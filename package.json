@@ -19,6 +19,8 @@
     "dev:web": "react-scripts start",
     "test": "react-scripts test",
     "lint": "eslint .",
+    "lint:markdown": "markdownlint '**/*.md' --ignore node_modules --ignore CHANGELOG.md",
+    "lint:fix": "eslint . --fix --ignore-path .gitignore .",
     "check-types": "tsc --noEmit",
     "validate": "npm run lint && npm run check-types"
   },
@@ -27,6 +29,20 @@
       "react-app",
       "react-app/jest",
       "prettier"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.md": [
+      "npm run lint:markdown --"
+    ],
+    "*.{js,jsx,ts,tsx,eslintrc,prettierrc}": [
+      "eslint --fix",
+      "prettier --write"
     ]
   },
   "browserslist": {
@@ -43,6 +59,9 @@
   },
   "devDependencies": {
     "eslint-config-prettier": "^8.5.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "markdownlint-cli": "^0.32.2",
     "prettier": "^2.7.1"
   }
 }
