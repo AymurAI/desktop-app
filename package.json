@@ -17,6 +17,11 @@
   },
   "scripts": {
     "dev:web": "react-scripts start",
+    "dev": "npm run build:renderer && concurrently 'BROWSER=none npm run dev:web' 'wait-on tcp:3000 && NODE_ENV=development electron .'",
+    "build:renderer": "tsc --build tsconfig.renderer.json",
+    "build:app": "PUBLIC_URL=. react-scripts build",
+    "build": "npm run build:app && npm run build:renderer",
+    "start": "npm run build && electron .",
     "test": "react-scripts test",
     "lint": "eslint .",
     "lint:markdown": "markdownlint '**/*.md' --ignore node_modules --ignore CHANGELOG.md",
@@ -62,10 +67,15 @@
     ]
   },
   "devDependencies": {
+    "concurrently": "^7.5.0",
+    "electron": "^21.2.0",
+    "electron-debug": "^3.2.0",
+    "electron-devtools-installer": "^3.2.0",
     "eslint-config-prettier": "^8.5.0",
-    "husky": "^8.0.1",
+    "husky": "^8.0.0",
     "lint-staged": "^13.0.3",
     "markdownlint-cli": "^0.32.2",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "wait-on": "^6.0.1"
   }
 }
