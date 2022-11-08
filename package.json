@@ -21,8 +21,10 @@
     "lint": "eslint .",
     "lint:markdown": "markdownlint '**/*.md' --ignore node_modules --ignore CHANGELOG.md",
     "lint:fix": "eslint . --fix --ignore-path .gitignore .",
-    "check-types": "tsc --noEmit",
-    "validate": "npm run lint && npm run check-types"
+    "check-types:react": "tsc -p tsconfig.json",
+    "check-types:renderer": "tsc -p tsconfig.renderer.json --noEmit",
+    "validate": "npm run lint && npm run check-types:react",
+    "pre-commit": "lint-staged"
   },
   "eslintConfig": {
     "extends": [
@@ -33,16 +35,18 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npx lint-staged"
+      "pre-commit": "npm run pre-commit"
     }
   },
   "lint-staged": {
     "*.md": [
       "npm run lint:markdown --"
     ],
-    "*.{js,jsx,ts,tsx,eslintrc,prettierrc}": [
-      "eslint --fix",
-      "prettier --write"
+    "src/*.{ts,tsx}": [
+      "npm run lint"
+    ],
+    "renderer/*.{ts}": [
+      "npm run lint"
     ]
   },
   "browserslist": {
