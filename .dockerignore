@@ -1,0 +1,12 @@
+node_modules
+build
+tmp
+.nvmrc
+.gitignore
+.editorconfig
+.tmp
+.next
+.DS_Store
+*.log
+README.md
+CONTRIBUTING.md
