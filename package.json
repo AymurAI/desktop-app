@@ -50,10 +50,10 @@
     "*.md": [
       "npm run lint:markdown --"
     ],
-    "src/*.{ts,tsx}": [
+    "src/**/*.{ts,tsx}": [
       "npm run lint"
     ],
-    "renderer/*.{ts}": [
+    "renderer/**/*.ts": [
       "npm run lint"
     ]
   },
