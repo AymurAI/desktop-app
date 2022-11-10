@@ -18,7 +18,71 @@ const defaultTheme = createStitches({
     space: tokens.spaces,
     transitions: {},
   },
+  utils: {
+    // ----------------
+    // PADDINGS
+    // ----------------
+    p: (value: number | string) => ({
+      padding: value,
+    }),
+    pt: (value: number | string) => ({
+      paddingTop: value,
+    }),
+    pr: (value: number | string) => ({
+      paddingRight: value,
+    }),
+    pb: (value: number | string) => ({
+      paddingBottom: value,
+    }),
+    pl: (value: number | string) => ({
+      paddingLeft: value,
+    }),
+    px: (value: number | string) => ({
+      paddingLeft: value,
+      paddingRight: value,
+    }),
+    py: (value: number | string) => ({
+      paddingTop: value,
+      paddingBottom: value,
+    }),
+
+    // ----------------
+    // MARGINS
+    // ----------------
+    m: (value: number | string) => ({
+      margin: value,
+    }),
+    mt: (value: number | string) => ({
+      marginTop: value,
+    }),
+    mr: (value: number | string) => ({
+      marginRight: value,
+    }),
+    mb: (value: number | string) => ({
+      marginBottom: value,
+    }),
+    ml: (value: number | string) => ({
+      marginLeft: value,
+    }),
+    mx: (value: number | string) => ({
+      marginLeft: value,
+      marginRight: value,
+    }),
+    my: (value: number | string) => ({
+      marginTop: value,
+      marginBottom: value,
+    }),
+
+    // ----------------
+    // BACKGROUND
+    // ----------------
+    bg: (value: string) => ({
+      backgroundColor: value,
+    }),
+  },
 });
+
+export type CSS = CSSProp<typeof defaultTheme>;
 
 export const { styled, globalCss, createTheme, theme, keyframes } =
   defaultTheme;
