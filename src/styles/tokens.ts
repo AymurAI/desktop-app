@@ -33,6 +33,11 @@ export const colors = {
   borderPrimary: '#BCBAB8',
   borderPrimaryAlt: '#3F479D',
   borderSecondary: '#9F99A5',
+
+  // ----------------
+  // OTHERS
+  // ----------------
+  white: '#FFFFFF',
 };
 
 export const fonts = {
@@ -65,7 +70,6 @@ export const fontWeights = {
 export const lineHeights = {
   titleMd: '38px',
 
-  subtitleMdDefault: '30px',
   subtitleMdStrong: '24px',
   subtitleSm: '17px',
 
