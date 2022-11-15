@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from 'components';
 import { Home, Login } from 'pages';
 import MainLayout from 'layout/main';
+import AuthProvider from 'context/Authentication';
 
 const router = createBrowserRouter([
   {
@@ -23,9 +24,12 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    {/* Stitches global styles */}
-    <ThemeProvider>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    {/* Provides the Google OAuth2 token */}
+    <AuthProvider>
+      {/* Stitches global styles */}
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
