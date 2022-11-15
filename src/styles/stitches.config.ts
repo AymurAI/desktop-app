@@ -2,7 +2,7 @@ import { createStitches, CSS as CSSProp } from '@stitches/react';
 
 import * as tokens from './tokens';
 
-const defaultTheme = createStitches({
+export const defaultTheme = createStitches({
   theme: {
     colors: {
       ...tokens.colors,
@@ -71,6 +71,33 @@ const defaultTheme = createStitches({
     my: (value: number | string) => ({
       marginTop: value,
       marginBottom: value,
+    }),
+
+    // ----------------
+    // BORDER
+    // ----------------
+    b: (value: string) => ({
+      border: value,
+    }),
+    bt: (value: string) => ({
+      borderTop: value,
+    }),
+    br: (value: string) => ({
+      borderRight: value,
+    }),
+    bb: (value: string) => ({
+      borderBottom: value,
+    }),
+    bl: (value: string) => ({
+      borderLeft: value,
+    }),
+    bx: (value: string) => ({
+      borderLeft: value,
+      borderRight: value,
+    }),
+    by: (value: string) => ({
+      borderTop: value,
+      borderBottom: value,
     }),
 
     // ----------------
