@@ -4,6 +4,7 @@ import { useContext } from 'react';
 
 interface UseLoginArgs {
   onSuccess?: () => void;
+  onLogout?: () => void;
   onError?: (
     e: Pick<TokenResponse, 'error' | 'error_description' | 'error_uri'>
   ) => void;
@@ -13,12 +14,16 @@ interface UseLoginArgs {
  * Hook used to configure the `login` function.
  * @param onSuccess Function to be called when te login succeeds
  * @param onError Function called when an error is thrown
- * @returns `login()` function which opens a new window to perform the Google authentication
+ * @returns `login()` function which opens a new window to perform the Google authentication and `logout()` function to reser the stored token
  */
-export default function useLogin({ onSuccess, onError }: UseLoginArgs = {}) {
+export default function useLogin({
+  onSuccess,
+  onError,
+  onLogout,
+}: UseLoginArgs = {}) {
   const { setToken } = useContext(Context);
 
-  return useGoogleLogin({
+  const login = useGoogleLogin({
     onSuccess: async (res) => {
       setToken(res.access_token);
       onSuccess?.();
@@ -28,4 +33,11 @@ export default function useLogin({ onSuccess, onError }: UseLoginArgs = {}) {
       onError?.(err);
     },
   });
+
+  const logout = () => {
+    onLogout?.();
+    setToken(null);
+  };
+
+  return { login, logout };
 }
