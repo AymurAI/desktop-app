@@ -1,11 +1,15 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 import { Title, Text, ProfilePicture } from 'components';
+import { useLogin } from 'hooks';
 import withAuthProtection from 'features/withAuthProtection';
 import { Props } from './Main.types';
 import { Container, Header } from './Main.styles';
 
 export default withAuthProtection(function Main({ children, ...props }: Props) {
+  const navigate = useNavigate();
+  const { logout } = useLogin({ onLogout: () => navigate('/login') });
+
   return (
     <main {...props}>
       <Header>
@@ -16,7 +20,7 @@ export default withAuthProtection(function Main({ children, ...props }: Props) {
         <Text>Im the stepper</Text>
         <div>
           <ProfilePicture src="https://place-puppy.com/300x300"></ProfilePicture>
-          <button>logout</button>
+          <button onClick={() => logout()}>logout</button>
         </div>
       </Header>
 
