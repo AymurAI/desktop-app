@@ -6,7 +6,7 @@ import { CLIENT_ID } from 'utils/config';
 
 type AuthContextType = {
   token: GoogleToken | null;
-  setToken: (token: GoogleToken) => void;
+  setToken: (token: GoogleToken | null) => void;
 };
 /**
  * Provides the token received through OAuth2 login to the whole app
@@ -25,7 +25,7 @@ interface Props {
 export default function AuthProvider({ children }: Props) {
   const [token, setToken] = useState<GoogleToken | null>(null);
 
-  const updateToken = (newToken: GoogleToken) => {
+  const updateToken = (newToken: GoogleToken | null) => {
     setToken(newToken);
   };
 
