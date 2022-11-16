@@ -10,6 +10,7 @@ import AuthProvider from 'context/Authentication';
 const router = createBrowserRouter([
   {
     // Main as a layout element
+    path: '/',
     element: <MainLayout></MainLayout>,
     children: [{ path: 'home', element: <Home></Home> }],
   },

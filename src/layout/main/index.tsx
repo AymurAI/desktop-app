@@ -1,10 +1,11 @@
 import { Outlet } from 'react-router-dom';
 
 import { Title, Text, ProfilePicture } from 'components';
+import withAuthProtection from 'features/withAuthProtection';
 import { Props } from './Main.types';
 import { Container, Header } from './Main.styles';
 
-export default function Main({ children, ...props }: Props) {
+export default withAuthProtection(function Main({ children, ...props }: Props) {
   return (
     <main {...props}>
       <Header>
@@ -25,4 +26,4 @@ export default function Main({ children, ...props }: Props) {
       </Container>
     </main>
   );
-}
+});
