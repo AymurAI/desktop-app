@@ -1,21 +1,36 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import { CLIENT_ID } from 'utils/config';
 import { ThemeProvider } from 'components';
+import { Home, Login } from 'pages';
+import MainLayout from 'layout/main';
+import AuthProvider from 'context/Authentication';
 
-import App from './App';
+const router = createBrowserRouter([
+  {
+    // Main as a layout element
+    path: '/',
+    element: <MainLayout></MainLayout>,
+    children: [{ path: 'home', element: <Home></Home> }],
+  },
+  {
+    path: '/login',
+    element: <Login></Login>,
+  },
+]);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={CLIENT_ID}>
+    {/* Provides the Google OAuth2 token */}
+    <AuthProvider>
+      {/* Stitches global styles */}
       <ThemeProvider>
-        <App />
+        <RouterProvider router={router} />
       </ThemeProvider>
-    </GoogleOAuthProvider>
+    </AuthProvider>
   </React.StrictMode>
 );

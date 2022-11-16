@@ -1,4 +1,4 @@
-import { globalStyles } from 'styles/globalStyles';
+import { globalStyles } from 'styles';
 
 import { Props } from './ThemeProvider.types';
 
