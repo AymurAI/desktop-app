@@ -35,6 +35,21 @@ export const colors = {
   borderSecondary: '#9F99A5',
 
   // ----------------
+  // FEEDBACK
+  // ----------------
+  successPrimary: '#1B834E',
+  successSecondary: '#E0FAED',
+
+  errorPrimary: '#DC582E',
+  errorSecondary: '#FFECE6',
+
+  warningPrimary: '#F2BA2C',
+  warningSecondary: '#FFF7DB',
+
+  infoPrimary: '#3F479D',
+  infoSecondary: '#F6F5F7',
+
+  // ----------------
   // OTHERS
   // ----------------
   white: '#FFFFFF',
