@@ -40,7 +40,7 @@ const Stack = styled('div', {
       xs: { gap: '$xs' },
       s: { gap: '$s' },
       m: { gap: '$m' },
-      k: { gap: '$k' },
+      l: { gap: '$l' },
       xl: { gap: '$xl' },
     },
   },
