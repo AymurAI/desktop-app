@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Background, Container } from 'layout/login';
-import { Text, Title } from 'components';
+import { Subtitle, Title, Stack } from 'components';
 import { useGoogleToken, useLogin } from 'hooks';
+import { Button } from 'components';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -21,9 +22,20 @@ export default function Login() {
   return (
     <Background>
       <Container>
-        <Text>Te damos la bienvenida a</Text>
-        <Title>AymurAI</Title>
-        <button onClick={() => login()}>Login</button>
+        {/*  Title */}
+        <Stack direction="column" align="center">
+          <Subtitle>Te damos la bienvenida a</Subtitle>
+          <Title weight="heavy" size="main">
+            AymurAI
+          </Title>
+        </Stack>
+
+        {/* Login */}
+        <Stack direction="column" align="center">
+          <Button onClick={() => login()}>Login</Button>
+        </Stack>
+
+        {/* DataGenero info */}
       </Container>
     </Background>
   );
