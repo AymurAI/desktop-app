@@ -31,8 +31,23 @@ export const colors = {
   bgSecondary: '#FFFFFF',
 
   borderPrimary: '#BCBAB8',
-  borderPrimaryAlt: '#3F479D',
+  borderPrimaryAlt: '##110041',
   borderSecondary: '#9F99A5',
+
+  // ----------------
+  // FEEDBACK
+  // ----------------
+  successPrimary: '#1B834E',
+  successSecondary: '#E0FAED',
+
+  errorPrimary: '#DC582E',
+  errorSecondary: '#FFECE6',
+
+  warningPrimary: '#F2BA2C',
+  warningSecondary: '#FFF7DB',
+
+  infoPrimary: '#3F479D',
+  infoSecondary: '#F6F5F7',
 
   // ----------------
   // OTHERS
@@ -46,6 +61,7 @@ export const fonts = {
 };
 
 export const fontSizes = {
+  titleMain: '64px',
   titleMd: '32px',
 
   subtitleMd: '20px',
@@ -65,13 +81,15 @@ export const fontSizes = {
 export const fontWeights = {
   default: 400,
   strong: 600,
+  heavy: 800,
 };
 
 export const lineHeights = {
+  titleMain: '70px',
   titleMd: '38px',
 
-  subtitleMdStrong: '24px',
-  subtitleSm: '17px',
+  subtitleMd: '24px',
+  subtitleSm: '24px',
 
   paragraphsMd: '27px',
   paragraphsSm: '22px',

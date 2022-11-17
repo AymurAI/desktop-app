@@ -12,7 +12,6 @@ export function resolveHTMLPath(fileName = 'index.html') {
   if (isDebug) {
     const url = new URL(`http://localhost:${PORT}`);
 
-    url.pathname = fileName;
     return url.href;
   } else {
     const pathToFile = path.resolve(__dirname, '../', fileName);
