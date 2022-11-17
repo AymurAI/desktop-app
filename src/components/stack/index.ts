@@ -1,0 +1,57 @@
+import { styled } from 'styles';
+
+const Stack = styled('div', {
+  display: 'flex',
+
+  variants: {
+    direction: {
+      row: { flexDirection: 'row' },
+      column: { flexDirection: 'column' },
+      'row-reverse': { flexDirection: 'row-reverse' },
+      'column-reverse': { flexDirection: 'column-reverse' },
+    },
+
+    wrap: {
+      wrap: { flexWrap: 'wrap' },
+      nowrap: { flexWrap: 'nowrap' },
+      'wrap-reverse': { flexWrap: 'wrap-reverse' },
+    },
+
+    justify: {
+      start: { justifyContent: 'start' },
+      end: { justifyContent: 'end' },
+      center: { justifyContent: 'center' },
+      'space-between': { justifyContent: 'space-between' },
+      'space-around': { justifyContent: 'space-around' },
+      'space-evenly': { justifyContent: 'space-evenly' },
+    },
+
+    align: {
+      start: { alignItems: 'start' },
+      end: { alignItems: 'end' },
+      center: { alignItems: 'center' },
+      stretch: { alignItems: 'stretch' },
+      baseline: { alignItems: 'baseline' },
+    },
+
+    spacing: {
+      zero: { gap: 0 },
+      xxs: { gap: '$xxs' },
+      xs: { gap: '$xs' },
+      s: { gap: '$s' },
+      m: { gap: '$m' },
+      k: { gap: '$k' },
+      xl: { gap: '$xl' },
+    },
+  },
+
+  defaultVariants: {
+    direction: 'row',
+    wrap: 'wrap',
+    justify: 'start',
+    align: 'start',
+    spacing: 's',
+  },
+});
+
+export default Stack;
