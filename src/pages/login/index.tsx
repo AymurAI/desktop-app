@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogo } from 'phosphor-react';
 
 import { Background, Container } from 'layout/login';
 import { Subtitle, Title, Stack } from 'components';
 import { useGoogleToken, useLogin } from 'hooks';
 import { Button } from 'components';
+import Callout from './Callout';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -31,8 +33,12 @@ export default function Login() {
         </Stack>
 
         {/* Login */}
-        <Stack direction="column" align="center">
-          <Button onClick={() => login()}>Login</Button>
+        <Stack direction="column" align="stretch" spacing="xl">
+          <Button onClick={() => login()}>
+            <GoogleLogo weight="bold" />
+            Login
+          </Button>
+          <Callout />
         </Stack>
 
         {/* DataGenero info */}
