@@ -1,8 +1,19 @@
+import Button from './button';
 import Label from './label';
+import ProfilePicture from './profile-picture';
+import Stack from './stack';
 import Subtitle from './subtitle';
 import Text from './text';
-import Title from './title';
 import ThemeProvider from './theme-provider';
-import ProfilePicture from './profile-picture';
+import Title from './title';
 
-export { Label, Subtitle, Text, Title, ThemeProvider, ProfilePicture };
+export {
+  Button,
+  Label,
+  ProfilePicture,
+  Stack,
+  Subtitle,
+  Text,
+  ThemeProvider,
+  Title,
+};
