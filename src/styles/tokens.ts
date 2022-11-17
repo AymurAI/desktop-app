@@ -31,7 +31,7 @@ export const colors = {
   bgSecondary: '#FFFFFF',
 
   borderPrimary: '#BCBAB8',
-  borderPrimaryAlt: '#3F479D',
+  borderPrimaryAlt: '##110041',
   borderSecondary: '#9F99A5',
 
   // ----------------
@@ -46,6 +46,7 @@ export const fonts = {
 };
 
 export const fontSizes = {
+  titleMain: '64px',
   titleMd: '32px',
 
   subtitleMd: '20px',
@@ -65,13 +66,15 @@ export const fontSizes = {
 export const fontWeights = {
   default: 400,
   strong: 600,
+  heavy: 800,
 };
 
 export const lineHeights = {
+  titleMain: '70px',
   titleMd: '38px',
 
-  subtitleMdStrong: '24px',
-  subtitleSm: '17px',
+  subtitleMd: '24px',
+  subtitleSm: '24px',
 
   paragraphsMd: '27px',
   paragraphsSm: '22px',
