@@ -1,6 +1,8 @@
 import { styled } from 'styles';
 
 const Label = styled('label', {
+  color: '$textLighter',
+
   variants: {
     size: {
       md: {
