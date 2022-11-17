@@ -1,6 +1,6 @@
 import { styled } from 'styles';
 
-const Subtitle = styled('span', {
+const Subtitle = styled('p', {
   variants: {
     size: {
       md: {
