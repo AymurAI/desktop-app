@@ -1,19 +1,19 @@
 import { createContext, ReactNode, useState } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-import { GoogleToken } from 'types/google';
 import { CLIENT_ID } from 'utils/config';
+import { User } from 'types/user';
 
 type AuthContextType = {
-  token: GoogleToken | null;
-  setToken: (token: GoogleToken | null) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
 };
 /**
  * Provides the token received through OAuth2 login to the whole app
  */
 export const AuthenticationContext = createContext<AuthContextType>({
-  token: null,
-  setToken: () => {},
+  user: null,
+  setUser: () => {},
 });
 
 interface Props {
@@ -23,14 +23,14 @@ interface Props {
  * Provider for `AuthenticationContext`. Its main purpose is to serve as an interface for `GoogleOAuthProvider`
  */
 export default function AuthProvider({ children }: Props) {
-  const [token, setToken] = useState<GoogleToken | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  const updateToken = (newToken: GoogleToken | null) => {
-    setToken(newToken);
+  const updateUser = (user: User | null) => {
+    setUser(user);
   };
 
   return (
-    <AuthenticationContext.Provider value={{ token, setToken: updateToken }}>
+    <AuthenticationContext.Provider value={{ user, setUser: updateUser }}>
       <GoogleOAuthProvider clientId={CLIENT_ID}>{children}</GoogleOAuthProvider>
     </AuthenticationContext.Provider>
   );
