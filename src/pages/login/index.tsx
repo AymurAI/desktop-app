@@ -3,11 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { GoogleLogo } from 'phosphor-react';
 
 import { Background, Container } from 'layout/login';
-import { Subtitle, Title, Stack, Label } from 'components';
-import { useLogin, useUser } from 'hooks';
-import { Button } from 'components';
+import { Button, Subtitle, Title, Stack, Label } from 'components';
+import { useLogin, useUser, useGoogleScript } from 'hooks';
 import Callout from './Callout';
-import { useGoogleScript } from 'hooks';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -20,7 +18,7 @@ export default function Login() {
    * Ensures the user state has been successfully updated before navigating to the `/home`
    */
   useEffect(() => {
-    if (user && user.token !== '') navigate('/home');
+    if (user && user.token !== '') navigate('/onboarding');
   }, [user, navigate]);
 
   return (

@@ -31,7 +31,7 @@ export const colors = {
   bgSecondary: '#FFFFFF',
 
   borderPrimary: '#BCBAB8',
-  borderPrimaryAlt: '##110041',
+  borderPrimaryAlt: '#110041',
   borderSecondary: '#9F99A5',
 
   // ----------------

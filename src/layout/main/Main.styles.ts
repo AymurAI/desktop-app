@@ -1,5 +1,12 @@
 import { styled } from 'styles';
 
+export const Layout = styled('main', {
+  height: '100vh',
+
+  display: 'flex',
+  flexDirection: 'column',
+});
+
 export const Header = styled('header', {
   display: 'flex',
   flexDirection: 'row',
@@ -14,15 +21,28 @@ export const Header = styled('header', {
   bb: '1px solid $borderPrimary',
 });
 
-export const Container = styled('section', {
+export const Section = styled('section', {
   px: 200,
-  py: '$l',
+  py: '$xxl',
+  flex: 1,
+
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$m',
 
   bg: '$bgPrimary',
 });
 
 export const Footer = styled('nav', {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  gap: '$m',
+
+  p: '$l 100px',
+
   bt: '1px solid $borderPrimary',
 
-  bg: '$bgPrimary',
+  bg: '$bgSecondary',
 });

@@ -1,0 +1,58 @@
+import { styled } from 'styles';
+
+/**
+ * Container for styled cards
+ */
+export const CardContainer = styled('div', {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'stretch',
+  gap: '$m',
+
+  alignSelf: 'center',
+});
+
+/**
+ * Styled card, containing step, image and description
+ */
+export const Card = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  gap: '$m',
+  alignItems: 'center',
+  textAlign: 'center',
+
+  bg: '$bgSecondary',
+
+  border: '1px solid $borderPrimary',
+  borderRadius: '$xxs',
+
+  position: 'relative',
+
+  px: '$m',
+  pt: '$l',
+  pb: '$xl',
+  width: 200,
+});
+
+/**
+ * Step indicator on Onboarding cards
+ */
+export const Step = styled('span', {
+  bg: '$actionDefaultAlt',
+  color: '$textOnButtonAlternative',
+
+  position: 'absolute',
+  top: '$m',
+
+  borderRadius: '100%',
+  width: 36,
+  height: 36,
+  mb: '-$m',
+
+  alignSelf: 'end',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
