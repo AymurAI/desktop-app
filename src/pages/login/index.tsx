@@ -7,10 +7,12 @@ import { Subtitle, Title, Stack, Label } from 'components';
 import { useLogin, useUser } from 'hooks';
 import { Button } from 'components';
 import Callout from './Callout';
+import { useGoogleScript } from 'hooks';
 
 export default function Login() {
   const navigate = useNavigate();
   const user = useUser();
+  const hasScriptLoaded = useGoogleScript();
 
   const { login } = useLogin();
 
@@ -34,7 +36,7 @@ export default function Login() {
 
         {/* Login */}
         <Stack direction="column" align="stretch" spacing="xl">
-          <Button onClick={() => login()}>
+          <Button onClick={() => login()} disabled={!hasScriptLoaded}>
             <GoogleLogo weight="bold" />
             Login
           </Button>
