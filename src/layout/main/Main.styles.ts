@@ -1,5 +1,12 @@
 import { styled } from 'styles';
 
+export const Layout = styled('main', {
+  height: '100vh',
+
+  display: 'flex',
+  flexDirection: 'column',
+});
+
 export const Header = styled('header', {
   display: 'flex',
   flexDirection: 'row',
