@@ -22,7 +22,15 @@ export const Container = styled('section', {
 });
 
 export const Footer = styled('nav', {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  gap: '$m',
+
+  p: '$l 100px',
+
   bt: '1px solid $borderPrimary',
 
-  bg: '$bgPrimary',
+  bg: '$bgSecondary',
 });
