@@ -14,9 +14,14 @@ export const Header = styled('header', {
   bb: '1px solid $borderPrimary',
 });
 
-export const Container = styled('section', {
+export const Section = styled('section', {
   px: 200,
-  py: '$l',
+  py: '$xxl',
+  flex: 1,
+
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$m',
 
   bg: '$bgPrimary',
 });
