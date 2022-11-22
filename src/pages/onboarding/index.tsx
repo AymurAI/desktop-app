@@ -1,11 +1,23 @@
+import { ChangeEventHandler, useRef } from 'react';
+
 import { Button, Stack, Text, Title } from 'components';
 import { Section, Footer } from 'layout/main';
+import logger from 'utils/logger';
 
 import { CardContainer, Card } from './cards';
 import { Input } from './Input';
 import RightArrow from './RightArrow';
 
 export default function Onboarding() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSelectFile = () => {
+    inputRef.current?.click();
+  };
+
+  const handleAddFile: ChangeEventHandler<HTMLInputElement> = (e) => {
+    logger.info('Test', e.target.files);
+  };
 
   return (
     <>
