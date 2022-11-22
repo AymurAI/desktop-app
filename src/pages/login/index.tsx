@@ -4,22 +4,22 @@ import { GoogleLogo } from 'phosphor-react';
 
 import { Background, Container } from 'layout/login';
 import { Subtitle, Title, Stack, Label } from 'components';
-import { useGoogleToken, useLogin } from 'hooks';
+import { useLogin, useUser } from 'hooks';
 import { Button } from 'components';
 import Callout from './Callout';
 
 export default function Login() {
   const navigate = useNavigate();
-  const token = useGoogleToken();
+  const user = useUser();
 
   const { login } = useLogin();
 
   /**
-   * Ensures the token state has been successfully updated before navigating to the `/home`
+   * Ensures the user state has been successfully updated before navigating to the `/home`
    */
   useEffect(() => {
-    if (token && token !== '') navigate('/home');
-  }, [token, navigate]);
+    if (user && user.token !== '') navigate('/home');
+  }, [user, navigate]);
 
   return (
     <Background>

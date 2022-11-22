@@ -1,14 +1,12 @@
-import { useContext } from 'react';
-
-import { AuthenticationContext as Context } from 'context/Authentication';
 import { GoogleToken } from 'types/google';
+import useUser from './useUser';
 
 /**
  * Works as an interface for the `AuthenticationContext`, exposing the `token`
  * @returns The token provided by the OAuth2 login
  */
 export default function useGoogleToken(): GoogleToken | null {
-  const { token } = useContext(Context);
+  const user = useUser();
 
-  return token;
+  return user?.token ?? null;
 }

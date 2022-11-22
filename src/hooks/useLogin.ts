@@ -1,9 +1,12 @@
-import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
-import { AuthenticationContext as Context } from 'context/Authentication';
 import { useContext } from 'react';
+import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
+
+import { AuthenticationContext as Context } from 'context/Authentication';
+import { GoogleToken } from 'types/google';
+import google from 'services/google';
 
 interface UseLoginArgs {
-  onSuccess?: () => void;
+  onSuccess?: (token: GoogleToken) => void;
   onLogout?: () => void;
   onError?: (
     e: Pick<TokenResponse, 'error' | 'error_description' | 'error_uri'>
@@ -21,12 +24,16 @@ export default function useLogin({
   onError,
   onLogout,
 }: UseLoginArgs = {}) {
-  const { setToken } = useContext(Context);
+  const { setUser } = useContext(Context);
 
   const login = useGoogleLogin({
     onSuccess: async (res) => {
-      setToken(res.access_token);
-      onSuccess?.();
+      // Fetch user info
+      const data = await google(res.access_token).user();
+      setUser({ ...data, token: res.access_token });
+
+      // Pass the token to perform any other action
+      onSuccess?.(res.access_token);
     },
     onError: async (err) => {
       console.error('An error ocurred while retrieving the OAuth2 token', err);
@@ -36,7 +43,7 @@ export default function useLogin({
 
   const logout = () => {
     onLogout?.();
-    setToken(null);
+    setUser(null);
   };
 
   return { login, logout };
