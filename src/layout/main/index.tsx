@@ -1,16 +1,12 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
-import { Title, Text, ProfilePicture } from 'components';
-import { useLogin, useUser } from 'hooks';
+import { Title, Text } from 'components';
 import withAuthProtection from 'features/withAuthProtection';
+import ProfileInfo from 'components/profile-info';
 import { Props } from './Main.types';
 import { Container, Header } from './Main.styles';
 
 export default withAuthProtection(function Main({ children, ...props }: Props) {
-  const navigate = useNavigate();
-  const user = useUser();
-  const { logout } = useLogin({ onLogout: () => navigate('/login') });
-
   return (
     <main {...props}>
       <Header>
@@ -19,10 +15,7 @@ export default withAuthProtection(function Main({ children, ...props }: Props) {
           AymurAI
         </Title>
         <Text>Im the stepper</Text>
-        <div>
-          <ProfilePicture src={user?.picture}></ProfilePicture>
-          <button onClick={() => logout()}>logout</button>
-        </div>
+        <ProfileInfo></ProfileInfo>
       </Header>
 
       {/* Content as Outlet, managed by React-Router */}
