@@ -1,6 +1,6 @@
 ---
 variables:
-  REVIEW_APPS_DOMAIN: 'wip.aerolab.co'
+  REVIEW_APPS_DOMAIN: 'aerolab.dev'
   REVIEW_APPS_SUBDOMAIN_PREFIX: 'datagenero-desktop'
 
 .functions: &functions |
