@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { Title, ProfileInfo } from 'components';
+import { Title, ProfileInfo, Stepper } from 'components';
 import withAuthProtection from 'features/withAuthProtection';
 import FileContext from 'context/File';
 import { Props } from './Main.types';
@@ -23,6 +23,7 @@ export default withAuthProtection(function Main({ children, ...props }: Props) {
         <Title weight="strong" css={{ fontSize: 24 }}>
           AymurAI
         </Title>
+        <Stepper currentStep={step}></Stepper>
         <ProfileInfo></ProfileInfo>
       </Header>
 
