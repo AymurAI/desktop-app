@@ -1,21 +1,44 @@
 import { ChangeEventHandler, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Button, Stack, Text, Title } from 'components';
 import { Section, Footer } from 'layout/main';
 
 import { Card } from './cards';
 import { Input } from './Input';
+import getFileExtension from 'utils/getFileExtension';
+import { useStepper, useFiles } from 'hooks';
 import { Arrow } from 'components';
 
 export default function Onboarding() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { addFiles } = useFiles();
+  const { nextStep } = useStepper();
+  const navigate = useNavigate();
 
   const handleSelectFile = () => {
     inputRef.current?.click();
   };
 
-  const handleAddFile: ChangeEventHandler<HTMLInputElement> = (e) => {
-    logger.info('Test', e.target.files);
+  const handleAddedFile: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const rawFiles = e.target.files;
+
+    // Check if any file was added
+    if (rawFiles) {
+      const ALLOWED_EXT = ['doc', 'docx'];
+      const files = Array.from(rawFiles);
+
+      // Check for whitelisted extensions
+      const filtered = files.filter(
+        (file) => !!ALLOWED_EXT.find((ext) => ext === getFileExtension(file))
+      );
+
+      if (filtered.length > 0) {
+        addFiles(filtered);
+        nextStep();
+        navigate('/preview');
+      }
+    }
   };
 
   return (
@@ -57,7 +80,7 @@ export default function Onboarding() {
           type="file"
           accept=".doc,.docx"
           ref={inputRef}
-          onChange={handleAddFile}
+          onChange={handleAddedFile}
           multiple
         />
         <Text size="sm">Formatos válidos: .doc y .docx</Text>
