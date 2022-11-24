@@ -6,7 +6,7 @@ import logger from 'utils/logger';
 
 import { CardContainer, Card } from './cards';
 import { Input } from './Input';
-import RightArrow from './RightArrow';
+import { Arrow } from 'components';
 
 export default function Onboarding() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -34,17 +34,17 @@ export default function Onboarding() {
         </Stack>
         <CardContainer>
           <Card step={1} text="Selecciona los archivos" />
-          <RightArrow />
+          <Arrow.Right />
           <Card
             step={2}
             text="La inteligencia artificial procesará los archivos"
           />
-          <RightArrow />
+          <Arrow.Right />
           <Card
             step={3}
             text="Valida que la información identificada sea correcta"
           />
-          <RightArrow />
+          <Arrow.Right />
           <Card
             step={4}
             text="Proceso terminado. Los archivos ya son parte del set de datos."

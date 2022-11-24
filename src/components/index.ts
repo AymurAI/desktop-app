@@ -1,3 +1,4 @@
+import Arrow from './arrow';
 import Button from './button';
 import Label from './label';
 import ProfileInfo from './profile-info';
@@ -9,6 +10,7 @@ import ThemeProvider from './theme-provider';
 import Title from './title';
 
 export {
+  Arrow,
   Button,
   Label,
   ProfileInfo,
