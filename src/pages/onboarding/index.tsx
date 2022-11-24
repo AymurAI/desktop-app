@@ -22,7 +22,7 @@ export default function Onboarding() {
   return (
     <>
       {/* Onboarding description */}
-      <Section css={{ gap: '$xl' }}>
+      <Section spacing="xl">
         <Stack spacing="m">
           <Title weight="strong">¿Cómo funciona AymurAI?</Title>
           <Text>

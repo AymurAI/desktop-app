@@ -31,6 +31,22 @@ export const Section = styled('section', {
   gap: '$m',
 
   bg: '$bgPrimary',
+
+  variants: {
+    spacing: {
+      none: { gap: 0 },
+      xxs: { gap: '$xxs' },
+      xs: { gap: '$xs' },
+      s: { gap: '$s' },
+      m: { gap: '$m' },
+      l: { gap: '$l' },
+      xl: { gap: '$xl' },
+      xxl: { gap: '$xxl' },
+    },
+  },
+  defaultVariants: {
+    spacing: 'm',
+  },
 });
 
 export const Footer = styled('nav', {
