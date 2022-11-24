@@ -2,9 +2,8 @@ import { ChangeEventHandler, useRef } from 'react';
 
 import { Button, Stack, Text, Title } from 'components';
 import { Section, Footer } from 'layout/main';
-import logger from 'utils/logger';
 
-import { CardContainer, Card } from './cards';
+import { Card } from './cards';
 import { Input } from './Input';
 import { Arrow } from 'components';
 
@@ -32,7 +31,7 @@ export default function Onboarding() {
             perspectiva de género.
           </Text>
         </Stack>
-        <CardContainer>
+        <Stack align="stretch" spacing="m" css={{ alignSelf: 'center' }}>
           <Card step={1} text="Selecciona los archivos" />
           <Arrow.Right />
           <Card
@@ -49,7 +48,7 @@ export default function Onboarding() {
             step={4}
             text="Proceso terminado. Los archivos ya son parte del set de datos."
           />
-        </CardContainer>
+        </Stack>
       </Section>
 
       {/* Input file */}

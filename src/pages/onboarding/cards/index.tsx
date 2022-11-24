@@ -1,7 +1,5 @@
 import { Text } from 'components';
-import { CardContainer, Card as StyledCard, Step } from './Cards.styles';
-
-export { CardContainer };
+import { Card as StyledCard, Step } from './Cards.styles';
 
 interface Props {
   step: number;
