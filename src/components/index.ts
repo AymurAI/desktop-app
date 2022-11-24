@@ -1,5 +1,6 @@
 import Arrow from './arrow';
 import Button from './button';
+import Card from './card';
 import Label from './label';
 import ProfileInfo from './profile-info';
 import Stack from './stack';
@@ -12,6 +13,7 @@ import Title from './title';
 export {
   Arrow,
   Button,
+  Card,
   Label,
   ProfileInfo,
   Stack,
