@@ -33,7 +33,7 @@ review:
     - ssh dokku@$REVIEW_APPS_DOMAIN certs:add $REVIEW_APP /home/dokku/.https/server.crt /home/dokku/.https/server.key
     - ssh dokku@$REVIEW_APPS_DOMAIN config:set $REVIEW_APP NODE_ENV=production
     - ssh dokku@$REVIEW_APPS_DOMAIN docker-options:add $REVIEW_APP build "--build-arg NODE_ENV=production"
-    - git push dokku@$REVIEW_APPS_DOMAIN:$REVIEW_APP HEAD:refs/heads/main --force
+    - git push dokku@$REVIEW_APPS_DOMAIN:$REVIEW_APP HEAD:refs/heads/master --force
     - echo $CI_ENVIRONMENT_URL > environment_url.txt
   environment:
     name: review/$CI_COMMIT_REF_NAME
@@ -83,7 +83,7 @@ develop:
     - ssh dokku@$REVIEW_APPS_DOMAIN certs:add $REVIEW_APP /home/dokku/.https/server.crt /home/dokku/.https/server.key
     - ssh dokku@$REVIEW_APPS_DOMAIN config:set $REVIEW_APP NODE_ENV=production
     - ssh dokku@$REVIEW_APPS_DOMAIN docker-options:add $REVIEW_APP build "--build-arg NODE_ENV=production"
-    - git push dokku@$REVIEW_APPS_DOMAIN:$REVIEW_APP HEAD:refs/heads/main --force
+    - git push dokku@$REVIEW_APPS_DOMAIN:$REVIEW_APP HEAD:refs/heads/master --force
     - echo $CI_ENVIRONMENT_URL > environment_url.txt
   environment:
     name: develop
@@ -127,7 +127,7 @@ staging:
     - ssh dokku@$REVIEW_APPS_DOMAIN certs:add $REVIEW_APP /home/dokku/.https/server.crt /home/dokku/.https/server.key
     - ssh dokku@$REVIEW_APPS_DOMAIN config:set $REVIEW_APP NODE_ENV=production
     - ssh dokku@$REVIEW_APPS_DOMAIN docker-options:add $REVIEW_APP build "--build-arg NODE_ENV=production"
-    - git push dokku@$REVIEW_APPS_DOMAIN:$REVIEW_APP HEAD:refs/heads/main --force
+    - git push dokku@$REVIEW_APPS_DOMAIN:$REVIEW_APP HEAD:refs/heads/master --force
     - echo $CI_ENVIRONMENT_URL > environment_url.txt
   environment:
     name: staging
