@@ -16,7 +16,7 @@ export const defaultTheme = createStitches({
     shadows: {},
     sizes: tokens.sizes,
     space: tokens.spaces,
-    transitions: {},
+    transitions: tokens.transitions,
   },
   utils: {
     // ----------------

@@ -131,3 +131,7 @@ export const spaces = {
   xs: '4px',
   xxs: '2px',
 };
+
+export const transitions = {
+  s: '300ms',
+};
