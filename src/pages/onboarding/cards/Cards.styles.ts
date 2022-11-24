@@ -1,32 +1,14 @@
+import { Card as StyledCard } from 'components';
 import { styled } from 'styles';
-
-/**
- * Container for styled cards
- */
-export const CardContainer = styled('div', {
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'stretch',
-  gap: '$m',
-
-  alignSelf: 'center',
-});
 
 /**
  * Styled card, containing step, image and description
  */
-export const Card = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
+export const Card = styled(StyledCard, {
   justifyContent: 'center',
-  gap: '$m',
   alignItems: 'center',
   textAlign: 'center',
-
-  bg: '$bgSecondary',
-
-  border: '1px solid $borderPrimary',
-  borderRadius: '$xxs',
+  gap: '$m',
 
   position: 'relative',
 

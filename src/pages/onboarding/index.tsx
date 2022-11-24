@@ -1,28 +1,50 @@
 import { ChangeEventHandler, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Button, Stack, Text, Title } from 'components';
 import { Section, Footer } from 'layout/main';
-import logger from 'utils/logger';
 
-import { CardContainer, Card } from './cards';
+import { Card } from './cards';
 import { Input } from './Input';
-import RightArrow from './RightArrow';
+import getFileExtension from 'utils/getFileExtension';
+import { useStepper, useFiles } from 'hooks';
+import { Arrow } from 'components';
 
 export default function Onboarding() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { addFiles } = useFiles();
+  const { nextStep } = useStepper();
+  const navigate = useNavigate();
 
   const handleSelectFile = () => {
     inputRef.current?.click();
   };
 
-  const handleAddFile: ChangeEventHandler<HTMLInputElement> = (e) => {
-    logger.info('Test', e.target.files);
+  const handleAddedFile: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const rawFiles = e.target.files;
+
+    // Check if any file was added
+    if (rawFiles) {
+      const ALLOWED_EXT = ['doc', 'docx'];
+      const files = Array.from(rawFiles);
+
+      // Check for whitelisted extensions
+      const filtered = files.filter(
+        (file) => !!ALLOWED_EXT.find((ext) => ext === getFileExtension(file))
+      );
+
+      if (filtered.length > 0) {
+        addFiles(filtered);
+        nextStep();
+        navigate('/preview');
+      }
+    }
   };
 
   return (
     <>
       {/* Onboarding description */}
-      <Section css={{ gap: '$xl' }}>
+      <Section spacing="xl">
         <Stack spacing="m">
           <Title weight="strong">¿Cómo funciona AymurAI?</Title>
           <Text>
@@ -32,24 +54,24 @@ export default function Onboarding() {
             perspectiva de género.
           </Text>
         </Stack>
-        <CardContainer>
+        <Stack align="stretch" spacing="m" css={{ alignSelf: 'center' }}>
           <Card step={1} text="Selecciona los archivos" />
-          <RightArrow />
+          <Arrow.Right />
           <Card
             step={2}
             text="La inteligencia artificial procesará los archivos"
           />
-          <RightArrow />
+          <Arrow.Right />
           <Card
             step={3}
             text="Valida que la información identificada sea correcta"
           />
-          <RightArrow />
+          <Arrow.Right />
           <Card
             step={4}
             text="Proceso terminado. Los archivos ya son parte del set de datos."
           />
-        </CardContainer>
+        </Stack>
       </Section>
 
       {/* Input file */}
@@ -58,7 +80,7 @@ export default function Onboarding() {
           type="file"
           accept=".doc,.docx"
           ref={inputRef}
-          onChange={handleAddFile}
+          onChange={handleAddedFile}
           multiple
         />
         <Text size="sm">Formatos válidos: .doc y .docx</Text>
