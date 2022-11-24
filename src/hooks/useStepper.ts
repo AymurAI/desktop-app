@@ -6,7 +6,10 @@ import { useContext } from 'react';
  * @returns `nextStep` and `previousStep` functions
  */
 export default function useStepper() {
-  const { nextStep, previousStep } = useContext(Context);
+  const { step, setStep } = useContext(Context);
+
+  const nextStep = () => setStep(step + 1);
+  const previousStep = () => setStep(step - 1);
 
   return { nextStep, previousStep };
 }

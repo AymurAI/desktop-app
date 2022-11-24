@@ -3,8 +3,8 @@ import { createContext } from 'react';
 type FileContextType = {
   files: File[];
   setFiles: (files: File[]) => void;
-  nextStep: () => void;
-  previousStep: () => void;
+  step: number;
+  setStep: (step: number) => void;
 };
 /**
  * Context used to provide files that have to be processed and the current processing step
@@ -12,8 +12,8 @@ type FileContextType = {
 export const FileContext = createContext<FileContextType>({
   files: [],
   setFiles: () => {},
-  nextStep: () => {},
-  previousStep: () => {},
+  step: 0,
+  setStep: () => {},
 });
 FileContext.displayName = 'FileContext';
 
