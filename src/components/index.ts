@@ -1,6 +1,7 @@
 import Arrow from './arrow';
 import Button from './button';
 import Card from './card';
+import Checkbox from './checkbox';
 import Grid from './grid';
 import HiddenInput from './hidden-input';
 import Label from './label';
@@ -16,6 +17,7 @@ export {
   Arrow,
   Button,
   Card,
+  Checkbox,
   Grid,
   HiddenInput,
   Label,

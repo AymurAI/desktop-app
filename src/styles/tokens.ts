@@ -24,7 +24,7 @@ export const colors = {
   textDefault: '#110041',
   textLighter: '#625C68',
   textOnButtonDefault: '#110041',
-  textOnButtonDisabled: '#9F99A5',
+  textOnButtonDisabled: '#2D3748',
   textOnButtonAlternative: '#FFFFFF',
 
   bgPrimary: '#F6F5F7',
@@ -134,5 +134,5 @@ export const spaces = {
 };
 
 export const transitions = {
-  s: '300ms',
+  s: '250ms',
 };
