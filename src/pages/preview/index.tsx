@@ -7,6 +7,7 @@ import {
   Subtitle,
   Stack,
   Grid,
+  HiddenInput,
 } from 'components';
 import { Footer, Section } from 'layout/main';
 
@@ -41,6 +42,11 @@ export default function Preview() {
 
       {/* FOOTER */}
       <Footer>
+        <HiddenInput
+          type="file"
+          accept=".doc,.docx"
+          multiple
+        />
         <Text size="sm">Formatos válidos: .doc y .docx</Text>
         <Button>Continuar</Button>
       </Footer>

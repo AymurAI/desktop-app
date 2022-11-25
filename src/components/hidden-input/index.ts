@@ -1,6 +1,8 @@
 import { styled } from 'styles';
 
-export const Input = styled('input', {
+const HiddenInput = styled('input', {
   opacity: 0,
   pointerEvents: 'none',
 });
+
+export default HiddenInput;

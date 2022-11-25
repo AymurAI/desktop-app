@@ -1,7 +1,7 @@
 import { ChangeEventHandler, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Stack, Text, Title } from 'components';
+import { Button, HiddenInput, Stack, Text, Title, Arrow } from 'components';
 import { Section, Footer } from 'layout/main';
 
 import { Card } from './cards';
@@ -20,7 +20,7 @@ export default function Onboarding() {
     inputRef.current?.click();
   };
 
-  const handleAddedFile: ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleAddedFiles: ChangeEventHandler<HTMLInputElement> = (e) => {
     const rawFiles = e.target.files;
 
     // Check if any file was added
@@ -76,11 +76,11 @@ export default function Onboarding() {
 
       {/* Input file */}
       <Footer>
-        <Input
+        <HiddenInput
           type="file"
           accept=".doc,.docx"
           ref={inputRef}
-          onChange={handleAddedFile}
+          onChange={handleAddedFiles}
           multiple
         />
         <Text size="sm">Formatos válidos: .doc y .docx</Text>
