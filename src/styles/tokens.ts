@@ -57,7 +57,8 @@ export const colors = {
 
 export const fonts = {
   primary:
-    "'Archivo', -apple-system, Helvetica Neue, Helvetica, Roboto, sans-serif",
+    '"Archivo", -apple-system, Helvetica Neue, Helvetica, Roboto, sans-serif',
+  file: '"Times New Roman", Times, serif',
 };
 
 export const fontSizes = {
