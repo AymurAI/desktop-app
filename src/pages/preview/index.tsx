@@ -5,6 +5,7 @@ import {
   Title,
   Card,
   Subtitle,
+  Arrow,
   Stack,
   Grid,
   HiddenInput,
@@ -24,6 +25,7 @@ export default function Preview() {
               size="s"
               css={{ p: 0, alignSelf: 'center' }}
             >
+              <Arrow.Left></Arrow.Left>
             </Button>
             1. Previsualización de archivos
           </Stack>
