@@ -1,6 +1,7 @@
 import Arrow from './arrow';
 import Button from './button';
 import Card from './card';
+import Grid from './grid';
 import Label from './label';
 import ProfileInfo from './profile-info';
 import Stack from './stack';
@@ -14,6 +15,7 @@ export {
   Arrow,
   Button,
   Card,
+  Grid,
   Label,
   ProfileInfo,
   Stack,
