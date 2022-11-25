@@ -25,19 +25,11 @@ export default function Onboarding() {
 
     // Check if any file was added
     if (rawFiles) {
-      const ALLOWED_EXT = ['doc', 'docx'];
       const files = Array.from(rawFiles);
 
-      // Check for whitelisted extensions
-      const filtered = files.filter(
-        (file) => !!ALLOWED_EXT.find((ext) => ext === getFileExtension(file))
-      );
-
-      if (filtered.length > 0) {
-        addFiles(filtered);
-        nextStep();
-        navigate('/preview');
-      }
+      addFiles(files);
+      nextStep();
+      navigate('/preview');
     }
   };
 
