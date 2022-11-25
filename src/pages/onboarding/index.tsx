@@ -3,12 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button, HiddenInput, Stack, Text, Title, Arrow } from 'components';
 import { Section, Footer } from 'layout/main';
-
-import { Card } from './cards';
-import { Input } from './Input';
-import getFileExtension from 'utils/getFileExtension';
 import { useStepper, useFiles } from 'hooks';
-import { Arrow } from 'components';
+import { Card } from './cards';
 
 export default function Onboarding() {
   const inputRef = useRef<HTMLInputElement>(null);
