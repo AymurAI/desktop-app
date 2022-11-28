@@ -2,9 +2,11 @@ import Arrow from './arrow';
 import Button from './button';
 import Card from './card';
 import Checkbox from './checkbox';
+import FilePreview from './file-preview';
 import Grid from './grid';
 import HiddenInput from './hidden-input';
 import Label from './label';
+import PreviousButton from './previous-button';
 import ProfileInfo from './profile-info';
 import Stack from './stack';
 import Stepper from './stepper';
@@ -18,9 +20,11 @@ export {
   Button,
   Card,
   Checkbox,
+  FilePreview,
   Grid,
   HiddenInput,
   Label,
+  PreviousButton,
   ProfileInfo,
   Stack,
   Stepper,
