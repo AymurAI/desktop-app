@@ -14,10 +14,11 @@ import { useFiles, useStepper } from 'hooks';
 import { Footer, Section } from 'layout/main';
 
 export default function Preview() {
+  const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const { previousStep } = useStepper();
-  const { removeAllFiles, files } = useFiles();
+  const { removeAllFiles, files, addFiles } = useFiles();
 
   const handlePrevious = () => {
     removeAllFiles();
@@ -25,6 +26,13 @@ export default function Preview() {
     navigate('/onboarding');
   };
 
+
+  const handleAddedFiles: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const rawFiles = e.target.files;
+
+    // Check if any file was added
+    if (rawFiles) addFiles(Array.from(rawFiles));
+  };
   return (
     <>
       {/* MAIN SECTION */}
@@ -52,7 +60,10 @@ export default function Preview() {
         <HiddenInput
           type="file"
           accept=".doc,.docx"
+          ref={inputRef}
+          onChange={handleAddedFiles}
           multiple
+          tabIndex={-1}
         />
         <Text size="sm">Formatos válidos: .doc y .docx</Text>
         <Button>Continuar</Button>
