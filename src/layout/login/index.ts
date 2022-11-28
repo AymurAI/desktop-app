@@ -26,5 +26,5 @@ export const Container = styled('div', {
 
   margin: '$xl',
 
-  border: '1px solid $borderPrimary',
+  b: '1px solid $borderPrimary',
 });

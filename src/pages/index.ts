@@ -1,4 +1,5 @@
-import Home from './home';
 import Login from './login';
+import Onboarding from './onboarding';
+import Preview from './preview';
 
-export { Home, Login };
+export { Login, Onboarding, Preview };

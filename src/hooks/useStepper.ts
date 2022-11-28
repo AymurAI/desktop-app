@@ -10,6 +10,7 @@ export default function useStepper() {
 
   const nextStep = () => setStep(step + 1);
   const previousStep = () => setStep(step - 1);
+  const resetStepper = () => setStep(0);
 
-  return { nextStep, previousStep };
+  return { nextStep, previousStep, resetStepper };
 }

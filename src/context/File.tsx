@@ -1,8 +1,10 @@
 import { createContext } from 'react';
 
+import { DocFile } from 'types/file';
+
 type FileContextType = {
-  files: File[];
-  setFiles: (files: File[]) => void;
+  files: DocFile[];
+  setFiles: (files: DocFile[]) => void;
   step: number;
   setStep: (step: number) => void;
 };

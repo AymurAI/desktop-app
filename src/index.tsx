@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { ThemeProvider } from 'components';
-import { Home, Login } from 'pages';
+import { Login, Onboarding, Preview } from 'pages';
 import MainLayout from 'layout/main';
 import AuthProvider from 'context/Authentication';
-import Onboarding from 'pages/onboarding';
 
 const router = createBrowserRouter([
   {
@@ -14,8 +13,8 @@ const router = createBrowserRouter([
     path: '/',
     element: <MainLayout></MainLayout>,
     children: [
-      { path: 'home', element: <Home></Home> },
       { path: 'onboarding', element: <Onboarding></Onboarding> },
+      { path: 'preview', element: <Preview></Preview> },
     ],
   },
   {

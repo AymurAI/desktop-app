@@ -6,6 +6,7 @@ const Button = styled('button', {
   gap: '$xxs',
   justifyContent: 'center',
   alignSelf: 'stretch',
+  alignItems: 'center',
 
   transitionProperty: 'background-color, color, box-shadow',
   transitionDuration: '0.3s',
@@ -46,7 +47,7 @@ const Button = styled('button', {
 
         '&:disabled': {
           color: '$textOnButtonDefault',
-          bg: '$bgSecondary',
+          bg: '$actionDisabled',
         },
       },
       secondary: {
