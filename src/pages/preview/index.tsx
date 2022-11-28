@@ -1,3 +1,4 @@
+import { ChangeEventHandler, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -17,8 +18,8 @@ export default function Preview() {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const { previousStep } = useStepper();
-  const { removeAllFiles, files, addFiles } = useFiles();
+  const { previousStep, nextStep } = useStepper();
+  const { removeAllFiles, files, addFiles, filterUnselected } = useFiles();
 
   const handlePrevious = () => {
     removeAllFiles();
@@ -26,6 +27,9 @@ export default function Preview() {
     navigate('/onboarding');
   };
 
+  const handleSelectFile = () => {
+    inputRef.current?.click();
+  };
 
   const handleAddedFiles: ChangeEventHandler<HTMLInputElement> = (e) => {
     const rawFiles = e.target.files;
@@ -33,6 +37,13 @@ export default function Preview() {
     // Check if any file was added
     if (rawFiles) addFiles(Array.from(rawFiles));
   };
+
+  const handleConfirmFiles = () => {
+    filterUnselected();
+    nextStep();
+    navigate('/process');
+  };
+
   return (
     <>
       {/* MAIN SECTION */}
@@ -66,7 +77,10 @@ export default function Preview() {
           tabIndex={-1}
         />
         <Text size="sm">Formatos válidos: .doc y .docx</Text>
-        <Button>Continuar</Button>
+        <Button onClick={handleSelectFile} variant="secondary">
+          Cargar más documentos
+        </Button>
+        <Button onClick={handleConfirmFiles}>Continuar</Button>
       </Footer>
     </>
   );
