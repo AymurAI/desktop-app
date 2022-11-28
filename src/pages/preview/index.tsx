@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 
 import {
   Text,
@@ -9,27 +10,29 @@ import {
   Stack,
   Grid,
   HiddenInput,
+  PreviousButton,
 } from 'components';
+import { useFiles, useStepper } from 'hooks';
 import { Footer, Section } from 'layout/main';
 
 export default function Preview() {
+
+  const { previousStep } = useStepper();
+  const { removeAllFiles, } = useFiles();
+
+  const handlePrevious = () => {
+    removeAllFiles();
+    previousStep();
+    navigate('/onboarding');
+  };
 
   return (
     <>
       {/* MAIN SECTION */}
       <Section spacing="xl">
-        <Title>
-          <Stack>
-            <Button
-              variant="none"
-              size="s"
-              css={{ p: 0, alignSelf: 'center' }}
-            >
-              <Arrow.Left></Arrow.Left>
-            </Button>
-            1. Previsualización de archivos
-          </Stack>
-        </Title>
+        <PreviousButton onClick={handlePrevious}>
+          1. Previsualización de archivos
+        </PreviousButton>
         <Card>
           <Subtitle>Archivos seleccionados</Subtitle>
           <Grid
