@@ -3,11 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   Text,
   Button,
-  Title,
   Card,
   Subtitle,
-  Arrow,
-  Stack,
+  FilePreview,
   Grid,
   HiddenInput,
   PreviousButton,
@@ -16,9 +14,10 @@ import { useFiles, useStepper } from 'hooks';
 import { Footer, Section } from 'layout/main';
 
 export default function Preview() {
+  const navigate = useNavigate();
 
   const { previousStep } = useStepper();
-  const { removeAllFiles, } = useFiles();
+  const { removeAllFiles, files } = useFiles();
 
   const handlePrevious = () => {
     removeAllFiles();
@@ -41,6 +40,9 @@ export default function Preview() {
             justify="center"
             css={{ width: '100%' }}
           >
+            {files.map((file) => (
+              <FilePreview key={file.data.name} file={file}></FilePreview>
+            ))}
           </Grid>
         </Card>
       </Section>
