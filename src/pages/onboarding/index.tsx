@@ -70,6 +70,7 @@ export default function Onboarding() {
           ref={inputRef}
           onChange={handleAddedFiles}
           multiple
+          tabIndex={-1}
         />
         <Text size="sm">Formatos válidos: .doc y .docx</Text>
         <Button onClick={handleSelectFile}>Cargar documentos</Button>
