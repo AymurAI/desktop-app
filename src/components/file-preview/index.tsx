@@ -17,7 +17,7 @@ export default function FilePreview({ file }: Props) {
   // Converts the doc/docx file and inserts it into a `<div>`
   useEffect(() => {
     if (containerRef.current) {
-      insertIntoHTML(file, containerRef.current);
+      insertIntoHTML(file.data, containerRef.current);
     }
   }, [file]);
 

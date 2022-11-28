@@ -6,14 +6,15 @@ import withAuthProtection from 'features/withAuthProtection';
 import FileContext from 'context/File';
 import { Props } from './Main.types';
 import { Section, Footer, Header, Layout } from './Main.styles';
+import { DocFile } from 'types/file';
 
 export { Section, Footer };
 
 export default withAuthProtection(function Main({ children, ...props }: Props) {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<DocFile[]>([]);
   const [step, setStep] = useState<number>(0);
 
-  const handleSetFiles = (newFiles: File[]) => setFiles(newFiles);
+  const handleSetFiles = (newFiles: DocFile[]) => setFiles(newFiles);
   const handleSetStep = (newStep: number) => setStep(newStep);
 
   return (
