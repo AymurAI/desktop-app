@@ -49,7 +49,7 @@ export const Wrapper = styled('label', {
   $$checkbox_borderFocus_checked: 'none',
 
   // Focus
-  $$checkbox_outlineFocus_noText: '$sizes$xs solid $colors$borderPrimaryAlt',
+  $$checkbox_outlineFocus_noText: '3px solid $colors$borderPrimaryAlt',
   $$checkbox_outlineFocus_Text: '3px solid $colors$borderPrimary',
 
   position: 'relative',
