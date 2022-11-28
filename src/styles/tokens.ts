@@ -90,7 +90,7 @@ export const lineHeights = {
   titleMd: '38px',
 
   subtitleMd: '24px',
-  subtitleSm: '24px',
+  subtitleSm: '17px',
 
   paragraphsMd: '27px',
   paragraphsSm: '22px',
