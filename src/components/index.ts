@@ -14,6 +14,7 @@ import Subtitle from './subtitle';
 import Text from './text';
 import ThemeProvider from './theme-provider';
 import Title from './title';
+import Tooltip from './tooltip';
 
 export {
   Arrow,
@@ -32,4 +33,5 @@ export {
   Text,
   ThemeProvider,
   Title,
+  Tooltip,
 };
