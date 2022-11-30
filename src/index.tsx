@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { ThemeProvider } from 'components';
-import { Login, Onboarding, Preview } from 'pages';
+import { Login, Onboarding, Preview, Process } from 'pages';
 import MainLayout from 'layout/main';
 import AuthProvider from 'context/Authentication';
 
@@ -13,8 +13,9 @@ const router = createBrowserRouter([
     path: '/',
     element: <MainLayout></MainLayout>,
     children: [
-      { path: 'onboarding', element: <Onboarding></Onboarding> },
-      { path: 'preview', element: <Preview></Preview> },
+      { path: 'onboarding', element: <Onboarding /> },
+      { path: 'preview', element: <Preview /> },
+      { path: 'process', element: <Process /> },
     ],
   },
   {
