@@ -1,3 +1,4 @@
 import markPredictedWords from './markPredictedWords';
+import toPlainParagraphs from './toPlainParagraphs';
 
-export { toPlainParagraphs };
+export { markPredictedWords, toPlainParagraphs };
