@@ -2,11 +2,13 @@ import Arrow from './arrow';
 import Button from './button';
 import Card from './card';
 import Checkbox from './checkbox';
+import Fieldset from './fieldset';
 import FileContainer from './file-container';
 import FilePreview from './file-preview';
 import FileProcessing from './file-processing';
 import Grid from './grid';
 import HiddenInput from './hidden-input';
+import Input from './input';
 import Label from './label';
 import ProfileInfo from './profile-info';
 import SectionTitle from './section-title';
@@ -23,11 +25,13 @@ export {
   Button,
   Card,
   Checkbox,
+  Fieldset,
   FileContainer,
   FilePreview,
   FileProcessing,
   Grid,
   HiddenInput,
+  Input,
   Label,
   ProfileInfo,
   SectionTitle,
