@@ -9,8 +9,13 @@ export default function useFiles() {
   const addFiles = (newFiles: File[]) =>
     setFiles(addFilesToState(newFiles, files));
 
+  const removeFiles = (fileName: string) =>
+    setFiles(removeFileFromState(fileName, files));
+
+  const removeAllFiles = () => setFiles([]);
   return {
     files,
     addFiles,
+    removeFiles,
   };
 }
