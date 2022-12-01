@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { useStepper } from 'hooks';
+import { useStepper, useFiles } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import {
   SectionTitle,
@@ -9,12 +9,15 @@ import {
   Stack,
   Text,
   Subtitle,
+  FileProcessing,
 } from 'components';
 import withFileProtection from 'features/withFileProtection';
 
 export default withFileProtection(function Process() {
   const navigate = useNavigate();
   const { previousStep, nextStep } = useStepper();
+  const { files } = useFiles();
+
   const handlePrevious = () => {
     previousStep();
     navigate('/preview');
@@ -39,6 +42,9 @@ export default withFileProtection(function Process() {
                 Este proceso puede tardar algunos minutos.
               </Subtitle>
             </Stack>
+            {files.map(({ data }) => (
+              <FileProcessing key={data.name} file={data} />
+            ))}
           </Stack>
         </Card>
       </Section>
