@@ -60,7 +60,7 @@ const Button = styled('button', {
 
         '&:hover': {
           color: '$textOnButtonDefault',
-          bg: '$actionHover',
+          bg: '$white',
           borderColor: '$actionHover',
         },
 
