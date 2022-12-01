@@ -3,6 +3,7 @@ import Button from './button';
 import Card from './card';
 import Checkbox from './checkbox';
 import FilePreview from './file-preview';
+import FileProcessing from './file-processing';
 import Grid from './grid';
 import HiddenInput from './hidden-input';
 import Label from './label';
@@ -22,6 +23,7 @@ export {
   Card,
   Checkbox,
   FilePreview,
+  FileProcessing,
   Grid,
   HiddenInput,
   Label,
