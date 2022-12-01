@@ -1,8 +1,6 @@
 import { styled } from 'styles';
 
 const Label = styled('label', {
-  color: '$textLighter',
-
   variants: {
     size: {
       md: {
@@ -22,10 +20,19 @@ const Label = styled('label', {
         fontWeight: '$strong',
       },
     },
+    status: {
+      default: {
+        color: '$textLighter',
+      },
+      error: {
+        color: '$errorPrimary',
+      },
+    },
   },
   defaultVariants: {
     size: 'md',
     weight: 'default',
+    status: 'default',
   },
 });
 
