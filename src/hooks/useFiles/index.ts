@@ -3,6 +3,8 @@ import { useContext } from 'react';
 import Context from 'context/File';
 import addFilesToState from './addFiles';
 import removeFileFromState from './removeFile';
+import toggleFromState from './toggleSelected';
+import filterUnselectedFromState from './filterUnselected';
 import replaceFileFromState from './replaceFile';
 
 export default function useFiles() {
@@ -18,9 +20,18 @@ export default function useFiles() {
 
   const replaceFile = (fileName: string, newFile: File) =>
     setFiles(replaceFileFromState(fileName, newFile, files));
+
+  const toggleSelected = (fileName: string) =>
+    setFiles(toggleFromState(fileName, files));
+
+  const filterUnselected = () => setFiles(filterUnselectedFromState(files));
+
   return {
     files,
     addFiles,
     removeFiles,
+    removeAllFiles,
+    toggleSelected,
+    filterUnselected,
   };
 }
