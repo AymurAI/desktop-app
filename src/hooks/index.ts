@@ -5,6 +5,7 @@ import useGoogleToken from './useGoogleToken';
 import useLogin from './useLogin';
 import useStepper from './useStepper';
 import useUser from './useUser';
+import usePredict from './usePredict';
 
 export {
   useFiles,
@@ -14,4 +15,5 @@ export {
   useLogin,
   useStepper,
   useUser,
+  usePredict,
 };
