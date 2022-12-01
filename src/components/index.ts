@@ -9,6 +9,7 @@ import HiddenInput from './hidden-input';
 import Label from './label';
 import PreviousButton from './previous-button';
 import ProfileInfo from './profile-info';
+import SectionTitle from './section-title';
 import Stack from './stack';
 import Stepper from './stepper';
 import Subtitle from './subtitle';
@@ -29,6 +30,7 @@ export {
   Label,
   PreviousButton,
   ProfileInfo,
+  SectionTitle,
   Stack,
   Stepper,
   Subtitle,
