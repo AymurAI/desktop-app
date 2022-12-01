@@ -2,12 +2,12 @@ import Arrow from './arrow';
 import Button from './button';
 import Card from './card';
 import Checkbox from './checkbox';
+import FileContainer from './file-container';
 import FilePreview from './file-preview';
 import FileProcessing from './file-processing';
 import Grid from './grid';
 import HiddenInput from './hidden-input';
 import Label from './label';
-import PreviousButton from './previous-button';
 import ProfileInfo from './profile-info';
 import SectionTitle from './section-title';
 import Stack from './stack';
@@ -23,12 +23,12 @@ export {
   Button,
   Card,
   Checkbox,
+  FileContainer,
   FilePreview,
   FileProcessing,
   Grid,
   HiddenInput,
   Label,
-  PreviousButton,
   ProfileInfo,
   SectionTitle,
   Stack,
