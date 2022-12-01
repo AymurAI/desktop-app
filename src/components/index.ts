@@ -3,11 +3,13 @@ import Button from './button';
 import Card from './card';
 import Checkbox from './checkbox';
 import FilePreview from './file-preview';
+import FileProcessing from './file-processing';
 import Grid from './grid';
 import HiddenInput from './hidden-input';
 import Label from './label';
 import PreviousButton from './previous-button';
 import ProfileInfo from './profile-info';
+import SectionTitle from './section-title';
 import Stack from './stack';
 import Stepper from './stepper';
 import Subtitle from './subtitle';
@@ -22,11 +24,13 @@ export {
   Card,
   Checkbox,
   FilePreview,
+  FileProcessing,
   Grid,
   HiddenInput,
   Label,
   PreviousButton,
   ProfileInfo,
+  SectionTitle,
   Stack,
   Stepper,
   Subtitle,

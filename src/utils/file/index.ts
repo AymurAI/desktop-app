@@ -1,6 +1,7 @@
+import getByName from './getByName';
 import getExtension from './getExtension';
-import insertIntoHTML from './insertIntoHTML';
-import isFileAllowed from './isFileAllowed';
-import toggleSelected from './toggleSelected';
+import convertToHTML from './convertToHTML';
+import isAllowed from './isAllowed';
+import isAlreadyLoaded from './isAlreadyLoaded';
 
-export { getExtension, insertIntoHTML, isFileAllowed, toggleSelected };
+export { getByName, getExtension, convertToHTML, isAllowed, isAlreadyLoaded };

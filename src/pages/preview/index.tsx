@@ -9,7 +9,7 @@ import {
   FilePreview,
   Grid,
   HiddenInput,
-  PreviousButton,
+  SectionTitle,
 } from 'components';
 import { useFiles, useStepper } from 'hooks';
 import { Footer, Section } from 'layout/main';
@@ -48,9 +48,9 @@ export default function Preview() {
     <>
       {/* MAIN SECTION */}
       <Section spacing="xl">
-        <PreviousButton onClick={handlePrevious}>
+        <SectionTitle onClick={handlePrevious}>
           1. Previsualización de archivos
-        </PreviousButton>
+        </SectionTitle>
         <Card>
           <Subtitle>Archivos seleccionados</Subtitle>
           <Grid
