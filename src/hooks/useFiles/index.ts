@@ -2,6 +2,8 @@ import { useContext } from 'react';
 
 import Context from 'context/File';
 import addFilesToState from './addFiles';
+import removeFileFromState from './removeFile';
+import replaceFileFromState from './replaceFile';
 
 export default function useFiles() {
   const { files, setFiles } = useContext(Context);
@@ -13,6 +15,9 @@ export default function useFiles() {
     setFiles(removeFileFromState(fileName, files));
 
   const removeAllFiles = () => setFiles([]);
+
+  const replaceFile = (fileName: string, newFile: File) =>
+    setFiles(replaceFileFromState(fileName, newFile, files));
   return {
     files,
     addFiles,
