@@ -49,7 +49,7 @@ const Grid = styled('div', {
     },
 
     spacing: {
-      zero: { gap: 0 },
+      none: { gap: 0 },
       xxs: { gap: '$xxs' },
       xs: { gap: '$xs' },
       s: { gap: '$s' },
@@ -70,9 +70,7 @@ const Grid = styled('div', {
       start: { justifyItems: 'start' },
       end: { justifyItems: 'end' },
       center: { justifyItems: 'center' },
-      'space-between': { justifyItems: 'space-between' },
-      'space-around': { justifyItems: 'space-around' },
-      'space-evenly': { justifyItems: 'space-evenly' },
+      stretch: { justifyItems: 'stretch' },
     },
   },
   defaultVariants: {
