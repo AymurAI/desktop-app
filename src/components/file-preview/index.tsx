@@ -1,25 +1,16 @@
-import { useEffect, useRef } from 'react';
-
 import { Checkbox, Text } from 'components';
-import { insertIntoHTML } from 'utils/file';
 import { FileContainer, Wrapper } from './FilePreview.styles';
 import { DocFile } from 'types/file';
-import { useFiles } from 'hooks';
+import { useFileParser, useFiles } from 'hooks';
 
 interface Props {
   file: DocFile;
 }
 
 export default function FilePreview({ file }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const { toggleSelected } = useFiles();
-
-  // Converts the doc/docx file and inserts it into a `<div>`
-  useEffect(() => {
-    if (containerRef.current) {
-      insertIntoHTML(file.data, containerRef.current);
-    }
-  }, [file]);
+  // Converts the doc/docx file into HTML that can be inserted into a `<div>`
+  const html = useFileParser(file.data);
 
   return (
     <Wrapper>
@@ -28,7 +19,7 @@ export default function FilePreview({ file }: Props) {
         checked={file.selected}
         onChange={() => toggleSelected(file.data.name)}
       ></Checkbox>
-      <FileContainer ref={containerRef} />
+      <FileContainer dangerouslySetInnerHTML={{ __html: html ?? '' }} />
       <Text size="sm">{file.data.name}</Text>
     </Wrapper>
   );
