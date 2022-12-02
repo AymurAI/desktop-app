@@ -1,4 +1,5 @@
 import { DocFile } from 'types/file';
+import { isAllowed, isAlreadyLoaded } from 'utils/file';
 
 /**
  * Replaces a file by the given name on the files state
@@ -12,14 +13,16 @@ export default function replaceFile(
   newFile: File,
   state: DocFile[]
 ) {
-  const replaced = state.map((file) =>
-    file.data.name === fileName
-      ? {
-          data: newFile,
-          selected: true,
-        }
-      : file
-  );
-
-  return replaced;
+  if (isAllowed(newFile) && !isAlreadyLoaded(newFile.name, state)) {
+    const replaced = state.map((file) =>
+      file.data.name === fileName
+        ? {
+            data: newFile,
+            selected: true,
+            predictions: undefined,
+          }
+        : file
+    );
+    return replaced;
+  } else return state;
 }
