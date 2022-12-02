@@ -11,6 +11,7 @@ import HiddenInput from './hidden-input';
 import Input from './input';
 import Label from './label';
 import ProfileInfo from './profile-info';
+import { Radio, RadioGroup } from './radio';
 import SectionTitle from './section-title';
 import Stack from './stack';
 import Stepper from './stepper';
@@ -34,6 +35,8 @@ export {
   Input,
   Label,
   ProfileInfo,
+  Radio,
+  RadioGroup,
   SectionTitle,
   Stack,
   Stepper,
