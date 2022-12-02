@@ -7,6 +7,11 @@ import { toPlainParagraphs } from 'utils/html';
 
 export type FileStatus = 'processing' | 'error' | 'stopped' | 'completed';
 
+/**
+ * Makes a prediction based on the given file
+ * @param file File used with the AI to get predictions
+ * @returns The `status` and `progress` of the prediction, along with an `abort()` function to cancel the process whenever is needed
+ */
 export default function usePredict(file: File) {
   const [status, setStatus] = useState<FileStatus>('processing');
   const [progress, setProgress] = useState(0);
