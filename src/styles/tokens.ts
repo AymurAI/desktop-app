@@ -5,6 +5,7 @@ export const colors = {
   // Brand colors are used as base color of other elements or as color in image vectors
   // ----------------
   primary: '#3F479D',
+  primaryAlt: '#E6E8FF',
   secondary: '#C5CAFF',
   tertiary: '#4A5568',
 
