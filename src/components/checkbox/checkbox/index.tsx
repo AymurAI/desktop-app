@@ -5,18 +5,20 @@ import { colors } from 'styles/tokens';
 import { Input, Wrapper, Checkbox as StyledCheckbox } from './Checkbox.styles';
 import { CSS } from 'styles';
 
-interface Props {
+export interface Props {
   children?: ReactNode;
   disabled?: boolean;
   checked?: boolean;
   onChange?: ChangeEventHandler<HTMLInputElement>;
+  name?: string;
   css?: CSS;
 }
 export default function Checkbox({
-  children,
   disabled = false,
   checked = false,
+  name,
   onChange,
+  children,
   css,
 }: Props) {
   const [isChecked, setIsChecked] = useState(checked);
@@ -39,6 +41,7 @@ export default function Checkbox({
         checked={isChecked}
         disabled={disabled}
         onChange={handleToggle}
+        name={name}
       />
       <StyledCheckbox>
         <Check color={iconColor} weight="bold"></Check>

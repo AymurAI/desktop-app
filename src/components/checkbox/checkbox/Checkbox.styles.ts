@@ -60,7 +60,7 @@ export const Wrapper = styled('label', {
   gap: '$s',
 
   transitionDuration: '$transitions$s',
-  transitionProperty: 'all',
+  transitionProperty: 'outline, border-radius, border',
   transitionTimingFunction: 'ease',
 
   variants: {
@@ -103,7 +103,6 @@ export const Wrapper = styled('label', {
   },
   defaultVariants: {
     hasText: false,
-    // isChecked: false,
     isDisabled: false,
   },
 
