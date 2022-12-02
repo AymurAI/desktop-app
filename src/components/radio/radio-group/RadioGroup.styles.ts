@@ -12,6 +12,7 @@ export const Legend = styled('legend', {
 export const Group = styled('fieldset', {
   display: 'flex',
   gap: '$m',
+  flexWrap: 'wrap',
 
   variants: {
     direction: {
