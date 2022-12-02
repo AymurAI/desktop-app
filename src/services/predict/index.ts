@@ -1,4 +1,4 @@
-import { PredictLabel, PredictSuccess } from 'types/predict';
+import { PredictLabel } from 'types/predict';
 import axios from 'axios';
 import { PREDICT_PORT } from 'utils/config';
 
