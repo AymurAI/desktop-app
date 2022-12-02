@@ -14,9 +14,6 @@ export default withAuthProtection(function Main({ children, ...props }: Props) {
   const [files, setFiles] = useState<DocFile[]>([]);
   const [step, setStep] = useState<number>(0);
 
-  const handleSetFiles = (newFiles: DocFile[]) => setFiles(newFiles);
-  const handleSetStep = (newStep: number) => setStep(newStep);
-
   return (
     <Layout {...props}>
       <Header>
@@ -31,9 +28,9 @@ export default withAuthProtection(function Main({ children, ...props }: Props) {
       <FileContext.Provider
         value={{
           files,
-          setFiles: handleSetFiles,
+          setFiles,
           step,
-          setStep: handleSetStep,
+          setStep,
         }}
       >
         {/* Content as Outlet, managed by React-Router */}

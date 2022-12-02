@@ -1,12 +1,12 @@
-import { createContext } from 'react';
+import { createContext, Dispatch, SetStateAction } from 'react';
 
 import { DocFile } from 'types/file';
 
 type FileContextType = {
   files: DocFile[];
-  setFiles: (files: DocFile[]) => void;
+  setFiles: Dispatch<SetStateAction<DocFile[]>>;
   step: number;
-  setStep: (step: number) => void;
+  setStep: Dispatch<SetStateAction<number>>;
 };
 /**
  * Context used to provide files that have to be processed and the current processing step
