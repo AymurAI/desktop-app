@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useCallback } from 'react';
 
 import Context from 'context/File';
 import addFilesToState from './addFiles';
@@ -31,10 +31,13 @@ export default function useFiles() {
 
   const filterUnselected = () => setFiles(filterUnselectedFromState(files));
 
-  const isPredictionCompleted = () => checkPrediction(files);
+  const isPredictionCompleted = useCallback(
+    () => checkPrediction(files),
+    [files]
+  );
 
   const addPrediction = (fileName: string, predictions: PredictLabel[]) =>
-    setFiles(addPredictionToState(fileName, predictions, files));
+    setFiles((current) => addPredictionToState(fileName, predictions, current));
 
     const removeAllPredictions = () =>
     setFiles(removeAllPredictionsFromState(files));
