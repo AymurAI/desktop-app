@@ -8,6 +8,8 @@ import filterUnselectedFromState from './filterUnselected';
 import checkPrediction from './isPredictionCompleted';
 import replaceFileFromState from './replaceFile';
 import addPredictionToState from './addPrediction';
+import removeAllPredictionsFromState from './removeAllPredictions';
+import removePredictionFromState from './removePrediction';
 import { PredictLabel } from 'types/predict';
 
 export default function useFiles() {
@@ -34,6 +36,12 @@ export default function useFiles() {
   const addPrediction = (fileName: string, predictions: PredictLabel[]) =>
     setFiles(addPredictionToState(fileName, predictions, files));
 
+    const removeAllPredictions = () =>
+    setFiles(removeAllPredictionsFromState(files));
+
+  const removePrediction = (fileName: string) =>
+    setFiles(removePredictionFromState(fileName, files));
+
   return {
     files,
     addFiles,
@@ -44,5 +52,7 @@ export default function useFiles() {
     isPredictionCompleted,
     replaceFile,
     addPrediction,
+    removeAllPredictions,
+    removePrediction
   };
 }
