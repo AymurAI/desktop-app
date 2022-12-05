@@ -9,11 +9,13 @@ import {
 interface Props extends NativeComponent<'input', 'prefix'> {
   label?: string;
   suggestion?: string;
+  helper?: string;
   sufix?: ReactNode;
   prefix?: ReactNode;
 }
 export default function Input({
   label,
+  helper,
   sufix,
   prefix,
   ...props
@@ -40,6 +42,7 @@ export default function Input({
           </>
         )}
       </InputContainer>
+      {helper && <Label size="s">{helper}</Label>}
     </Container>
   );
 }
