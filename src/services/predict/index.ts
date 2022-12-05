@@ -19,7 +19,7 @@ const fetcher = axios.create({
   baseURL: `http://localhost:${PREDICT_PORT}/predict`,
 });
 
-export default async function predict(
+export async function predict(
   paragraph: string,
   controller: AbortController
 ): Promise<PredictLabel[]> {

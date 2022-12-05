@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { useStepper, useFiles } from 'hooks';
+import { useStepper, useFiles, useFileDispatch } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import {
   SectionTitle,
@@ -12,15 +12,19 @@ import {
   FileProcessing,
 } from 'components';
 import withFileProtection from 'features/withFileProtection';
+import { removeAllPredictions } from 'reducers/file/actions';
+import { isPredictionCompleted } from 'utils/file';
 
 export default withFileProtection(function Process() {
   const navigate = useNavigate();
   const { previousStep, nextStep } = useStepper();
-  const { files } = useFiles();
+  const dispatch = useFileDispatch();
+  const files = useFiles();
 
   const handlePrevious = () => {
     previousStep();
     navigate('/preview');
+    dispatch(removeAllPredictions());
   };
 
   const handleNext = () => {
@@ -38,7 +42,7 @@ export default withFileProtection(function Process() {
           <Stack spacing="l" direction="column">
             <Stack direction="column" spacing="xs">
               <Text>AymurAI está extrayendo los datos de los archivos</Text>
-              <Subtitle size="sm">
+              <Subtitle size="s">
                 Este proceso puede tardar algunos minutos.
               </Subtitle>
             </Stack>
@@ -49,7 +53,13 @@ export default withFileProtection(function Process() {
         </Card>
       </Section>
       <Footer>
-        <Button onClick={handleNext}>Siguiente</Button>
+        <Button
+          size="l"
+          disabled={!isPredictionCompleted(files)}
+          onClick={handleNext}
+        >
+          Siguiente
+        </Button>
       </Footer>
     </>
   );

@@ -1,22 +1,31 @@
-import { createContext } from 'react';
+import { createContext, Dispatch, ReactNode, useReducer } from 'react';
 
+import reducer, { Action } from 'reducers/file';
 import { DocFile } from 'types/file';
 
-type FileContextType = {
-  files: DocFile[];
-  setFiles: (files: DocFile[]) => void;
-  step: number;
-  setStep: (step: number) => void;
-};
 /**
- * Context used to provide files that have to be processed and the current processing step
+ * Context used to provide files that have to be processed
  */
-export const FileContext = createContext<FileContextType>({
-  files: [],
-  setFiles: () => {},
-  step: 0,
-  setStep: () => {},
-});
+export const FileContext = createContext<DocFile[]>([]);
 FileContext.displayName = 'FileContext';
 
-export default FileContext;
+/**
+ * Context used to provide the dispatch function
+ */
+export const FileDispatchContext = createContext<Dispatch<Action>>(() => {});
+FileDispatchContext.displayName = 'FileDispatchContext';
+
+interface Props {
+  children: ReactNode;
+}
+export default function FileProvider({ children }: Props) {
+  const [state, dispatch] = useReducer(reducer, []);
+
+  return (
+    <FileContext.Provider value={state}>
+      <FileDispatchContext.Provider value={dispatch}>
+        {children}
+      </FileDispatchContext.Provider>
+    </FileContext.Provider>
+  );
+}

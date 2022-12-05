@@ -1,5 +1,5 @@
 import useFileParser from './useFileParser';
-import useFiles from './useFiles';
+import { useFiles, useFileDispatch } from './useFiles';
 import useGoogleScript from './useGoogleScript';
 import useGoogleToken from './useGoogleToken';
 import useLogin from './useLogin';
@@ -9,6 +9,7 @@ import usePredict from './usePredict';
 
 export {
   useFiles,
+  useFileDispatch,
   useFileParser,
   useGoogleToken,
   useGoogleScript,

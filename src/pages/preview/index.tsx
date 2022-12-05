@@ -11,18 +11,24 @@ import {
   HiddenInput,
   SectionTitle,
 } from 'components';
-import { useFiles, useStepper } from 'hooks';
+import { useFileDispatch, useFiles, useStepper } from 'hooks';
 import { Footer, Section } from 'layout/main';
+import {
+  addFiles,
+  filterUnselected,
+  removeAllFiles,
+} from 'reducers/file/actions';
 
 export default function Preview() {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const { previousStep, nextStep } = useStepper();
-  const { removeAllFiles, files, addFiles, filterUnselected } = useFiles();
+  const files = useFiles();
+  const dispatch = useFileDispatch();
 
   const handlePrevious = () => {
-    removeAllFiles();
+    dispatch(removeAllFiles());
     previousStep();
     navigate('/onboarding');
   };
@@ -35,11 +41,15 @@ export default function Preview() {
     const rawFiles = e.target.files;
 
     // Check if any file was added
-    if (rawFiles) addFiles(Array.from(rawFiles));
+    if (rawFiles) {
+      const fileArray = Array.from(rawFiles);
+
+      dispatch(addFiles(fileArray));
+    }
   };
 
   const handleConfirmFiles = () => {
-    filterUnselected();
+    dispatch(filterUnselected());
     nextStep();
     navigate('/process');
   };
