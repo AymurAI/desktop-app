@@ -3,7 +3,8 @@ import { ChangeEventHandler, useRef } from 'react';
 import { HiddenInput, Stack } from 'components';
 import Button from './Button';
 import ProgressBar from './ProgressBar';
-import { useFiles, usePredict } from 'hooks';
+import { useFileDispatch, usePredict } from 'hooks';
+import { replaceFile } from 'reducers/file/actions';
 
 interface Props {
   file: File;
@@ -11,7 +12,7 @@ interface Props {
 export default function FileProcessing({ file }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { progress, status, abort } = usePredict(file);
-  const { replaceFile } = useFiles();
+  const dispatch = useFileDispatch();
 
   const handleOpenFinder = () => {
     inputRef.current?.click();
@@ -26,7 +27,7 @@ export default function FileProcessing({ file }: Props) {
 
       // Only one file can be used to replace the old one
       if (files.length > 0) {
-        replaceFile(file.name, files[0]);
+        dispatch(replaceFile(file.name, files[0]));
       }
     }
   };
