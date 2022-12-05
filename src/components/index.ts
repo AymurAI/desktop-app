@@ -17,6 +17,7 @@ import SectionTitle from './section-title';
 import Stack from './stack';
 import Stepper from './stepper';
 import Subtitle from './subtitle';
+import Suggestion from './suggestion';
 import Text from './text';
 import ThemeProvider from './theme-provider';
 import Title from './title';
@@ -44,6 +45,7 @@ export {
   Stack,
   Stepper,
   Subtitle,
+  Suggestion,
   Text,
   ThemeProvider,
   Title,

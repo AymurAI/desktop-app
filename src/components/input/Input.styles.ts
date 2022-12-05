@@ -9,20 +9,17 @@ export const Container = styled('label', {
   fontSize: '$labelSm',
   lineHeight: '$labelSm',
 
-  color: '$textLighter',
+  color: '$textDefault',
 });
 
-export const Input = styled('input', {
+export const InputContainer = styled('div', {
   display: 'flex',
   flexDirection: 'row',
-  gap: '$xl',
+  alignItems: 'center',
+  gap: '$s',
   flex: 1,
 
-  p: '$m',
-
-  fontWeight: 400,
-  fontSize: '$labelMd',
-  lineHeight: '$labelMd',
+  p: 12,
 
   bg: '$bgSecondary',
   b: '1px solid $borderPrimary',
@@ -33,4 +30,14 @@ export const Input = styled('input', {
     b: '1px solid $borderPrimaryAlt',
     boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.16)',
   },
+});
+export const Input = styled('input', {
+  fontWeight: 400,
+  fontSize: '$labelMd',
+  lineHeight: '$labelMd',
+
+  b: 'none',
+  outline: 'none',
+
+  flex: 1,
 });
