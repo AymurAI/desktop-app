@@ -86,7 +86,7 @@ export default function Preview() {
           multiple
           tabIndex={-1}
         />
-        <Text size="sm">Formatos válidos: .doc y .docx</Text>
+        <Text size="s">Formatos válidos: .doc y .docx</Text>
         <Button onClick={handleSelectFile} variant="secondary">
           Cargar más documentos
         </Button>
