@@ -1,3 +1,5 @@
+import { CaretDown } from 'phosphor-react';
+
 import { Label, Suggestion, Text } from 'components';
 import {
   Container,
@@ -26,6 +28,16 @@ export default function Select({
             {label}
           </Label>
         )}
+
+        <Input tabIndex={0}>
+          <Text>{selectedOption?.text ?? ''}</Text>
+          {suggestion && isValueEmpty && (
+            <Suggestion onClick={handleClickSuggestion}>
+              {suggestedOption}
+            </Suggestion>
+          )}
+          <CaretDown size={16} />
+        </Input>
 
         {helper && <Label size="s">{helper}</Label>}
       </TextContainer>
