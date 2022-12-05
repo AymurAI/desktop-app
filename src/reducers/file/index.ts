@@ -1,6 +1,12 @@
 import {
   ActionTypes,
   AddFilesAction,
+  AddPredictionsAction,
+  FilterUnselectedAction,
+  RemoveAllFilesAction,
+  RemoveAllPredictionsAction,
+  RemovePredictionsAction,
+  ReplaceFileAction,
   ToggleSelectedAction,
 } from './actions';
 import { addFiles, replaceFile, updateFromState } from './utils';
@@ -11,7 +17,13 @@ type State = DocFile[];
 
 export type Action =
   | AddFilesAction
+  | AddPredictionsAction
   | ToggleSelectedAction
+  | RemoveAllPredictionsAction
+  | RemoveAllFilesAction
+  | RemovePredictionsAction
+  | ReplaceFileAction
+  | FilterUnselectedAction;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -36,6 +48,18 @@ export default function reducer(state: State, action: Action): State {
       return addFiles(newFiles, state);
     }
     // ----------------
+    // ADD PREDICTIONS
+    // ----------------
+    case ActionTypes.ADD_PREDICTIONS: {
+      const { fileName, predictions } = payload;
+
+      return update(fileName, (current) => ({
+        ...current,
+        // Appends the predictions to the already created array
+        predictions: [...(current.predictions ?? []), ...predictions],
+      }));
+    }
+    // ----------------
     // TOGGLE SELECTED
     // ----------------
     case ActionTypes.TOGGLE_SELECTED: {
@@ -45,6 +69,42 @@ export default function reducer(state: State, action: Action): State {
         ...current,
         selected: !current.selected,
       }));
+    }
+    // ----------------
+    // REMOVE ALL PREDICTIONS
+    // ----------------
+    case ActionTypes.REMOVE_ALL_PREDICTIONS: {
+      return state.map((file) => ({ ...file, predictions: undefined }));
+    }
+    // ----------------
+    // REMOVE PREDICTIONS
+    // ----------------
+    case ActionTypes.REMOVE_PREDICTIONS: {
+      const { fileName } = payload;
+
+      return update(fileName, (current) => ({
+        ...current,
+        predictions: undefined,
+      }));
+    }
+    // ----------------
+    // REMOVE ALL FILES
+    // ----------------
+    case ActionTypes.REMOVE_ALL_FILES: {
+      return [];
+    }
+    // ----------------
+    // REPLACE FILE
+    // ----------------
+    case ActionTypes.REPLACE_FILE: {
+      const { fileName, file } = payload;
+      return replaceFile(fileName, file, state);
+    }
+    // ----------------
+    // FILTER_UNSELECTED
+    // ----------------
+    case ActionTypes.FILTER_UNSELECTED: {
+      return state.filter((file) => file.selected);
     }
     default:
       return state;
