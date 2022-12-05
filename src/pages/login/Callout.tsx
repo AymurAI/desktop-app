@@ -12,11 +12,11 @@ export default function Callout() {
     >
       <Info weight="regular" size={24} color={colors.infoPrimary} />
       <Stack direction="column">
-        <Text size="xsm">
+        <Text size="xs">
           Para ingresar a la plataforma debes utilizar tu cuenta de Google
           habilitada por el juzgado.
         </Text>
-        <Text size="xsm">No olvides utilizar siempre la misma cuenta.</Text>
+        <Text size="xs">No olvides utilizar siempre la misma cuenta.</Text>
       </Stack>
     </Stack>
   );
