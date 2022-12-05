@@ -6,6 +6,7 @@ import Fieldset from './fieldset';
 import FileContainer from './file-container';
 import FilePreview from './file-preview';
 import FileProcessing from './file-processing';
+import FileStepper from './file-stepper';
 import Grid from './grid';
 import HiddenInput from './hidden-input';
 import Input from './input';
@@ -31,6 +32,7 @@ export {
   FileContainer,
   FilePreview,
   FileProcessing,
+  FileStepper,
   Grid,
   HiddenInput,
   Input,
