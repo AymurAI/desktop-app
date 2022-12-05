@@ -1,4 +1,5 @@
 import { DocFile } from 'types/file';
+import { isAllowed, isAlreadyLoaded } from 'utils/file';
 
 /**
  * Util function used along with `filter()` array function to mantain the types
@@ -32,4 +33,47 @@ export function updateFromState(state: DocFile[]) {
 
     return filtered;
   };
+}
+
+/**
+ * Adds an array of `File` to the current files state
+ * @param files Files to be added
+ * @param state Current files state
+ * @returns A new state with the files added
+ */
+export function addFiles(files: File[], state: DocFile[]) {
+  // Check for whitelisted extensions and already loaded files
+  const filtered = files.filter(
+    (file) => isAllowed(file) && !isAlreadyLoaded(file.name, state)
+  );
+
+  // Add necessary fields to the object
+  const newFiles: DocFile[] = filtered.map((file) => ({
+    data: file,
+    selected: true,
+  }));
+
+  return [...state, ...newFiles];
+}
+
+/**
+ * Replaces a file by the given name on the files state
+ * @param fileName Name of the file to be replaced
+ * @param newFile File to be inserted into the state
+ * @param state Current files state
+ * @returns A new array containing the file replaced
+ */
+export function replaceFile(fileName: string, newFile: File, state: DocFile[]) {
+  if (isAllowed(newFile) && !isAlreadyLoaded(newFile.name, state)) {
+    const replaced = state.map((file) =>
+      file.data.name === fileName
+        ? {
+            data: newFile,
+            selected: true,
+            predictions: undefined,
+          }
+        : file
+    );
+    return replaced;
+  } else return state;
 }
