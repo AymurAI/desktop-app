@@ -1,6 +1,6 @@
 import { ChangeEventHandler, ReactNode, useState } from 'react';
 
-import { Label, Text } from 'components';
+import { Label, Text, Suggestion } from 'components';
 import { NativeComponent } from 'types/component';
 import {
   Input as StyledInput,
@@ -22,10 +22,13 @@ export default function Input({
   sufix,
   prefix,
   value,
+  suggestion,
   onChange,
   ...props
 }: Props) {
   const [inputValue, setInputValue] = useState(value);
+
+  const isValueEmpty = inputValue === '' || inputValue === undefined;
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const newValue = e.target.value;
@@ -34,29 +37,38 @@ export default function Input({
     onChange?.(e);
   };
 
+  const handleClickSuggestion = () => setInputValue(suggestion);
+
   return (
     <Container>
       {label}
       <InputContainer>
+        {/* PREFIX */}
         {prefix && (
           <>
             {prefix}
-            <Text>|</Text>
+            <Text css={{ lineHeight: '100%' }}>|</Text>
           </>
         )}
 
+        {/* INPUT */}
         <StyledInput
           value={inputValue}
           onChange={handleChange}
           {...props}
         ></StyledInput>
 
-        {sufix && (
+        {suggestion && isValueEmpty && (
           <>
-            <Text>|</Text>
-            {sufix}
+            <Text css={{ lineHeight: '100%' }}>|</Text>
+            <Suggestion onClick={handleClickSuggestion}>
+              {suggestion}
+            </Suggestion>
           </>
         )}
+
+        {/* SUFIX */}
+        {sufix}
       </InputContainer>
       {helper && <Label size="s">{helper}</Label>}
     </Container>
