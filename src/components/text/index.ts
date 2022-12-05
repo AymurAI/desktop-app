@@ -3,15 +3,15 @@ import { styled } from 'styles';
 const Text = styled('p', {
   variants: {
     size: {
-      md: {
+      m: {
         fontSize: '$paragraphsMd',
         lineHeight: '$paragraphsMd',
       },
-      sm: {
+      s: {
         fontSize: '$paragraphsSm',
         lineHeight: '$paragraphsSm',
       },
-      xsm: {
+      xs: {
         fontSize: '$paragraphsXsm',
         lineHeight: '$paragraphsXsm',
       },
@@ -26,7 +26,7 @@ const Text = styled('p', {
     },
   },
   defaultVariants: {
-    size: 'md',
+    size: 'm',
     weight: 'default',
   },
 });

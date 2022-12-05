@@ -3,11 +3,11 @@ import { styled } from 'styles';
 const Subtitle = styled('p', {
   variants: {
     size: {
-      md: {
+      m: {
         fontSize: '$subtitleMd',
         lineHeight: '$subtitleMd',
       },
-      sm: {
+      s: {
         fontSize: '$subtitleSm',
         lineHeight: '$subtitleSm',
       },
@@ -22,7 +22,7 @@ const Subtitle = styled('p', {
     },
   },
   defaultVariants: {
-    size: 'md',
+    size: 'm',
     weight: 'default',
   },
 });

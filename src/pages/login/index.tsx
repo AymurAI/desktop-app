@@ -47,7 +47,7 @@ export default function Login() {
           align="center"
           style={{ position: 'fixed', bottom: 48 }}
         >
-          <Label size="sm">Plataforma hecha por</Label>
+          <Label size="s">Plataforma hecha por</Label>
           <a
             href="https://www.datagenero.org/"
             target="_blank"
