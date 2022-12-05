@@ -1,3 +1,5 @@
+import { ChangeEventHandler, ReactNode, useState } from 'react';
+
 import { Label, Text } from 'components';
 import { NativeComponent } from 'types/component';
 import {
@@ -18,8 +20,19 @@ export default function Input({
   helper,
   sufix,
   prefix,
+  value,
+  onChange,
   ...props
 }: Props) {
+  const [inputValue, setInputValue] = useState(value);
+
+  const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+
+    onChange?.(e);
+  };
+
   return (
     <Container>
       {label}
@@ -32,6 +45,8 @@ export default function Input({
         )}
 
         <StyledInput
+          value={inputValue}
+          onChange={handleChange}
           {...props}
         ></StyledInput>
 
