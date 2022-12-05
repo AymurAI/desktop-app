@@ -1,14 +1,17 @@
+import { useLocation } from 'react-router-dom';
+
 import { Stack } from 'components';
 import Step from './Step';
+import { getStep } from './utils';
 
-interface Props {
-  currentStep: number;
-}
 /**
  * Stepper representing the current state of file validation
  * @param currentStep Current file validation step, between 0 and 4 (0 being validation process hasn't started)
  */
-export default function Stepper({ currentStep = 1 }: Props) {
+export default function Stepper() {
+  const location = useLocation();
+  const currentStep = getStep(location);
+
   // step = 0 is used in the case we want to hide the stepper (for example, in Onboarding page)
   if (currentStep === 0) return null;
 
