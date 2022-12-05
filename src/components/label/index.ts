@@ -3,11 +3,11 @@ import { styled } from 'styles';
 const Label = styled('label', {
   variants: {
     size: {
-      md: {
+      m: {
         fontSize: '$labelMd',
         lineHeight: '$labelMd',
       },
-      sm: {
+      s: {
         fontSize: '$labelSm',
         lineHeight: '$labelSm',
       },
@@ -30,7 +30,7 @@ const Label = styled('label', {
     },
   },
   defaultVariants: {
-    size: 'md',
+    size: 'm',
     weight: 'default',
     status: 'default',
   },
