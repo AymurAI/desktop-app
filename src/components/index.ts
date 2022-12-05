@@ -14,6 +14,7 @@ import Label from './label';
 import ProfileInfo from './profile-info';
 import { Radio, RadioGroup } from './radio';
 import SectionTitle from './section-title';
+import Select from './select';
 import Stack from './stack';
 import Stepper from './stepper';
 import Subtitle from './subtitle';
@@ -42,6 +43,7 @@ export {
   Radio,
   RadioGroup,
   SectionTitle,
+  Select,
   Stack,
   Stepper,
   Subtitle,
