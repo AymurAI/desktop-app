@@ -1,3 +1,6 @@
+// ------------
+// PREDICTION
+// ------------
 type LabelAttributes = {
   aymurai_label: string;
   aymurai_label_subclass: string[] | null;
@@ -13,4 +16,12 @@ export type PredictLabel = {
 export type PredictSuccess = {
   document: string;
   labels: PredictLabel[];
+};
+
+// --------------------
+// DOCUMENT EXTRACTION
+// --------------------
+
+export type ExportDocumentSuccess = {
+  document: string;
 };
