@@ -20,3 +20,15 @@ type Action<Type, Payload = {}> = {
   type: Type;
   payload: Payload;
 };
+
+export type AddFilesAction = Action<ActionTypes.ADD, { newFiles: File[] }>;
+/**
+ * Adds a new set of `File[]` to the end of the state
+ * @param newFiles `File[]` to be added to the state
+ */
+export function addFiles(newFiles: File[]): AddFilesAction {
+  return {
+    type: ActionTypes.ADD,
+    payload: { newFiles },
+  };
+}
