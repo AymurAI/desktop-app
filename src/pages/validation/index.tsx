@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import {
   Button,
+  FileContainer,
+  FileStepper,
   Grid,
   SectionTitle,
 } from 'components';
@@ -28,12 +30,23 @@ export default withFileProtection(function Validation() {
         align="stretch"
         css={{ overflow: 'hidden' }}
       >
+        <FileContainer
+          key={selectedFile.data.name}
+          file={selectedFile}
+        ></FileContainer>
         <Section css={{ px: 100, overflowY: 'scroll' }} spacing="xxl">
           <SectionTitle>3. Validación de datos</SectionTitle>
         </Section>
       </Grid>
       <Footer
+        css={{
+          justifyContent: stepperEnabled ? 'space-between' : 'flex-end',
+          gap: 150,
+        }}
       >
+        {stepperEnabled && (
+          <FileStepper {...{ selected, nextFile, previousFile }} />
+        )}
         <Button size="l">Validar documento</Button>
       </Footer>
     </>
