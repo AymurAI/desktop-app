@@ -6,6 +6,8 @@ const Container = styled('div', {
   boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
   zIndex: 1,
 
+  overflowY: 'scroll',
+
   '& p, & span, & strong, & em': {
     fontFamily: '$file',
     fontSize: 16,
