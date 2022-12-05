@@ -1,19 +1,14 @@
-import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { Title, ProfileInfo, Stepper } from 'components';
 import withAuthProtection from 'features/withAuthProtection';
-import FileContext from 'context/File';
 import { Props } from './Main.types';
 import { Section, Footer, Header, Layout } from './Main.styles';
-import { DocFile } from 'types/file';
+import FileProvider from 'context/File';
 
 export { Section, Footer };
 
 export default withAuthProtection(function Main({ children, ...props }: Props) {
-  const [files, setFiles] = useState<DocFile[]>([]);
-  const [step, setStep] = useState<number>(0);
-
   return (
     <Layout {...props}>
       <Header>
@@ -21,21 +16,14 @@ export default withAuthProtection(function Main({ children, ...props }: Props) {
         <Title weight="strong" css={{ fontSize: 24 }}>
           AymurAI
         </Title>
-        <Stepper currentStep={step}></Stepper>
+        <Stepper></Stepper>
         <ProfileInfo></ProfileInfo>
       </Header>
 
-      <FileContext.Provider
-        value={{
-          files,
-          setFiles,
-          step,
-          setStep,
-        }}
-      >
+      <FileProvider>
         {/* Content as Outlet, managed by React-Router */}
         <Outlet></Outlet>
-      </FileContext.Provider>
+      </FileProvider>
     </Layout>
   );
 });
