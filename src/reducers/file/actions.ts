@@ -21,6 +21,20 @@ type Action<Type, Payload = {}> = {
   payload: Payload;
 };
 
+export type ToggleSelectedAction = Action<
+  ActionTypes.TOGGLE_SELECTED,
+  { fileName: string }
+>;
+/**
+ * Toggles the `selected` property of the given file
+ * @param fileName Name of the file to be toggled
+ */
+export function toggleSelected(fileName: string): ToggleSelectedAction {
+  return {
+    type: ActionTypes.TOGGLE_SELECTED,
+    payload: { fileName },
+  };
+}
 export type AddFilesAction = Action<ActionTypes.ADD, { newFiles: File[] }>;
 /**
  * Adds a new set of `File[]` to the end of the state
