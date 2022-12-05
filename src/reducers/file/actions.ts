@@ -1,3 +1,5 @@
+import { PredictLabel } from 'types/predict';
+
 /**
  * List of action types.
  */
@@ -79,6 +81,39 @@ export function removeAllFiles(): RemoveAllFilesAction {
   return {
     type: ActionTypes.REMOVE_ALL_FILES,
     payload: {},
+  };
+}
+
+export type AddPredictionsAction = Action<
+  ActionTypes.ADD_PREDICTIONS,
+  { fileName: string; predictions: PredictLabel[] }
+>;
+/**
+ * Adds predictions to a specific file
+ * @param fileName File to be modified
+ * @param predictions `PredictLabel[]` received from the `/predict` API request
+ */
+export function addPredictions(
+  fileName: string,
+  predictions: PredictLabel[]
+): AddPredictionsAction {
+  return {
+    type: ActionTypes.ADD_PREDICTIONS,
+    payload: { fileName, predictions },
+  };
+}
+
+export type RemovePredictionsAction = Action<
+  ActionTypes.REMOVE_PREDICTIONS,
+  { fileName: string }
+>;
+/**
+ * Removes all the predictions from a given file
+ */
+export function removePredictions(fileName: string): RemovePredictionsAction {
+  return {
+    type: ActionTypes.REMOVE_PREDICTIONS,
+    payload: { fileName },
   };
 }
 
