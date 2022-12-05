@@ -1,4 +1,5 @@
 import { styled } from 'styles';
+import { DocFile } from 'types/file';
 const Form = styled('form', {
   display: 'flex',
   flexDirection: 'column',
