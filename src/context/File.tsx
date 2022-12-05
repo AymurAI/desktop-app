@@ -14,3 +14,18 @@ FileContext.displayName = 'FileContext';
  */
 export const FileDispatchContext = createContext<Dispatch<Action>>(() => {});
 FileDispatchContext.displayName = 'FileDispatchContext';
+
+interface Props {
+  children: ReactNode;
+}
+export default function FileProvider({ children }: Props) {
+  const [state, dispatch] = useReducer(reducer, []);
+
+  return (
+    <FileContext.Provider value={state}>
+      <FileDispatchContext.Provider value={dispatch}>
+        {children}
+      </FileDispatchContext.Provider>
+    </FileContext.Provider>
+  );
+}
