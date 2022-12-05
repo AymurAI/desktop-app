@@ -13,6 +13,19 @@ interface Props {
   file: DocFile;
 }
 export default function ValidationForm({ file }: Props) {
+
+  const predictions: Predictions = (file.predictions ?? []).reduce(
+    (prev, { attrs, text }) => ({
+      ...prev,
+      [attrs.aymurai_label]: text,
+    }),
+    {}
+  );
+
+  const getPrediction = (label: string) => {
+    return predictions[label] ?? '';
+  };
+
   return (
     <Form>
     </Form>
