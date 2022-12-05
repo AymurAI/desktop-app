@@ -14,6 +14,7 @@ interface Props extends NativeComponent<'input', 'prefix'> {
   helper?: string;
   sufix?: ReactNode;
   prefix?: ReactNode;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
 }
 export default function Input({
   label,
