@@ -11,7 +11,7 @@ import {
   HiddenInput,
   SectionTitle,
 } from 'components';
-import { useFileDispatch, useFiles, useStepper } from 'hooks';
+import { useFileDispatch, useFiles } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import {
   addFiles,
@@ -23,13 +23,11 @@ export default function Preview() {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const { previousStep, nextStep } = useStepper();
   const files = useFiles();
   const dispatch = useFileDispatch();
 
   const handlePrevious = () => {
     dispatch(removeAllFiles());
-    previousStep();
     navigate('/onboarding');
   };
 
@@ -50,7 +48,6 @@ export default function Preview() {
 
   const handleConfirmFiles = () => {
     dispatch(filterUnselected());
-    nextStep();
     navigate('/process');
   };
 

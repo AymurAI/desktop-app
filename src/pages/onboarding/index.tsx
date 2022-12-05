@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button, HiddenInput, Stack, Text, Title, Arrow } from 'components';
 import { Section, Footer } from 'layout/main';
-import { useStepper, useFileDispatch } from 'hooks';
+import { useFileDispatch } from 'hooks';
 import { Card } from './cards';
 import { addFiles } from 'reducers/file/actions';
 
 export default function Onboarding() {
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useFileDispatch();
-  const { nextStep } = useStepper();
   const navigate = useNavigate();
 
   const handleSelectFile = () => {
@@ -25,7 +24,6 @@ export default function Onboarding() {
       const files = Array.from(rawFiles);
 
       dispatch(addFiles(files));
-      nextStep();
       navigate('/preview');
     }
   };

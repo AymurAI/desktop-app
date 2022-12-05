@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { useStepper, useFiles, useFileDispatch } from 'hooks';
+import { useFiles, useFileDispatch } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import {
   SectionTitle,
@@ -17,18 +17,15 @@ import { isPredictionCompleted } from 'utils/file';
 
 export default withFileProtection(function Process() {
   const navigate = useNavigate();
-  const { previousStep, nextStep } = useStepper();
   const dispatch = useFileDispatch();
   const files = useFiles();
 
   const handlePrevious = () => {
-    previousStep();
     navigate('/preview');
     dispatch(removeAllPredictions());
   };
 
   const handleNext = () => {
-    nextStep();
     navigate('/validation');
   };
 
