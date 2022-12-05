@@ -35,6 +35,30 @@ export function toggleSelected(fileName: string): ToggleSelectedAction {
     payload: { fileName },
   };
 }
+
+export type RemoveAllPredictionsAction =
+  Action<ActionTypes.REMOVE_ALL_PREDICTIONS>;
+/**
+ * Removes all the predictions for all the files in the state
+ */
+export function removeAllPredictions(): RemoveAllPredictionsAction {
+  return {
+    type: ActionTypes.REMOVE_ALL_PREDICTIONS,
+    payload: {},
+  };
+}
+
+export type FilterUnselectedAction = Action<ActionTypes.FILTER_UNSELECTED>;
+/**
+ * Removes files from the state whose `selected` property is set on `false`
+ */
+export function filterUnselected(): FilterUnselectedAction {
+  return {
+    type: ActionTypes.FILTER_UNSELECTED,
+    payload: {},
+  };
+}
+
 export type AddFilesAction = Action<ActionTypes.ADD, { newFiles: File[] }>;
 /**
  * Adds a new set of `File[]` to the end of the state
@@ -44,5 +68,30 @@ export function addFiles(newFiles: File[]): AddFilesAction {
   return {
     type: ActionTypes.ADD,
     payload: { newFiles },
+  };
+}
+
+export type RemoveAllFilesAction = Action<ActionTypes.REMOVE_ALL_FILES>;
+/**
+ * Removes all the files from the state
+ */
+export function removeAllFiles(): RemoveAllFilesAction {
+  return {
+    type: ActionTypes.REMOVE_ALL_FILES,
+    payload: {},
+  };
+}
+
+export type ReplaceFileAction = Action<
+  ActionTypes.REPLACE_FILE,
+  { fileName: string; file: File }
+>;
+/**
+ * Replaces a file data with the given `fileName`
+ */
+export function replaceFile(fileName: string, file: File): ReplaceFileAction {
+  return {
+    type: ActionTypes.REPLACE_FILE,
+    payload: { fileName, file },
   };
 }
