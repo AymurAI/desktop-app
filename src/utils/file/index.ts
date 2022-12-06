@@ -4,6 +4,7 @@ import convertToHTML from './convertToHTML';
 import isAllowed from './isAllowed';
 import isAlreadyLoaded from './isAlreadyLoaded';
 import isPredictionCompleted from './isPredictionCompleted';
+import isValidationCompleted from './isValidationCompleted';
 
 export {
   getByName,
@@ -12,4 +13,5 @@ export {
   isAllowed,
   isAlreadyLoaded,
   isPredictionCompleted,
+  isValidationCompleted,
 };
