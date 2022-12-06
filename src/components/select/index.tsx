@@ -71,7 +71,9 @@ export default function Select({
         )}
 
         <Input tabIndex={0}>
-          <Text>{selectedOption?.text ?? ''}</Text>
+          <Label css={{ flex: 1, color: '$textDefault' }}>
+            {selectedOption?.text ?? ''}
+          </Label>
           {suggestion && isValueEmpty && (
             <Suggestion onClick={handleClickSuggestion}>
               {suggestedOption}
