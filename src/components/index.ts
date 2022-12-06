@@ -2,6 +2,7 @@ import Arrow from './arrow';
 import Button from './button';
 import Card from './card';
 import Checkbox from './checkbox';
+import FileCheck from './file-check';
 import FileContainer from './file-container';
 import FilePreview from './file-preview';
 import FileProcessing from './file-processing';
@@ -23,6 +24,7 @@ export {
   Button,
   Card,
   Checkbox,
+  FileCheck,
   FileContainer,
   FilePreview,
   FileProcessing,
