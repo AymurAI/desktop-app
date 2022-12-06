@@ -11,6 +11,8 @@ import {
 import { useFileDispatch, useFiles } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import withFileProtection from 'features/withFileProtection';
+import logger from 'utils/logger';
+import { isValidationCompleted } from 'utils/file';
 import { validate } from 'reducers/file/actions';
 
 export default withFileProtection(function Validation() {
@@ -20,10 +22,14 @@ export default withFileProtection(function Validation() {
   const navigate = useNavigate();
 
   const stepperEnabled = files.length > 1;
-  const nextFile = () => setSelected(selected + 1);
-  const previousFile = () => setSelected(selected - 1);
+  const limit = files.length - 1;
+  const nextFile = () =>
+    setSelected((cur) => (cur === limit ? limit : cur + 1));
+  const previousFile = () => setSelected((cur) => (cur === 0 ? 0 : cur - 1));
 
   const selectedFile = files[selected];
+  const canContinue = isValidationCompleted(files);
+
   const handleValidate = () => {
     dispatch(validate(selectedFile.data.name));
     nextFile();
@@ -59,7 +65,16 @@ export default withFileProtection(function Validation() {
         {stepperEnabled && (
           <FileStepper {...{ selected, nextFile, previousFile }} />
         )}
-        <Button size="l">Validar documento</Button>
+
+        {canContinue ? (
+          <Button size="l" onClick={handleContinue}>
+            Continuar
+          </Button>
+        ) : (
+          <Button size="l" onClick={handleValidate}>
+            Validar documento
+          </Button>
+        )}
       </Footer>
     </>
   );
