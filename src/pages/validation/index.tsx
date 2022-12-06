@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Button,
@@ -7,19 +8,30 @@ import {
   Grid,
   SectionTitle,
 } from 'components';
-import { useFiles } from 'hooks';
+import { useFileDispatch, useFiles } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import withFileProtection from 'features/withFileProtection';
+import { validate } from 'reducers/file/actions';
 
 export default withFileProtection(function Validation() {
   const files = useFiles();
   const [selected, setSelected] = useState(0);
+  const dispatch = useFileDispatch();
+  const navigate = useNavigate();
 
   const stepperEnabled = files.length > 1;
   const nextFile = () => setSelected(selected + 1);
   const previousFile = () => setSelected(selected - 1);
 
   const selectedFile = files[selected];
+  const handleValidate = () => {
+    dispatch(validate(selectedFile.data.name));
+    nextFile();
+  };
+
+  const handleContinue = () => {
+    navigate('/finish');
+  };
 
   return (
     <>
