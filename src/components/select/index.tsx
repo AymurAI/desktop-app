@@ -79,7 +79,7 @@ export default forwardRef<{ selected: SelectOption | undefined }, Props>(
           )}
 
           {/* INPUT */}
-          <InputContainer tabIndex={0}>
+          <InputContainer>
             <Input value={value} onChange={handleChangeInput} />
             {suggestion && isValueEmpty && (
               <Suggestion
