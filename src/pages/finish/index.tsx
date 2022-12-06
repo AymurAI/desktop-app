@@ -29,7 +29,7 @@ export default function Finish() {
     <>
       <Section>
         <SectionTitle>4. Finalización</SectionTitle>
-        <Text>
+        <Text css={{ maxWidth: '60%' }}>
           Los datos encontrados por AymurAI y posteriormente validados ya son
           parte del set de datos abiertos con perspectiva de género.
         </Text>
