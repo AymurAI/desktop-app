@@ -65,6 +65,7 @@ export const OptionContainer = styled('ul', {
 
   minWidth: '100%',
   maxHeight: 200,
+  minHeight: '$s',
   mt: '$m',
   overflowY: 'scroll',
 
