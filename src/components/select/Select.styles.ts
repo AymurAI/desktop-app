@@ -17,7 +17,7 @@ export const TextContainer = styled('div', {
   cursor: 'pointer',
 });
 
-export const Input = styled('div', {
+export const InputContainer = styled('div', {
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -35,6 +35,19 @@ export const Input = styled('div', {
     b: '1px solid $borderPrimaryAlt',
     boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.16)',
   },
+});
+
+export const Input = styled('input', {
+  flex: 1,
+
+  fontWeight: 400,
+  fontSize: '$labelMd',
+  lineHeight: '$labelMd',
+
+  color: '$textDefault',
+
+  outline: 'none',
+  b: 'none',
 });
 
 // ----------------
