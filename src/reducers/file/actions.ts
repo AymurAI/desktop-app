@@ -1,4 +1,4 @@
-import { PredictLabel } from 'types/predict';
+import { PredictLabel } from 'types/aymurai';
 
 /**
  * List of action types.
@@ -13,6 +13,7 @@ export enum ActionTypes {
   REMOVE_PREDICTIONS = 'REMOVE_PREDICTIONS',
   REMOVE_ALL_FILES = 'REMOVE_ALL_FILES',
   REPLACE_FILE = 'REPLACE_FILE',
+  VALIDATE = 'VALIDATE',
 }
 
 /**
@@ -123,10 +124,24 @@ export type ReplaceFileAction = Action<
 >;
 /**
  * Replaces a file data with the given `fileName`
+ * @param fileName File to be replaced on the state
+ * @param file File data to be inserted in place of the given `fileName`
  */
 export function replaceFile(fileName: string, file: File): ReplaceFileAction {
   return {
     type: ActionTypes.REPLACE_FILE,
     payload: { fileName, file },
+  };
+}
+
+export type ValidateAction = Action<ActionTypes.VALIDATE, { fileName: string }>;
+/**
+ * Sets the validated status to the given file to `true`
+ * @param fileName Name of the file to be toggled
+ */
+export function validate(fileName: string): ValidateAction {
+  return {
+    type: ActionTypes.VALIDATE,
+    payload: { fileName },
   };
 }
