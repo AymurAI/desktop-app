@@ -15,17 +15,23 @@ export const FileStep = styled('div', {
   variants: {
     status: {
       completed: {
-        color: '$onButtonAlternative',
+        '& label': {
+          color: '$textOnButtonAlternative',
+        },
         bg: '$actionPressed',
       },
       focus: {
-        color: '$textOnButtonDefault',
+        '& label': {
+          color: '$textOnButtonDefault',
+        },
         bg: '$actionFocus',
         boxShadow: '2px 2px 10px rgba(17, 0, 65, 0.25)',
         b: '1px solid $borderPrimaryAlt',
       },
       default: {
-        color: '$textOnButtonDefault',
+        '& label': {
+          color: '$textOnButtonDefault',
+        },
         bg: '$primaryAlt',
       },
     },
