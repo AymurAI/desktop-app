@@ -12,7 +12,6 @@ Main technologies:
 Other technologies
 
 - **npm** as the _package manager_
-- **Jest** as the _testing library_
 - **ESLint** as the _code linter_
 
 ##  Getting started
