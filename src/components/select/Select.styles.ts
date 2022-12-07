@@ -17,7 +17,7 @@ export const TextContainer = styled('div', {
   cursor: 'pointer',
 });
 
-export const Input = styled('div', {
+export const InputContainer = styled('div', {
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -29,12 +29,19 @@ export const Input = styled('div', {
   bg: '$bgSecondary',
   b: '1px solid $borderPrimary',
   borderRadius: '$xs',
+});
 
-  '&:focus': {
-    outline: 'none',
-    b: '1px solid $borderPrimaryAlt',
-    boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.16)',
-  },
+export const Input = styled('input', {
+  flex: 1,
+
+  fontWeight: 400,
+  fontSize: '$labelMd',
+  lineHeight: '$labelMd',
+
+  color: '$textDefault',
+
+  outline: 'none',
+  b: 'none',
 });
 
 // ----------------
@@ -92,6 +99,11 @@ export const Container = styled('div', {
     [`& ${OptionContainer}`]: {
       opacity: 1,
       visibility: 'visible',
+    },
+    [`& ${InputContainer}`]: {
+      outline: '1px solid $borderPrimaryAlt',
+      boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.16)',
+      borderRadius: '$xs',
     },
   },
 });

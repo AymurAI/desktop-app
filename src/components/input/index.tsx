@@ -1,4 +1,9 @@
-import { ChangeEventHandler, ReactNode, useState } from 'react';
+import {
+  ChangeEventHandler,
+  ReactNode,
+  useImperativeHandle,
+  useState,
+} from 'react';
 
 import { Label, Text, Suggestion } from 'components';
 import { NativeComponent } from 'types/component';
@@ -7,41 +12,46 @@ import {
   Container,
   InputContainer,
 } from './Input.styles';
+import { forwardRef } from 'react';
 
-interface Props extends NativeComponent<'input', 'prefix'> {
+interface Props extends NativeComponent<'input', 'prefix' | 'type'> {
   label?: string;
   suggestion?: string;
   helper?: string;
   sufix?: ReactNode;
   prefix?: ReactNode;
-  onChange?: ChangeEventHandler<HTMLInputElement>;
+  defaultValue?: string;
 }
-export default function Input({
-  label,
-  helper,
-  sufix,
-  prefix,
-  value,
-  suggestion,
-  onChange,
-  ...props
-}: Props) {
-  const [inputValue, setInputValue] = useState(value);
+export default forwardRef<{ value: string }, Props>(function Input(
+  { label, helper, suggestion, prefix, sufix, defaultValue, ...props },
+  ref
+) {
+  const [value, setValue] = useState<string>(defaultValue ?? '');
 
-  const isValueEmpty = inputValue === '' || inputValue === undefined;
+  // Only exposes `selected` object to the parent component
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        value,
+      };
+    },
+    [value]
+  );
+
+  const isValueEmpty = !value || value === '';
+
+  const handleClickSuggestion = () => setValue(suggestion as string);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const newValue = e.target.value;
-    setInputValue(newValue);
-
-    onChange?.(e);
+    setValue(e.target.value);
   };
-
-  const handleClickSuggestion = () => setInputValue(suggestion);
-
   return (
     <Container>
+      {/* LABEL */}
       {label}
+
+      {/* INPUT CONTAINER */}
       <InputContainer>
         {/* PREFIX */}
         {prefix && (
@@ -53,11 +63,13 @@ export default function Input({
 
         {/* INPUT */}
         <StyledInput
-          value={inputValue}
+          value={value}
+          type="text"
           onChange={handleChange}
           {...props}
-        ></StyledInput>
+        />
 
+        {/* SUGGESTION */}
         {suggestion && isValueEmpty && (
           <>
             <Text css={{ lineHeight: '100%' }}>|</Text>
@@ -70,7 +82,9 @@ export default function Input({
         {/* SUFIX */}
         {sufix}
       </InputContainer>
+
+      {/* HELPER */}
       {helper && <Label size="s">{helper}</Label>}
     </Container>
   );
-}
+});
