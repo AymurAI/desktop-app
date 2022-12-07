@@ -14,18 +14,19 @@ import {
 } from './Input.styles';
 import { forwardRef } from 'react';
 
-interface Props extends NativeComponent<'input', 'prefix'> {
+interface Props extends NativeComponent<'input', 'prefix' | 'type'> {
   label?: string;
   suggestion?: string;
   helper?: string;
   sufix?: ReactNode;
   prefix?: ReactNode;
+  defaultValue?: string;
 }
 export default forwardRef<{ value: string }, Props>(function Input(
-  { label, helper, suggestion, prefix, sufix },
+  { label, helper, suggestion, prefix, sufix, defaultValue, ...props },
   ref
 ) {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState<string>(defaultValue ?? '');
 
   // Only exposes `selected` object to the parent component
   useImperativeHandle(
@@ -61,7 +62,12 @@ export default forwardRef<{ value: string }, Props>(function Input(
         )}
 
         {/* INPUT */}
-        <StyledInput value={value} onChange={handleChange} />
+        <StyledInput
+          value={value}
+          type="text"
+          onChange={handleChange}
+          {...props}
+        />
 
         {/* SUGGESTION */}
         {suggestion && isValueEmpty && (
