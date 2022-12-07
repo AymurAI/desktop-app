@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { CaretDown } from 'phosphor-react';
 
-import { Label, Suggestion } from 'components';
+import { Label, Suggestion, Text } from 'components';
 import {
   Container,
   Input,
@@ -82,13 +82,16 @@ export default forwardRef<{ selected: SelectOption | undefined }, Props>(
           <InputContainer>
             <Input value={value} onChange={handleChangeInput} />
             {suggestion && isValueEmpty && (
-              <Suggestion
-                onClick={handleClickSelect(suggestion)}
-                onKeyDown={handleKeySelect(suggestion)}
-                tabIndex={0}
-              >
-                {suggestion}
-              </Suggestion>
+              <>
+                <Text css={{ lineHeight: '100%' }}>|</Text>
+                <Suggestion
+                  onClick={handleClickSelect(suggestion)}
+                  onKeyDown={handleKeySelect(suggestion)}
+                  tabIndex={0}
+                >
+                  {suggestion}
+                </Suggestion>
+              </>
             )}
             <CaretDown size={16} />
           </InputContainer>
