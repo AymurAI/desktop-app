@@ -36,7 +36,8 @@
     "check-types:react": "tsc -p tsconfig.json",
     "check-types:renderer": "tsc -p tsconfig.renderer.json --noEmit",
     "validate": "npm run lint && npm run check-types:react",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "deploy": "sudo docker compose -f docker-compose.production.yml build && docker compose -f docker-compose.production.yml up -d"
   },
   "eslintConfig": {
     "extends": [
