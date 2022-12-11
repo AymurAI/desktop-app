@@ -1,4 +1,5 @@
-import { PredictLabel } from 'types/predict';
+import { FormData } from 'hooks/useForm';
+import { PredictLabel } from 'types/aymurai';
 
 /**
  * List of action types.
@@ -13,6 +14,8 @@ export enum ActionTypes {
   REMOVE_PREDICTIONS = 'REMOVE_PREDICTIONS',
   REMOVE_ALL_FILES = 'REMOVE_ALL_FILES',
   REPLACE_FILE = 'REPLACE_FILE',
+  VALIDATE = 'VALIDATE',
+  APPEND_VALIDATION = 'APPEND_VALIDATION',
 }
 
 /**
@@ -123,10 +126,43 @@ export type ReplaceFileAction = Action<
 >;
 /**
  * Replaces a file data with the given `fileName`
+ * @param fileName File to be replaced on the state
+ * @param file File data to be inserted in place of the given `fileName`
  */
 export function replaceFile(fileName: string, file: File): ReplaceFileAction {
   return {
     type: ActionTypes.REPLACE_FILE,
     payload: { fileName, file },
+  };
+}
+
+export type ValidateAction = Action<ActionTypes.VALIDATE, { fileName: string }>;
+/**
+ * Sets the validated status to the given file to `true`
+ * @param fileName Name of the file to be toggled
+ */
+export function validate(fileName: string): ValidateAction {
+  return {
+    type: ActionTypes.VALIDATE,
+    payload: { fileName },
+  };
+}
+
+export type AppendValidationAction = Action<
+  ActionTypes.APPEND_VALIDATION,
+  { fileName: string; validation: FormData }
+>;
+/**
+ * Builds the `validation` progressively
+ * @param fileName Name of the file to be modified
+ * @param validation Validation object to be appended
+ */
+export function appendValidation(
+  fileName: string,
+  validation: FormData
+): AppendValidationAction {
+  return {
+    type: ActionTypes.APPEND_VALIDATION,
+    payload: { fileName, validation },
   };
 }
