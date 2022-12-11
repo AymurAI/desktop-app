@@ -23,6 +23,7 @@ import Text from './text';
 import ThemeProvider from './theme-provider';
 import Title from './title';
 import Tooltip from './tooltip';
+import ValidationForm from './validation-form';
 
 export {
   Arrow,
@@ -52,4 +53,5 @@ export {
   ThemeProvider,
   Title,
   Tooltip,
+  ValidationForm,
 };
