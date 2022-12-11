@@ -13,12 +13,14 @@ import {
 } from 'components';
 import withFileProtection from 'features/withFileProtection';
 import { removeAllPredictions } from 'reducers/file/actions';
-import { isPredictionCompleted } from 'utils/file';
+import { isPredictionCompleted as checkPrediction } from 'utils/file';
 
 export default withFileProtection(function Process() {
   const navigate = useNavigate();
   const dispatch = useFileDispatch();
   const files = useFiles();
+
+  const isPredictionCompleted = checkPrediction(files);
 
   const handlePrevious = () => {
     navigate('/preview');
@@ -50,11 +52,7 @@ export default withFileProtection(function Process() {
         </Card>
       </Section>
       <Footer>
-        <Button
-          size="l"
-          disabled={!isPredictionCompleted(files)}
-          onClick={handleNext}
-        >
+        <Button size="l" disabled={!isPredictionCompleted} onClick={handleNext}>
           Siguiente
         </Button>
       </Footer>
