@@ -2,12 +2,14 @@ import {
   ActionTypes,
   AddFilesAction,
   AddPredictionsAction,
+  AppendValidationAction,
   FilterUnselectedAction,
   RemoveAllFilesAction,
   RemoveAllPredictionsAction,
   RemovePredictionsAction,
   ReplaceFileAction,
   ToggleSelectedAction,
+  ValidateAction,
 } from './actions';
 import { addFiles, replaceFile, updateFromState } from './utils';
 
@@ -23,7 +25,9 @@ export type Action =
   | RemoveAllFilesAction
   | RemovePredictionsAction
   | ReplaceFileAction
-  | FilterUnselectedAction;
+  | FilterUnselectedAction
+  | ValidateAction
+  | AppendValidationAction;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -101,11 +105,31 @@ export default function reducer(state: State, action: Action): State {
       return replaceFile(fileName, file, state);
     }
     // ----------------
-    // FILTER_UNSELECTED
+    // FILTER UNSELECTED
     // ----------------
     case ActionTypes.FILTER_UNSELECTED: {
       return state.filter((file) => file.selected);
     }
+    // ----------------
+    // VALIDATE
+    // ----------------
+    case ActionTypes.VALIDATE: {
+      const { fileName } = payload;
+      return update(fileName, (cur) => ({ ...cur, validated: true }));
+    }
+    // ----------------
+    // APPEND VALIDATION
+    // ----------------
+    case ActionTypes.APPEND_VALIDATION: {
+      const { fileName, validation } = payload;
+
+      return update(fileName, (cur) => ({
+        ...cur,
+        // Append to the already created object
+        validationObject: { ...cur.validationObject, ...validation },
+      }));
+    }
+
     default:
       return state;
   }

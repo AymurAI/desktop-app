@@ -51,6 +51,7 @@ export function addFiles(files: File[], state: DocFile[]) {
   const newFiles: DocFile[] = filtered.map((file) => ({
     data: file,
     selected: true,
+    validationObject: {},
   }));
 
   return [...state, ...newFiles];
@@ -71,6 +72,7 @@ export function replaceFile(fileName: string, newFile: File, state: DocFile[]) {
             data: newFile,
             selected: true,
             predictions: undefined,
+            validationObject: {},
           }
         : file
     );
