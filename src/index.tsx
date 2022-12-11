@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { ThemeProvider } from 'components';
-import { Login, Onboarding, Preview, Process, Validation } from 'pages';
+import { Login, Onboarding, Preview, Process, Validation, Finish } from 'pages';
 import MainLayout from 'layout/main';
 import AuthProvider from 'context/Authentication';
 
@@ -17,6 +17,7 @@ const router = createBrowserRouter([
       { path: 'preview', element: <Preview /> },
       { path: 'process', element: <Process /> },
       { path: 'validation', element: <Validation /> },
+      { path: 'finish', element: <Finish /> },
     ],
   },
   {

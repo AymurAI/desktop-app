@@ -1,5 +1,11 @@
 import { Circle } from 'phosphor-react';
-import { ChangeEventHandler, ReactNode, useState } from 'react';
+import {
+  ChangeEventHandler,
+  forwardRef,
+  ReactNode,
+  useImperativeHandle,
+  useState,
+} from 'react';
 
 import { CSS } from 'styles';
 import { colors } from 'styles/tokens';
@@ -10,24 +16,31 @@ export interface Props {
   name?: string;
   checked?: boolean;
   disabled?: boolean;
-  onChange?: ChangeEventHandler<HTMLInputElement>;
+  onChange?: (value: boolean) => void;
   css?: CSS;
 }
-export default function Radio({
-  name,
-  checked = false,
-  disabled = false,
-  onChange,
-  css,
-  children,
-}: Props) {
+export default forwardRef<{ value: boolean }, Props>(function Radio(
+  { name, checked = false, disabled = false, onChange, css, children },
+  ref
+) {
   const [isChecked, setIsChecked] = useState(checked);
 
   const hasText = !!children;
 
+  // Only exposes `value` object to the parent component
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        value: isChecked,
+      };
+    },
+    [isChecked]
+  );
+
   const handleToggle: ChangeEventHandler<HTMLInputElement> = (e) => {
     setIsChecked(e.target.checked);
-    onChange?.(e);
+    onChange?.(isChecked);
   };
 
   const iconColor = disabled
@@ -49,4 +62,4 @@ export default function Radio({
       {children}
     </Wrapper>
   );
-}
+});

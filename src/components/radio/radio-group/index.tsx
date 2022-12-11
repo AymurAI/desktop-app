@@ -11,12 +11,12 @@ import { Group, Legend } from './RadioGroup.styles';
 
 interface Props {
   children: ReactNode;
-  title?: string;
+  label?: string;
   name: string;
   direction?: 'horizontal' | 'vertical';
 }
 export default function RadioGroup({
-  title,
+  label,
   name,
   direction = 'horizontal',
   children,
@@ -32,7 +32,7 @@ export default function RadioGroup({
 
   return (
     <Group direction={direction}>
-      {title && <Legend>{title}</Legend>}
+      {label && <Legend>{label}</Legend>}
       {radiosWithName}
     </Group>
   );

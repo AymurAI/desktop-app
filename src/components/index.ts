@@ -2,7 +2,7 @@ import Arrow from './arrow';
 import Button from './button';
 import Card from './card';
 import { Checkbox, CheckboxGroup } from './checkbox';
-import Fieldset from './fieldset';
+import FileCheck from './file-check';
 import FileContainer from './file-container';
 import FilePreview from './file-preview';
 import FileProcessing from './file-processing';
@@ -30,7 +30,7 @@ export {
   Card,
   Checkbox,
   CheckboxGroup,
-  Fieldset,
+  FileCheck,
   FileContainer,
   FilePreview,
   FileProcessing,
