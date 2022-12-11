@@ -4,6 +4,7 @@ import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import { AuthenticationContext as Context } from 'context/Authentication';
 import { GoogleToken } from 'types/google';
 import google from 'services/google';
+import logger from 'utils/logger';
 
 interface UseLoginArgs {
   onSuccess?: (token: GoogleToken) => void;
@@ -36,7 +37,7 @@ export default function useLogin({
       onSuccess?.(res.access_token);
     },
     onError: async (err) => {
-      console.error('An error ocurred while retrieving the OAuth2 token', err);
+      logger.error('An error ocurred while retrieving the OAuth2 token', err);
       onError?.(err);
     },
   });
