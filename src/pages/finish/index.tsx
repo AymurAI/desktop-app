@@ -43,7 +43,7 @@ export default function Finish() {
             css={{ width: '100%' }}
           >
             {files.map(({ data }) => (
-              <FileCheck fileName={data.name}></FileCheck>
+              <FileCheck key={data.name} fileName={data.name}></FileCheck>
             ))}
           </Grid>
         </Card>
