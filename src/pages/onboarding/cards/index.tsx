@@ -14,7 +14,7 @@ export function Card({ step = 1, text }: Props) {
     <StyledCard>
       <Step>{step}</Step>
       <img src={`/onboarding-steps/step${step}.png`} alt={`Step ${step}`} />
-      <Text size="sm">{text}</Text>
+      <Text size="s">{text}</Text>
     </StyledCard>
   );
 }

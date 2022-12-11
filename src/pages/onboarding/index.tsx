@@ -72,7 +72,9 @@ export default function Onboarding() {
           tabIndex={-1}
         />
         <Text size="s">Formatos válidos: .doc y .docx</Text>
-        <Button onClick={handleSelectFile}>Cargar documentos</Button>
+        <Button onClick={handleSelectFile} size="l">
+          Cargar documentos
+        </Button>
       </Footer>
     </>
   );
