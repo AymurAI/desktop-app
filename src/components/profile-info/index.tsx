@@ -20,6 +20,7 @@ export default function ProfileInfo() {
       <Tooltip text={`${user?.given_name} ${user?.family_name}`}>
         <ProfilePicture
           src={user?.picture}
+          alt="Profile picture"
           referrerPolicy="no-referrer"
           tabIndex={0}
         />
