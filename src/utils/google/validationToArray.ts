@@ -1,3 +1,4 @@
+import { LabelType } from 'types/aymurai';
 import { DocFile } from 'types/file';
 
 /**
@@ -67,7 +68,7 @@ const orderArray = [
   'DECISION_CSJN',
   'N_REGISTRO_Y_TOMO_CSJN',
   'LINK_CSJN',
-];
+] as const;
 
 /**
  * Converts the validation object into an ordered array
@@ -75,5 +76,15 @@ const orderArray = [
  * @returns An ordered array with the values from the `validationObject`
  */
 export default function validationToArray(object: DocFile['validationObject']) {
-  return orderArray.map((key) => object[key] ?? null);
+  return orderArray.map((key) => {
+    if (key === 'VIOLENCIA_DE_GENERO') {
+      const si = object[LabelType.VIOLENCIA_DE_GENERO_SI];
+      const no = object[LabelType.VIOLENCIA_DE_GENERO_NO];
+
+      if (si) return true;
+      else if (no) return false;
+      return null;
+    }
+    return object[key] ?? null;
+  });
 }
