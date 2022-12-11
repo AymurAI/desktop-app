@@ -10,6 +10,7 @@ import {
 } from 'components';
 import { useFileDispatch, useFiles } from 'hooks';
 import { Footer, Section } from 'layout/main';
+import FormGroup from './form-group';
 import withFileProtection from 'features/withFileProtection';
 import logger from 'utils/logger';
 import { isValidationCompleted } from 'utils/file';
@@ -54,6 +55,7 @@ export default withFileProtection(function Validation() {
         ></FileContainer>
         <Section css={{ px: 100, overflowY: 'scroll' }} spacing="xxl">
           <SectionTitle>3. Validación de datos</SectionTitle>
+          <FormGroup key={selectedFile.data.name} file={selectedFile} />
         </Section>
       </Grid>
       <Footer
