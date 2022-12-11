@@ -1,4 +1,5 @@
-import { PredictLabel } from './predict';
+import { PredictLabel } from './aymurai';
+import { FormData } from 'hooks/useForm';
 
 /**
  * Type for
@@ -17,7 +18,11 @@ export type DocFile = {
    */
   predictions?: PredictLabel[];
   /**
-   * Is the file validated by the validation form?
+   * Is the file validated by the validation form? This is toggled when the user clicks on the 'Validar documento' button
    */
   validated?: boolean;
+  /**
+   *
+   */
+  validationObject: FormData;
 };
