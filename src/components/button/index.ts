@@ -81,23 +81,44 @@ const Button = styled('button', {
           bg: '$bgSecondary',
         },
       },
+      tertiary: {
+        color: '$textOnButtonDefault',
+        bg: '$white',
+
+        // Doesnt have a :hover state
+
+        '&:active': {
+          color: '$actionPressed',
+        },
+
+        '&:focus': {
+          outline: '2px solid $primaryAlt',
+        },
+
+        // Doesnt have a :disabled state
+      },
       none: {
         p: 0,
         bg: 'inherit',
       },
     },
     size: {
-      s: {
-        p: '$s $m',
+      s: { p: '$s $m' },
+      m: { p: '$m' },
+      l: { py: '$m', width: 300 },
+    },
+    checked: {
+      true: {
+        bg: '$actionPressed',
+        color: '$textOnButtonAlternative',
       },
-      m: {
-        p: '$m',
-      },
+      false: {},
     },
   },
   defaultVariants: {
     size: 'm',
     variant: 'primary',
+    checked: false,
   },
 });
 
