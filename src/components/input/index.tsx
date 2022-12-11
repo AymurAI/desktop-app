@@ -14,16 +14,28 @@ import {
 } from './Input.styles';
 import { forwardRef } from 'react';
 
-interface Props extends NativeComponent<'input', 'prefix' | 'type'> {
+export type InputRefValue = { value: string };
+interface Props
+  extends NativeComponent<'input', 'prefix' | 'type' | 'value' | 'onChange'> {
   label?: string;
   suggestion?: string;
   helper?: string;
   sufix?: ReactNode;
   prefix?: ReactNode;
   defaultValue?: string;
+  onChange?: (value: string) => void;
 }
 export default forwardRef<{ value: string }, Props>(function Input(
-  { label, helper, suggestion, prefix, sufix, defaultValue, ...props },
+  {
+    label,
+    helper,
+    suggestion,
+    prefix,
+    sufix,
+    defaultValue,
+    onChange,
+    ...props
+  },
   ref
 ) {
   const [value, setValue] = useState<string>(defaultValue ?? '');
@@ -41,11 +53,20 @@ export default forwardRef<{ value: string }, Props>(function Input(
 
   const isValueEmpty = !value || value === '';
 
-  const handleClickSuggestion = () => setValue(suggestion as string);
+  const updateValue = (newValue: string) => {
+    setValue(newValue);
+
+    onChange?.(newValue);
+  };
+
+  const handleClickSuggestion = () => {
+    updateValue(suggestion as string); // We are sure is a string because the button is enabled only in case suggestion = string
+  };
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setValue(e.target.value);
+    updateValue(e.target.value);
   };
+
   return (
     <Container>
       {/* LABEL */}
