@@ -26,9 +26,13 @@ interface Props {
   helper?: string;
   selected?: SelectOption['id'];
   suggestion?: SelectOption['text'];
+  onChange?: (value: SelectOption | undefined) => void;
 }
-export default forwardRef<{ selected: SelectOption | undefined }, Props>(
-  function Select({ label, helper, options, suggestion, selected }, ref) {
+export default forwardRef<{ value: SelectOption | undefined }, Props>(
+  function Select(
+    { label, helper, options, suggestion, selected, onChange },
+    ref
+  ) {
     const [value, setValue] = useState<SelectOption['text']>(
       findOption(selected, options)?.text ?? ''
     );
@@ -38,7 +42,7 @@ export default forwardRef<{ selected: SelectOption | undefined }, Props>(
       ref,
       () => {
         return {
-          selected: findOption(value, options),
+          value: findOption(value, options),
         };
       },
       [value, options]
@@ -46,9 +50,16 @@ export default forwardRef<{ selected: SelectOption | undefined }, Props>(
 
     const isValueEmpty = !value || value === '';
 
+    const updateValue = (newValue: SelectOption['text']) => {
+      setValue(newValue);
+
+      const option = findOption(newValue, options);
+      onChange?.(option);
+    };
+
     const handleClickSelect =
       (text: string) => (e: MouseEvent<HTMLLIElement>) => {
-        setValue(text);
+        updateValue(text);
         e.currentTarget.blur();
       };
 
@@ -59,13 +70,13 @@ export default forwardRef<{ selected: SelectOption | undefined }, Props>(
         } else if (e.code === 'Enter' || e.code === 'Space') {
           e.preventDefault(); // Prevent scroll
 
-          setValue(text);
+          updateValue(text);
           e.currentTarget.blur();
         }
       };
 
     const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-      setValue(e.currentTarget.value);
+      updateValue(e.currentTarget.value);
     };
 
     return (
