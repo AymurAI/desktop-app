@@ -8,36 +8,59 @@ import {
   Grid,
   SectionTitle,
 } from 'components';
-import { useFileDispatch, useFiles } from 'hooks';
+import { useFileDispatch, useFiles, useGoogleToken } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import FormGroup from './form-group';
 import withFileProtection from 'features/withFileProtection';
-import logger from 'utils/logger';
-import { isValidationCompleted } from 'utils/file';
+import { isFileValidated, isValidationCompleted } from 'utils/file';
 import { validate } from 'reducers/file/actions';
+import google from 'services/google';
+import { spreadsheetURLToId, validationToArray } from 'utils/google';
+import { DATASET_URL } from 'utils/config';
 
 export default withFileProtection(function Validation() {
   const files = useFiles();
   const [selected, setSelected] = useState(0);
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
+  const token = useGoogleToken();
 
-  const stepperEnabled = files.length > 1;
-  const limit = files.length - 1;
+  // TODO bloquear volver a un archivo ya validado
   const nextFile = () =>
     setSelected((cur) => (cur === limit ? limit : cur + 1));
   const previousFile = () => setSelected((cur) => (cur === 0 ? 0 : cur - 1));
 
-  const selectedFile = files[selected];
-  const canContinue = isValidationCompleted(files);
+  const hasStepper = files.length > 1;
+  const limit = files.length - 1;
 
-  const handleValidate = () => {
-    dispatch(validate(selectedFile.data.name));
-    nextFile();
-  };
+  const selectedFile = files[selected];
+  // Check if the validation was completed on all the files
+  const canContinue = isValidationCompleted(files);
+  const canValidate = isFileValidated(selectedFile);
 
   const handleContinue = () => {
     navigate('/finish');
+  };
+
+  const handleValidate = async () => {
+    if (token) {
+      dispatch(validate(selectedFile.data.name));
+
+      if (hasStepper) {
+        nextFile();
+      } else {
+        handleContinue();
+      }
+
+      // POST the validated data to the dataset
+      await google(token)
+        .spreadsheet(spreadsheetURLToId(DATASET_URL))
+        .append(validationToArray(selectedFile.validationObject));
+    } else {
+      throw new Error(
+        'No token was found, cannot POST the data to the Google API!'
+      );
+    }
   };
 
   return (
@@ -60,11 +83,11 @@ export default withFileProtection(function Validation() {
       </Grid>
       <Footer
         css={{
-          justifyContent: stepperEnabled ? 'space-between' : 'flex-end',
+          justifyContent: hasStepper ? 'space-between' : 'flex-end',
           gap: 150,
         }}
       >
-        {stepperEnabled && (
+        {hasStepper && (
           <FileStepper {...{ selected, nextFile, previousFile }} />
         )}
 
@@ -73,7 +96,7 @@ export default withFileProtection(function Validation() {
             Continuar
           </Button>
         ) : (
-          <Button size="l" onClick={handleValidate}>
+          <Button size="l" onClick={handleValidate} disabled={!canValidate}>
             Validar documento
           </Button>
         )}
