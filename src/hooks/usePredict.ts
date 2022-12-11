@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 
 import { useFileDispatch, useFileParser } from 'hooks';
-import { predict } from 'services/predict';
-import { PredictLabel } from 'types/predict';
+import { predict } from 'services/aymurai';
+import { PredictLabel } from 'types/aymurai';
 import { toPlainParagraphs } from 'utils/html';
 import {
   addPredictions,
