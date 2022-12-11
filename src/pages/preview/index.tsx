@@ -84,10 +84,12 @@ export default function Preview() {
           tabIndex={-1}
         />
         <Text size="s">Formatos válidos: .doc y .docx</Text>
-        <Button onClick={handleSelectFile} variant="secondary">
+        <Button onClick={handleSelectFile} size="l" variant="secondary">
           Cargar más documentos
         </Button>
-        <Button onClick={handleConfirmFiles}>Continuar</Button>
+        <Button onClick={handleConfirmFiles} size="l">
+          Continuar
+        </Button>
       </Footer>
     </>
   );
