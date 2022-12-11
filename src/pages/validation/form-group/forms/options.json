@@ -1,0 +1,87 @@
+{
+  "GENERO": [
+    { "id": "varon_cis", "text": "Varón cis" },
+    { "id": "mujer_cis", "text": "Mujer cis" },
+    { "id": "varon_trans", "text": "Varón trans" },
+    { "id": "mujer_trans", "text": "Mujer trans" },
+    { "id": "travesti", "text": "Travesti" },
+    { "id": "no_binaria", "text": "No binaria" }
+  ],
+  "LUGAR_DEL_HECHO": [
+    { "id":"zona_sur", "text": "Zona Sur"},
+    { "id":"zona_oeste", "text": "Zona Oeste"},
+    { "id":"zona_norte", "text": "Zona Norte"},
+    { "id":"provincia_de_buenos_aires", "text": "Provincia de Buenos Aires"},
+    { "id":"mas_de_una_zona", "text": "Más de una zona"},
+    { "id":"sd", "text": "S/D"},
+    { "id":"whatsapp", "text": "WahtsApp"},
+    { "id":"telegrma", "text": "Telegram"},
+    { "id":"no_corresponde", "text": "No corresponde"}
+  ],
+  "ART_INFRINGIDO": [
+    { "id": "codigo_contravencional", "text": "Código contravencional" },
+    {
+      "id": "codigo_penal_de_la_nacion",
+      "text": "Código penal de la Nación"
+    },
+    { "id": "ley_1217", "text": "Ley 1217" },
+    { "id": "ley_12331", "text": "Ley 12331" },
+    { "id": "ley_13944", "text": "Ley 13944" },
+    { "id": "ley_14346", "text": "Ley 14346" },
+    { "id": "ley_23098", "text": "Ley 23098" },
+    { "id": "ley_23592", "text": "Ley 23592" },
+    { "id": "ley_23737", "text": "Ley 23737" },
+    { "id": "ley_24192", "text": "Ley 24192" },
+    { "id": "ley_24270", "text": "Ley 24270" },
+    { "id": "ley_25761", "text": "Ley 25761" },
+    { "id": "ley_26735", "text": "Ley 26735" },
+    { "id": "ley_451", "text": "Ley 451" }
+  ],
+  "FRECUENCIA_EPISODIOS": [
+    { "id": "primera_vez", "text": "Primera vez" },
+    { "id": "esporadico", "text": "Esporádico" },
+    { "id": "diario", "text": "Diario" },
+    { "id": "habitual", "text": "Habitual" },
+    { "id": "eventual", "text": "Eventual" }
+  ],
+  "NIVEL_INSTRUCCION": [
+    { "id": "sin_instruccion", "text": "Sin instruccion" },
+    { "id": "sin_escolarizar", "text": "Sin escolarizar" },
+    { "id": "primario_incompleto", "text": "Primario incompleto" },
+    { "id": "primario_completo", "text": "Primario completo" },
+    { "id": "primario_en_curso", "text": "Primario en curso" },
+    { "id": "secundario_incompleto", "text": "Secundario incompleto" },
+    { "id": "secundario_completo", "text": "Secundario completo" },
+    { "id": "secundario_en_curso", "text": "Secundario en curso" },
+    { "id": "terciario_incompleto", "text": "Terciario incompleto" },
+    { "id": "terciario_completo", "text": "Terciario completo" },
+    { "id": "terciario_en_curso", "text": "Terciario en curso" },
+    {
+      "id": "universitario_incompleto",
+      "text": "Universitario incompleto"
+    },
+    { "id": "universitario_completo", "text": "Universitario completo" },
+    { "id": "universitario_en_curso", "text": "Universitario en curso" }
+  ],
+  "MODALIDAD_DE_LA_VIOLENCIA": [
+    {  "id": "domestica",  "text": "Doméstica" },
+    {  "id": "en_espacio_publico",  "text": "En espacio público" },
+    {  "id": "institucional",  "text": "Institucional" },
+    {  "id": "laboral",  "text": "Laboral" },
+    {  "id": "libertad_reproductiva",  "text": "Libertad reproductiva" },
+    {  "id": "mediatica",  "text": "Mediática" },
+    {  "id": "obstetrica",  "text": "Obstétrica" },
+    {  "id": "publica_politica",  "text": "Pública política" }
+  ],
+  "TIPO_DE_RESOLUCION": [
+    {"id":"definitiva", "text": "Definitiva"},
+    {"id":"interlocuria", "text": "Interlocuria"}
+  ],
+  "DECISION": [
+    {"id":"hace_lugar", "text": "Hace lugar"},
+    {"id":"no_hace_lugar", "text": "No hace lugar"}
+  ]
+}
+
+
+

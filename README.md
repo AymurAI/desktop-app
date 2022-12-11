@@ -17,13 +17,13 @@ Other technologies
 ##  Getting started
 
 1. Clone the repository
-2. Install dependencies with
+1. Install dependencies with
 
-```bash
-npm install
-```
+    ```bash
+    npm install
+    ```
 
-3. Start the app in development mode with
+1. Start the app in development mode with
 
 ```bash
 npm run dev

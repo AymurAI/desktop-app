@@ -35,7 +35,7 @@ const Stack = styled('div', {
     },
 
     spacing: {
-      zero: { gap: 0 },
+      none: { gap: 0 },
       xxs: { gap: '$xxs' },
       xs: { gap: '$xs' },
       s: { gap: '$s' },

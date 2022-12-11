@@ -17,4 +17,14 @@ export const globalStyles = globalCss({
   '*': {
     fontFamily: '$primary',
   },
+
+  mark: {
+    backgroundColor: '$primaryAlt',
+
+    fontFamily: '$file',
+
+    padding: '0px 8px',
+
+    borderRadius: 8,
+  },
 });
