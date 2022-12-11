@@ -1,4 +1,10 @@
-import { ChangeEventHandler, ReactNode, useState } from 'react';
+import {
+  ChangeEventHandler,
+  forwardRef,
+  ReactNode,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { Check } from 'phosphor-react';
 
 import { colors } from 'styles/tokens';
@@ -13,17 +19,24 @@ export interface Props {
   name?: string;
   css?: CSS;
 }
-export default function Checkbox({
-  disabled = false,
-  checked = false,
-  name,
-  onChange,
-  children,
-  css,
-}: Props) {
+export default forwardRef<{ value: boolean }, Props>(function Checkbox(
+  { disabled = false, checked = false, name, onChange, children, css },
+  ref
+) {
   const [isChecked, setIsChecked] = useState(checked);
 
   const hasText = !!children;
+
+  // Only exposes `value` object to the parent component
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        value: isChecked,
+      };
+    },
+    [isChecked]
+  );
 
   const handleToggle: ChangeEventHandler<HTMLInputElement> = (e) => {
     setIsChecked(e.target.checked);
@@ -49,4 +62,4 @@ export default function Checkbox({
       {children}
     </Wrapper>
   );
-}
+});
