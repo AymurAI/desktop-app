@@ -4,7 +4,7 @@ import {
   forwardRef,
   ReactNode,
   useImperativeHandle,
-  useState,
+  useRef,
 } from 'react';
 
 import { CSS } from 'styles';
@@ -23,7 +23,7 @@ export default forwardRef<{ value: boolean }, Props>(function Radio(
   { name, checked = false, disabled = false, onChange, css, children },
   ref
 ) {
-  const [isChecked, setIsChecked] = useState(checked);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const hasText = !!children;
 
@@ -32,15 +32,14 @@ export default forwardRef<{ value: boolean }, Props>(function Radio(
     ref,
     () => {
       return {
-        value: isChecked,
+        value: inputRef.current?.checked ?? false,
       };
     },
-    [isChecked]
+    []
   );
 
   const handleToggle: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setIsChecked(e.target.checked);
-    onChange?.(isChecked);
+    onChange?.(e.target.checked);
   };
 
   const iconColor = disabled
@@ -50,9 +49,10 @@ export default forwardRef<{ value: boolean }, Props>(function Radio(
   return (
     <Wrapper hasText={hasText} isDisabled={disabled} css={css}>
       <Input
+        ref={inputRef}
         type="radio"
         name={name}
-        checked={isChecked}
+        defaultChecked={checked}
         disabled={disabled}
         onChange={handleToggle}
       />
