@@ -32,6 +32,10 @@ export default function FileProcessing({ file }: Props) {
     }
   };
 
+  const handleStop = () => {
+    abort();
+  };
+
   return (
     <Stack align="center" spacing="m" css={{ width: '100%' }}>
       <HiddenInput
@@ -43,9 +47,13 @@ export default function FileProcessing({ file }: Props) {
       <ProgressBar
         status={status}
         fileName={file.name}
-        progress={Math.floor(progress * 100)}
+        progress={status === 'stopped' ? 0 : Math.round(progress * 100)}
       />
-      <Button status={status} onStop={abort} onReplace={handleOpenFinder} />
+      <Button
+        status={status}
+        onStop={handleStop}
+        onReplace={handleOpenFinder}
+      />
     </Stack>
   );
 }

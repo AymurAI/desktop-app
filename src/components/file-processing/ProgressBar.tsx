@@ -1,11 +1,11 @@
 import { Label, Stack } from 'components';
-import { FileStatus } from 'hooks/usePredict';
+import { PredictStatus } from 'hooks/usePredict';
 import { Bar, BarContainer } from './FileProcessing.styles';
 
 interface Props {
   fileName: string;
   progress: number;
-  status: FileStatus;
+  status: PredictStatus;
 }
 export default function ProgressBar({ fileName, progress, status }: Props) {
   const getProgressText = () => {

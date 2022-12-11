@@ -1,10 +1,10 @@
 import { Stop, ArrowCounterClockwise as Restart } from 'phosphor-react';
 
 import { Button as BaseButton } from 'components';
-import { FileStatus } from 'hooks/usePredict';
+import { PredictStatus } from 'hooks/usePredict';
 
 interface Props {
-  status: FileStatus;
+  status: PredictStatus;
   onStop?: () => void;
   onReplace?: () => void;
 }
