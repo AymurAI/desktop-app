@@ -56,7 +56,11 @@ export const Footer = styled('nav', {
   alignItems: 'center',
   gap: '$m',
 
-  p: '$l 100px',
+  zIndex: 1,
+
+  py: '$l',
+  px: 100,
+  height: 100,
 
   bt: '1px solid $borderPrimary',
 
