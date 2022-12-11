@@ -107,10 +107,18 @@ const Button = styled('button', {
       m: { p: '$m' },
       l: { py: '$m', width: 300 },
     },
+    checked: {
+      true: {
+        bg: '$actionPressed',
+        color: '$textOnButtonAlternative',
+      },
+      false: {},
+    },
   },
   defaultVariants: {
     size: 'm',
     variant: 'primary',
+    checked: false,
   },
 });
 
