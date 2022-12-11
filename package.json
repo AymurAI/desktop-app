@@ -26,7 +26,7 @@
     "dev:web": "react-scripts start",
     "dev": "npm run build:renderer && concurrently 'BROWSER=none npm run dev:web' 'wait-on tcp:3000 && NODE_ENV=development electron .'",
     "build:renderer": "tsc --build tsconfig.renderer.json",
-    "build:app": "PUBLIC_URL=. react-scripts build",
+    "build:app": "react-scripts build",
     "build": "npm run build:app && npm run build:renderer",
     "start": "npm run build && electron .",
     "test": "react-scripts test",
