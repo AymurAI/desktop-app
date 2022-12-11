@@ -1,7 +1,7 @@
 import Arrow from './arrow';
 import Button from './button';
 import Card from './card';
-import Checkbox from './checkbox';
+import {Checkbox, CheckboxGroup} from './checkbox';
 import FileCheck from './file-check';
 import FileContainer from './file-container';
 import FilePreview from './file-preview';
@@ -19,12 +19,14 @@ import Text from './text';
 import ThemeProvider from './theme-provider';
 import Title from './title';
 import Tooltip from './tooltip';
+import ValidationForm from './validation-form';
 
 export {
   Arrow,
   Button,
   Card,
   Checkbox,
+  CheckboxGroup,
   FileCheck,
   FileContainer,
   FilePreview,
@@ -43,4 +45,5 @@ export {
   ThemeProvider,
   Title,
   Tooltip,
+  ValidationForm
 };
