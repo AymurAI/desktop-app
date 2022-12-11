@@ -10,6 +10,7 @@ import Grid from './grid';
 import HiddenInput from './hidden-input';
 import Label from './label';
 import ProfileInfo from './profile-info';
+import { Radio, RadioGroup } from './radio';
 import SectionTitle from './section-title';
 import Stack from './stack';
 import Stepper from './stepper';
@@ -32,6 +33,8 @@ export {
   HiddenInput,
   Label,
   ProfileInfo,
+  Radio,
+  RadioGroup,
   SectionTitle,
   Stack,
   Stepper,
