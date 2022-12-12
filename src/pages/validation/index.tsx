@@ -17,6 +17,7 @@ import { validate } from 'reducers/file/actions';
 import google from 'services/google';
 import { spreadsheetURLToId, validationToArray } from 'utils/google';
 import { DATASET_URL } from 'utils/config';
+import { moveNext, movePrevious } from './utils';
 
 export default withFileProtection(function Validation() {
   const files = useFiles();
@@ -25,13 +26,10 @@ export default withFileProtection(function Validation() {
   const navigate = useNavigate();
   const token = useGoogleToken();
 
-  // TODO bloquear volver a un archivo ya validado
-  const nextFile = () =>
-    setSelected((cur) => (cur === limit ? limit : cur + 1));
-  const previousFile = () => setSelected((cur) => (cur === 0 ? 0 : cur - 1));
+  const nextFile = () => setSelected(moveNext(selected, files));
+  const previousFile = () => setSelected(movePrevious(selected, files));
 
   const hasStepper = files.length > 1;
-  const limit = files.length - 1;
 
   const selectedFile = files[selected];
   // Check if the validation was completed on all the files

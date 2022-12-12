@@ -8,19 +8,22 @@ import {
 } from './FileStepper.styles';
 import { DocFile } from 'types/file';
 import Icons from './Icons';
+import { canMoveLeft as checkLeft, canMoveRight as checkRight } from './utils';
 
 interface Props {
   selected: number;
-  previousFile: () => void;
   nextFile: () => void;
+  previousFile: () => void;
 }
 export default function FileStepper({
   selected,
-  previousFile,
   nextFile,
+  previousFile,
 }: Props) {
   const files = useFiles();
 
+  const canMoveLeft = checkLeft(selected, files);
+  const canMoveRight = checkRight(selected, files);
   const isLeftDisabled = selected === 0;
   const isRightDisabled = selected === files.length - 1; // -1 because we are using base 0 notation
 
@@ -37,7 +40,7 @@ export default function FileStepper({
       {/* <- */}
       <CaretButton
         variant="tertiary"
-        disabled={isLeftDisabled}
+        disabled={isLeftDisabled || !canMoveLeft}
         onClick={previousFile}
       >
         <Icons.ArrowLeft />
@@ -56,7 +59,7 @@ export default function FileStepper({
       {/* -> */}
       <CaretButton
         variant="tertiary"
-        disabled={isRightDisabled}
+        disabled={isRightDisabled || !canMoveRight}
         onClick={nextFile}
       >
         <Icons.ArrowRight />
