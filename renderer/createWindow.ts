@@ -47,6 +47,7 @@ function configureWindow(window: BrowserWindow | null) {
 
 export default function createWindow() {
   // Creates the browser window.
+  // TODO añadir el icono de DataGenero
   mainWindow = new BrowserWindow({
     width: 1366,
     height: 768,
