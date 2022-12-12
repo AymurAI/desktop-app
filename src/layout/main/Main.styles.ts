@@ -13,7 +13,7 @@ export const Header = styled('header', {
   justifyContent: 'space-between',
   alignItems: 'center',
 
-  px: 200,
+  px: 150,
   py: '$l',
   gap: 10,
 
@@ -22,7 +22,7 @@ export const Header = styled('header', {
 });
 
 export const Section = styled('section', {
-  px: 200,
+  px: 150,
   py: '$xxl',
   flex: 1,
 
