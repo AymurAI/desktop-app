@@ -1,6 +1,6 @@
 {
   "name": "data-genero",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "main": "build/renderer/main.js",
   "dependencies": {
