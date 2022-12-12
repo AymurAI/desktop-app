@@ -1,5 +1,7 @@
 import {
   ChangeEventHandler,
+  KeyboardEvent,
+  MouseEvent,
   ReactNode,
   useImperativeHandle,
   useState,
@@ -59,8 +61,14 @@ export default forwardRef<{ value: string }, Props>(function Input(
     onChange?.(newValue);
   };
 
-  const handleClickSuggestion = () => {
+  const handleClickSuggestion = (e: MouseEvent) => {
     updateValue(suggestion as string); // We are sure is a string because the button is enabled only in case suggestion = string
+  };
+  const handleKeySuggestion = (e: KeyboardEvent) => {
+    e.preventDefault();
+
+    if (e.code === 'Space' || e.code === 'Enter')
+      updateValue(suggestion as string); // We are sure is a string because the button is enabled only in case suggestion = string
   };
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -94,7 +102,11 @@ export default forwardRef<{ value: string }, Props>(function Input(
         {suggestion && isValueEmpty && (
           <>
             <Text css={{ lineHeight: '100%' }}>|</Text>
-            <Suggestion onClick={handleClickSuggestion}>
+            <Suggestion
+              onClick={handleClickSuggestion}
+              onKeyDown={handleKeySuggestion}
+              tabIndex={0}
+            >
               {suggestion}
             </Suggestion>
           </>
