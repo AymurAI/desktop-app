@@ -3,16 +3,6 @@
 // ------------------------
 
 /**
- * Google App Client ID
- */
-export const CLIENT_ID = process.env.CLIENT_ID ?? '';
-
-/**
- * Google App API Key
- */
-export const API_KEY = process.env.API_KEY ?? '';
-
-/**
  * Port for the development app
  */
 export const PORT = process.env.PORT ?? 3000;

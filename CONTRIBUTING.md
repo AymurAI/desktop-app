@@ -2,8 +2,9 @@
 
 ## Linter
 
-This project uses _Create React App_ ESLint configuration as a base. You won't be able
-to commit files with linting errors, and if you do a `--force` you'll break CI.
+This project uses _Create React App_ ESLint configuration as a base. You won't
+be able to commit files with linting errors, and if you do a `--force`
+you'll break CI.
 
 We also use [Markdownlint](https://github.com/DavidAnson/markdownlint) for
 Markdown files.

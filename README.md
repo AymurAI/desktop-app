@@ -12,19 +12,18 @@ Main technologies:
 Other technologies
 
 - **npm** as the _package manager_
-- **Jest** as the _testing library_
 - **ESLint** as the _code linter_
 
 ##  Getting started
 
 1. Clone the repository
-2. Install dependencies with
+1. Install dependencies with
 
-```bash
-npm install
-```
+    ```bash
+    npm install
+    ```
 
-3. Start the app in development mode with
+1. Start the app in development mode with
 
 ```bash
 npm run dev

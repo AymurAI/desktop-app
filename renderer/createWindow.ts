@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, shell } from 'electron';
 
 import { isDebug, isProduction, startMinimized } from './env';
 import { resolveHTMLPath } from './utils';
@@ -33,10 +33,21 @@ function configureWindow(window: BrowserWindow | null) {
       window.show();
     }
   });
+
+  window.webContents.on('new-window', (e, url) => {
+    const EXTERNAL_URLS = ['https://www.datagenero.org/'];
+
+    // Check if the url is in the 'whitelist'
+    if (!!EXTERNAL_URLS.find((val) => val === url)) {
+      e.preventDefault();
+      shell.openExternal(url);
+    }
+  });
 }
 
 export default function createWindow() {
   // Creates the browser window.
+  // TODO añadir el icono de DataGenero
   mainWindow = new BrowserWindow({
     width: 1366,
     height: 768,

@@ -1,0 +1,40 @@
+import { Card as StyledCard } from 'components';
+import { styled } from 'styles';
+
+/**
+ * Styled card, containing step, image and description
+ */
+export const Card = styled(StyledCard, {
+  justifyContent: 'center',
+  alignItems: 'center',
+  textAlign: 'center',
+  gap: '$m',
+
+  position: 'relative',
+
+  px: '$m',
+  pt: '$l',
+  pb: '$xl',
+  width: 200,
+});
+
+/**
+ * Step indicator on Onboarding cards
+ */
+export const Step = styled('span', {
+  bg: '$actionDefaultAlt',
+  color: '$textOnButtonAlternative',
+
+  position: 'absolute',
+  top: '$m',
+
+  borderRadius: '100%',
+  width: 36,
+  height: 36,
+  mb: '-$m',
+
+  alignSelf: 'end',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
