@@ -1,4 +1,4 @@
-import { BrowserWindow, shell } from 'electron';
+import path from 'path';
 
 import { isDebug, isProduction, startMinimized } from './env';
 import { resolveHTMLPath } from './utils';
@@ -51,6 +51,9 @@ export default function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1366,
     height: 768,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+    },
   });
 
   // Add configuration
