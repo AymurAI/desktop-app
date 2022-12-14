@@ -2,7 +2,7 @@ import { PredictLabel } from './aymurai';
 import { FormData } from 'hooks/useForm';
 
 /**
- * Type for
+ * Type that defines the properties of a processed file
  */
 export type DocFile = {
   /**

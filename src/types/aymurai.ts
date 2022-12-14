@@ -73,3 +73,20 @@ export enum LabelType {
 export type ExportDocumentSuccess = {
   document: string;
 };
+
+// --------------------
+// FEEDBACK
+// --------------------
+type Nullable<T> = T extends object
+  ? {
+      [K in keyof T]: Nullable<T[K] | null>;
+    }
+  : T;
+/**
+ * Type for the object stored into the exported JSON file
+ */
+export type PredictionFeedback = Nullable<
+  PredictLabel & {
+    validationText: string | boolean;
+  }
+>;
