@@ -21,7 +21,7 @@
     "jsx": "react-jsx",
     "baseUrl": "src",
     "typeRoots": [
-      "src/types/mammoth-browser.d.ts",
+      "src/types",
       "node_modules/@types"
     ]
   },
