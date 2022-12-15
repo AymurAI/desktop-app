@@ -1,5 +1,6 @@
 import { PredictStatus } from 'hooks/usePredict';
 import { DocFile } from 'types/file';
+import logger from 'utils/logger';
 
 type ProcessState = { name: string; status: PredictStatus };
 /**
@@ -17,7 +18,18 @@ export function initProcessState(files: DocFile[]): ProcessState[] {
  * @returns `true` if the prediction process is completed, `false` otherwise
  */
 export function isPredictionCompleted(state: ProcessState[]) {
-  return !state.some((process) => process.status === 'processing');
+  return !state.some(({ status }) => status === 'processing');
+}
+
+export function canContinue(state: ProcessState[]) {
+  const atLeastOneCompleted = state.some(
+    ({ status }) => status === 'completed'
+  );
+  const hasFinishedProcessing = !state.some(
+    ({ status }) => status === 'processing'
+  );
+
+  return hasFinishedProcessing;
 }
 
 /**

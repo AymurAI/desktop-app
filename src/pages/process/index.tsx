@@ -14,11 +14,7 @@ import {
 } from 'components';
 import withFileProtection from 'features/withFileProtection';
 import { removeAllPredictions } from 'reducers/file/actions';
-import {
-  initProcessState,
-  isPredictionCompleted as checkPrediction,
-  replaceValue,
-} from './utils';
+import { initProcessState, canContinue, replaceValue } from './utils';
 import { PredictStatus } from 'hooks/usePredict';
 
 export default withFileProtection(function Process() {
@@ -27,13 +23,9 @@ export default withFileProtection(function Process() {
   const files = useFiles();
   const [process, setProcess] = useState(initProcessState(files));
 
-  const isPredictionCompleted = checkPrediction(process);
-
   const handleStatusChange = (name: string) => (newValue: PredictStatus) => {
     // Replace the newValue
-    const arr = replaceValue(name, newValue, process);
-
-    setProcess(arr);
+    setProcess((cur) => replaceValue(name, newValue, cur));
   };
 
   const handlePrevious = () => {
@@ -63,14 +55,14 @@ export default withFileProtection(function Process() {
               <FileProcessing
                 key={data.name}
                 file={data}
-                onStatusChange={handleStatusChange}
+                onStatusChange={handleStatusChange(data.name)}
               />
             ))}
           </Stack>
         </Card>
       </Section>
       <Footer>
-        <Button size="l" disabled={!isPredictionCompleted} onClick={handleNext}>
+        <Button size="l" disabled={!canContinue(process)} onClick={handleNext}>
           Siguiente
         </Button>
       </Footer>
