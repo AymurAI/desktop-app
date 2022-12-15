@@ -29,7 +29,7 @@ export function canContinue(state: ProcessState[]) {
     ({ status }) => status === 'processing'
   );
 
-  return hasFinishedProcessing;
+  return hasFinishedProcessing && atLeastOneCompleted;
 }
 
 /**
