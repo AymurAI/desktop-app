@@ -9,8 +9,6 @@ export default function spreadsheetURLToId(url: string): SpreadsheetId {
   const split = url.split('/');
   const pageIndex = split.indexOf('spreadsheets');
 
-  // TODO añadir mas checkeos a esta funcion
-
   // + 1 equals to the '/d/' in the url
   // + 2 equals to the id we are looking for
   const id = split[pageIndex + 2];

@@ -1,7 +1,9 @@
-import { BrowserWindow, shell } from 'electron';
+import { BrowserWindow, ipcMain, shell } from 'electron';
+import path from 'path';
 
 import { isDebug, isProduction, startMinimized } from './env';
 import { resolveHTMLPath } from './utils';
+import exportFeedback from './utils/feedback';
 
 let mainWindow: BrowserWindow | null;
 
@@ -51,6 +53,9 @@ export default function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1366,
     height: 768,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+    },
   });
 
   // Add configuration
@@ -60,4 +65,8 @@ export default function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  ipcMain.handle('EXPORT_FEEDBACK', (_, fileName: string, data: object) =>
+    exportFeedback(fileName, data)
+  );
 }

@@ -18,6 +18,7 @@ import google from 'services/google';
 import { spreadsheetURLToId, validationToArray } from 'utils/google';
 import { DATASET_URL } from 'utils/config';
 import { moveNext, movePrevious } from './utils';
+import exportFeedback from 'services/feedback';
 
 export default withFileProtection(function Validation() {
   const files = useFiles();
@@ -54,6 +55,9 @@ export default withFileProtection(function Validation() {
       await google(token)
         .spreadsheet(spreadsheetURLToId(DATASET_URL))
         .append(validationToArray(selectedFile.validationObject));
+
+      // Export the feedback JSON
+      await exportFeedback(selectedFile);
     } else {
       throw new Error(
         'No token was found, cannot POST the data to the Google API!'
