@@ -66,7 +66,7 @@ export default function createWindow() {
     mainWindow = null;
   });
 
-  ipcMain.handle('EXPORT', (_, fileName: string, data: object) =>
+  ipcMain.handle('EXPORT_FEEDBACK', (_, fileName: string, data: object) =>
     exportFeedback(fileName, data)
   );
 }
