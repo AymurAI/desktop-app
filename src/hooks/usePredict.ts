@@ -1,16 +1,16 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from "react";
 
-import { useFileDispatch, useFileParser } from 'hooks';
-import { predict } from 'services/aymurai';
-import { PredictLabel } from 'types/aymurai';
-import { toPlainParagraphs } from 'utils/html';
+import { useFileDispatch, useFileParser } from "hooks";
+import { predict } from "services/aymurai";
+import { PredictLabel } from "types/aymurai";
+import { toPlainParagraphs } from "utils/html";
 import {
   addPredictions,
   removeAllPredictions,
   removePredictions,
-} from 'reducers/file/actions';
+} from "reducers/file/actions";
 
-export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
+export type PredictStatus = "processing" | "error" | "stopped" | "completed";
 
 /**
  * Makes a prediction based on the given file
@@ -18,7 +18,7 @@ export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
  * @returns The `status` and `progress` of the prediction, along with an `abort()` function to cancel the process whenever is needed
  */
 export default function usePredict(file: File) {
-  const [status, setStatus] = useState<PredictStatus>('processing');
+  const [status, setStatus] = useState<PredictStatus>("processing");
   const [progress, setProgress] = useState(0);
   const [promises, setPromises] = useState<Promise<PredictLabel[]>[]>([]);
 
@@ -36,7 +36,7 @@ export default function usePredict(file: File) {
     setPromises(() => {
       dispatch(removePredictions(file.name));
       setProgress(0);
-      setStatus('stopped');
+      setStatus("stopped");
       return [];
     });
   };
@@ -46,7 +46,7 @@ export default function usePredict(file: File) {
     // If the HTML is valid and we have no promises yet
     if (html && promises.length === 0) {
       // Restart the prediction process
-      dispatch(removeAllPredictions());
+      dispatch(removePredictions(file.name));
       const paragraphs = toPlainParagraphs(html);
 
       const promises = paragraphs.map(async (p) => {
@@ -60,7 +60,7 @@ export default function usePredict(file: File) {
 
       setPromises(promises);
     }
-  }, [html, dispatch, promises.length]);
+  }, [html, dispatch, promises.length, file.name]);
 
   // Completed promises
   useEffect(() => {
@@ -73,10 +73,10 @@ export default function usePredict(file: File) {
               dispatch(addPredictions(file.name, prediction));
             });
 
-            setStatus('completed');
+            setStatus("completed");
           }
         })
-        .catch(() => setStatus('error'));
+        .catch(() => setStatus("error"));
     }
   }, [promises, file.name, dispatch]);
 
