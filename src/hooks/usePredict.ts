@@ -1,16 +1,12 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from 'react';
 
-import { useFileDispatch, useFileParser } from "hooks";
-import { predict } from "services/aymurai";
-import { PredictLabel } from "types/aymurai";
-import { toPlainParagraphs } from "utils/html";
-import {
-  addPredictions,
-  removeAllPredictions,
-  removePredictions,
-} from "reducers/file/actions";
+import { useFileDispatch, useFileParser } from 'hooks';
+import { predict } from 'services/aymurai';
+import { PredictLabel } from 'types/aymurai';
+import { toPlainParagraphs } from 'utils/html';
+import { addPredictions, removePredictions } from 'reducers/file/actions';
 
-export type PredictStatus = "processing" | "error" | "stopped" | "completed";
+export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
 
 /**
  * Makes a prediction based on the given file
@@ -18,7 +14,7 @@ export type PredictStatus = "processing" | "error" | "stopped" | "completed";
  * @returns The `status` and `progress` of the prediction, along with an `abort()` function to cancel the process whenever is needed
  */
 export default function usePredict(file: File) {
-  const [status, setStatus] = useState<PredictStatus>("processing");
+  const [status, setStatus] = useState<PredictStatus>('processing');
   const [progress, setProgress] = useState(0);
   const [promises, setPromises] = useState<Promise<PredictLabel[]>[]>([]);
 
@@ -36,7 +32,7 @@ export default function usePredict(file: File) {
     setPromises(() => {
       dispatch(removePredictions(file.name));
       setProgress(0);
-      setStatus("stopped");
+      setStatus('stopped');
       return [];
     });
   };
@@ -73,10 +69,10 @@ export default function usePredict(file: File) {
               dispatch(addPredictions(file.name, prediction));
             });
 
-            setStatus("completed");
+            setStatus('completed');
           }
         })
-        .catch(() => setStatus("error"));
+        .catch(() => setStatus('error'));
     }
   }, [promises, file.name, dispatch]);
 
