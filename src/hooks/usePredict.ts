@@ -4,11 +4,7 @@ import { useFileDispatch, useFileParser } from 'hooks';
 import { predict } from 'services/aymurai';
 import { PredictLabel } from 'types/aymurai';
 import { toPlainParagraphs } from 'utils/html';
-import {
-  addPredictions,
-  removeAllPredictions,
-  removePredictions,
-} from 'reducers/file/actions';
+import { addPredictions, removePredictions } from 'reducers/file/actions';
 
 export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
 
@@ -46,7 +42,7 @@ export default function usePredict(file: File) {
     // If the HTML is valid and we have no promises yet
     if (html && promises.length === 0) {
       // Restart the prediction process
-      dispatch(removeAllPredictions());
+      dispatch(removePredictions(file.name));
       const paragraphs = toPlainParagraphs(html);
 
       const promises = paragraphs.map(async (p) => {
@@ -60,7 +56,7 @@ export default function usePredict(file: File) {
 
       setPromises(promises);
     }
-  }, [html, dispatch, promises.length]);
+  }, [html, dispatch, promises.length, file.name]);
 
   // Completed promises
   useEffect(() => {
