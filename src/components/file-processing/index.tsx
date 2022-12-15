@@ -5,13 +5,15 @@ import Button from './Button';
 import ProgressBar from './ProgressBar';
 import { useFileDispatch, usePredict } from 'hooks';
 import { replaceFile } from 'reducers/file/actions';
+import { PredictStatus } from 'hooks/usePredict';
 
 interface Props {
   file: File;
+  onStatusChange?: (newStatus: PredictStatus) => void;
 }
-export default function FileProcessing({ file }: Props) {
+export default function FileProcessing({ file, onStatusChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { progress, status, abort } = usePredict(file);
+  const { progress, status, abort } = usePredict(file, { onStatusChange });
   const dispatch = useFileDispatch();
 
   const handleOpenFinder = () => {
