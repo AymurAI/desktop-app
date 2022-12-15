@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 import { useFiles, useFileDispatch } from 'hooks';
 import { Footer, Section } from 'layout/main';
@@ -13,14 +14,27 @@ import {
 } from 'components';
 import withFileProtection from 'features/withFileProtection';
 import { removeAllPredictions } from 'reducers/file/actions';
-import { isPredictionCompleted as checkPrediction } from 'utils/file';
+import {
+  initProcessState,
+  isPredictionCompleted as checkPrediction,
+  replaceValue,
+} from './utils';
+import { PredictStatus } from 'hooks/usePredict';
 
 export default withFileProtection(function Process() {
   const navigate = useNavigate();
   const dispatch = useFileDispatch();
   const files = useFiles();
+  const [process, setProcess] = useState(initProcessState(files));
 
-  const isPredictionCompleted = checkPrediction(files);
+  const isPredictionCompleted = checkPrediction(process);
+
+  const handleStatusChange = (name: string) => (newValue: PredictStatus) => {
+    // Replace the newValue
+    const arr = replaceValue(name, newValue, process);
+
+    setProcess(arr);
+  };
 
   const handlePrevious = () => {
     navigate('/preview');
@@ -46,7 +60,11 @@ export default withFileProtection(function Process() {
               </Subtitle>
             </Stack>
             {files.map(({ data }) => (
-              <FileProcessing key={data.name} file={data} />
+              <FileProcessing
+                key={data.name}
+                file={data}
+                onStatusChange={handleStatusChange}
+              />
             ))}
           </Stack>
         </Card>
