@@ -36,13 +36,12 @@ export default function usePredict(
   // This 'cancelled' value is used to cancel any ongoing promise before making further changes to the state
   const cancelled = useRef(false);
 
-  const updateStatus = useCallback(
-    (newValue: PredictStatus) => {
-      setStatus(newValue);
-      onStatusChange?.(newValue);
-    },
-    [onStatusChange]
-  );
+  const updateStatus = useCallback((newValue: PredictStatus) => {
+    setStatus(newValue);
+    onStatusChange?.(newValue);
+    // This next line is disabled because the function should only be created once, independent
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const abort = () => {
     cancelled.current = true;
