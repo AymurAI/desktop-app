@@ -4,6 +4,7 @@ import {
   AddPredictionsAction,
   AppendValidationAction,
   FilterUnselectedAction,
+  FilterCancelledAction,
   RemoveAllFilesAction,
   RemoveAllPredictionsAction,
   RemovePredictionsAction,
@@ -27,7 +28,8 @@ export type Action =
   | ReplaceFileAction
   | FilterUnselectedAction
   | ValidateAction
-  | AppendValidationAction;
+  | AppendValidationAction
+  | FilterCancelledAction;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -109,6 +111,13 @@ export default function reducer(state: State, action: Action): State {
     // ----------------
     case ActionTypes.FILTER_UNSELECTED: {
       return state.filter((file) => file.selected);
+    }
+
+    // ----------------
+    // FILTER UNSELECTED
+    // ----------------
+    case ActionTypes.FILTER_CANCELLED: {
+      return state.filter((file) => file.predictions);
     }
     // ----------------
     // VALIDATE

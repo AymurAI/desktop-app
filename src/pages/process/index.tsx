@@ -13,7 +13,7 @@ import {
   FileProcessing,
 } from 'components';
 import withFileProtection from 'features/withFileProtection';
-import { removeAllPredictions } from 'reducers/file/actions';
+import { filterCancelled, removeAllPredictions } from 'reducers/file/actions';
 import { initProcessState, canContinue, replace } from './utils';
 import { PredictStatus } from 'hooks/usePredict';
 
@@ -39,6 +39,7 @@ export default withFileProtection(function Process() {
   };
 
   const handleNext = () => {
+    dispatch(filterCancelled());
     navigate('/validation');
   };
 

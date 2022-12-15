@@ -9,6 +9,7 @@ export enum ActionTypes {
   ADD_PREDICTIONS = 'ADD_PREDICTIONS',
   ADD_PARSED_HTML = 'ADD_PARSED_HTML',
   FILTER_UNSELECTED = 'FILTER_UNSELECTED',
+  FILTER_CANCELLED = 'FILTER_CANCELLED',
   TOGGLE_SELECTED = 'TOGGLE_SELECTED',
   REMOVE_ALL_PREDICTIONS = 'REMOVE_ALL_PREDICTIONS',
   REMOVE_PREDICTIONS = 'REMOVE_PREDICTIONS',
@@ -164,5 +165,16 @@ export function appendValidation(
   return {
     type: ActionTypes.APPEND_VALIDATION,
     payload: { fileName, validation },
+  };
+}
+
+export type FilterCancelledAction = Action<ActionTypes.FILTER_CANCELLED>;
+/**
+ * Removes files from the state whose `predictions` property is set on `undefined`
+ */
+export function filterCancelled(): FilterCancelledAction {
+  return {
+    type: ActionTypes.FILTER_CANCELLED,
+    payload: {},
   };
 }
