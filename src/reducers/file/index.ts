@@ -4,13 +4,13 @@ import {
   AddPredictionsAction,
   AppendValidationAction,
   FilterUnselectedAction,
-  FilterCancelledAction,
   RemoveAllFilesAction,
   RemoveAllPredictionsAction,
   RemovePredictionsAction,
   ReplaceFileAction,
   ToggleSelectedAction,
   ValidateAction,
+  FilterUnprocessedAction,
 } from './actions';
 import { addFiles, replaceFile, updateFromState } from './utils';
 
@@ -29,7 +29,7 @@ export type Action =
   | FilterUnselectedAction
   | ValidateAction
   | AppendValidationAction
-  | FilterCancelledAction;
+  | FilterUnprocessedAction;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -116,7 +116,7 @@ export default function reducer(state: State, action: Action): State {
     // ----------------
     // FILTER UNSELECTED
     // ----------------
-    case ActionTypes.FILTER_CANCELLED: {
+    case ActionTypes.FILTER_UNPROCESSED: {
       return state.filter((file) => file.predictions);
     }
     // ----------------
