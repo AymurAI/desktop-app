@@ -1,6 +1,5 @@
 node_modules
 build
-renderer
 tmp
 .nvmrc
 .gitignore
@@ -11,3 +10,4 @@ tmp
 *.log
 README.md
 CONTRIBUTING.md
+out
