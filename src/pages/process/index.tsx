@@ -61,6 +61,7 @@ export default withFileProtection(function Process() {
                 key={data.name}
                 file={data}
                 onStatusChange={handleStatusChange(data.name)}
+                onFileReplace={handleReplaceFile(data.name)}
               />
             ))}
           </Stack>
