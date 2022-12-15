@@ -13,9 +13,11 @@ import {
   FileProcessing,
 } from 'components';
 import withFileProtection from 'features/withFileProtection';
-import { removeAllPredictions } from 'reducers/file/actions';
+import { filterCancelled, removeAllPredictions } from 'reducers/file/actions';
 import { initProcessState, canContinue, replaceValue } from './utils';
 import { PredictStatus } from 'hooks/usePredict';
+import { updateFromState } from 'reducers/file/utils';
+import { addFiles } from 'reducers/file/actions';
 
 export default withFileProtection(function Process() {
   const navigate = useNavigate();
@@ -34,6 +36,7 @@ export default withFileProtection(function Process() {
   };
 
   const handleNext = () => {
+    dispatch(filterCancelled());
     navigate('/validation');
   };
 
@@ -44,10 +47,10 @@ export default withFileProtection(function Process() {
           2. Procesamiento de los archivos
         </SectionTitle>
         <Card css={{ alignItems: 'stretch' }}>
-          <Stack spacing="l" direction="column">
-            <Stack direction="column" spacing="xs">
+          <Stack spacing='l' direction='column'>
+            <Stack direction='column' spacing='xs'>
               <Text>AymurAI está extrayendo los datos de los archivos</Text>
-              <Subtitle size="s">
+              <Subtitle size='s'>
                 Este proceso puede tardar algunos minutos.
               </Subtitle>
             </Stack>
@@ -62,7 +65,7 @@ export default withFileProtection(function Process() {
         </Card>
       </Section>
       <Footer>
-        <Button size="l" disabled={!canContinue(process)} onClick={handleNext}>
+        <Button size='l' disabled={!canContinue(process)} onClick={handleNext}>
           Siguiente
         </Button>
       </Footer>
