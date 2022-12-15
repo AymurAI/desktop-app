@@ -39,7 +39,7 @@ export default function usePredict(
   const updateStatus = useCallback((newValue: PredictStatus) => {
     setStatus(newValue);
     onStatusChange?.(newValue);
-    // This next line is disabled because the function should only be created once, independent
+    // This next line is disabled because the function should only be created once
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
