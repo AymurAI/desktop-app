@@ -1,4 +1,6 @@
 import { promises as fs } from 'fs';
+import { homedir } from 'os';
+import path from 'path';
 
 function getDate() {
   const now = new Date(Date.now());
@@ -20,6 +22,17 @@ function formatName(fileName: string) {
     .replace(/\s/g, '_'); // Remove whitespace
 
   return `aymurai--${formattedName}`;
+}
+
+function getFolder() {
+  const home = path.resolve(homedir(), 'AppData/Local/AymurAI/feedback'); // This path is based on Windows OS
+
+  return home;
+}
+
+async function mkdir() {
+  const dataPath = getFolder();
+  await fs.mkdir(dataPath, { recursive: true });
 }
 
 /**
