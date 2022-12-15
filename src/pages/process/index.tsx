@@ -14,7 +14,7 @@ import {
 } from 'components';
 import withFileProtection from 'features/withFileProtection';
 import { removeAllPredictions } from 'reducers/file/actions';
-import { initProcessState, canContinue, replaceValue } from './utils';
+import { initProcessState, canContinue, replace } from './utils';
 import { PredictStatus } from 'hooks/usePredict';
 
 export default withFileProtection(function Process() {
@@ -25,7 +25,12 @@ export default withFileProtection(function Process() {
 
   const handleStatusChange = (name: string) => (newValue: PredictStatus) => {
     // Replace the newValue
-    setProcess((cur) => replaceValue(name, newValue, cur));
+    setProcess((cur) => replace(name, { status: newValue }, cur));
+  };
+  const handleReplaceFile = (name: string) => (newName: string) => {
+    setProcess((cur) =>
+      replace(name, { name: newName, status: 'processing' }, cur)
+    );
   };
 
   const handlePrevious = () => {

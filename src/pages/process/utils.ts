@@ -39,13 +39,13 @@ export function canContinue(state: ProcessState[]) {
  * @param state `ProcessState[]` state in `/process` page
  * @returns A new array with the status of the given file changed
  */
-export function replaceValue(
+export function replace(
   name: string,
-  newValue: PredictStatus,
+  value: Partial<ProcessState>,
   state: ProcessState[]
 ) {
   return state.map((process) => {
-    if (process.name === name) return { ...process, status: newValue };
+    if (process.name === name) return { ...process, ...value };
     else return process;
   });
 }
