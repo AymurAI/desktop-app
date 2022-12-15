@@ -36,5 +36,5 @@ export default async function exportFeedback(
   const path = '/Users/aerolab';
   const json = JSON.stringify(content);
 
-  await fs.writeFile(`${path}/${name}--${date}`, json, { flag: 'w' });
+  await fs.writeFile(`${path}/${name}--${date}.json`, json, { flag: 'w' });
 }
