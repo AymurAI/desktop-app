@@ -77,6 +77,7 @@ const orderArray = [
  */
 export default function validationToArray(object: DocFile['validationObject']) {
   return orderArray.map((key) => {
+    // Special cases
     if (key === 'VIOLENCIA_DE_GENERO') {
       const si = object[LabelType.VIOLENCIA_DE_GENERO_SI];
       const no = object[LabelType.VIOLENCIA_DE_GENERO_NO];
@@ -84,7 +85,18 @@ export default function validationToArray(object: DocFile['validationObject']) {
       if (si) return true;
       else if (no) return false;
       return null;
+    } else if (key === 'FRASES_AGRESION') {
+      // Find related fields. This retrieves any field named in the format `FRASES_AGRESIONx`
+      const frases = Object.keys(object).filter((objectKey) =>
+        objectKey.includes(key)
+      );
+      // Join the phrases by commas
+      const joined = frases.map((frase) => object[frase]).join(', ');
+
+      return joined;
     }
+
+    // Generic case, just return the value
     return object[key] ?? null;
   });
 }
