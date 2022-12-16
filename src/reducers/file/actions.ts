@@ -7,8 +7,8 @@ import { PredictLabel } from 'types/aymurai';
 export enum ActionTypes {
   ADD = 'ADD',
   ADD_PREDICTIONS = 'ADD_PREDICTIONS',
-  ADD_PARSED_HTML = 'ADD_PARSED_HTML',
   FILTER_UNSELECTED = 'FILTER_UNSELECTED',
+  FILTER_UNPROCESSED = 'FILTER_UNPROCESSED',
   TOGGLE_SELECTED = 'TOGGLE_SELECTED',
   REMOVE_ALL_PREDICTIONS = 'REMOVE_ALL_PREDICTIONS',
   REMOVE_PREDICTIONS = 'REMOVE_PREDICTIONS',
@@ -164,5 +164,16 @@ export function appendValidation(
   return {
     type: ActionTypes.APPEND_VALIDATION,
     payload: { fileName, validation },
+  };
+}
+
+export type FilterUnprocessedAction = Action<ActionTypes.FILTER_UNPROCESSED>;
+/**
+ * Removes files from the state whose `predictions` property is set on `undefined`
+ */
+export function filterUnprocessed(): FilterUnprocessedAction {
+  return {
+    type: ActionTypes.FILTER_UNPROCESSED,
+    payload: {},
   };
 }

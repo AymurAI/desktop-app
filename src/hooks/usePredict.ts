@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 import { useFileDispatch, useFileParser } from 'hooks';
 import { predict } from 'services/aymurai';
@@ -8,12 +8,18 @@ import { addPredictions, removePredictions } from 'reducers/file/actions';
 
 export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
 
+interface UsePredictOptions {
+  onStatusChange?: (status: PredictStatus) => void;
+}
 /**
  * Makes a prediction based on the given file
  * @param file File used with the AI to get predictions
  * @returns The `status` and `progress` of the prediction, along with an `abort()` function to cancel the process whenever is needed
  */
-export default function usePredict(file: File) {
+export default function usePredict(
+  file: File,
+  { onStatusChange }: UsePredictOptions = {}
+) {
   const [status, setStatus] = useState<PredictStatus>('processing');
   const [progress, setProgress] = useState(0);
   const [promises, setPromises] = useState<Promise<PredictLabel[]>[]>([]);
@@ -26,15 +32,21 @@ export default function usePredict(file: File) {
   // This 'cancelled' value is used to cancel any ongoing promise before making further changes to the state
   const cancelled = useRef(false);
 
+  const updateStatus = useCallback((newValue: PredictStatus) => {
+    setStatus(newValue);
+    onStatusChange?.(newValue);
+    // This next line is disabled because the function should only be created once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const abort = () => {
     cancelled.current = true;
     controller.current.abort();
-    setPromises(() => {
-      dispatch(removePredictions(file.name));
-      setProgress(0);
-      setStatus('stopped');
-      return [];
-    });
+
+    setPromises([]);
+    dispatch(removePredictions(file.name));
+    setProgress(0);
+    updateStatus('stopped');
   };
 
   // Generate Promises
@@ -69,12 +81,12 @@ export default function usePredict(file: File) {
               dispatch(addPredictions(file.name, prediction));
             });
 
-            setStatus('completed');
+            updateStatus('completed');
           }
         })
-        .catch(() => setStatus('error'));
+        .catch(() => updateStatus('error'));
     }
-  }, [promises, file.name, dispatch]);
+  }, [promises, file.name, dispatch, updateStatus]);
 
   return { status, progress, abort };
 }

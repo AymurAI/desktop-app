@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 import { useFiles, useFileDispatch } from 'hooks';
 import { Footer, Section } from 'layout/main';
@@ -12,15 +13,25 @@ import {
   FileProcessing,
 } from 'components';
 import withFileProtection from 'features/withFileProtection';
-import { removeAllPredictions } from 'reducers/file/actions';
-import { isPredictionCompleted as checkPrediction } from 'utils/file';
+import { filterUnprocessed, removeAllPredictions } from 'reducers/file/actions';
+import { initProcessState, canContinue, replace } from './utils';
+import { PredictStatus } from 'hooks/usePredict';
 
 export default withFileProtection(function Process() {
   const navigate = useNavigate();
   const dispatch = useFileDispatch();
   const files = useFiles();
+  const [process, setProcess] = useState(initProcessState(files));
 
-  const isPredictionCompleted = checkPrediction(files);
+  const handleStatusChange = (name: string) => (newValue: PredictStatus) => {
+    // Replace the newValue
+    setProcess((cur) => replace(name, { status: newValue }, cur));
+  };
+  const handleReplaceFile = (name: string) => (newName: string) => {
+    setProcess((cur) =>
+      replace(name, { name: newName, status: 'processing' }, cur)
+    );
+  };
 
   const handlePrevious = () => {
     navigate('/preview');
@@ -28,6 +39,7 @@ export default withFileProtection(function Process() {
   };
 
   const handleNext = () => {
+    dispatch(filterUnprocessed());
     navigate('/validation');
   };
 
@@ -46,13 +58,18 @@ export default withFileProtection(function Process() {
               </Subtitle>
             </Stack>
             {files.map(({ data }) => (
-              <FileProcessing key={data.name} file={data} />
+              <FileProcessing
+                key={data.name}
+                file={data}
+                onStatusChange={handleStatusChange(data.name)}
+                onFileReplace={handleReplaceFile(data.name)}
+              />
             ))}
           </Stack>
         </Card>
       </Section>
       <Footer>
-        <Button size="l" disabled={!isPredictionCompleted} onClick={handleNext}>
+        <Button size="l" disabled={!canContinue(process)} onClick={handleNext}>
           Siguiente
         </Button>
       </Footer>

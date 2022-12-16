@@ -5,13 +5,20 @@ import Button from './Button';
 import ProgressBar from './ProgressBar';
 import { useFileDispatch, usePredict } from 'hooks';
 import { replaceFile } from 'reducers/file/actions';
+import { PredictStatus } from 'hooks/usePredict';
 
 interface Props {
   file: File;
+  onStatusChange?: (newStatus: PredictStatus) => void;
+  onFileReplace?: (newName: string) => void;
 }
-export default function FileProcessing({ file }: Props) {
+export default function FileProcessing({
+  file,
+  onStatusChange,
+  onFileReplace,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { progress, status, abort } = usePredict(file);
+  const { progress, status, abort } = usePredict(file, { onStatusChange });
   const dispatch = useFileDispatch();
 
   const handleOpenFinder = () => {
@@ -27,6 +34,7 @@ export default function FileProcessing({ file }: Props) {
 
       // Only one file can be used to replace the old one
       if (files.length > 0) {
+        onFileReplace?.(files[0].name);
         dispatch(replaceFile(file.name, files[0]));
       }
     }
