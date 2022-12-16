@@ -2,12 +2,14 @@ import { Plus } from 'phosphor-react';
 import { useState } from 'react';
 
 import {
+  Button,
   Checkbox,
   CheckboxGroup,
   Input,
   Radio,
   RadioGroup,
   Select,
+  Stack,
   ValidationForm,
 } from 'components';
 import { LabelType } from 'types/aymurai';
@@ -130,14 +132,17 @@ export default function DatosDenunciante({
             options={json.MODALIDAD_DE_LA_VIOLENCIA}
             label="Modalidad de la violencia"
           />
-          <Input
-            {...register(LabelType.FRASES_AGRESION)}
-            defaultValue={getValue(LabelType.FRASES_AGRESION)}
-            suggestion={getSuggestion(LabelType.FRASES_AGRESION)}
-            label="Frases de la agresión"
-          />
-          {/* TODO añadir boton de agregar más agresiones
-          Consultar cómo se guardan en el dataset multiples frases */}
+          <Stack direction="column" spacing="m" align="stretch">
+            <Button
+              size="s"
+              css={{ alignSelf: 'flex-start' }}
+              variant="secondary"
+              onClick={newFraseAgresion}
+            >
+              <Plus />
+              Agregar frase
+            </Button>
+          </Stack>
           <Select
             {...register(LabelType.FRECUENCIA_EPISODIOS)}
             selected={getValue(LabelType.FRECUENCIA_EPISODIOS)}
