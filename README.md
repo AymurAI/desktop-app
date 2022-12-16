@@ -17,6 +17,14 @@ Other technologies
 ##  Getting started
 
 1. Clone the repository
+1. Add your Google OAuth Client ID as an `.env` file
+
+    ```bash
+    $ vim .env
+    
+    REACT_APP_CLIENT_ID="XXXXXXXXXXXX" # Your Client ID
+    ```
+
 1. Install dependencies with
 
     ```bash
@@ -25,9 +33,9 @@ Other technologies
 
 1. Start the app in development mode with
 
-```bash
-npm run dev
-```
+    ```bash
+    npm run dev
+    ```
 
 ##  Colaborators
 
