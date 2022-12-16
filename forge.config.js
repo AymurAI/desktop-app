@@ -2,8 +2,8 @@ module.exports = {
   packagerConfig: {
     // This forces forge to only package already builded files
     ignore: ['^\\/public$', '^\\/src$', '^\\/node_modules$', '^\\/[.].+'],
-    icon: 'public/brand/logo256.ico',
-    name: 'AymurAI'
+    icon: 'public/brand/logo256-text',
+    name: 'AymurAI',
   },
   rebuildConfig: {},
   makers: [
