@@ -3,7 +3,7 @@
 ## Tecnologías principales
 
 AymurAI es una aplicación de escritorio basada en
-[NodeJS](https://nodejs.org/en/) que utiliza dos principales frameworks:
+[NodeJS](https://nodejs.org/en/) que utiliza tres principales tecnologías:
 
 - **[Electron.JS](https://www.electronjs.org/)**: elegido por su capacidad de
 poder crear aplicaciones multiplataforma, Electron nos permite crear
@@ -42,7 +42,7 @@ de Google OAuth2
 - **[Stitches](https://stitches.dev/)**: elegida como librería de estilos, nos
 permite configurar toda una lista de _tokens_ que pueden ser utilizados a lo
 largo de toda la aplicación manteniendo una alta consistencia entre los estilos.
-Nos permiten configurar y estandarizar colores, espaciados, sombras, etc además
+Esto nos permite configurar y estandarizar colores, espaciados, sombras, etc además
 de darnos la posibilidad de trabajar con _styled components_ para un
 ágil desarrollo
 - **[Google OAuth2](https://developers.google.com/identity/protocols/oauth2)**:
@@ -53,23 +53,23 @@ podría obtener el token que nos permite interaccionar con las APIs
 
 ## Estructura
 
-Se dividió la aplicación en 6 páginas, siguiendo el siguiente orden:
+Se dividió la aplicación en 6 páginas, que se presentan en el siguiente orden:
 
 1. **Login**: página donde se realiza la autenticación mediante _Google OAuth2_
 1. **Onboarding**: se nos muestra una guía sobre el funcionamiento de la
 aplicación y los pasos a seguir para poder realizar la validación de nuestros
-archivos. En este paso es donde podremos cargar nuestros archivos
-1. **Preview**: obtendremos una vista previa de los documentos cargados en la
+archivos. Es en este paso donde podremos cargar nuestros documentos
+1. **Preview**: obtendremos una vista previa de los escritos cargados en la
 página anterior con la oportunidad de cargar nuevos documentos si es necesario.
-Es aquí donde podemos decidir cuáles son los documentos finales que serán
+Es aquí donde podemos decidir cuáles son los archivos finales que serán
 procesados por la inteligencia artificial
-1. **Process**: página de procesamiento. Se irán procesando los archivos poco a
-poco a medida que se consulta a la inteligencia artificial. Este proceso puede
-tardar un poco. Podemos detener el procesamiento de los archivos o reemplazarlos
-si es necesario
+1. **Process**: página de procesamiento. En este paso se realiza la consulta
+a la inteligencia artificial para obtener las predicciones correspondientes
+a cada archivo. Esto puede tardar un poco. Podemos detener el procesamiento
+de los documentos o reemplazarlos en cualquier momento si es necesario
 1. **Validation**: es en esta instancia donde validaremos lo que nos ha devuelto
 la inteligencia artificial. Tendremos un form donde podremos ir seleccionando
-las sugerencias hechas por la IA o completar con lo corresponda en ese momento.
+las sugerencias hechas por la IA o completar con lo que corresponda en ese momento.
 Cada vez que se valida un documento, se crea una conexión con la
 _Spreadsheet API_ de _Google_ para poder enviar los datos finales
 1. **Finish**: podremos ver una vista preview de los documentos que validamos y
