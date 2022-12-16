@@ -1,6 +1,5 @@
 import { PredictStatus } from 'hooks/usePredict';
 import { DocFile } from 'types/file';
-import logger from 'utils/logger';
 
 type ProcessState = { name: string; status: PredictStatus };
 /**
