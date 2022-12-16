@@ -37,6 +37,43 @@ Other technologies
     npm run dev
     ```
 
+## Scripts
+
+### Development
+
+- `dev:web`: levanta el frontend localmente para poder ser visualizado en un
+browser convencional
+- `dev`: levanta el frontend localmente y crea una instancia de _Electron_ para
+poder visualizarlo
+
+### Build
+
+- `build:renderer`: genera un build de la aplicación de _Electron_
+- `build:app`: genera un build de la aplicación de _React_
+- `build`: genera un build de la aplicación de _React_ y luego un build de la
+aplicación de _Electron_
+
+### Validation
+
+- `lint`: corre el linter (_ESLint_) en todo el proyecto
+- `lint:markdown`: corre el linter de markdown (_MarkdownLint_), pero
+únicamente en los archivos de markdown
+- `lint:fix`: corrige los errores de linter de formato
+- `check-types:react`: corre un checko de tipado en la aplicación de _React_
+- `check-types:renderer`: corre un checko de tipado en la aplicación de
+_Electron_
+- `validate`: corre el linter y luego el checkeo de tipos
+- `pre-commit`: corre el _LintStaged_
+
+### Deployment
+
+- `deploy`: genera la imagen del frontend en base al `Dockerfile.production` y
+luego la despliega en su propio container de _Docker_
+- `package`: genera la aplicación empaquetada en la carpeta `/out`. El tipo de
+aplicación depende del OS host
+- `make`: genera un instalador de la aplicación empaquetada. También depende del
+OS host
+
 ##  Colaborators
 
 - Melina Gatto (_Project Manager_)

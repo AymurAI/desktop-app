@@ -35,7 +35,7 @@
     "lint:fix": "eslint . --fix --ignore-path .gitignore .",
     "check-types:react": "tsc -p tsconfig.json",
     "check-types:renderer": "tsc -p tsconfig.renderer.json --noEmit",
-    "validate": "npm run lint && npm run check-types:react",
+    "validate": "npm run lint && npm run check-types:react && npm run check-types:renderer",
     "pre-commit": "lint-staged",
     "deploy": "docker compose -f docker-compose.production.yml build && docker compose -f docker-compose.production.yml up -d",
     "package": "rm -rf build && npm run build:renderer && electron-forge package",
