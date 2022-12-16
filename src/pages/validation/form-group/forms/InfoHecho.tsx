@@ -27,6 +27,8 @@ export default function DatosDenunciante({
   const newFraseAgresion = () => setFrasesAgresion(frasesAgresion + 1);
 
   const frasesArray = Array.from(Array(frasesAgresion).keys());
+  const fraseName = (i: number) => `${LabelType.FRASES_AGRESION}${i}`;
+
   return (
     <ValidationForm title="Información del hecho" fileName={fileName}>
       {(register) => (
@@ -133,6 +135,16 @@ export default function DatosDenunciante({
             label="Modalidad de la violencia"
           />
           <Stack direction="column" spacing="m" align="stretch">
+            {frasesArray.map((i) => (
+              <Input
+                key={i}
+                prefix={frasesArray.length > 1 ? i + 1 : undefined}
+                {...register(fraseName(i))}
+                defaultValue={getValue(fraseName(i))}
+                suggestion={getSuggestion(fraseName(i))}
+                label="Frases de la agresión"
+              />
+            ))}
             <Button
               size="s"
               css={{ alignSelf: 'flex-start' }}
