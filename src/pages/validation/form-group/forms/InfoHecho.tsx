@@ -1,3 +1,6 @@
+import { Plus } from 'phosphor-react';
+import { useState } from 'react';
+
 import {
   Checkbox,
   CheckboxGroup,
@@ -17,6 +20,11 @@ export default function DatosDenunciante({
   getSuggestion,
   getChecked,
 }: FormProps) {
+  const [frasesAgresion, setFrasesAgresion] = useState(1);
+
+  const newFraseAgresion = () => setFrasesAgresion(frasesAgresion + 1);
+
+  const frasesArray = Array.from(Array(frasesAgresion).keys());
   return (
     <ValidationForm title="Información del hecho" fileName={fileName}>
       {(register) => (
