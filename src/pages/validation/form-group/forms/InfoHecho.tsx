@@ -1,10 +1,15 @@
+import { Plus } from 'phosphor-react';
+import { useState } from 'react';
+
 import {
+  Button,
   Checkbox,
   CheckboxGroup,
   Input,
   Radio,
   RadioGroup,
   Select,
+  Stack,
   ValidationForm,
 } from 'components';
 import { LabelType } from 'types/aymurai';
@@ -17,6 +22,13 @@ export default function DatosDenunciante({
   getSuggestion,
   getChecked,
 }: FormProps) {
+  const [frasesAgresion, setFrasesAgresion] = useState(1);
+
+  const newFraseAgresion = () => setFrasesAgresion(frasesAgresion + 1);
+
+  const frasesArray = Array.from(Array(frasesAgresion).keys());
+  const fraseName = (i: number) => `${LabelType.FRASES_AGRESION}${i}`;
+
   return (
     <ValidationForm title="Información del hecho" fileName={fileName}>
       {(register) => (
@@ -122,14 +134,27 @@ export default function DatosDenunciante({
             options={json.MODALIDAD_DE_LA_VIOLENCIA}
             label="Modalidad de la violencia"
           />
-          <Input
-            {...register(LabelType.FRASES_AGRESION)}
-            defaultValue={getValue(LabelType.FRASES_AGRESION)}
-            suggestion={getSuggestion(LabelType.FRASES_AGRESION)}
-            label="Frases de la agresión"
-          />
-          {/* TODO añadir boton de agregar más agresiones
-          Consultar cómo se guardan en el dataset multiples frases */}
+          <Stack direction="column" spacing="m" align="stretch">
+            {frasesArray.map((i) => (
+              <Input
+                key={i}
+                prefix={frasesArray.length > 1 ? i + 1 : undefined}
+                {...register(fraseName(i))}
+                defaultValue={getValue(fraseName(i))}
+                suggestion={getSuggestion(fraseName(i))}
+                label="Frases de la agresión"
+              />
+            ))}
+            <Button
+              size="s"
+              css={{ alignSelf: 'flex-start' }}
+              variant="secondary"
+              onClick={newFraseAgresion}
+            >
+              <Plus />
+              Agregar frase
+            </Button>
+          </Stack>
           <Select
             {...register(LabelType.FRECUENCIA_EPISODIOS)}
             selected={getValue(LabelType.FRECUENCIA_EPISODIOS)}
