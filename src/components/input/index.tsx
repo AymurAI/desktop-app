@@ -85,8 +85,8 @@ export default forwardRef<{ value: string }, Props>(function Input(
         {/* PREFIX */}
         {prefix && (
           <>
-            {prefix}
-            <Text css={{ lineHeight: '100%' }}>|</Text>
+            <Label>{prefix}</Label>
+            <Text css={{ lineHeight: '100%', color: '$secondary' }}>|</Text>
           </>
         )}
 
