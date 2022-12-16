@@ -29,7 +29,6 @@ export default function FormGroup({ file }: Props) {
     {}
   );
 
-  // TODO checkear este `as string`
   const getValue: GetValueFunction = (label) =>
     (file.validationObject[label] ?? '') as string;
   const getSuggestion: GetSuggestionFunction = (label) =>
