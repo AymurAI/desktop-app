@@ -8,15 +8,73 @@
     { "id": "no_binaria", "text": "No binaria" }
   ],
   "LUGAR_DEL_HECHO": [
-    { "id":"zona_sur", "text": "Zona Sur"},
-    { "id":"zona_oeste", "text": "Zona Oeste"},
-    { "id":"zona_norte", "text": "Zona Norte"},
-    { "id":"provincia_de_buenos_aires", "text": "Provincia de Buenos Aires"},
-    { "id":"mas_de_una_zona", "text": "Más de una zona"},
-    { "id":"sd", "text": "S/D"},
-    { "id":"whatsapp", "text": "WahtsApp"},
-    { "id":"telegrma", "text": "Telegram"},
-    { "id":"no_corresponde", "text": "No corresponde"}
+    [
+      { "id": "en_auto_particular", "text": "En auto particular" },
+      { "id": "en_comisaria", "text": "En comisaria" },
+      {
+        "id": "en_complejo_penitenciario",
+        "text": "En complejo penitenciario"
+      },
+      { "id": "en_domicilio_laboral", "text": "En domicilio laboral" },
+      {
+        "id": "en_domicilio_laboral_y_mediante_medios_tecnologicos",
+        "text": "En domicilio laboral y mediante medios tecnológicos"
+      },
+      { "id": "en_domicilio_particular", "text": "En domicilio particular" },
+      {
+        "id": "en_domicilio_particular_y_en_puerta_de_domicilio_particular",
+        "text": "En domicilio particular y en puerta de domicilio particular"
+      },
+      {
+        "id": "en_domicilio_particular_y_mediante_medios_tecnologicos",
+        "text": "En domicilio particular y mediante medios tecnológicos"
+      },
+      { "id": "en_estadio_de_futbol", "text": "En estadio de fútbol" },
+      { "id": "en_geriatrico", "text": "En geriátrico" },
+      { "id": "en_hospital", "text": "En hospital" },
+      { "id": "en_institucion_privada", "text": "En institución privada" },
+      { "id": "en_lugar_privado", "text": "En lugar privado" },
+      { "id": "en_lugar_publico", "text": "En lugar público" },
+      {
+        "id": "en_puerta_de_domicilio_particular_y_mediante_medios_tecnológicos",
+        "text": "En puerta de domicilio particular y mediante medios tecnológicos"
+      },
+      { "id": "en_transporte_publico", "text": "En transporte público" },
+      {
+        "id": "en_una_institucion_educativa",
+        "text": "En una instituci´pn educativa"
+      },
+      {
+        "id": "en_via_publica_y_mediante_medios_tecnologicos",
+        "text": "En vía pública y mediante medios tecnológicos"
+      },
+      {
+        "id": "mediante_medios_tecnologicos",
+        "text": "Mediante medios tecnológicos"
+      },
+      { "id": "pasillo_de_domicilio", "text": "Pasillo de domicilio" },
+      {
+        "id": "puerta_de_domicilio_particular_y_en_domicilio_laboral",
+        "text": "Puerta de domicilio particular y en domicilio laboral"
+      },
+      {
+        "id": "puerta_de_domicilio_particular",
+        "text": "Puerta de domicilio particular"
+      },
+      {
+        "id": "puerta_de_domicilio_particular_y_en_puerta_de_domicilio_laboral",
+        "text": "Puerta de domicilio particular y en puerta de domicilio laboral"
+      },
+      { "id": "via_publica", "text": "Vía pública" },
+      {
+        "id": "via_publica_y_en_domicilio_particular",
+        "text": "Via pública y en domicilio particular"
+      },
+      {
+        "id": "via_publica_y_en_domicilio_particular_y_mediante_medios_tecnologicos",
+        "text": "Vía pública y en domicilio particular y mediante medios tecnológicos"
+      }
+    ]
   ],
   "ART_INFRINGIDO": [
     { "id": "codigo_contravencional", "text": "Código contravencional" },
@@ -64,24 +122,21 @@
     { "id": "universitario_en_curso", "text": "Universitario en curso" }
   ],
   "MODALIDAD_DE_LA_VIOLENCIA": [
-    {  "id": "domestica",  "text": "Doméstica" },
-    {  "id": "en_espacio_publico",  "text": "En espacio público" },
-    {  "id": "institucional",  "text": "Institucional" },
-    {  "id": "laboral",  "text": "Laboral" },
-    {  "id": "libertad_reproductiva",  "text": "Libertad reproductiva" },
-    {  "id": "mediatica",  "text": "Mediática" },
-    {  "id": "obstetrica",  "text": "Obstétrica" },
-    {  "id": "publica_politica",  "text": "Pública política" }
+    { "id": "domestica", "text": "Doméstica" },
+    { "id": "en_espacio_publico", "text": "En espacio público" },
+    { "id": "institucional", "text": "Institucional" },
+    { "id": "laboral", "text": "Laboral" },
+    { "id": "libertad_reproductiva", "text": "Libertad reproductiva" },
+    { "id": "mediatica", "text": "Mediática" },
+    { "id": "obstetrica", "text": "Obstétrica" },
+    { "id": "publica_politica", "text": "Pública política" }
   ],
   "TIPO_DE_RESOLUCION": [
-    {"id":"definitiva", "text": "Definitiva"},
-    {"id":"interlocuria", "text": "Interlocuria"}
+    { "id": "definitiva", "text": "Definitiva" },
+    { "id": "interlocutoria", "text": "Interlocutoria" }
   ],
   "DECISION": [
-    {"id":"hace_lugar", "text": "Hace lugar"},
-    {"id":"no_hace_lugar", "text": "No hace lugar"}
+    { "id": "hace_lugar", "text": "Hace lugar" },
+    { "id": "no_hace_lugar", "text": "No hace lugar" }
   ]
 }
-
-
-
