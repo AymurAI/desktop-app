@@ -8,15 +8,15 @@
     { "id": "no_binaria", "text": "No binaria" }
   ],
   "LUGAR_DEL_HECHO": [
-    { "id":"zona_sur", "text": "Zona Sur"},
-    { "id":"zona_oeste", "text": "Zona Oeste"},
-    { "id":"zona_norte", "text": "Zona Norte"},
-    { "id":"provincia_de_buenos_aires", "text": "Provincia de Buenos Aires"},
-    { "id":"mas_de_una_zona", "text": "Más de una zona"},
-    { "id":"sd", "text": "S/D"},
-    { "id":"whatsapp", "text": "WahtsApp"},
-    { "id":"telegrma", "text": "Telegram"},
-    { "id":"no_corresponde", "text": "No corresponde"}
+    { "id": "zona_sur", "text": "Zona Sur" },
+    { "id": "zona_oeste", "text": "Zona Oeste" },
+    { "id": "zona_norte", "text": "Zona Norte" },
+    { "id": "provincia_de_buenos_aires", "text": "Provincia de Buenos Aires" },
+    { "id": "mas_de_una_zona", "text": "Más de una zona" },
+    { "id": "sd", "text": "S/D" },
+    { "id": "whatsapp", "text": "WahtsApp" },
+    { "id": "telegrma", "text": "Telegram" },
+    { "id": "no_corresponde", "text": "No corresponde" }
   ],
   "ART_INFRINGIDO": [
     { "id": "codigo_contravencional", "text": "Código contravencional" },
@@ -64,24 +64,21 @@
     { "id": "universitario_en_curso", "text": "Universitario en curso" }
   ],
   "MODALIDAD_DE_LA_VIOLENCIA": [
-    {  "id": "domestica",  "text": "Doméstica" },
-    {  "id": "en_espacio_publico",  "text": "En espacio público" },
-    {  "id": "institucional",  "text": "Institucional" },
-    {  "id": "laboral",  "text": "Laboral" },
-    {  "id": "libertad_reproductiva",  "text": "Libertad reproductiva" },
-    {  "id": "mediatica",  "text": "Mediática" },
-    {  "id": "obstetrica",  "text": "Obstétrica" },
-    {  "id": "publica_politica",  "text": "Pública política" }
+    { "id": "domestica", "text": "Doméstica" },
+    { "id": "en_espacio_publico", "text": "En espacio público" },
+    { "id": "institucional", "text": "Institucional" },
+    { "id": "laboral", "text": "Laboral" },
+    { "id": "libertad_reproductiva", "text": "Libertad reproductiva" },
+    { "id": "mediatica", "text": "Mediática" },
+    { "id": "obstetrica", "text": "Obstétrica" },
+    { "id": "publica_politica", "text": "Pública política" }
   ],
   "TIPO_DE_RESOLUCION": [
-    {"id":"definitiva", "text": "Definitiva"},
-    {"id":"interlocuria", "text": "Interlocuria"}
+    { "id": "definitiva", "text": "Definitiva" },
+    { "id": "interlocutoria", "text": "Interlocutoria" }
   ],
   "DECISION": [
-    {"id":"hace_lugar", "text": "Hace lugar"},
-    {"id":"no_hace_lugar", "text": "No hace lugar"}
+    { "id": "hace_lugar", "text": "Hace lugar" },
+    { "id": "no_hace_lugar", "text": "No hace lugar" }
   ]
 }
-
-
-

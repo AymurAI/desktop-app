@@ -59,6 +59,7 @@ export default forwardRef<{ value: SelectOption | undefined }, Props>(
 
     const handleClickSelect =
       (text: string) => (e: MouseEvent<HTMLLIElement>) => {
+        e.stopPropagation();
         updateValue(text);
         e.currentTarget.blur();
       };
@@ -84,13 +85,13 @@ export default forwardRef<{ value: SelectOption | undefined }, Props>(
         <TextContainer>
           {/* LABEL */}
           {label && (
-            <Label size="s" css={{ color: '$textDefault' }}>
+            <Label size='s' css={{ color: '$textDefault' }}>
               {label}
             </Label>
           )}
 
           {/* INPUT */}
-          <InputContainer>
+          <InputContainer tabIndex={-1}>
             <Input value={value} onChange={handleChangeInput} />
             {suggestion && isValueEmpty && (
               <>
@@ -108,7 +109,7 @@ export default forwardRef<{ value: SelectOption | undefined }, Props>(
           </InputContainer>
 
           {/* HELPER */}
-          {helper && <Label size="s">{helper}</Label>}
+          {helper && <Label size='s'>{helper}</Label>}
         </TextContainer>
 
         {/* OPTION LIST */}
