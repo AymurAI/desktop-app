@@ -3,19 +3,6 @@ import { CanceledError } from 'axios';
 import { PredictLabel, PredictSuccess } from 'types/aymurai';
 import { fetcher } from './utils';
 
-const predictions: PredictLabel[] = [
-  {
-    text: '12 de enero de 2022',
-    start_char: 0,
-    end_char: 0,
-    attrs: {
-      aymurai_label: 'FECHA_RESOLUCION',
-      aymurai_label_subclass: null,
-      aymurai_alt_text: null,
-    },
-  },
-];
-
 /**
  * Realiza una petición a la AI para poder obtener predicciones en base a un párrafo
  * @param paragraph Párrafo a analizar
@@ -27,9 +14,16 @@ export default async function predict(
   controller: AbortController
 ): Promise<PredictLabel[]> {
   try {
-    return new Promise<PredictLabel[]>((resolve, reject) => {
-      setTimeout(() => resolve(predictions), Math.round(Math.random() * 1000));
-    });
+    const response = await fetcher.post<PredictSuccess>(
+      '/predict',
+      {
+        text: paragraph,
+      },
+      {
+        signal: controller.signal,
+      }
+    );
+    return response.data.labels;
   } catch (e) {
     // If the POST is cancelled by the controller, just return an empty prediction
     if (e instanceof CanceledError) {
