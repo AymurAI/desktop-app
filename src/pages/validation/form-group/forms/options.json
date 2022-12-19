@@ -720,5 +720,166 @@
       "id": "zanjas_y_pozos_en_via_publica",
       "text": "Zanjas y pozos en via pública"
     }
+  ],
+  "CONDUCTA_DESCRIPCION": [
+    { "id": "agravada", "text": "Agravada" },
+    { "id": "agravadas_por_edad", "text": "Agravadas por edad" },
+    {
+      "id": "agravadas_por_el_uso_de_armas",
+      "text": "Agravadas por el uso de armas"
+    },
+    {
+      "id": "agravadas_por_uso_de_armas_impropia",
+      "text": "Agravadas por uso de armas impropia"
+    },
+    { "id": "agravado", "text": "Agravado" },
+    { "id": "agravado_abuso_funcion", "text": "Agravado abuso función" },
+    { "id": "agravado_alevosia", "text": "Agravado alevosía" },
+    {
+      "id": "agravado_causar_sufrimiento_otra_persona",
+      "text": "Agravado causar sufrimiento otra persona"
+    },
+    { "id": "agravado_concurso", "text": "Agravado concurso" },
+    { "id": "agravado_familiar", "text": "Agravado familiar" },
+    {
+      "id": "agravado_insertar_datos_en_datos_personales",
+      "text": "Agravado insertar datos en datos personales"
+    },
+    { "id": "agravado_lugar_publico", "text": "Agravado lugar público" },
+    { "id": "agravado_mas_personas", "text": "Agravado más personas" },
+    { "id": "agravado_medio_idoneo", "text": "Agravado medio idóneo" },
+    { "id": "agravado_menor_de_edad", "text": "Agravado menor de edad" },
+    { "id": "agravado_miembro_fuerzas", "text": "Agravado miembro fuerzas" },
+    { "id": "agravado_monumentos", "text": "Agravado monumentos" },
+    { "id": "agravado_otro_delito", "text": "Agravado otro delito" },
+    {
+      "id": "agravado_peligro_de_muerte",
+      "text": "Agravado peligro de muerte"
+    },
+    { "id": "agravado_por_el_vinculo", "text": "Agravado por el vínculo" },
+    { "id": "agravado_por_espacio", "text": "Agravado por espacio" },
+    {
+      "id": "agravado_por_ser_fuerza_de_seguridad",
+      "text": "Agravado por ser fuerza de seguridad"
+    },
+    { "id": "agravado_precio", "text": "Agravado precio" },
+    {
+      "id": "agravado_relacion_de_pareja",
+      "text": "Agravado relación de pareja"
+    },
+    { "id": "agravado_superior_militar", "text": "Agravado superior militar" },
+    {
+      "id": "agravado_violar_informacion_banco_de_datos",
+      "text": "Agravado violar información banco de datos"
+    },
+    {
+      "id": "agravado_violar_sistemas_seguridad",
+      "text": "Agravado violar sistemas seguridad"
+    },
+    {
+      "id": "agravado_violencia_de_genero",
+      "text": "Agravado violencia de género"
+    },
+    { "id": "agravado_violencia_mujer", "text": "Agravado violencia mujer" },
+    { "id": "agravados", "text": "Agravados" },
+    { "id": "coactivas", "text": "Coactivas" },
+    { "id": "coactivas_agravadas", "text": "Coactivas agravadas" },
+    {
+      "id": "coactivas_agravadas_por_uso_de_armas",
+      "text": "Coactivas agravadas por uso de armas"
+    },
+    {
+      "id": "comercio_de_plantas_para_producir_estupefacientes",
+      "text": "Comercio de plantas para producir estupefacientes"
+    },
+    { "id": "con_escalamiento", "text": "Con escalamiento" },
+    { "id": "conduccion_imprudente", "text": "Conducción imprudente" },
+    { "id": "culposas", "text": "Culposas" },
+    { "id": "culposo", "text": "Culposo" },
+    { "id": "de_fuego_uso_civil", "text": "De fuego uso civil" },
+    { "id": "de_guerra", "text": "De guerra" },
+    {
+      "id": "destinado_a_acreditar_identidad_de_personas_habilitacion_o_titularidad",
+      "text": "Destinado a acreditar identidad de personas habilitación o titularidad"
+    },
+    { "id": "digital", "text": "Digital" },
+    { "id": "digital_agravado_familiar", "text": "Digital agravado familiar" },
+    { "id": "digital_agravado_jefe", "text": "Digital agravado jefe" },
+    {
+      "id": "digital_agravado_mas_de_una_persona",
+      "text": "Digital agravado más de una persona"
+    },
+    {
+      "id": "digital_agravado_menor_de_edad",
+      "text": "Digital agravado menor de edad"
+    },
+    {
+      "id": "digital_agravado_relacion_de_pareja",
+      "text": "Digital agravado relación de pareja"
+    },
+    {
+      "id": "durante_espectaculo_deportivo",
+      "text": "Durante espectáculo deportivo"
+    },
+    {
+      "id": "en_grandes_parques_o_espectaculos_masivos",
+      "text": "En grandes parques o espectáculos masivos"
+    },
+    { "id": "en_riña", "text": "En riña" },
+    {
+      "id": "entrega_suministro_facilitacion",
+      "text": "Entrega suministro facilitación"
+    },
+    { "id": "funcionario_publico", "text": "Funcionario público" },
+    { "id": "ganzua_llave", "text": "Ganzúa llave" },
+    { "id": "graves", "text": "Graves" },
+    { "id": "graves_tentativa", "text": "Graves tentativa" },
+    { "id": "informatica", "text": "Informática" },
+    {
+      "id": "ingreso_a_domicilio_sin_autorizacion",
+      "text": "Ingreso a domicilio sin autorización"
+    },
+    {
+      "id": "intimidacion_o_invocando_orden_superior",
+      "text": "Intimidación o invocando orden superior"
+    },
+    { "id": "leves", "text": "Leves" },
+    { "id": "leves_agravadas", "text": "Leves agravadas" },
+    { "id": "muebles_transportables", "text": "Muebles transportables" },
+    { "id": "no_denuncia_delito", "text": "No denuncia delito" },
+    { "id": "ocasion_de_incendio", "text": "Ocasión de incendio" },
+    { "id": "organismo_publico", "text": "Organismo público" },
+    {
+      "id": "para_produccion_o_tenencia_con_fines_de_comercializacion",
+      "text": "Para producción o tenencia con fines de comercialización"
+    },
+    { "id": "por_despojo", "text": "Por despojo" },
+    {
+      "id": "por_obligacion_de_devolver",
+      "text": "Por obligación de devolver"
+    },
+    {
+      "id": "por_turbacion_de_la_posesion",
+      "text": "Por turbación de la posesión"
+    },
+    { "id": "productos_separados_suelo", "text": "Productos separados suelo" },
+    { "id": "publico_o_privado", "text": "Público o privado" },
+    { "id": "seguido_de_muerte", "text": "Seguido de muerte" },
+    { "id": "simple", "text": "Simple" },
+    { "id": "simples", "text": "Simples" },
+    { "id": "sin_autorizacion", "text": "Sin autorización" },
+    { "id": "tarjeta_credito_debito", "text": "Tarjeta crédito débito" },
+    { "id": "tenencia", "text": "Tenencia" },
+    { "id": "tentativa", "text": "Tentativa" },
+    {
+      "id": "tentativa_agravado_alevosia",
+      "text": "Tentativa agravado alevosía"
+    },
+    {
+      "id": "transporte_de_pasajeros_sin_habilitacion_o_autorizacion",
+      "text": "Transporte de pasajeros sin habilitación o autorización"
+    },
+    { "id": "uso_de_tarjeta_o_datos", "text": "Uso de tarjeta o datos" },
+    { "id": "vehiculos", "text": "Vehículos" }
   ]
 }
