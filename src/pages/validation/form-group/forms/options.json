@@ -152,6 +152,10 @@
     },
     { "id": "abuso_sexual", "text": "Abuso sexual" },
     {
+      "id": "acceder_lugares_distintos_segun_entrada",
+      "text": "Acceder lugares distintos según entrada"
+    },
+    {
       "id": "acceder_a_lugares_distintos_segun_entrada",
       "text": "Acceder a lugares distintos según entrada"
     },
@@ -175,6 +179,10 @@
     {
       "id": "administracion_fraudulenta",
       "text": "Administración fraudulenta"
+    },
+    {
+      "id": "afectar_desarrollo_espectaculo",
+      "text": "Afectar desarrollo espectáculo"
     },
     {
       "id": "afectar_el_desarrollo_del_espectaculo",
@@ -415,6 +423,7 @@
       "id": "incendios_y_otros_estragos",
       "text": "Incendios y otros estragos"
     },
+    { "id": "incitar_desorden", "text": "Incitar desorden" },
     { "id": "incitar_al_desorden", "text": "Incitar al desorden" },
     { "id": "incumplimiento_de_plazos", "text": "Incumplimiento de plazos" },
     {
@@ -519,6 +528,10 @@
     {
       "id": "obstruccion_de_via_publica",
       "text": "Obstruccion de vía pública"
+    },
+    {
+      "id": "obstruccion_via_publica",
+      "text": "Obstruccion vía pública"
     },
     { "id": "obstruir_salida", "text": "Obstruir salida" },
     { "id": "ocupar_via_publica", "text": "Ocupar vía pública" },
@@ -729,6 +742,10 @@
       "text": "Agravadas por el uso de armas"
     },
     {
+      "id": "agravadas_por_uso_de_armas",
+      "text": "Agravadas por uso de armas"
+    },
+    {
       "id": "agravadas_por_uso_de_armas_impropia",
       "text": "Agravadas por uso de armas impropia"
     },
@@ -881,5 +898,663 @@
     },
     { "id": "uso_de_tarjeta_o_datos", "text": "Uso de tarjeta o datos" },
     { "id": "vehiculos", "text": "Vehículos" }
+  ],
+  "DETALLE": [
+    {
+      "id": "audiencia_victima_ley26484",
+      "text": "Audiencia víctima Ley 26484"
+    },
+    { "id": "29_dias", "text": "29 días" },
+    { "id": "44_dias", "text": "44 días" },
+    { "id": "59_dias", "text": "59 días" },
+    { "id": "89_dias", "text": "89 días" },
+    { "id": "179_dias", "text": "179 días" },
+    { "id": "abandono_vehiculo", "text": "Abandono vehículo" },
+    { "id": "absolucion", "text": "Absolución" },
+    {
+      "id": "absolucion_desistimiento_fiscal",
+      "text": "Absolución desistimiento fiscal"
+    },
+    { "id": "accesorias_legales", "text": "Accesorias legales" },
+    {
+      "id": "acepta_competencia_inhibitoria",
+      "text": "Acepta competencia inhibitoria"
+    },
+    { "id": "acepta_cuestion_turno", "text": "Acepta cuestión turno" },
+    { "id": "aclaratoria", "text": "Aclaratoria" },
+    { "id": "acta_de_comprobacion", "text": "Acta de comprobación" },
+    { "id": "acta_de_intimacion", "text": "Acta de intimación" },
+    {
+      "id": "acuerdo_de_pago_levanta_embargo",
+      "text": "Acuerdo de pago levanta embargo"
+    },
+    {
+      "id": "acumulacion_por_conexidad_y_ampliacion",
+      "text": "Acumulación por conexidad y ampliación"
+    },
+    { "id": "admisibilidad", "text": "Admisibilidad" },
+    { "id": "agente_encubierto", "text": "Agente encubierto" },
+    { "id": "agente_revelador", "text": "Agente revelador" },
+    { "id": "agotamiento_de_la_pena", "text": "Agotamiento de la pena" },
+    { "id": "alimentos_provisorios", "text": "Alimentos provisorios" },
+    { "id": "allanamiento", "text": "Allanamiento" },
+    { "id": "apelacion", "text": "Apelación" },
+    {
+      "id": "apertura_extraccion_examen_datos",
+      "text": "Apertura extracción examen datos"
+    },
+    { "id": "aprehension", "text": "Aprehensión" },
+    { "id": "arma", "text": "Arma" },
+    { "id": "armas", "text": "Armas" },
+    {
+      "id": "arresto_domiciliario_deja_sin_efecto",
+      "text": "Arresto domiciliario deja sin efecto"
+    },
+    { "id": "asesor_tutelar", "text": "Asesor tutelar" },
+    { "id": "atipicidad_sobreseimiento", "text": "Atipicidad sobreseimiento" },
+    {
+      "id": "audiencia_acusado_ley26484",
+      "text": "Audiencia acusado Ley 26484"
+    },
+    {
+      "id": "audiencia_acusado_difiere_sentencia",
+      "text": "Audiencia acusado difiere sentencia"
+    },
+    { "id": "audiencia_preliminar", "text": "Audiencia preliminar" },
+    {
+      "id": "audiencia_victima_10bis_ley24660",
+      "text": "Audiencia víctima 10 bis Ley 24660"
+    },
+    { "id": "bloqueo_acceso_al_dominio", "text": "Bloqueo acceso al dominio" },
+    {
+      "id": "cadena_de_custodia_de_elementos_secuestrados",
+      "text": "Cadena de custodia de elementos secuestrados"
+    },
+    { "id": "camara_gesell", "text": "Cámara Gesell" },
+    {
+      "id": "cambio_domicilio_prision_domiciliaria",
+      "text": "Cambio domicilio prisión domiciliaria"
+    },
+    { "id": "captura", "text": "Captura" },
+    { "id": "captura_deja_sin_efecto", "text": "Captura deja sin efecto" },
+    { "id": "caucion_real", "text": "Caución real" },
+    { "id": "cedula_de_notificacion", "text": "Cédula de notificación" },
+    {
+      "id": "cese_de_actos_de_perturbacion_o_intimidacion",
+      "text": "Cese de actos de perturbación o intimidación"
+    },
+    { "id": "cese_de_medidas", "text": "Cese de medidas" },
+    { "id": "cese_de_medidas_parcial", "text": "Cese de medidas parcial" },
+    { "id": "cierre_de_instancia", "text": "Cierre de instancia" },
+    { "id": "clausura", "text": "Clausura" },
+    { "id": "clausura_deja_sin_efecto", "text": "Clausura deja sin efecto" },
+    { "id": "competencia_penal_juvenil", "text": "Competencia penal juvenil" },
+    { "id": "concede", "text": "Concede" },
+    { "id": "concede_parcialmente", "text": "Concede parcialmente" },
+    { "id": "conocimiento_personal", "text": "Conocimiento personal" },
+    { "id": "consigna_policial", "text": "Consigna policial" },
+    { "id": "contienda_negativa", "text": "Contienda negativa" },
+    { "id": "control", "text": "Control" },
+    { "id": "convalida_fallecimiento", "text": "Convalida fallecimiento" },
+    { "id": "convalida_inimputabilidad", "text": "Convalida inimputabilidad" },
+    {
+      "id": "convalidacion_otras_causales",
+      "text": "Convalidación otras causales"
+    },
+    { "id": "copia_forense_celular", "text": "Copia forense celular" },
+    {
+      "id": "copias_de_capturas_de_pantalla_mensajes_y_llamados",
+      "text": "Copias de capturas de pantalla mensajes y llamados"
+    },
+    {
+      "id": "cosa_juzgada_sobreseimiento",
+      "text": "Cosa juzgada sobreseimiento"
+    },
+    { "id": "cuarto_intermedio", "text": "Cuarto intermedio" },
+    {
+      "id": "cuarto_intermedio_para_resolver",
+      "text": "Cuarto intermedio para resolver"
+    },
+    {
+      "id": "cumplimiento_de_regla_de_conducta_en_complejo_penitenciario",
+      "text": "Cumplimiento de regla de conducta en complejo penitenciario"
+    },
+    {
+      "id": "cumplimiento_de_reglas_de_conducta",
+      "text": "Cumplimiento de reglas de conducta"
+    },
+    { "id": "declaracion_testimonial", "text": "Declaracion testimonial" },
+    { "id": "declina_competencia", "text": "Declina competencia" },
+    { "id": "defensa", "text": "Defensa" },
+    { "id": "defensa_particular", "text": "Defensa particular" },
+    { "id": "defensa_querella", "text": "Defensa querella" },
+    {
+      "id": "deja_sin_efecto_inhabilitacion_y_devuelve_licencia",
+      "text": "Deja sin efecto inhabilitación y devuelve licencia"
+    },
+    {
+      "id": "deja_sin_efecto_revocacion",
+      "text": "Deja sin efecto revocación"
+    },
+    { "id": "delitos_de_accion_publica", "text": "Delitos de acción publica" },
+    {
+      "id": "desistimiento_accion_instancia_privada_sobreseimiento",
+      "text": "Desistimiento accion instancia privada sobreseimiento"
+    },
+    { "id": "desistimiento_fiscal", "text": "Desistimiento fiscal" },
+    { "id": "destruccion_de_arma", "text": "Destrucción de arma" },
+    { "id": "detencion", "text": "Detención" },
+    {
+      "id": "detencion_captura_y/o_traslado",
+      "text": "Detención captura y/o traslado"
+    },
+    {
+      "id": "detencion_captura_y/o_traslado_deja_sin_efecto",
+      "text": "Detención captura y/o traslado deja sin efecto"
+    },
+    {
+      "id": "detencion_secuestro_y_requisa",
+      "text": "Detención secuestro y requisa"
+    },
+    {
+      "id": "devolucion_acarreo_y_estadia",
+      "text": "Devolución acarreo y estadía"
+    },
+    { "id": "dictamen_fiscal", "text": "Dictamen fiscal" },
+    { "id": "difiere_decision", "text": "Difiere decisión" },
+    { "id": "difiere_fundamentos", "text": "Difiere fundamentos" },
+    { "id": "difiere_resolucion", "text": "Difiere resolución" },
+    {
+      "id": "dispositivo_de_geoposicionamiento_mantiene_hasta_juicio",
+      "text": "Dispositivo de geoposicionamiento mantiene hasta juicio"
+    },
+    {
+      "id": "domiciliaria_con_vigilancia_electronica",
+      "text": "Domiciliaria con vigilancia electrónica"
+    },
+    { "id": "egreso_del_pais", "text": "Egreso del país" },
+    { "id": "ejecucion_de_honorarios", "text": "Ejecución de honorarios" },
+    { "id": "embargo", "text": "Embargo" },
+    { "id": "embargo_deja_sin_efecto", "text": "Embargo deja sin efecto" },
+    { "id": "estimulo_educativo", "text": "Estímulo educativo" },
+    { "id": "estupefacientes", "text": "Estupefacientes" },
+    { "id": "estupefacientes_dinero", "text": "Estupefacientes dinero" },
+    {
+      "id": "estupefacientes_telefono_dinero",
+      "text": "Estupefacientes teléfono dinero"
+    },
+    {
+      "id": "estupefacientes_telefono_dinero_arma",
+      "text": "Estupefacientes teléfono dinero arma"
+    },
+    {
+      "id": "estupefacientes_telefono_vehiculo",
+      "text": "Estupefacientes teléfono vehículo"
+    },
+    {
+      "id": "estupefacientes_vehiculo_dinero",
+      "text": "Estupefacientes vehículo dinero"
+    },
+    { "id": "excarcelacion", "text": "Excarcelación" },
+    { "id": "exclusion_del_hogar", "text": "Exclusión del hogar" },
+    { "id": "exhorto", "text": "Exhorto" },
+    { "id": "exhorto_diplomatico", "text": "Exhorto diplomático" },
+    { "id": "exime_pago_multa", "text": "Exime pago multa" },
+    {
+      "id": "exime_reparacion_del_daño_y_pago_multa",
+      "text": "Exime reparación del daño y pago multa"
+    },
+    { "id": "eximicion_pago", "text": "Eximición pago" },
+    {
+      "id": "eximicion_pauta_de_conducta",
+      "text": "Eximición pauta de conducta"
+    },
+    {
+      "id": "expulsion_art_63_a_ley_25871",
+      "text": "Expulsión art 63 a Ley 25871"
+    },
+    {
+      "id": "extincion_accion_por_autocomposicion",
+      "text": "Extinción acción por autocomposición"
+    },
+    {
+      "id": "extincion_accion_por_cumplimiento",
+      "text": "Extinción acción por cumplimiento"
+    },
+    {
+      "id": "extincion_accion_sobreseimiento",
+      "text": "Extinción acción sobreseimiento"
+    },
+    {
+      "id": "extincion_accion_sobreseimiento_por_fallecimiento",
+      "text": "Extinción acción sobreseimiento por fallecimiento"
+    },
+    { "id": "extincion_de_la_pena", "text": "Extinción de la pena" },
+    {
+      "id": "extincion_sancion_por_cumplimiento",
+      "text": "Extinción sanción por cumplimiento"
+    },
+    { "id": "extrañamiento", "text": "Extrañamiento" },
+    {
+      "id": "falta_de_accion_sobreseimiento",
+      "text": "Falta de acción sobreseimiento"
+    },
+    {
+      "id": "falta_de_legitimacion_pasiva",
+      "text": "Falta de legitimación pasiva"
+    },
+    { "id": "falta_de_participacion", "text": "Falta de participación" },
+    { "id": "falta_de_presentacion", "text": "Falta de presentación" },
+    {
+      "id": "falta_de_requisitos_procedencia",
+      "text": "Falta de requisitos procedencia"
+    },
+    { "id": "fija_nueva_audiencia", "text": "Fija nueva audiencia" },
+    { "id": "fondo_de_reserva", "text": "Fondo de reserva" },
+    { "id": "habeas_corpus", "text": "Habeas corpus" },
+    {
+      "id": "hasta_agotar_investigacion",
+      "text": "Hasta agotar investigación"
+    },
+    { "id": "identidad_objeto_y_sujeto", "text": "Identidad objeto y sujeto" },
+    { "id": "imagenes_videos", "text": "Imagenes videos" },
+    { "id": "incompetencia_material", "text": "Incompetencia material" },
+    {
+      "id": "incompetencia_por_conexidad",
+      "text": "Incompetencia por conexidad"
+    },
+    {
+      "id": "incompetencia_por_conexidad_subjetiva",
+      "text": "Incompetencia por conexidad subjetiva"
+    },
+    { "id": "incompetencia_territorial", "text": "Incompetencia territorial" },
+    {
+      "id": "indeterminacion_imputacion",
+      "text": "Indeterminacion imputación"
+    },
+    {
+      "id": "informacion_y_apertura_de_antenas_llamadas",
+      "text": "Información y apertura de antenas llamadas"
+    },
+    { "id": "informe_cij", "text": "Informe cij" },
+    { "id": "informe_mercado_libre", "text": "Informe mercado libre" },
+    { "id": "informe_ncmec", "text": "Informe ncmec" },
+    { "id": "informe_previo", "text": "Informe previo" },
+    {
+      "id": "informes_llamadas_y_deteccion_de_celdas",
+      "text": "Informes llamadas y detección de celdas"
+    },
+    {
+      "id": "inhabilitacion_para_conducir",
+      "text": "Inhabilitación para conducir"
+    },
+    {
+      "id": "inhabilitacion_para_conducir_deja_sin_efecto",
+      "text": "Inhabilitación para conducir deja sin efecto"
+    },
+    { "id": "inmovilizacion", "text": "Inmovilización" },
+    { "id": "interes_en_el_caso", "text": "Interés en el caso" },
+    { "id": "internacion_involuntaria", "text": "Internación involuntaria" },
+    { "id": "interprete", "text": "Intérprete" },
+    { "id": "interprete_y_defensa", "text": "Intérprete y defensa" },
+    { "id": "interrogatorio_policial", "text": "Interrogatorio policial" },
+    {
+      "id": "intervencion_equipo_especializado",
+      "text": "Intervención equipo especializado"
+    },
+    { "id": "intervencion_previa", "text": "Intervención previa" },
+    { "id": "intervencion_red_social", "text": "Intervención red social" },
+    { "id": "intervencion_telefonica", "text": "Intervención telefónica" },
+    {
+      "id": "intervencion_telefonica_con_ubicacion_de_celda_de_apertura",
+      "text": "Intervención telefónica con ubicación de celda de apertura"
+    },
+    {
+      "id": "levantamiento_clausura_administrativa",
+      "text": "Levantamiento clausura administrativa"
+    },
+    {
+      "id": "levantamiento_secreto_bancario",
+      "text": "Levantamiento secreto bancario"
+    },
+    {
+      "id": "levantamiento_secreto_fiscal",
+      "text": "Levantamiento secreto fiscal"
+    },
+    { "id": "liberacion_aves", "text": "Liberación aves" },
+    {
+      "id": "libertad_asistida_incorporacion",
+      "text": "Libertad asistida incorporación"
+    },
+    {
+      "id": "libertad_condicional_otorga",
+      "text": "Libertad condicional otorga"
+    },
+    {
+      "id": "libertad_condicional_revoca",
+      "text": "Libertad condicional revoca"
+    },
+    { "id": "litispendencia", "text": "Litispendencia" },
+    { "id": "mantiene", "text": "Mantiene" },
+    { "id": "mediacion", "text": "Mediación" },
+    { "id": "medidas_restrictivas", "text": "Medidas restrictivas" },
+    {
+      "id": "modifica_pauta_de_conducta",
+      "text": "Modifica pauta de conducta"
+    },
+    { "id": "morigeracion_domiciliaria", "text": "Morigeración domiciliaria" },
+    { "id": "no_convalida", "text": "No convalida" },
+    { "id": "no_homologa_absolucion", "text": "No homologa absolución" },
+    { "id": "notificacion_via_mail", "text": "Notificacion vía mail" },
+    {
+      "id": "nulidad_incorporacion_prueba",
+      "text": "Nulidad incorporación prueba"
+    },
+    { "id": "otorga_plazo", "text": "Otorga plazo" },
+    { "id": "otras_vias_idoneas", "text": "Otras vías idóneas" },
+    { "id": "pago_de_multa_en_cuotas", "text": "Pago de multa en cuotas" },
+    {
+      "id": "pago_minimo_multa_sobreseimiento",
+      "text": "Pago mínimo multa sobreseimiento"
+    },
+    {
+      "id": "pago_minimo_multa_y_reparacion_daño_63cp",
+      "text": "Pago mínimo multa y reparación daño 63 cp"
+    },
+    { "id": "paradero", "text": "Paradero" },
+    { "id": "paradero_deja_sin_efecto", "text": "Paradero deja sin efecto" },
+    {
+      "id": "parcial_requerimiento_de_juicio",
+      "text": "Parcial requerimiento de juicio"
+    },
+    {
+      "id": "parcial_requerimiento_de_juicio_falta_de_circunscripcion_temporal",
+      "text": "Parcial requerimiento de juicio falta de circunscripción temporal"
+    },
+    {
+      "id": "parcial_requerimiento_de_juicio_falta_de_fundamentacion",
+      "text": "Parcial requerimiento de juicio falta de fundamentación"
+    },
+    {
+      "id": "parcial_requerimiento_de_juicio_por_introduccion_de_agravante",
+      "text": "Parcial requerimiento de juicio por introducción de agravante"
+    },
+    { "id": "pedido_de_informe_banco", "text": "Pedido de informe banco" },
+    {
+      "id": "pedido_de_informe_facebook",
+      "text": "Pedido de informe Facebook"
+    },
+    {
+      "id": "pedido_de_informe_facebook_google",
+      "text": "Pedido de informe Facebook Google"
+    },
+    {
+      "id": "pedido_de_informe_facebook_microsoft",
+      "text": "Pedido de informe Facebook Microsoft"
+    },
+    { "id": "pedido_de_informe_google", "text": "Pedido de informe Google" },
+    {
+      "id": "pedido_de_informe_google_microsoft",
+      "text": "Pedido de informe Google Microsoft"
+    },
+    {
+      "id": "pedido_de_informe_imgur_llc",
+      "text": "Pedido de informe Imgur LLC"
+    },
+    {
+      "id": "pedido_de_informe_instagram",
+      "text": "Pedido de informe Instagram"
+    },
+    {
+      "id": "pedido_de_informe_microsoft",
+      "text": "Pedido de informe Microsoft"
+    },
+    { "id": "pedido_de_informe_skype", "text": "Pedido de informe Skype" },
+    {
+      "id": "pedido_de_informe_telefonía",
+      "text": "Pedido de informe telefonía"
+    },
+    {
+      "id": "pedido_de_informe_whatsapp",
+      "text": "Pedido de informe Whatsapp"
+    },
+    { "id": "pedido_informe_tiktok", "text": "Pedido informe Tiktok" },
+    {
+      "id": "pedido_prision_domiciliaria",
+      "text": "Pedido prisión domiciliaria"
+    },
+    {
+      "id": "pena_de_arresto_efectivo_cumplimiento",
+      "text": "Pena de arresto efectivo cumplimiento"
+    },
+    {
+      "id": "pena_de_arresto_efectivo_cumplimiento_compurgada",
+      "text": "Pena de arresto efectivo cumplimiento compurgada"
+    },
+    {
+      "id": "pena_de_arresto_en_suspenso",
+      "text": "Pena de arresto en suspenso"
+    },
+    {
+      "id": "pena_de_inhabilitacion_especial",
+      "text": "Pena de inhabilitación especial"
+    },
+    {
+      "id": "pena_de_multa_efectivo_cumplimiento",
+      "text": "Pena de multa efectivo cumplimiento"
+    },
+    { "id": "pena_de_multa_en_suspenso", "text": "Pena de multa en suspenso" },
+    {
+      "id": "pena_de_multa_sustituida_por_amonestacion",
+      "text": "Pena de multa sustituida por amonestación"
+    },
+    {
+      "id": "pena_de_multa_sustituida_por_clausura_se_tiene_por_cumplida",
+      "text": "Pena de multa sustituida por clausura se tiene por cumplida"
+    },
+    {
+      "id": "pena_de_multa_sustituida_por_trabajos_comunitarios",
+      "text": "Pena de multa sustituida por trabajos comunitarios"
+    },
+    {
+      "id": "pena_de_prision_domiciliaria",
+      "text": "Pena de prisión domiciliaria"
+    },
+    {
+      "id": "pena_de_prision_efectivo_cumplimiento",
+      "text": "Pena de prisión efectivo cumplimiento"
+    },
+    {
+      "id": "pena_de_prision_efectivo_cumplimiento_compurgada",
+      "text": "Pena de prisión efectivo cumplimiento compurgada"
+    },
+    {
+      "id": "pena_de_prision_efectivo_cumplimiento_domiciliaria",
+      "text": "Pena de prisión efectivo cumplimiento domiciliaria"
+    },
+    {
+      "id": "pena_de_prision_en_suspenso",
+      "text": "Pena de prisión en suspenso"
+    },
+    {
+      "id": "pena_de_tareas_comunitarias",
+      "text": "Pena de tareas comunitarias"
+    },
+    {
+      "id": "pena_de_tareas_de_utilidad_publica",
+      "text": "Pena de tareas de utilidad pública"
+    },
+    { "id": "pericia", "text": "Pericia" },
+    { "id": "pericia_arma", "text": "Pericia arma" },
+    {
+      "id": "pericia_examen_veterinario",
+      "text": "Pericia examen veterinario"
+    },
+    { "id": "peritaje_de_telefono", "text": "Peritaje de teléfono" },
+    {
+      "id": "peritaje_ordenadores_y_o_telefonos",
+      "text": "Peritaje ordenadores y o teléfonos"
+    },
+    { "id": "peritaje_telefono", "text": "Peritaje teléfono" },
+    { "id": "perito", "text": "Perito" },
+    { "id": "permiso_de_viaje", "text": "Permiso de viaje" },
+    {
+      "id": "plazo_razonable_sobreseimiento",
+      "text": "Plazo razonable sobreseimiento"
+    },
+    {
+      "id": "plazo_razonable_sobresimiento",
+      "text": "Plazo razonable sobresimiento"
+    },
+    { "id": "pleito_con_una_parte", "text": "Pleito con una parte" },
+    {
+      "id": "por_quince_dias_hasta_tomar_contacto_con_victima",
+      "text": "Por quince dias hasta tomar contacto con víctima"
+    },
+    {
+      "id": "prescripcion_sobreseimiento",
+      "text": "Prescripción sobreseimiento"
+    },
+    {
+      "id": "prision_domiciliaria_mantiene",
+      "text": "Prisión domiciliaria mantiene"
+    },
+    {
+      "id": "prision_domiciliaria_prorroga",
+      "text": "Prisión domiciliaria prórroga"
+    },
+    { "id": "procedimiento", "text": "Procedimiento" },
+    {
+      "id": "procedimiento_administrativo_pendiente",
+      "text": "Procedimiento administrativo pendiente"
+    },
+    {
+      "id": "prohibicion_compra_tenencia_registracion_de_armas",
+      "text": "Prohibición compra tenencia registración de armas"
+    },
+    {
+      "id": "prohibicion_de_acercamiento",
+      "text": "Prohibición de acercamiento"
+    },
+    {
+      "id": "prohibicion_de_acercamiento_y_contacto",
+      "text": "Prohibición de acercamiento y contacto"
+    },
+    {
+      "id": "prohibicion_de_publicar_en_redes",
+      "text": "Prohibición de publicar en redes"
+    },
+    {
+      "id": "prohibicion_de_publicar_en_redes_sobre",
+      "text": "Prohibición de publicar en redes sobre"
+    },
+    {
+      "id": "promocion_a_periodo_de_prueba_art_6_ley_24660",
+      "text": "Promoción a período de prueba art 6 Ley 24660"
+    },
+    { "id": "prorroga", "text": "Prórroga" },
+    { "id": "prueba_ofrecida", "text": "Prueba ofrecida" },
+    { "id": "publicacion_de_edictos", "text": "Publicación de edictos" },
+    { "id": "queja", "text": "Queja" },
+    { "id": "querella", "text": "Querella" },
+    {
+      "id": "quita_puntos_de_licencia_de_conducir",
+      "text": "Quita puntos de licencia de conducir"
+    },
+    { "id": "realizacion", "text": "Realización" },
+    { "id": "rebeldia", "text": "Rebeldía" },
+    { "id": "rebeldia_deja_sin_efecto", "text": "Rebeldía deja sin efecto" },
+    { "id": "rebeldia_y_captura", "text": "Rebeldía y captura" },
+    { "id": "rebeldia_y_paradero", "text": "Rebeldía y paradero" },
+    { "id": "rechaza_acuerdo", "text": "Rechaza acuerdo" },
+    { "id": "rechaza_competencia", "text": "Rechaza competencia" },
+    {
+      "id": "regimen_de_comunicacion_provisoria",
+      "text": "Regimen de comunicación provisoria"
+    },
+    { "id": "reincidencia", "text": "Reincidencia" },
+    {
+      "id": "reintegra_puntos_de_licencia_de_conducir",
+      "text": "Reintegra puntos de licencia de conducir"
+    },
+    { "id": "remate_vehiculo", "text": "Remate vehículo" },
+    { "id": "remision_a_justicia_civil", "text": "Remisión a justicia civil" },
+    {
+      "id": "remision_camara_para_sorteo",
+      "text": "Remisión cámara para sorteo"
+    },
+    {
+      "id": "reparacion_integral_del_daño_sobreseimiento",
+      "text": "Reparación integral del daño sobreseimiento"
+    },
+    {
+      "id": "replica_de_arma_de_plastico",
+      "text": "Réplica de arma de plástico"
+    },
+    { "id": "reposicion", "text": "Reposición" },
+    {
+      "id": "reposicion_apelacion_subsidio",
+      "text": "Reposición apelación subsidio"
+    },
+    { "id": "reprogramacion", "text": "Reprogramación" },
+    { "id": "requerido_por_infractor", "text": "Requerido por infractor" },
+    { "id": "requerimiento_de_juicio", "text": "Requerimiento de juicio" },
+    {
+      "id": "requerimiento_de_juicio_falta_de_fundamentacion",
+      "text": "Requerimiento de juicio falta de fundamentación"
+    },
+    { "id": "requisa", "text": "Requisa" },
+    { "id": "restitucion_de_inmueble", "text": "Restitución de inmueble" },
+    {
+      "id": "revision_psicofisica_capacidad",
+      "text": "Revisión psicofísica capacidad"
+    },
+    {
+      "id": "revision_psiquiatrica_y_psicologica",
+      "text": "Revision psiquiátrica y psicológica"
+    },
+    { "id": "revoca", "text": "Revoca" },
+    { "id": "revoca_condicionalidad", "text": "Revoca condicionalidad" },
+    { "id": "revocacion", "text": "Revocación" },
+    { "id": "rueda_de_reconocimiento", "text": "Rueda de reconocimiento" },
+    { "id": "salidas_extraordinarias", "text": "Salidas extraordinarias" },
+    { "id": "salidas_transitorias", "text": "Salidas transitorias" },
+    {
+      "id": "sancion_sustitutiva_prorroga",
+      "text": "Sanción sustitutiva prórroga"
+    },
+    { "id": "secuestro", "text": "Secuestro" },
+    { "id": "sin_indicacion_plazo", "text": "Sin indicación plazo" },
+    { "id": "sobreseimiento", "text": "Sobreseimiento" },
+    { "id": "solicita", "text": "Solicita" },
+    {
+      "id": "solicitud_destruccion_de_estupefacientes",
+      "text": "Solicitud destrucción de estupefacientes"
+    },
+    { "id": "tareas_de_investigacion", "text": "Tareas de investigación" },
+    { "id": "telefono", "text": "Teléfono" },
+    {
+      "id": "temor_parcialidad_generico",
+      "text": "Temor parcialidad genérico"
+    },
+    { "id": "tiene_por_desistido", "text": "Tiene por desistido" },
+    {
+      "id": "tiene_por_no_computado_plazo",
+      "text": "Tiene por no computado plazo"
+    },
+    { "id": "tiene_presente", "text": "Tiene presente" },
+    { "id": "tiene_presente_acuerdo", "text": "Tiene presente acuerdo" },
+    { "id": "tobillera_refractaria", "text": "Tobillera refractaria" },
+    {
+      "id": "traslado_por_fuerza_publica",
+      "text": "Traslado por fuerza pública"
+    },
+    {
+      "id": "unifica_solicita_inhibitoria",
+      "text": "Unifica solicita inhibitoria"
+    },
+    { "id": "unificacion_de_pena", "text": "Unificación de pena" },
+    { "id": "vehiculo", "text": "Vehículo" },
+    { "id": "vencimiento_plazo_ipp", "text": "Vencimiento plazo ipp" }
   ]
 }
