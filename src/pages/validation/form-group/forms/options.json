@@ -1556,5 +1556,57 @@
     { "id": "unificacion_de_pena", "text": "Unificación de pena" },
     { "id": "vehiculo", "text": "Vehículo" },
     { "id": "vencimiento_plazo_ipp", "text": "Vencimiento plazo ipp" }
+  ],
+  "OBJETO_DE_LA_RESOLUCION": [
+    { "id": "acumulacion_de_caso", "text": "Acumulación de caso" },
+    { "id": "admisibilidad_amparo", "text": "Admisibilidad amparo" },
+    {
+      "id": "admisibilidad_habeas_corpus",
+      "text": "Admisibilidad habeas corpus"
+    },
+    { "id": "admisibilidad_prueba", "text": "Admisibilidad prueba" },
+    { "id": "apartamiento", "text": "Apartamiento" },
+    { "id": "archivo_fiscal", "text": "Archivo fiscal" },
+    { "id": "audiencia_de_conciliacion", "text": "Audiencia de conciliación" },
+    {
+      "id": "beneficio_litigar_sin_gastos",
+      "text": "Beneficio litigar sin gastos"
+    },
+    { "id": "caducidad_de_instancia", "text": "Caducidad de instancia" },
+    { "id": "cuestion_de_competencia", "text": "Cuestión de competencia" },
+    { "id": "decomiso", "text": "Decomiso" },
+    { "id": "desistimiento_faltas", "text": "Desistimiento faltas" },
+    { "id": "ejecucion_de_la_pena", "text": "Ejecución de la pena" },
+    { "id": "excepcion", "text": "Excepción" },
+    { "id": "excusacion", "text": "Excusación" },
+    { "id": "extraccion_testimonios", "text": "Extracción testimonios" },
+    { "id": "juicio_abreviado", "text": "Juicio abreviado" },
+    { "id": "juicio_oral", "text": "Juicio oral" },
+    { "id": "juzgamiento_faltas", "text": "Juzgamiento faltas" },
+    { "id": "mediacion", "text": "Mediación" },
+    { "id": "medida_cautelar", "text": "Medida cautelar" },
+    { "id": "medida_probatoria", "text": "Medida probatoria" },
+    { "id": "mesa_de_dialogo", "text": "Mesa de diálogo" },
+    { "id": "nulidad", "text": "Nulidad" },
+    { "id": "prision_preventiva", "text": "Prisión preventiva" },
+    {
+      "id": "prorroga_investigacion_penal_preparatoria",
+      "text": "Prórroga investigación penal preparatoria"
+    },
+    { "id": "recurso", "text": "Recurso" },
+    { "id": "recusacion", "text": "Recusación" },
+    { "id": "regulacion_de_honorarios", "text": "Regulación de honorarios" },
+    { "id": "remision_controladora", "text": "Remisión controladora" },
+    {
+      "id": "restablecimiento_de_contacto",
+      "text": "Restablecimiento de contacto"
+    },
+    { "id": "restitucion_de_efectos", "text": "Restitución de efectos" },
+    { "id": "restitucion_de_inmueble", "text": "Restitución de inmueble" },
+    { "id": "restitucion_efectos", "text": "Restitución efectos" },
+    {
+      "id": "suspension_del_proceso_a_prueba",
+      "text": "Suspensión del proceso a prueba"
+    }
   ]
 }
