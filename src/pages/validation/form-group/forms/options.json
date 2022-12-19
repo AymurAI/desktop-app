@@ -5,7 +5,9 @@
     { "id": "varon_trans", "text": "Varón trans" },
     { "id": "mujer_trans", "text": "Mujer trans" },
     { "id": "travesti", "text": "Travesti" },
-    { "id": "no_binaria", "text": "No binaria" }
+    { "id": "no_binaria", "text": "No binaria" },
+    { "id": "sd", "text": "s/d" },
+    { "id": "no_corresponde", "text": "No corresponde" }
   ],
   "LUGAR_DEL_HECHO": [
     [
@@ -76,31 +78,14 @@
       }
     ]
   ],
-  "ART_INFRINGIDO": [
-    { "id": "codigo_contravencional", "text": "Código contravencional" },
-    {
-      "id": "codigo_penal_de_la_nacion",
-      "text": "Código penal de la Nación"
-    },
-    { "id": "ley_1217", "text": "Ley 1217" },
-    { "id": "ley_12331", "text": "Ley 12331" },
-    { "id": "ley_13944", "text": "Ley 13944" },
-    { "id": "ley_14346", "text": "Ley 14346" },
-    { "id": "ley_23098", "text": "Ley 23098" },
-    { "id": "ley_23592", "text": "Ley 23592" },
-    { "id": "ley_23737", "text": "Ley 23737" },
-    { "id": "ley_24192", "text": "Ley 24192" },
-    { "id": "ley_24270", "text": "Ley 24270" },
-    { "id": "ley_25761", "text": "Ley 25761" },
-    { "id": "ley_26735", "text": "Ley 26735" },
-    { "id": "ley_451", "text": "Ley 451" }
-  ],
   "FRECUENCIA_EPISODIOS": [
     { "id": "primera_vez", "text": "Primera vez" },
     { "id": "esporadico", "text": "Esporádico" },
     { "id": "diario", "text": "Diario" },
     { "id": "habitual", "text": "Habitual" },
-    { "id": "eventual", "text": "Eventual" }
+    { "id": "eventual", "text": "Eventual" },
+    { "id": "sd", "text": "s/d" },
+    { "id": "no_corresponde", "text": "No corresponde" }
   ],
   "NIVEL_INSTRUCCION": [
     { "id": "sin_instruccion", "text": "Sin instruccion" },
@@ -119,7 +104,9 @@
       "text": "Universitario incompleto"
     },
     { "id": "universitario_completo", "text": "Universitario completo" },
-    { "id": "universitario_en_curso", "text": "Universitario en curso" }
+    { "id": "universitario_en_curso", "text": "Universitario en curso" },
+    { "id": "sd", "text": "s/d" },
+    { "id": "no_corresponde", "text": "No corresponde" }
   ],
   "MODALIDAD_DE_LA_VIOLENCIA": [
     { "id": "domestica", "text": "Doméstica" },
@@ -128,6 +115,7 @@
     { "id": "laboral", "text": "Laboral" },
     { "id": "libertad_reproductiva", "text": "Libertad reproductiva" },
     { "id": "mediatica", "text": "Mediática" },
+    { "id": "no_corresponde", "text": "No corresponde" },
     { "id": "obstetrica", "text": "Obstétrica" },
     { "id": "publica_politica", "text": "Pública política" }
   ],
@@ -343,6 +331,7 @@
       "text": "Estacionamiento sobre senda peatonal"
     },
     { "id": "estafa", "text": "Estafa" },
+    { "id": "evasion_tributaria", "text": "Evasión tributaria" },
     { "id": "estupefacientes", "text": "Estupefacientes" },
     { "id": "exceso_capacidad_ingreso", "text": "Exceso capacidad ingreso" },
     { "id": "exceso_de_velocidad", "text": "Exceso de velocidad" },
@@ -481,7 +470,7 @@
     { "id": "intimidacion", "text": "Intimidación" },
     { "id": "juego_sin_autorizacion", "text": "Juego sin autorización" },
     {
-      "id": "juegos_de_azar_sin_autorización",
+      "id": "juegos_de_azar_sin_autorizacion",
       "text": "Juegos de azar sin autorización"
     },
     { "id": "lesiones", "text": "Lesiones" },
@@ -664,6 +653,7 @@
       "id": "suplantacion_digital_de_identidad",
       "text": "Suplantación digital de identidad"
     },
+
     {
       "id": "taxis_transportes_escolares_remises_sin_autorizacion",
       "text": "Taxis transportes escolares remises sin autorización"
@@ -862,8 +852,10 @@
     },
     { "id": "leves", "text": "Leves" },
     { "id": "leves_agravadas", "text": "Leves agravadas" },
+    { "id": "leves_tentativa", "text": "Leves tentativa" },
     { "id": "muebles_transportables", "text": "Muebles transportables" },
     { "id": "no_denuncia_delito", "text": "No denuncia delito" },
+    { "id": "no_corresponde", "text": "No corresponde" },
     { "id": "ocasion_de_incendio", "text": "Ocasión de incendio" },
     { "id": "organismo_publico", "text": "Organismo público" },
     {
@@ -904,11 +896,28 @@
       "id": "audiencia_victima_ley26484",
       "text": "Audiencia víctima Ley 26484"
     },
+    {
+      "id": "audiencia_victima_11bis_ley24660",
+      "text": "Audiencia víctima 11 bis Ñey 24660"
+    },
+    {
+      "id": "audiencia_victima_ley26485",
+      "text": "Audiencia victima Ley26485"
+    },
+    {
+      "id": "audiencia_acusado_ley26485",
+      "text": "Audiencia acusado Ley 26485"
+    },
     { "id": "29_dias", "text": "29 días" },
+    { "id": "30_dias", "text": "30 dias" },
     { "id": "44_dias", "text": "44 días" },
+    { "id": "45_dias", "text": "45 dias" },
     { "id": "59_dias", "text": "59 días" },
+    { "id": "60_dias", "text": "60 dias" },
     { "id": "89_dias", "text": "89 días" },
+    { "id": "90_dias", "text": "90 dias" },
     { "id": "179_dias", "text": "179 días" },
+    { "id": "180_dias", "text": "180 dias" },
     { "id": "abandono_vehiculo", "text": "Abandono vehículo" },
     { "id": "absolucion", "text": "Absolución" },
     {
@@ -1111,7 +1120,11 @@
     },
     {
       "id": "expulsion_art_63_a_ley_25871",
-      "text": "Expulsión art 63 a Ley 25871"
+      "text": "Expulsión art. 63 a Ley 25871"
+    },
+    {
+      "id": "expulsion_art_64_a_ley_25871",
+      "text": "Expulsion art. 64 a Ley 25871"
     },
     {
       "id": "extincion_accion_por_autocomposicion",
@@ -1259,7 +1272,11 @@
     },
     {
       "id": "pago_minimo_multa_y_reparacion_daño_63cp",
-      "text": "Pago mínimo multa y reparación daño 63 cp"
+      "text": "Pago mínimo multa y reparación daño 63 CP"
+    },
+    {
+      "id": "pago_minimo_multa_y_reparacion_daño_64cp",
+      "text": "Pago minimo multa y reparacion daño 64 CP"
     },
     { "id": "paradero", "text": "Paradero" },
     { "id": "paradero_deja_sin_efecto", "text": "Paradero deja sin efecto" },
@@ -1306,12 +1323,16 @@
       "text": "Pedido de informe Instagram"
     },
     {
+      "id": "pedido_de_informe_mercado_libre",
+      "text": "Pedido de informe Mercado Libre"
+    },
+    {
       "id": "pedido_de_informe_microsoft",
       "text": "Pedido de informe Microsoft"
     },
     { "id": "pedido_de_informe_skype", "text": "Pedido de informe Skype" },
     {
-      "id": "pedido_de_informe_telefonía",
+      "id": "pedido_de_informe_telefonia",
       "text": "Pedido de informe telefonía"
     },
     {
@@ -1319,6 +1340,7 @@
       "text": "Pedido de informe Whatsapp"
     },
     { "id": "pedido_informe_tiktok", "text": "Pedido informe Tiktok" },
+
     {
       "id": "pedido_prision_domiciliaria",
       "text": "Pedido prisión domiciliaria"
@@ -1452,6 +1474,10 @@
       "id": "promocion_a_periodo_de_prueba_art_6_ley_24660",
       "text": "Promoción a período de prueba art 6 Ley 24660"
     },
+    {
+      "id": "promocion_a_periodo_de_prueba_art_7_ley_24660",
+      "text": "Promoción a período de prueba art 7 Ley 24660"
+    },
     { "id": "prorroga", "text": "Prórroga" },
     { "id": "prueba_ofrecida", "text": "Prueba ofrecida" },
     { "id": "publicacion_de_edictos", "text": "Publicación de edictos" },
@@ -1555,7 +1581,7 @@
     },
     { "id": "unificacion_de_pena", "text": "Unificación de pena" },
     { "id": "vehiculo", "text": "Vehículo" },
-    { "id": "vencimiento_plazo_ipp", "text": "Vencimiento plazo ipp" }
+    { "id": "vencimiento_plazo_ipp", "text": "Vencimiento plazo IPP" }
   ],
   "OBJETO_DE_LA_RESOLUCION": [
     { "id": "acumulacion_de_caso", "text": "Acumulación de caso" },
@@ -1608,5 +1634,184 @@
       "id": "suspension_del_proceso_a_prueba",
       "text": "Suspensión del proceso a prueba"
     }
+  ],
+  "CODIGO_O_LEY": [
+    { "id": "00", "text": "00" },
+    { "id": "1", "text": "1" },
+    { "id": "1.1.6", "text": "1.1.6" },
+    { "id": "1.3.20", "text": "1.3.20" },
+    { "id": "1.3.22", "text": "1.3.22" },
+    { "id": "1.3.3", "text": "1.3.3" },
+    { "id": "1.3.31", "text": "1.3.31" },
+    { "id": "1.3.6.1", "text": "1.3.6.1" },
+    { "id": "2.1.1", "text": "2.1.1" },
+    { "id": "2.1.13", "text": "2.1.13" },
+    { "id": "2.1.15", "text": "2.1.15" },
+    { "id": "2.1.16", "text": "2.1.16" },
+    { "id": "2.1.17", "text": "2.1.17" },
+    { "id": "2.1.19", "text": "2.1.19" },
+    { "id": "2.1.21", "text": "2.1.21" },
+    { "id": "2.1.3", "text": "2.1.3" },
+    { "id": "2.2.1", "text": "2.2.1" },
+    { "id": "2.2.14", "text": "2.2.14" },
+    { "id": "3", "text": "3" },
+    { "id": "3.1.1", "text": "3.1.1" },
+    { "id": "4.1.1", "text": "4.1.1" },
+    { "id": "4.1.1.2", "text": "4.1.1.2" },
+    { "id": "4.1.17", "text": "4.1.17" },
+    { "id": "4.1.22", "text": "4.1.22" },
+    { "id": "4.1.24", "text": "4.1.24" },
+    { "id": "4.1.7", "text": "4.1.7" },
+    { "id": "5c", "text": "5c" },
+    { "id": "5d", "text": "5d" },
+    { "id": "5e", "text": "5e" },
+    { "id": "6", "text": "6" },
+    { "id": "6.1.12", "text": "6.1.12" },
+    { "id": "6.1.12.1", "text": "6.1.12.1" },
+    { "id": "6.1.2", "text": "6.1.2" },
+    { "id": "6.1.24", "text": "6.1.24" },
+    { "id": "6.1.26", "text": "6.1.26" },
+    { "id": "6.1.28", "text": "6.1.28" },
+    { "id": "6.1.31", "text": "6.1.31" },
+    { "id": "6.1.37", "text": "6.1.37" },
+    { "id": "6.1.4", "text": "6.1.4" },
+    { "id": "6.1.40", "text": "6.1.40" },
+    { "id": "6.1.41", "text": "6.1.41" },
+    { "id": "6.1.42", "text": "6.1.42" },
+    { "id": "6.1.44", "text": "6.1.44" },
+    { "id": "6.1.47", "text": "6.1.47" },
+    { "id": "6.1.49", "text": "6.1.49" },
+    { "id": "6.1.52", "text": "6.1.52" },
+    { "id": "6.1.54", "text": "6.1.54" },
+    { "id": "6.1.63", "text": "6.1.63" },
+    { "id": "6.1.67", "text": "6.1.67" },
+    { "id": "6.1.8", "text": "6.1.8" },
+    { "id": "6.1.9", "text": "6.1.9" },
+    { "id": "6.1.94", "text": "6.1.94" },
+    { "id": "9.1.1", "text": "9.1.1" },
+    { "id": "10.1.5", "text": "10.1.5" },
+    { "id": "11.1.10", "text": "11.1.10" },
+    { "id": "11.1.2", "text": "11.1.2" },
+    { "id": "11.1.4", "text": "11.1.4" },
+    { "id": "13", "text": "13" },
+    { "id": "14", "text": "14" },
+    { "id": "17", "text": "17" },
+    { "id": "23", "text": "23" },
+    { "id": "51", "text": "51" },
+    { "id": "52", "text": "52" },
+    { "id": "53_bis", "text": "53 bis" },
+    { "id": "53_bis_inc_3", "text": "53 bis inc. 3" },
+    { "id": "53_bis_inc_5", "text": "53 bis inc. 5" },
+    { "id": "54", "text": "54" },
+    { "id": "56", "text": "56" },
+    { "id": "57", "text": "57" },
+    { "id": "58", "text": "58" },
+    { "id": "59", "text": "59" },
+    { "id": "67_bis", "text": "67 bis" },
+    { "id": "71_quinquies", "text": "71 quinquies" },
+    { "id": "71_ter", "text": "71 ter" },
+    { "id": "72", "text": "72" },
+    { "id": "73", "text": "73" },
+    { "id": "74", "text": "74" },
+    { "id": "75", "text": "75" },
+    { "id": "76", "text": "76" },
+    { "id": "77", "text": "77" },
+    { "id": "79", "text": "79" },
+    { "id": "80", "text": "80" },
+    { "id": "80_inc_11", "text": "80 inc. 11" },
+    { "id": "80_inc_2", "text": "80 inc. 2" },
+    { "id": "81", "text": "81" },
+    { "id": "82", "text": "82" },
+    { "id": "83", "text": "83" },
+    { "id": "84", "text": "84" },
+    { "id": "85", "text": "85" },
+    { "id": "87", "text": "87" },
+    { "id": "88", "text": "88" },
+    { "id": "89", "text": "89" },
+    { "id": "90", "text": "90" },
+    { "id": "92", "text": "92" },
+    { "id": "93", "text": "93" },
+    { "id": "94", "text": "94" },
+    { "id": "94_bis", "text": "94 bis" },
+    { "id": "95", "text": "95" },
+    { "id": "96", "text": "96" },
+    { "id": "97", "text": "97" },
+    { "id": "100", "text": "100" },
+    { "id": "101", "text": "101" },
+    { "id": "104", "text": "104" },
+    { "id": "105", "text": "105" },
+    { "id": "106", "text": "106" },
+    { "id": "107", "text": "107" },
+    { "id": "109", "text": "109" },
+    { "id": "111", "text": "111" },
+    { "id": "113", "text": "113" },
+    { "id": "116", "text": "116" },
+    { "id": "118", "text": "118" },
+    { "id": "119", "text": "119" },
+    { "id": "120", "text": "120" },
+    { "id": "122", "text": "122" },
+    { "id": "125_bis", "text": "125 bis" },
+    { "id": "128", "text": "128" },
+    { "id": "129", "text": "129" },
+    { "id": "129_parr_2", "text": "129 párr. 2" },
+    { "id": "131", "text": "131" },
+    { "id": "135", "text": "135" },
+    { "id": "141", "text": "141" },
+    { "id": "148_bis", "text": "148 bis" },
+    { "id": "149_bis", "text": "149 bis" },
+    { "id": "149_bis_parr_2", "text": "149 bis párr. 2" },
+    { "id": "149_ter_inc_2b)", "text": "149 ter inc. 2b)" },
+    { "id": "150", "text": "150" },
+    { "id": "153", "text": "153" },
+    { "id": "153_bis", "text": "153 bis" },
+    { "id": "153_bis_parr_2", "text": "153 bis párr. 2" },
+    { "id": "157_bis", "text": "157 bis" },
+    { "id": "162", "text": "162" },
+    { "id": "163", "text": "163" },
+    { "id": "163_inc_4", "text": "163 inc. 4" },
+    { "id": "163_bis", "text": "163 bis" },
+    { "id": "164", "text": "164" },
+    { "id": "166", "text": "166" },
+    { "id": "168", "text": "168" },
+    { "id": "172", "text": "172" },
+    { "id": "173_inc_15", "text": "173 inc. 15" },
+    { "id": "173_inc_16", "text": "173 inc. 16" },
+    { "id": "173_inc_2", "text": "173 inc. 2" },
+    { "id": "181_inc_1", "text": "181 inc. 1" },
+    { "id": "181_inc_3", "text": "181 inc- 3" },
+    { "id": "183", "text": "183" },
+    { "id": "183_parr_2", "text": "183 párr. 2" },
+    { "id": "184_inc_5", "text": "184 inc. 5" },
+    { "id": "186", "text": "186" },
+    { "id": "186_inc_1", "text": "186 inc. 1" },
+    { "id": "186_inc_4", "text": "186 inc. 4" },
+    { "id": "186_inc_5", "text": "186 inc. 5" },
+    { "id": "189_bis", "text": "189 bis" },
+    { "id": "189_bis_inc_4", "text": "189 bis inc. 4" },
+    { "id": "193_bis", "text": "193 bis" },
+    { "id": "204_quinquies", "text": "204 quinquies" },
+    { "id": "205", "text": "205" },
+    { "id": "208", "text": "208" },
+    { "id": "210", "text": "210" },
+    { "id": "237", "text": "237" },
+    { "id": "238", "text": "238" },
+    { "id": "239", "text": "239" },
+    { "id": "243", "text": "243" },
+    { "id": "245", "text": "245" },
+    { "id": "248", "text": "248" },
+    { "id": "249", "text": "249" },
+    { "id": "258", "text": "258" },
+    { "id": "266", "text": "266" },
+    { "id": "267", "text": "267" },
+    { "id": "273", "text": "273" },
+    { "id": "277_inc_d", "text": "277 inc. d" },
+    { "id": "281", "text": "281" },
+    { "id": "289_inc_1", "text": "289 inc. 1" },
+    { "id": "289_inc_3", "text": "289 inc. 3" },
+    { "id": "292_parr_1", "text": "292 párr. 1" },
+    { "id": "292_parr_2", "text": "292 párr. 2" },
+    { "id": "295", "text": "295" },
+    { "id": "296", "text": "296" },
+    { "id": "301_bis", "text": "301 bis" }
   ]
 }
