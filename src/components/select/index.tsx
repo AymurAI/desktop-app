@@ -18,6 +18,7 @@ import {
   TextContainer,
 } from './Select.styles';
 import { findOption } from './utils';
+import { useEffect } from 'react';
 
 export type SelectOption = { id: string; text: string };
 interface Props {
