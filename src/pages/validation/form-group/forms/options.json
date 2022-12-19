@@ -138,5 +138,587 @@
   "DECISION": [
     { "id": "hace_lugar", "text": "Hace lugar" },
     { "id": "no_hace_lugar", "text": "No hace lugar" }
+  ],
+  "CONDUCTA": [
+    {
+      "id": "abandonar_animal_domestico",
+      "text": "Abandonar animal doméstico"
+    },
+    { "id": "abandono_de_personas", "text": "Abandono de personas" },
+    { "id": "abuso_de_armas", "text": "Abuso de armas" },
+    {
+      "id": "abuso_de_autoridad_e_incumplimiento_deberes_funcionario_publico",
+      "text": "Abuso de autoridad e incumplimiento deberes funcionario público"
+    },
+    { "id": "abuso_sexual", "text": "Abuso sexual" },
+    {
+      "id": "acceder_a_lugares_distintos_segun_entrada",
+      "text": "Acceder a lugares distintos según entrada"
+    },
+    {
+      "id": "acceso_a_sistema_restringido",
+      "text": "Acceso a sistema restringido"
+    },
+    { "id": "acoso_sexual_callejero", "text": "Acoso sexual callejero" },
+    {
+      "id": "actividades_lucrativas_sin_autorizacion",
+      "text": "Actividades lucrativas sin autorización"
+    },
+    {
+      "id": "actividades_lucrativas_sin_habilitacion",
+      "text": "Actividades lucrativas sin habilitación"
+    },
+    {
+      "id": "actos_contenido_sexual_con_menores",
+      "text": "Actos contenido sexual con menores"
+    },
+    {
+      "id": "administracion_fraudulenta",
+      "text": "Administración fraudulenta"
+    },
+    {
+      "id": "afectar_el_desarrollo_del_espectaculo",
+      "text": "Afectar el desarrollo del espectáculo"
+    },
+    {
+      "id": "afectar_funcionamiento_servicios_publicos",
+      "text": "Afectar funcionamiento servicios públicos"
+    },
+    {
+      "id": "afectar_servicios_de_emergencia_o_seguridad",
+      "text": "Afectar servicios de emergencia o seguridad"
+    },
+    {
+      "id": "afectar_servicios_emergencia",
+      "text": "Afectar servicios emergencia"
+    },
+    { "id": "afectar_señalizacion", "text": "Afectar señalización" },
+    { "id": "allanamiento_autonomo", "text": "Allanamiento autónomo" },
+    { "id": "alterar_programa", "text": "Alterar programa" },
+    { "id": "alterar_sepulturas", "text": "Alterar sepulturas" },
+    { "id": "amenazas", "text": "Amenazas" },
+    { "id": "amparo", "text": "Amparo" },
+    { "id": "apariencia_falsa", "text": "Apariencia falsa" },
+    {
+      "id": "apariencia_falsa_para_entrar_a_domicilio_o_lugar_privado",
+      "text": "Apariencia falsa para entrar a domicilio o lugar privado"
+    },
+    {
+      "id": "apropiacion_indebida_de_tributos",
+      "text": "Apropiacion indebida de tributos"
+    },
+    {
+      "id": "arrojar_cosas_que_puedan_causar_lesiones",
+      "text": "Arrojar cosas que puedan causar lesiones"
+    },
+    { "id": "arrojar_cosas_sustancias", "text": "Arrojar cosas sustancias" },
+    {
+      "id": "arrojar_sustancias_insalubres_en_lugares_publicos",
+      "text": "Arrojar sustancias insalubres en lugares públicos"
+    },
+    { "id": "asociacion_ilicita", "text": "Asociacion ilícita" },
+    {
+      "id": "asuncion_falsa_de_contravencion",
+      "text": "Asunción falsa de contravención"
+    },
+    {
+      "id": "atentado_contra_la_autoridad",
+      "text": "Atentado contra la autoridad"
+    },
+    { "id": "ausencia_de_habilitacion", "text": "Ausencia de habilitación" },
+    { "id": "banderas", "text": "Banderas" },
+    { "id": "carteles_afiches_volantes", "text": "Carteles afiches volantes" },
+    { "id": "cierre_defectuoso", "text": "Cierre defectuoso" },
+    {
+      "id": "circular_por_carriles_exclusivos",
+      "text": "Circular por carriles exclusivos"
+    },
+    {
+      "id": "circular_por_lugar_prohibido",
+      "text": "Circular por lugar prohibido"
+    },
+    { "id": "cohecho_activo", "text": "Cohecho activo" },
+    { "id": "cohecho_pasivo", "text": "Cohecho pasivo" },
+    { "id": "coimas", "text": "Coimas" },
+    { "id": "competencia_desleal", "text": "Competencia desleal" },
+    {
+      "id": "conducir_con_mayor_cantidad_de_alcohol_en_sangre_del_permitido",
+      "text": "Conducir con mayor cantidad de alcohol en sangre del permitido"
+    },
+    {
+      "id": "conducir_con_mayor_grado_de_alcohol_o_bajo_efectos_de_estupefacientes",
+      "text": "Conducir con mayor grado de alcohol o bajo efectos de estupefacientes"
+    },
+    {
+      "id": "conducir_sin_licencia_que_lo_habilite_por_categoria_de_vehiculo",
+      "text": "Conducir sin licencia que lo habilite por categoría de vehiculo"
+    },
+    {
+      "id": "conducir_usando_aparato_electronico",
+      "text": "Conducir usando aparato electrónico"
+    },
+    { "id": "connivencia_policial", "text": "Connivencia policial" },
+    {
+      "id": "contactar_menor_por_medio_de_tecnologias_para_cometer_delitos_contra_su_integridad_sexual",
+      "text": "Contactar menor por medio de tecnologías para cometer delitos contra su integridad sexual"
+    },
+    { "id": "cruce_de_semaforo_en_rojo", "text": "Cruce de semaforo en rojo" },
+    { "id": "cuida_coche", "text": "Cuida coche" },
+    {
+      "id": "cuidar_coches_sin_autorizacion",
+      "text": "Cuidar coches sin autorización"
+    },
+    { "id": "daños", "text": "Daños" },
+    { "id": "daños_informaticos", "text": "Daños informáticos" },
+    { "id": "defraudacion", "text": "Defraudación" },
+    {
+      "id": "defraudacion_contra_la_administracion_publica",
+      "text": "Defraudación contra la administración pública"
+    },
+    {
+      "id": "delito_contra_seguridad_transito",
+      "text": "Delito contra seguridad tránsito"
+    },
+    { "id": "denegacion_de_justicia", "text": "Denegación de justicia" },
+    { "id": "derecho_admision", "text": "Derecho admisión" },
+    { "id": "desarmado_automotor", "text": "Desarmado automotor" },
+    {
+      "id": "desinfeccion_y_desratizacion",
+      "text": "Desinfección y desratización"
+    },
+    {
+      "id": "desobediencia_a_cargas_procesales",
+      "text": "Desobediencia a cargas procesales"
+    },
+    {
+      "id": "desobediencia_a_la_autoridad",
+      "text": "Desobediencia a la autoridad"
+    },
+    {
+      "id": "difusion_no_autorizada_de_imagenes",
+      "text": "Difusión no autorizada de imágenes"
+    },
+    {
+      "id": "difusion_no_autorizada_de_imagenes_intimas",
+      "text": "Difusion no autorizada de imágenes íntimas"
+    },
+    { "id": "discriminar", "text": "Discriminar" },
+    { "id": "documentacion_sanitaria", "text": "Documentación sanitaria" },
+    { "id": "ejecucion_de_multa", "text": "Ejecución de multa" },
+    {
+      "id": "ejercer_ilegitimamente_actividad",
+      "text": "Ejercer ilegítimamente actividad"
+    },
+    {
+      "id": "ejercicio_ilegal_de_la_medicina",
+      "text": "Ejercicio ilegal de la medicina"
+    },
+    {
+      "id": "elementos_de_prevencion_contra_incendio",
+      "text": "Elementos de prevención contra incendio"
+    },
+    { "id": "encubrimiento", "text": "Encubrimiento" },
+    {
+      "id": "encubrimiento_actividades_baile",
+      "text": "Encubrimiento actividades baile"
+    },
+    { "id": "ensuciar_bienes", "text": "Ensuciar bienes" },
+    {
+      "id": "entregar_indebidamente_armas_explosivos",
+      "text": "Entregar indebidamente armas explosivos"
+    },
+    { "id": "espantar_animales", "text": "Espantar animales" },
+    { "id": "espejos_retrovisores", "text": "Espejos retrovisores" },
+    { "id": "estacionamiento_prohibido", "text": "Estacionamiento prohibido" },
+    {
+      "id": "estacionamiento_sobre_senda_peatonal",
+      "text": "Estacionamiento sobre senda peatonal"
+    },
+    { "id": "estafa", "text": "Estafa" },
+    { "id": "estupefacientes", "text": "Estupefacientes" },
+    { "id": "exceso_capacidad_ingreso", "text": "Exceso capacidad ingreso" },
+    { "id": "exceso_de_velocidad", "text": "Exceso de velocidad" },
+    {
+      "id": "exhibicion_de_documentacion_obligatoria",
+      "text": "Exhibición de documentacion obligatoria"
+    },
+    { "id": "exhibiciones_obscenas", "text": "Exhibiciones obscenas" },
+    {
+      "id": "exhortos_de_otras_jurisdicciones",
+      "text": "Exhortos de otras jurisdicciones"
+    },
+    {
+      "id": "explotacion_trabajo_infantil",
+      "text": "Explotación trabajo infantil"
+    },
+    { "id": "extorsion", "text": "Extorsión" },
+    {
+      "id": "fabricar_transportar_artefactos_pirotecnicos",
+      "text": "Fabricar transportar artefactos pirotécnicos"
+    },
+    { "id": "falsa_denuncia", "text": "Falsa denuncia" },
+    {
+      "id": "falsedad_documental_de_certificado_de_aptitud_ambiental",
+      "text": "Falsedad documental de certificado de aptitud ambiental"
+    },
+    {
+      "id": "falsificacion_certificado_medico",
+      "text": "Falsificación certificado médico"
+    },
+    {
+      "id": "falsificacion_de_documento",
+      "text": "Falsificación de documento"
+    },
+    {
+      "id": "falsificacion_de_marcas_firmas_señas_oficiales",
+      "text": "Falsificación de marcas firmas señas oficiales"
+    },
+    {
+      "id": "falsificacion_de_numeracion_de_objeto_registrada_de_acuerdo_a_ley",
+      "text": "Falsificación de numeración de objeto registrada de acuerdo a ley"
+    },
+    {
+      "id": "falta_de_poliza_de_seguros",
+      "text": "Falta de póliza de seguros"
+    },
+    {
+      "id": "favorecimiento_evasion_persona_detenida",
+      "text": "Favorecimiento evasión persona detenida"
+    },
+    { "id": "frustrar_subasta_publica", "text": "Frustrar subasta pública" },
+    {
+      "id": "guardar_artefactos_pirotecnicos",
+      "text": "Guardar artefactos pirotécnicos"
+    },
+    {
+      "id": "guardar_elementos_aptos_violencia",
+      "text": "Guardar elementos aptos violencia"
+    },
+    { "id": "habeas_corpus", "text": "Habeas corpus" },
+    {
+      "id": "habilitacion_en_infraccion",
+      "text": "Habilitación en infracción"
+    },
+    { "id": "homicidio", "text": "Homicidio" },
+    { "id": "hostigamiento", "text": "Hostigamiento" },
+    { "id": "hostigamiento_digital", "text": "Hostigamiento digital" },
+    { "id": "hurto", "text": "Hurto" },
+    {
+      "id": "impedimento_de_contacto_de_menor_con_padre_no_conviviente",
+      "text": "Impedimento de contacto de menor con padre no conviviente"
+    },
+    {
+      "id": "incendio_explosion_inundacion_con_peligro_para_bienes",
+      "text": "Incendio explosión inundación con peligro para bienes"
+    },
+    {
+      "id": "incendios_y_otros_estragos",
+      "text": "Incendios y otros estragos"
+    },
+    { "id": "incitar_al_desorden", "text": "Incitar al desorden" },
+    { "id": "incumplimiento_de_plazos", "text": "Incumplimiento de plazos" },
+    {
+      "id": "incumplimiento_deberes_familiares",
+      "text": "Incumplimiento deberes familiares"
+    },
+    {
+      "id": "incumplimiento_deberes_funcionario_publico",
+      "text": "Incumplimiento deberes funcionario público"
+    },
+    {
+      "id": "incumplimiento_medidas_prevencion_sanidad",
+      "text": "Incumplimiento medidas prevención sanidad"
+    },
+    {
+      "id": "incumplimiento_perimetro_profundidad",
+      "text": "Incumplimiento perímetro profundidad"
+    },
+    { "id": "incumplir_clausura", "text": "Incumplir clausura" },
+    {
+      "id": "incumplir_obligaciones_legales",
+      "text": "Incumplir obligaciones legales"
+    },
+    { "id": "inducir_menor_a_mendigar", "text": "Inducir menor a mendigar" },
+    {
+      "id": "infraccion_reglamentos_seguridad",
+      "text": "Infracción reglamentos seguridad"
+    },
+    {
+      "id": "ingresar_artefactos_pirotecnicos",
+      "text": "Ingresar artefactos pirotécnicos"
+    },
+    {
+      "id": "ingresar_consumir_bebidas_alcoholicas",
+      "text": "Ingresar consumir bebidas alcohólicas"
+    },
+    {
+      "id": "ingresar_contra_derecho_admision",
+      "text": "Ingresar contra derecho admisión"
+    },
+    {
+      "id": "ingresar_sin_autorizacion_lugares_reservados",
+      "text": "Ingresar sin autorización lugares reservados"
+    },
+    { "id": "ingresar_sin_entrada", "text": "Ingresar sin entrada" },
+    {
+      "id": "ingresar_sin_entrada_autorizacion",
+      "text": "Ingresar sin entrada autorización"
+    },
+    {
+      "id": "ingreso_a_domicilio_sin_autorizacion",
+      "text": "Ingreso a domicilio sin autorización"
+    },
+    { "id": "inhumar_exhumar_profanar", "text": "Inhumar exhumar profanar" },
+    { "id": "intimidacion", "text": "Intimidación" },
+    { "id": "juego_sin_autorizacion", "text": "Juego sin autorización" },
+    {
+      "id": "juegos_de_azar_sin_autorización",
+      "text": "Juegos de azar sin autorización"
+    },
+    { "id": "lesiones", "text": "Lesiones" },
+    { "id": "ley_451", "text": "Ley 451" },
+    { "id": "licencia_vencida", "text": "Licencia vencida" },
+    { "id": "maltrato", "text": "Maltrato" },
+    {
+      "id": "mantener_animal_domestico_espacios_inadecuados",
+      "text": "Mantener animal doméstico espacios inadecuados"
+    },
+    {
+      "id": "mantenimiento_de_cercas_y_aceras",
+      "text": "Mantenimiento de cercas y aceras"
+    },
+    {
+      "id": "menoscabar_integridad_animal_domestico",
+      "text": "Menoscabar integridad animal doméstico"
+    },
+    { "id": "mesnna_masnna", "text": "Mesnna masnna" },
+    {
+      "id": "no_realizar_grabado_de_autopartes",
+      "text": "No realizar grabado de autopartes"
+    },
+    { "id": "no_respetar_carriles", "text": "No respetar carriles" },
+    {
+      "id": "no_respetar_senda_peatonal",
+      "text": "No respetar senda peatonal"
+    },
+    {
+      "id": "obligacion_de_exhibir_cartel",
+      "text": "Obligación de exhibir cartel"
+    },
+    {
+      "id": "obligacion_de_informar_prohibicion_de_fumar",
+      "text": "Obligación de informar prohibición de fumar"
+    },
+    { "id": "obligacion_de_conservar", "text": "Obligación de conservar" },
+    {
+      "id": "obstaculizar_ingreso_o_salida",
+      "text": "Obstaculizar ingreso o salida"
+    },
+    { "id": "obstruccion_de_inspeccion", "text": "Obstrucción de inspección" },
+    { "id": "obstruccion_de_via", "text": "Obstrucción de vía" },
+    {
+      "id": "obstruccion_de_via_publica",
+      "text": "Obstruccion de vía pública"
+    },
+    { "id": "obstruir_salida", "text": "Obstruir salida" },
+    { "id": "ocupar_via_publica", "text": "Ocupar vía pública" },
+    {
+      "id": "oferta_demanda_sexo_espacio_publico",
+      "text": "Oferta demanda sexo espacio público"
+    },
+    {
+      "id": "omitir_cuidados_animal_domestico",
+      "text": "Omitir cuidados animal doméstico"
+    },
+    {
+      "id": "omitir_recaudos_de_cuidado_animal_domestico",
+      "text": "Omitir recaudos de cuidado animal doméstico"
+    },
+    {
+      "id": "omitir_recaudos_de_organizacion",
+      "text": "Omitir recaudos de organización"
+    },
+    {
+      "id": "omitir_recaudos_espectaculo_masivo",
+      "text": "Omitir recaudos espectáculo masivo"
+    },
+    {
+      "id": "omitir_recaudos_organizacion_seguridad",
+      "text": "Omitir recaudos organización seguridad"
+    },
+    { "id": "organizar_explotar_juego", "text": "Organizar explotar juego" },
+    {
+      "id": "organizar_sin_autorizacion_juego",
+      "text": "Organizar sin autorización juego"
+    },
+    {
+      "id": "participar_competencias_velocidad_via_publica",
+      "text": "Participar competencias velocidad via pública"
+    },
+    { "id": "pelear_en_lugar_publico", "text": "Pelear en lugar público" },
+    { "id": "permiso_y_planos_de_obra", "text": "Permiso y planos de obra" },
+    { "id": "persona_no_habilitada", "text": "Persona no habilitada" },
+    {
+      "id": "perturbar_ceremonias_religiosas_funebres",
+      "text": "Perturbar ceremonias religiosas fúnebres"
+    },
+    {
+      "id": "perturbar_filas_ingreso_no_respetar_vallado",
+      "text": "Perturbar filas ingreso no respetar vallado"
+    },
+    { "id": "placas_de_dominio", "text": "Placas de dominio" },
+    { "id": "pornografia_infantil", "text": "Pornografía infantil" },
+    { "id": "portacion_de_arma", "text": "Portación de arma" },
+    {
+      "id": "portar_armas_no_convencionales",
+      "text": "Portar armas no convencionales"
+    },
+    {
+      "id": "presencia_menores_lugar_no_autorizado",
+      "text": "Presencia menores lugar no autorizado"
+    },
+    { "id": "presunta_comision_delito", "text": "Presunta comisión delito" },
+    { "id": "presunta_contravencion", "text": "Presunta contravención" },
+    {
+      "id": "privacion_ilegitima_de_la_libertad",
+      "text": "Privacion ilegítima de la libertad"
+    },
+    { "id": "producir_avalanchas", "text": "Producir avalanchas" },
+    {
+      "id": "promocion_o_facilitacion_de_prostitucion_de_personas",
+      "text": "Promoción o facilitación de prostitución de personas"
+    },
+    {
+      "id": "promover_comerciar_ofertar_juego",
+      "text": "Promover comerciar ofertar juego"
+    },
+    {
+      "id": "propaganda_discriminatoria",
+      "text": "Propaganda discriminatoria"
+    },
+    { "id": "proteccion_animal", "text": "Protección animal" },
+    { "id": "provocar_parcialidad", "text": "Provocar parcialidad" },
+    {
+      "id": "publicidad_en_lugares_no_habilitados_via_publica",
+      "text": "Publicidad en lugares no habilitados via pública"
+    },
+    {
+      "id": "regentear_o_administrar_casas_de_tolerancia",
+      "text": "Regentear o administrar casas de tolerancia"
+    },
+    { "id": "residuos_peligrosos", "text": "Residuos peligrosos" },
+    { "id": "retencion_indebida", "text": "Retención indebida" },
+    { "id": "revender_entradas", "text": "Revender entradas" },
+    { "id": "robo", "text": "Robo" },
+    { "id": "ruidos_molestos", "text": "Ruidos molestos" },
+    { "id": "ruidos_y_vibraciones", "text": "Ruidos y vibraciones" },
+    { "id": "sancion_generica", "text": "Sanción generica" },
+    {
+      "id": "servicios_de_seguridad_prohibiciones_incumplidas",
+      "text": "Servicios de seguridad prohibiciones incumplidas"
+    },
+    {
+      "id": "servicios_de_seguridad_requisitos_incumplidos",
+      "text": "Servicios de seguridad requisitos incumplidos"
+    },
+    { "id": "suministrar_alcohol_menor", "text": "Suministrar alcohol menor" },
+    {
+      "id": "suministrar_bebidas_alcoholicas",
+      "text": "Suministrar bebidas alcohólicas"
+    },
+    {
+      "id": "suministrar_elementos_aptos_agresion",
+      "text": "Suministrar elementos aptos agresión"
+    },
+    {
+      "id": "suministrar_material_pornografico",
+      "text": "Suministrar material pornográfico"
+    },
+    {
+      "id": "suministrar_objetos_peligrosos",
+      "text": "Suministrar objetos peligrosos"
+    },
+    {
+      "id": "suministrar_productos_farmaceuticos",
+      "text": "Suministrar productos farmacéuticos"
+    },
+    {
+      "id": "suministro_de_medicamentos",
+      "text": "Suministro de medicamentos"
+    },
+    { "id": "suplantacion_identidad", "text": "Suplantación identidad" },
+    {
+      "id": "suplantacion_digital_de_identidad",
+      "text": "Suplantación digital de identidad"
+    },
+    {
+      "id": "taxis_transportes_escolares_remises_sin_autorizacion",
+      "text": "Taxis transportes escolares remises sin autorización"
+    },
+    { "id": "tenencia_de_arma", "text": "Tenencia de arma" },
+    { "id": "transporte_de_pasajeros", "text": "Transporte de pasajeros" },
+    {
+      "id": "transporte_de_pasajeros_sin_habilitacion",
+      "text": "Transporte de pasajeros sin habilitación"
+    },
+    {
+      "id": "transporte_de_pasajeros_sin_habilitacion_o_autorizacion",
+      "text": "Transporte de pasajeros sin habilitación o autorización"
+    },
+    {
+      "id": "usar_indebidamente_credencial",
+      "text": "Usar indebidamente credencial"
+    },
+    {
+      "id": "usar_indebidamente_espacio_publico",
+      "text": "Usar indebidamente espacio público"
+    },
+    { "id": "usar_indebidamente_armas", "text": "Usar indebidamente armas" },
+    {
+      "id": "uso_de_documento_falso_o_adulterado",
+      "text": "Uso de documento falso o adulterado"
+    },
+    {
+      "id": "uso_indebido_del_espacio_publico",
+      "text": "Uso indebido del espacio público"
+    },
+    {
+      "id": "uso_o_exhibicion_de_franquicias",
+      "text": "Uso o exhibición de franquicias"
+    },
+    { "id": "usurpacion", "text": "Usurpación" },
+    { "id": "vehiculo_abandonado", "text": "Vehiculo abandonado" },
+    {
+      "id": "vender_entradas_o_permitir_ingreso_exceso",
+      "text": "Vender entradas o permitir ingreso exceso"
+    },
+    {
+      "id": "vender_sustancias_medicinales_sin_receta",
+      "text": "Vender sustancias medicinales sin receta"
+    },
+    {
+      "id": "venta_o_consumo_de_bebidas_alcoholicas_fuera_del_horario",
+      "text": "Venta o consumo de bebidas alcohólicas fuera del horario"
+    },
+    { "id": "verificacion_tecnica", "text": "Verificación técnica" },
+    { "id": "violacion_de_peaje", "text": "Violación de peaje" },
+    { "id": "violacion_de_domicilio", "text": "Violación de domicilio" },
+    {
+      "id": "violacion_de_secretos_y_de_la_privacidad",
+      "text": "Violación de secretos y de la privacidad"
+    },
+    { "id": "violar_clausura", "text": "Violar clausura" },
+    {
+      "id": "violar_inhabilitacion_para_conducir",
+      "text": "Violar inhabilitación para conducir"
+    },
+    {
+      "id": "violar_reglamentacion_juego",
+      "text": "Violar reglamentación juego"
+    },
+    {
+      "id": "zanjas_y_pozos_en_via_publica",
+      "text": "Zanjas y pozos en via pública"
+    }
   ]
 }
