@@ -6,3 +6,7 @@ contextBridge.exposeInMainWorld('filesystem', {
       ipcRenderer.invoke('EXPORT_FEEDBACK', fileName, object),
   },
 });
+
+contextBridge.exposeInMainWorld('oauth', {
+  getCodeChallenge: () => ipcRenderer.invoke('GET_CODE_CHALLENGE'),
+});
