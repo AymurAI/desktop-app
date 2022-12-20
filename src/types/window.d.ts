@@ -5,6 +5,9 @@ declare global {
         export: (fileName: string, data: object) => Promise<void>;
       };
     };
+    oauth?: {
+      getCodeChallenge: () => Promise<string>;
+    };
   }
 }
 
