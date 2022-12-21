@@ -3,7 +3,7 @@ import path from 'path';
 
 import { isDebug, isProduction, startMinimized } from './env';
 import { resolveHTMLPath } from './utils';
-import { getCodeChallenge } from './utils/crypto';
+import { getChallengeCode, getVerifierCode } from './utils/crypto';
 import exportFeedback from './utils/feedback';
 
 let mainWindow: BrowserWindow | null;
@@ -69,5 +69,6 @@ export default function createWindow() {
   ipcMain.handle('EXPORT_FEEDBACK', (_, fileName: string, data: object) =>
     exportFeedback(fileName, data)
   );
-  ipcMain.handle('GET_CODE_CHALLENGE', () => getCodeChallenge());
+  ipcMain.handle('GET_CHALLENGE_CODE', () => getChallengeCode());
+  ipcMain.handle('GET_VERIFIER_CODE', () => getVerifierCode());
 }

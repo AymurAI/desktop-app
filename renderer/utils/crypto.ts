@@ -28,7 +28,7 @@ function sha256(str: string) {
  * Creates the PKCE OAuth2 verifier code
  * @returns The verifier code in `string` format
  */
-export function getCodeVerifier() {
+export function getVerifierCode() {
   const buffer = Buffer.from(VERIFIER_PHRASE, 'utf-8');
   return toBase64(buffer);
 }
@@ -37,8 +37,8 @@ export function getCodeVerifier() {
  * Creates the PKCE OAuth2 challenge code
  * @returns The challenge code in `string` format
  */
-export function getCodeChallenge() {
-  const verifier = getCodeVerifier();
+export function getChallengeCode() {
+  const verifier = getVerifierCode();
 
   const challenge = toBase64(sha256(verifier));
   return challenge;
