@@ -10,73 +10,71 @@
     { "id": "no_corresponde", "text": "No corresponde" }
   ],
   "LUGAR_DEL_HECHO": [
-    [
-      { "id": "en_auto_particular", "text": "En auto particular" },
-      { "id": "en_comisaria", "text": "En comisaria" },
-      {
-        "id": "en_complejo_penitenciario",
-        "text": "En complejo penitenciario"
-      },
-      { "id": "en_domicilio_laboral", "text": "En domicilio laboral" },
-      {
-        "id": "en_domicilio_laboral_y_mediante_medios_tecnologicos",
-        "text": "En domicilio laboral y mediante medios tecnológicos"
-      },
-      { "id": "en_domicilio_particular", "text": "En domicilio particular" },
-      {
-        "id": "en_domicilio_particular_y_en_puerta_de_domicilio_particular",
-        "text": "En domicilio particular y en puerta de domicilio particular"
-      },
-      {
-        "id": "en_domicilio_particular_y_mediante_medios_tecnologicos",
-        "text": "En domicilio particular y mediante medios tecnológicos"
-      },
-      { "id": "en_estadio_de_futbol", "text": "En estadio de fútbol" },
-      { "id": "en_geriatrico", "text": "En geriátrico" },
-      { "id": "en_hospital", "text": "En hospital" },
-      { "id": "en_institucion_privada", "text": "En institución privada" },
-      { "id": "en_lugar_privado", "text": "En lugar privado" },
-      { "id": "en_lugar_publico", "text": "En lugar público" },
-      {
-        "id": "en_puerta_de_domicilio_particular_y_mediante_medios_tecnológicos",
-        "text": "En puerta de domicilio particular y mediante medios tecnológicos"
-      },
-      { "id": "en_transporte_publico", "text": "En transporte público" },
-      {
-        "id": "en_una_institucion_educativa",
-        "text": "En una instituci´pn educativa"
-      },
-      {
-        "id": "en_via_publica_y_mediante_medios_tecnologicos",
-        "text": "En vía pública y mediante medios tecnológicos"
-      },
-      {
-        "id": "mediante_medios_tecnologicos",
-        "text": "Mediante medios tecnológicos"
-      },
-      { "id": "pasillo_de_domicilio", "text": "Pasillo de domicilio" },
-      {
-        "id": "puerta_de_domicilio_particular_y_en_domicilio_laboral",
-        "text": "Puerta de domicilio particular y en domicilio laboral"
-      },
-      {
-        "id": "puerta_de_domicilio_particular",
-        "text": "Puerta de domicilio particular"
-      },
-      {
-        "id": "puerta_de_domicilio_particular_y_en_puerta_de_domicilio_laboral",
-        "text": "Puerta de domicilio particular y en puerta de domicilio laboral"
-      },
-      { "id": "via_publica", "text": "Vía pública" },
-      {
-        "id": "via_publica_y_en_domicilio_particular",
-        "text": "Via pública y en domicilio particular"
-      },
-      {
-        "id": "via_publica_y_en_domicilio_particular_y_mediante_medios_tecnologicos",
-        "text": "Vía pública y en domicilio particular y mediante medios tecnológicos"
-      }
-    ]
+    { "id": "en_auto_particular", "text": "En auto particular" },
+    { "id": "en_comisaria", "text": "En comisaría" },
+    {
+      "id": "en_complejo_penitenciario",
+      "text": "En complejo penitenciario"
+    },
+    { "id": "en_domicilio_laboral", "text": "En domicilio laboral" },
+    {
+      "id": "en_domicilio_laboral_y_mediante_medios_tecnologicos",
+      "text": "En domicilio laboral y mediante medios tecnológicos"
+    },
+    { "id": "en_domicilio_particular", "text": "En domicilio particular" },
+    {
+      "id": "en_domicilio_particular_y_en_puerta_de_domicilio_particular",
+      "text": "En domicilio particular y en puerta de domicilio particular"
+    },
+    {
+      "id": "en_domicilio_particular_y_mediante_medios_tecnologicos",
+      "text": "En domicilio particular y mediante medios tecnológicos"
+    },
+    { "id": "en_estadio_de_futbol", "text": "En estadio de fútbol" },
+    { "id": "en_geriatrico", "text": "En geriátrico" },
+    { "id": "en_hospital", "text": "En hospital" },
+    { "id": "en_institucion_privada", "text": "En institución privada" },
+    { "id": "en_lugar_privado", "text": "En lugar privado" },
+    { "id": "en_lugar_publico", "text": "En lugar público" },
+    {
+      "id": "en_puerta_de_domicilio_particular_y_mediante_medios_tecnológicos",
+      "text": "En puerta de domicilio particular y mediante medios tecnológicos"
+    },
+    { "id": "en_transporte_publico", "text": "En transporte público" },
+    {
+      "id": "en_una_institucion_educativa",
+      "text": "En una instituci´pn educativa"
+    },
+    {
+      "id": "en_via_publica_y_mediante_medios_tecnologicos",
+      "text": "En vía pública y mediante medios tecnológicos"
+    },
+    {
+      "id": "mediante_medios_tecnologicos",
+      "text": "Mediante medios tecnológicos"
+    },
+    { "id": "pasillo_de_domicilio", "text": "Pasillo de domicilio" },
+    {
+      "id": "puerta_de_domicilio_particular_y_en_domicilio_laboral",
+      "text": "Puerta de domicilio particular y en domicilio laboral"
+    },
+    {
+      "id": "puerta_de_domicilio_particular",
+      "text": "Puerta de domicilio particular"
+    },
+    {
+      "id": "puerta_de_domicilio_particular_y_en_puerta_de_domicilio_laboral",
+      "text": "Puerta de domicilio particular y en puerta de domicilio laboral"
+    },
+    { "id": "via_publica", "text": "Vía pública" },
+    {
+      "id": "via_publica_y_en_domicilio_particular",
+      "text": "Via pública y en domicilio particular"
+    },
+    {
+      "id": "via_publica_y_en_domicilio_particular_y_mediante_medios_tecnologicos",
+      "text": "Vía pública y en domicilio particular y mediante medios tecnológicos"
+    }
   ],
   "FRECUENCIA_EPISODIOS": [
     { "id": "primera_vez", "text": "Primera vez" },
@@ -1635,7 +1633,7 @@
       "text": "Suspensión del proceso a prueba"
     }
   ],
-  "CODIGO_O_LEY": [
+  "ART_INFRINGIDO": [
     { "id": "00", "text": "00" },
     { "id": "1", "text": "1" },
     { "id": "1.1.6", "text": "1.1.6" },
@@ -1813,5 +1811,22 @@
     { "id": "295", "text": "295" },
     { "id": "296", "text": "296" },
     { "id": "301_bis", "text": "301 bis" }
+  ],
+  "CODIGO_O_LEY": [
+    { "id": "codigo_contravencional", "text": "Código contravencional" },
+    { "id": "codigo_penal_de_la_nacion", "text": "Código penal de la Nación" },
+    { "id": "ley_1217", "text": "Ley 1217" },
+    { "id": "ley_12331", "text": "Ley 12331" },
+    { "id": "ley_13944", "text": "Ley 13944" },
+    { "id": "ley_14346", "text": "Ley 14346" },
+    { "id": "ley_23098", "text": "Ley 23098" },
+    { "id": "ley_23592", "text": "Ley 23592" },
+    { "id": "ley_23737", "text": "Ley 23737" },
+    { "id": "ley_24192", "text": "Ley 24192" },
+    { "id": "ley_24270", "text": "Ley 24270" },
+    { "id": "ley_24769", "text": "Ley 24769" },
+    { "id": "ley_25761", "text": "Ley 25761" },
+    { "id": "ley_26735", "text": "Ley 26735" },
+    { "id": "ley_451", "text": "Ley 451" }
   ]
 }
