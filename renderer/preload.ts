@@ -7,6 +7,13 @@ contextBridge.exposeInMainWorld('filesystem', {
   },
 });
 
+type OnceAuthCodeReceived = (authCode: string) => void;
 contextBridge.exposeInMainWorld('oauth', {
-  getCodeChallenge: () => ipcRenderer.invoke('GET_CODE_CHALLENGE'),
+  // Get challenge code
+  getChallengeCode: () => ipcRenderer.invoke('GET_CHALLENGE_CODE'),
+  // Get verifier code
+  getVerifierCode: () => ipcRenderer.invoke('GET_VERIFIER_CODE'),
+  // Get verifier code
+  onceAuthCodeReceived: (callback: OnceAuthCodeReceived) =>
+    ipcRenderer.once('AUTH_CODE_RECEIVED', (_, authCode) => callback(authCode)),
 });
