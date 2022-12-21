@@ -9,35 +9,36 @@ export default function DatosDenunciante({
   getSuggestion,
 }: FormProps) {
   return (
-    <ValidationForm title="Datos del denunciante" fileName={fileName}>
+    <ValidationForm title='Datos del denunciante' fileName={fileName}>
       {(register) => (
         <>
           <Select
             {...register(LabelType.GENERO_DENUNCIANTE)}
             selected={getValue(LabelType.GENERO_DENUNCIANTE)}
             suggestion={getSuggestion(LabelType.GENERO_DENUNCIANTE)}
-            label="Género"
+            label='Género'
             options={json.GENERO}
           />
 
-          <Input
+          <Select
             {...register(LabelType.NACIONALIDAD_DENUNCIANTE)}
-            defaultValue={getValue(LabelType.NACIONALIDAD_DENUNCIANTE)}
+            selected={getValue(LabelType.NACIONALIDAD_DENUNCIANTE)}
             suggestion={getSuggestion(LabelType.NACIONALIDAD_DENUNCIANTE)}
-            label="Nacionalidad"
+            label='Nacionalidad'
+            options={json.NACIONALIDAD}
           />
           <Input
             {...register(LabelType.EDAD_DENUNCIANTE)}
             defaultValue={getValue(LabelType.EDAD_DENUNCIANTE)}
             suggestion={getSuggestion(LabelType.EDAD_DENUNCIANTE)}
-            label="Edad"
-            helper="Al momento del hecho"
+            label='Edad'
+            helper='Al momento del hecho'
           />
           <Select
             {...register(LabelType.NIVEL_INSTRUCCION_DENUNCIANTE)}
             selected={getValue(LabelType.NIVEL_INSTRUCCION_DENUNCIANTE)}
             suggestion={getSuggestion(LabelType.NIVEL_INSTRUCCION_DENUNCIANTE)}
-            label="Nivel de instrucción"
+            label='Nivel de instrucción'
             options={json.NIVEL_INSTRUCCION}
           />
         </>

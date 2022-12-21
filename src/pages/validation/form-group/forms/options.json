@@ -891,19 +891,19 @@
   ],
   "DETALLE": [
     {
-      "id": "audiencia_victima_ley26484",
+      "id": "audiencia_victima_ley_26484",
       "text": "Audiencia víctima Ley 26484"
     },
     {
-      "id": "audiencia_victima_11bis_ley24660",
-      "text": "Audiencia víctima 11 bis Ñey 24660"
+      "id": "audiencia_victima_11_bis_ley_24660",
+      "text": "Audiencia víctima 11 bis Ley 24660"
     },
     {
-      "id": "audiencia_victima_ley26485",
-      "text": "Audiencia victima Ley26485"
+      "id": "audiencia_victima_ley_26485",
+      "text": "Audiencia victima Ley 26485"
     },
     {
-      "id": "audiencia_acusado_ley26485",
+      "id": "audiencia_acusado_ley_26485",
       "text": "Audiencia acusado Ley 26485"
     },
     { "id": "29_dias", "text": "29 días" },
@@ -960,7 +960,7 @@
     { "id": "asesor_tutelar", "text": "Asesor tutelar" },
     { "id": "atipicidad_sobreseimiento", "text": "Atipicidad sobreseimiento" },
     {
-      "id": "audiencia_acusado_ley26484",
+      "id": "audiencia_acusado_ley_26484",
       "text": "Audiencia acusado Ley 26484"
     },
     {
@@ -969,7 +969,7 @@
     },
     { "id": "audiencia_preliminar", "text": "Audiencia preliminar" },
     {
-      "id": "audiencia_victima_10bis_ley24660",
+      "id": "audiencia_victima_10_bis_ley_24660",
       "text": "Audiencia víctima 10 bis Ley 24660"
     },
     { "id": "bloqueo_acceso_al_dominio", "text": "Bloqueo acceso al dominio" },
@@ -1776,7 +1776,7 @@
     { "id": "173_inc_16", "text": "173 inc. 16" },
     { "id": "173_inc_2", "text": "173 inc. 2" },
     { "id": "181_inc_1", "text": "181 inc. 1" },
-    { "id": "181_inc_3", "text": "181 inc- 3" },
+    { "id": "181_inc_3", "text": "181 inc. 3" },
     { "id": "183", "text": "183" },
     { "id": "183_parr_2", "text": "183 párr. 2" },
     { "id": "184_inc_5", "text": "184 inc. 5" },
@@ -1828,5 +1828,35 @@
     { "id": "ley_25761", "text": "Ley 25761" },
     { "id": "ley_26735", "text": "Ley 26735" },
     { "id": "ley_451", "text": "Ley 451" }
+  ],
+  "NACIONALIDAD": [
+    { "id": "argentina", "text": "Argentina" },
+    { "id": "armenia", "text": "Armenia" },
+    { "id": "australiana", "text": "Australiana" },
+    { "id": "belga", "text": "Belga" },
+    { "id": "boliviana", "text": "Boliviana" },
+    { "id": "brasilera", "text": "Brasilera" },
+    { "id": "chilena", "text": "Chilena" },
+    { "id": "china", "text": "China" },
+    { "id": "colombiana", "text": "Colombiana" },
+    { "id": "cubana", "text": "Cubana" },
+    { "id": "dominicana", "text": "Dominicana" },
+    { "id": "ecuatoriana", "text": "Ecuatoriana" },
+    { "id": "española", "text": "Española" },
+    { "id": "estadounidense", "text": "Estadounidense" },
+    { "id": "estonia", "text": "Estonia" },
+    { "id": "francesa", "text": "Francesa" },
+    { "id": "italiana", "text": "Italiana" },
+    { "id": "kazaka", "text": "Kazaka" },
+    { "id": "paraguaya", "text": "Paraguaya" },
+    { "id": "peruana", "text": "Peruana" },
+    { "id": "rusa", "text": "Rusa" },
+    { "id": "senegalesa", "text": "Senegalesa" },
+    { "id": "surcoreana", "text": "Surcoreana" },
+    { "id": "ucraniana", "text": "Ucraniana" },
+    { "id": "uruguaya", "text": "Uruguaya" },
+    { "id": "venezolana", "text": "Venezolana" },
+    { "id": "no_corresponde", "text": "No corresponde" },
+    { "id": "sd", "text": "s/d" }
   ]
 }
