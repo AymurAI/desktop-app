@@ -2,6 +2,7 @@ import { App, app, BrowserWindow } from 'electron';
 
 import createWindow from './createWindow';
 import { debug, installExtensions } from './extensions';
+import { setDefaultProtocol } from './protocol';
 
 /**
  * Configures the app with handlers and other features
@@ -9,7 +10,7 @@ import { debug, installExtensions } from './extensions';
  */
 export function configureApp(app: App) {
   // Set the name to the app
-  app.setAsDefaultProtocolClient('aymurai');
+  setDefaultProtocol(app);
 
   /**
    * EVENT HANDLERS
