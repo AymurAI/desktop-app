@@ -2,7 +2,7 @@
   "name": "data-genero",
   "version": "1.1.0",
   "private": true,
-  "main": "build/renderer/main.js",
+  "main": "build/main.js",
   "dependencies": {
     "@stitches/react": "^1.2.8",
     "@testing-library/jest-dom": "^5.16.5",
