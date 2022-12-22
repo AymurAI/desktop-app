@@ -22,7 +22,7 @@ export type RefreshTokenResponse = {
 /**
  * Token retrieved from OAuth2
  */
-export type GoogleToken = GoogleTokenResponse['access_token'];
+export type GoogleToken = GoogleTokenResponse['access_token']; // The same type as `refresh_token`
 
 /**
  * User info retrieved from Google User API

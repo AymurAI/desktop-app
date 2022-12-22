@@ -11,7 +11,8 @@ type Tokens = {
 };
 type OnceTokenReceived = (tokens: Tokens) => void;
 /**
- * Token receiver handler, used to add the tokens to the `Context`
+ * One-time token receiver handler, used to add the tokens to the `Context`.
+ * After it has been 'handled' its automatically removed.
  * @param callback Receives the token as arguments and returns `void`
  */
 export default async function onceTokenReceived(callback: OnceTokenReceived) {
