@@ -1,6 +1,7 @@
-import { createHash } from 'crypto';
+import { createHash, randomBytes } from 'crypto';
 
-import { VERIFIER_PHRASE } from '../env';
+// Generate a random verifier phrase at the start of the code
+const VERIFIER_PHRASE = randomBytes(32).toString('base64');
 
 /**
  * Converts a data buffer into the desired `base64` format
@@ -29,6 +30,11 @@ function sha256(str: string) {
  * @returns The verifier code in `string` format
  */
 export function getVerifierCode() {
+  if (!VERIFIER_PHRASE) {
+    throw new Error(
+      'VERIFIER_PHRASE not found! Check your .env file before packaging the app!'
+    );
+  }
   const buffer = Buffer.from(VERIFIER_PHRASE, 'utf-8');
   return toBase64(buffer);
 }
