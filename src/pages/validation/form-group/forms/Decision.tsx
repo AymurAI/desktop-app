@@ -9,27 +9,28 @@ export default function Decision({
   getSuggestion,
 }: FormProps) {
   return (
-    <ValidationForm title='Decisión/es' fileName={fileName}>
+    <ValidationForm title="Decisión/es" fileName={fileName}>
       {(register) => (
         <>
           <Select
             {...register(LabelType.TIPO_DE_RESOLUCION)}
             selected={getValue(LabelType.TIPO_DE_RESOLUCION)}
             suggestion={getSuggestion(LabelType.TIPO_DE_RESOLUCION)}
-            label='Tipo de la resolución'
+            label="Tipo de la resolución"
             options={json.TIPO_DE_RESOLUCION}
           />
-          <Input
+          <Select
             {...register(LabelType.OBJETO_DE_LA_RESOLUCION)}
             suggestion={getSuggestion(LabelType.OBJETO_DE_LA_RESOLUCION)}
-            defaultValue={getValue(LabelType.OBJETO_DE_LA_RESOLUCION)}
-            label='Objeto de resolución'
+            selected={getValue(LabelType.OBJETO_DE_LA_RESOLUCION)}
+            options={json.OBJETO_DE_LA_RESOLUCION}
+            label="Objeto de resolución"
           />
           <Select
             {...register(LabelType.DETALLE)}
             suggestion={getSuggestion(LabelType.DETALLE)}
             selected={getValue(LabelType.DETALLE)}
-            label='Detalle'
+            label="Detalle"
             options={json.DETALLE}
           />
           <Select
@@ -37,7 +38,7 @@ export default function Decision({
             suggestion={getSuggestion(LabelType.DECISION)}
             selected={getValue(LabelType.DECISION)}
             options={json.DECISION}
-            label='Decisión'
+            label="Decisión"
           />
         </>
       )}
