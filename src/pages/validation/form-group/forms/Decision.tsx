@@ -1,4 +1,4 @@
-import { Input, Select, ValidationForm } from 'components';
+import { Input, Radio, RadioGroup, Select, ValidationForm } from 'components';
 import { LabelType } from 'types/aymurai';
 import { FormProps } from '../FormGroup.types';
 import json from './options.json';
@@ -40,6 +40,24 @@ export default function Decision({
             options={json.DECISION}
             label="Decisión"
           />
+          <RadioGroup name="tipoAudiencia">
+            <Radio
+              checked={
+                getSuggestion(LabelType.TIPO_DE_AUDIENCIA_ORAL) === 'oral'
+              }
+              {...register(LabelType.TIPO_DE_AUDIENCIA_ORAL)}
+            >
+              Oral
+            </Radio>
+            <Radio
+              checked={
+                getSuggestion(LabelType.TIPO_DE_AUDIENCIA_ESCRITA) === 'escrita'
+              }
+              {...register(LabelType.TIPO_DE_AUDIENCIA_ESCRITA)}
+            >
+              Escrita
+            </Radio>
+          </RadioGroup>
         </>
       )}
     </ValidationForm>
