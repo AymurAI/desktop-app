@@ -1,3 +1,5 @@
+type OnceAuthCodeReceivedCallback = (authCode: string | null) => void;
+
 declare global {
   interface Window {
     filesystem?: {
@@ -6,7 +8,11 @@ declare global {
       };
     };
     oauth?: {
-      getCodeChallenge: () => Promise<string>;
+      getVerifierCode: () => Promise<string>;
+      getChallengeCode: () => Promise<string>;
+      onceAuthCodeReceived: (
+        callback: OnceAuthCodeReceivedCallback
+      ) => Promise<void>;
     };
   }
 }
