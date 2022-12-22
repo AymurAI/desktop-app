@@ -1,6 +1,7 @@
 import { App, app, BrowserWindow, dialog } from 'electron';
 
 import createWindow from './createWindow';
+import { URI_SCHEME } from './env';
 import { debug, installExtensions } from './extensions';
 import { setDefaultProtocol } from './protocol';
 import { sendCodeToApp } from './utils/oauth';
@@ -26,7 +27,7 @@ export function configureApp(app: App) {
   app.on('open-url', (_, url) => {
     const parsed = new URL(url);
 
-    if (parsed.protocol === 'aymurai.app:') {
+    if (parsed.protocol === `${URI_SCHEME}:`) {
       sendCodeToApp(parsed);
     } else {
       dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);

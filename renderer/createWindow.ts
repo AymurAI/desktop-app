@@ -1,7 +1,7 @@
 import { BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 
-import { isDebug, isProduction, startMinimized } from './env';
+import { isDebug, isProduction } from './env';
 import { resolveHTMLPath } from './utils';
 import { getChallengeCode, getVerifierCode } from './utils/crypto';
 import exportFeedback from './utils/feedback';
@@ -30,11 +30,7 @@ function configureWindow(window: BrowserWindow | null) {
    * HANDLERS
    */
   window.on('ready-to-show', () => {
-    if (startMinimized) {
-      window.minimize();
-    } else {
-      window.show();
-    }
+    window.show();
   });
 
   window.webContents.on('new-window', (e, url) => {
