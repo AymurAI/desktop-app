@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+  createMemoryRouter as createRouter,
+  RouterProvider,
+} from 'react-router-dom';
 
 import { ThemeProvider } from 'components';
 import { Login, Onboarding, Preview, Process, Validation, Finish } from 'pages';
 import MainLayout from 'layout/main';
 import AuthProvider from 'context/Authentication';
 
-const router = createBrowserRouter([
+const router = createRouter([
   {
     // Main as a layout element
     path: '/',
