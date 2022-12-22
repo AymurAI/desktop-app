@@ -3,7 +3,7 @@ import { App, app, BrowserWindow, dialog } from 'electron';
 import createWindow from './createWindow';
 import { URI_SCHEME } from './env';
 import { debug, installExtensions } from './extensions';
-import { setDefaultProtocol } from './protocol';
+import { lockHandler, setDefaultProtocol } from './protocol';
 import { sendCodeToApp } from './utils/oauth';
 
 /**
@@ -45,6 +45,8 @@ export function configureApp(app: App) {
   try {
     // Add debug features
     await debug();
+
+    lockHandler(app);
 
     await app.whenReady();
 
