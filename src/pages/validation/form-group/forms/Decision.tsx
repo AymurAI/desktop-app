@@ -9,33 +9,35 @@ export default function Decision({
   getSuggestion,
 }: FormProps) {
   return (
-    <ValidationForm title="Decisión/es" fileName={fileName}>
+    <ValidationForm title='Decisión/es' fileName={fileName}>
       {(register) => (
         <>
           <Select
             {...register(LabelType.TIPO_DE_RESOLUCION)}
             selected={getValue(LabelType.TIPO_DE_RESOLUCION)}
             suggestion={getSuggestion(LabelType.TIPO_DE_RESOLUCION)}
-            label="Tipo de la resolución"
+            label='Tipo de la resolución'
             options={json.TIPO_DE_RESOLUCION}
           />
           <Input
             {...register(LabelType.OBJETO_DE_LA_RESOLUCION)}
             suggestion={getSuggestion(LabelType.OBJETO_DE_LA_RESOLUCION)}
             defaultValue={getValue(LabelType.OBJETO_DE_LA_RESOLUCION)}
-            label="Objeto de resolución"
+            label='Objeto de resolución'
           />
-          <Input
+          <Select
             {...register(LabelType.DETALLE)}
             suggestion={getSuggestion(LabelType.DETALLE)}
-            defaultValue={getValue(LabelType.DETALLE)}
-            label="Detalle"
+            selected={getValue(LabelType.DETALLE)}
+            label='Detalle'
+            options={json.DETALLE}
           />
-          <Input
+          <Select
             {...register(LabelType.DECISION)}
             suggestion={getSuggestion(LabelType.DECISION)}
-            defaultValue={getValue(LabelType.DECISION)}
-            label="Decisión"
+            selected={getValue(LabelType.DECISION)}
+            options={json.DECISION}
+            label='Decisión'
           />
         </>
       )}
