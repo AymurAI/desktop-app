@@ -5,6 +5,8 @@ import { DocFile } from 'types/file';
  * Columns order extracted from the original dataset spreadsheet
  */
 const orderArray = [
+  'N',
+  'NRO_REGISTRO',
   'TOMO',
   'FECHA_RESOLUCION',
   'N_EXPTE_EJE',
