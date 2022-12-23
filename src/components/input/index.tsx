@@ -26,6 +26,7 @@ interface Props
   prefix?: ReactNode;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  type?: 'text' | 'number';
 }
 export default forwardRef<{ value: string }, Props>(function Input(
   {
@@ -36,6 +37,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
     sufix,
     defaultValue,
     onChange,
+    type = 'text',
     ...props
   },
   ref
@@ -56,6 +58,17 @@ export default forwardRef<{ value: string }, Props>(function Input(
   const isValueEmpty = !value || value === '';
 
   const updateValue = (newValue: string) => {
+    if (type === 'number') {
+      const regex = /^\d+$/;
+      if (regex.test(newValue) || !newValue) {
+        setValue(newValue);
+        onChange?.(newValue);
+        return;
+      } else {
+        return;
+      }
+    }
+
     setValue(newValue);
 
     onChange?.(newValue);
@@ -93,7 +106,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
         {/* INPUT */}
         <StyledInput
           value={value}
-          type="text"
+          type='text'
           onChange={handleChange}
           {...props}
         />
@@ -117,7 +130,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
       </InputContainer>
 
       {/* HELPER */}
-      {helper && <Label size="s">{helper}</Label>}
+      {helper && <Label size='s'>{helper}</Label>}
     </Container>
   );
 });
