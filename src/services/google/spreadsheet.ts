@@ -119,7 +119,7 @@ export async function append(
     {
       range,
       majorDimension: 'ROWS',
-      values: [[null, null, ...data]],
+      values: [[...data]],
     },
     {
       headers: auth(token),
