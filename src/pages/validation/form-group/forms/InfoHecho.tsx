@@ -33,35 +33,40 @@ export default function DatosDenunciante({
     <ValidationForm title="Información del hecho" fileName={fileName}>
       {(register) => (
         <>
-          <Input
+          <Select
             {...register(LabelType.MATERIA)}
-            defaultValue={getValue(LabelType.MATERIA)}
+            selected={getValue(LabelType.MATERIA)}
             suggestion={getSuggestion(LabelType.MATERIA)}
+            options={json.MATERIA}
             label="Materia"
           />
-          <Input
+          <Select
             {...register(LabelType.ART_INFRINGIDO)}
-            defaultValue={getValue(LabelType.ART_INFRINGIDO)}
+            selected={getValue(LabelType.ART_INFRINGIDO)}
             suggestion={getSuggestion(LabelType.ART_INFRINGIDO)}
             label="Artículo infringido"
+            options={json.ART_INFRINGIDO}
           />
-          <Input
+          <Select
             {...register(LabelType.CODIGO_O_LEY)}
-            defaultValue={getValue(LabelType.CODIGO_O_LEY)}
+            selected={getValue(LabelType.CODIGO_O_LEY)}
             suggestion={getSuggestion(LabelType.CODIGO_O_LEY)}
             label="Código o ley"
+            options={json.CODIGO_O_LEY}
           />
-          <Input
+          <Select
             {...register(LabelType.CONDUCTA)}
-            defaultValue={getValue(LabelType.CONDUCTA)}
+            selected={getValue(LabelType.CONDUCTA)}
             suggestion={getSuggestion(LabelType.CONDUCTA)}
             label="Conducta"
+            options={json.CONDUCTA}
           />
-          <Input
+          <Select
             {...register(LabelType.CONDUCTA_DESCRIPCION)}
-            defaultValue={getValue(LabelType.CONDUCTA_DESCRIPCION)}
+            selected={getValue(LabelType.CONDUCTA_DESCRIPCION)}
             suggestion={getSuggestion(LabelType.CONDUCTA_DESCRIPCION)}
             label="Descripción de la conducta"
+            options={json.CONDUCTA_DESCRIPCION}
           />
           <RadioGroup name="violenciaGenero" label="Violencia de género">
             <Radio
@@ -162,16 +167,49 @@ export default function DatosDenunciante({
             options={json.FRECUENCIA_EPISODIOS}
             label="Frecuencia del episodio"
           />
-          <Input
+          <Select
+            {...register(LabelType.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE)}
+            selected={getValue(
+              LabelType.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE
+            )}
+            suggestion={getSuggestion(
+              LabelType.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE
+            )}
+            options={json.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE}
+            label="Relación y tipo entre acusada y denunciante"
+          />
+          <Select
+            {...register(LabelType.HIJOS_HIJAS_EN_COMUN)}
+            selected={getValue(LabelType.HIJOS_HIJAS_EN_COMUN)}
+            suggestion={getSuggestion(LabelType.HIJOS_HIJAS_EN_COMUN)}
+            options={json.HIJOS_HIJAS_EN_COMUN}
+            label="Hijos/as en común"
+          />
+          <Select
+            {...register(
+              LabelType.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
+            )}
+            selected={getValue(
+              LabelType.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
+            )}
+            suggestion={getSuggestion(
+              LabelType.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
+            )}
+            options={json.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO}
+            label="Medidas de protección vigentes al momento del hecho"
+          />
+          <Select
             {...register(LabelType.ZONA_DEL_HECHO)}
-            defaultValue={getValue(LabelType.ZONA_DEL_HECHO)}
+            selected={getValue(LabelType.ZONA_DEL_HECHO)}
             suggestion={getSuggestion(LabelType.ZONA_DEL_HECHO)}
+            options={json.ZONA_DEL_HECHO}
             label="Zona del hecho"
           />
-          <Input
+          <Select
             {...register(LabelType.LUGAR_DEL_HECHO)}
-            defaultValue={getValue(LabelType.LUGAR_DEL_HECHO)}
+            selected={getValue(LabelType.LUGAR_DEL_HECHO)}
             suggestion={getSuggestion(LabelType.LUGAR_DEL_HECHO)}
+            options={json.LUGAR_DEL_HECHO}
             label="Lugar del hecho"
           />
         </>

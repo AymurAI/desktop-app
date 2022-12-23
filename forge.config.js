@@ -4,6 +4,12 @@ module.exports = {
     ignore: ['^\\/public$', '^\\/src$', '^\\/node_modules$', '^\\/[.].+'],
     icon: 'public/brand/logo256-text',
     name: 'AymurAI',
+    protocols: [
+      {
+        name: 'AymurAI',
+        schemes: ['aymurai.app'],
+      },
+    ],
   },
   rebuildConfig: {},
   makers: [
@@ -17,7 +23,9 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        mimeType: ['x-scheme-handler/aymurai.app'],
+      },
     },
     {
       name: '@electron-forge/maker-rpm',

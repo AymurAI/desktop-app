@@ -1,11 +1,12 @@
 import { BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 
-import { isDebug, isProduction, startMinimized } from './env';
+import { isDebug, isProduction } from './env';
 import { resolveHTMLPath } from './utils';
+import { getChallengeCode, getVerifierCode } from './utils/crypto';
 import exportFeedback from './utils/feedback';
 
-let mainWindow: BrowserWindow | null;
+export let mainWindow: BrowserWindow | null;
 
 /**
  * Configures the main `BrowserWindow` with features and handlers
@@ -29,18 +30,17 @@ function configureWindow(window: BrowserWindow | null) {
    * HANDLERS
    */
   window.on('ready-to-show', () => {
-    if (startMinimized) {
-      window.minimize();
-    } else {
-      window.show();
-    }
+    window.show();
   });
 
   window.webContents.on('new-window', (e, url) => {
-    const EXTERNAL_URLS = ['https://www.datagenero.org/'];
+    const EXTERNAL_URLS = [
+      'https://www.datagenero.org/',
+      'https://accounts.google.com/o/oauth2/v2/auth',
+    ];
 
     // Check if the url is in the 'whitelist'
-    if (!!EXTERNAL_URLS.find((val) => val === url)) {
+    if (!!EXTERNAL_URLS.find((val) => url.includes(val))) {
       e.preventDefault();
       shell.openExternal(url);
     }
@@ -68,4 +68,6 @@ export default function createWindow() {
   ipcMain.handle('EXPORT_FEEDBACK', (_, fileName: string, data: object) =>
     exportFeedback(fileName, data)
   );
+  ipcMain.handle('GET_CHALLENGE_CODE', () => getChallengeCode());
+  ipcMain.handle('GET_VERIFIER_CODE', () => getVerifierCode());
 }

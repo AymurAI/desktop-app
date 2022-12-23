@@ -5,4 +5,5 @@ import { GoogleUser, GoogleToken } from './google';
  */
 export type User = GoogleUser & {
   token: GoogleToken;
+  refreshToken: GoogleToken;
 };

@@ -18,3 +18,8 @@ export const WHITELISTED_EXTENSIONS = ['doc', 'docx'];
  */
 export const DATASET_URL =
   'https://docs.google.com/spreadsheets/d/1pzaGNM5BzRAOlj8p0NYtxnkU4VI_X5UcQsnIMOtLSVY/edit#gid=257379348';
+
+/**
+ * Token refresh interval = 45 min x 60s x 1000ms
+ */
+export const REFRESH_INTERVAL = 45 * 60 * 1000;

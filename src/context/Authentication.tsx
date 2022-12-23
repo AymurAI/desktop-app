@@ -1,13 +1,20 @@
-import { createContext, ReactNode, useState } from 'react';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useRef,
+  useState,
+} from 'react';
 
-import { CLIENT_ID } from 'utils/config';
 import { User } from 'types/user';
+import { REFRESH_INTERVAL } from 'utils/config';
 
 type AuthContextType = {
   user: User | null;
-  setUser: (user: User | null) => void;
-  hasScriptLoaded: boolean;
+  setUser: Dispatch<SetStateAction<User | null>>;
+  startTimer: (callback: () => void) => void;
+  resetTimer: () => void;
 };
 /**
  * Provides the token received through OAuth2 login to the whole app
@@ -15,7 +22,8 @@ type AuthContextType = {
 export const AuthenticationContext = createContext<AuthContextType>({
   user: null,
   setUser: () => {},
-  hasScriptLoaded: false,
+  startTimer: () => {},
+  resetTimer: () => {},
 });
 AuthenticationContext.displayName = 'AuthenticationContext';
 
@@ -27,26 +35,23 @@ interface Props {
  */
 export default function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
-  const [hasScriptLoaded, setHasScriptLoaded] = useState(false);
+  const timerRef = useRef<number>();
 
-  const updateUser = (user: User | null) => {
-    setUser(user);
+  const startTimer = (callback: () => void) => {
+    const timer = window.setInterval(callback, REFRESH_INTERVAL);
+    timerRef.current = timer;
   };
 
-  const updateScriptStatus = () => {
-    setHasScriptLoaded(true);
+  const resetTimer = () => {
+    window.clearInterval(timerRef.current);
+    timerRef.current = undefined;
   };
 
   return (
     <AuthenticationContext.Provider
-      value={{ user, setUser: updateUser, hasScriptLoaded }}
+      value={{ user, setUser, startTimer, resetTimer }}
     >
-      <GoogleOAuthProvider
-        clientId={CLIENT_ID}
-        onScriptLoadSuccess={updateScriptStatus}
-      >
-        {children}
-      </GoogleOAuthProvider>
+      {children}
     </AuthenticationContext.Provider>
   );
 }
