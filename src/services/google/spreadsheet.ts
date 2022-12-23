@@ -119,45 +119,45 @@ export async function append(
     {
       range,
       majorDimension: 'ROWS',
-      values: [[...data]],
+      values: [data],
     },
     {
       headers: auth(token),
     }
   );
 
-  // This has the form of 'xxxxxxxx!AY:BY', we want the 'AY:BY" part
-  const affectedRange = response.data.updates.updatedRange.split('!')[1];
-  // Get the number from the range
-  const row = affectedRange.match(/\d+/)![0]; // We make the assumption we capture a number
-  const rowNumber = parseInt(row);
+  // // This has the form of 'xxxxxxxx!AY:BY', we want the 'AY:BY" part
+  // const affectedRange = response.data.updates.updatedRange.split('!')[1];
+  // // Get the number from the range
+  // const row = affectedRange.match(/\d+/)![0]; // We make the assumption we capture a number
+  // const rowNumber = parseInt(row);
 
-  const indexes = await getRange(
-    token,
-    id,
-    `A${rowNumber - 1}`,
-    `B${rowNumber - 1}`
-  );
+  // const indexes = await getRange(
+  //   token,
+  //   id,
+  //   `A${rowNumber - 1}`,
+  //   `B${rowNumber - 1}`
+  // );
 
-  // Check if we have values before
-  if (indexes.values) {
-    // Get the indexes as a number
-    const parsedIndexes = indexes.values[0].map((index) => parseInt(index));
-    // Set a default value in case of NaN
-    const [mainIndex, offset] = parsedIndexes.map((i) => (isNaN(i) ? 0 : i));
+  // // Check if we have values before
+  // if (indexes.values) {
+  //   // Get the indexes as a number
+  //   const parsedIndexes = indexes.values[0].map((index) => parseInt(index));
+  //   // Set a default value in case of NaN
+  //   const [mainIndex, offset] = parsedIndexes.map((i) => (isNaN(i) ? 0 : i));
 
-    // Sets the 'N' and the 'NRO_REGISTRO' column
-    await writeRange(
-      token,
-      id,
-      [[`${mainIndex + 1}`, `${offset + 1}`]],
-      `A${rowNumber}`,
-      `B${rowNumber}`
-    );
-  } else {
-    // If we have'nt any values set 0 as default
-    await writeRange(token, id, [['0', '0']], `A${rowNumber}`, `B${rowNumber}`);
-  }
+  //   // Sets the 'N' and the 'NRO_REGISTRO' column
+  //   await writeRange(
+  //     token,
+  //     id,
+  //     [[`${mainIndex + 1}`, `${offset + 1}`]],
+  //     `A${rowNumber}`,
+  //     `B${rowNumber}`
+  //   );
+  // } else {
+  //   // If we have'nt any values set 0 as default
+  //   await writeRange(token, id, [['0', '0']], `A${rowNumber}`, `B${rowNumber}`);
+  // }
 
   return response.data;
 }
