@@ -43,6 +43,7 @@ export default function InfoGral({
             suggestion={getSuggestion(LabelType.N_EXPTE_EJE)}
             defaultValue={getValue(LabelType.N_EXPTE_EJE)}
             label='Nro de expediente'
+            type='number'
           />
           <Input
             {...register(LabelType.FIRMA)}
