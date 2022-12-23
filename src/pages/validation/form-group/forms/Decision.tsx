@@ -1,4 +1,11 @@
-import { Input, Radio, RadioGroup, Select, ValidationForm } from 'components';
+import {
+  Input,
+  Radio,
+  RadioGroup,
+  Select,
+  Stack,
+  ValidationForm,
+} from 'components';
 import { LabelType } from 'types/aymurai';
 import { FormProps } from '../FormGroup.types';
 import json from './options.json';
@@ -58,6 +65,26 @@ export default function Decision({
               Escrita
             </Radio>
           </RadioGroup>
+          <Stack spacing="l" css={{ '&>*': { flex: 1 } }}>
+            <Input
+              {...register(LabelType.HORA_DE_INICIO)}
+              suggestion={getSuggestion(LabelType.HORA_DE_INICIO)}
+              defaultValue={getValue(LabelType.HORA_DE_INICIO)}
+              label="Hora de inicio"
+            />
+            <Input
+              {...register(LabelType.HORA_DE_CIERRE)}
+              suggestion={getSuggestion(LabelType.HORA_DE_CIERRE)}
+              defaultValue={getValue(LabelType.HORA_DE_CIERRE)}
+              label="Hora de cierre"
+            />
+          </Stack>
+          <Input
+            {...register(LabelType.DURACION)}
+            suggestion={getSuggestion(LabelType.DURACION)}
+            defaultValue={getValue(LabelType.DURACION)}
+            label="Duración"
+          />
         </>
       )}
     </ValidationForm>

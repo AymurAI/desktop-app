@@ -196,7 +196,7 @@ export default function DatosDenunciante({
               LabelType.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
             )}
             options={json.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO}
-            label="Medidas de proteccion vigentes al momento del hecho"
+            label="Medidas de protección vigentes al momento del hecho"
           />
           <Select
             {...register(LabelType.ZONA_DEL_HECHO)}
