@@ -26,6 +26,8 @@ export default function Preview() {
   const files = useFiles();
   const dispatch = useFileDispatch();
 
+  const isAnyFileSelected = files.some((file) => file.selected);
+
   const handlePrevious = () => {
     dispatch(removeAllFiles());
     navigate('/onboarding');
@@ -87,7 +89,11 @@ export default function Preview() {
         <Button onClick={handleSelectFile} size="l" variant="secondary">
           Cargar más documentos
         </Button>
-        <Button onClick={handleConfirmFiles} size="l">
+        <Button
+          onClick={handleConfirmFiles}
+          disabled={!isAnyFileSelected}
+          size="l"
+        >
           Continuar
         </Button>
       </Footer>

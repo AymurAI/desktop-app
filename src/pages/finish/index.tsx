@@ -54,7 +54,7 @@ export default function Finish() {
           target="_blank"
           rel="noreferrer"
         >
-          <img src="/brand/data-genero.png" alt="DataGenero" width={127} />
+          <img src="brand/data-genero.png" alt="DataGenero" width={127} />
         </Anchor>
         <Button
           css={{ textDecoration: 'none' }}

@@ -1,9 +1,28 @@
-import { TokenResponse } from '@react-oauth/google';
+/**
+ * Response from the token OAuth endpoint
+ */
+export type GoogleTokenResponse = {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  scope: string;
+  token_type: 'Bearer';
+  id_token: string;
+};
+/**
+ * Response from the refresh token endpoint
+ */
+export type RefreshTokenResponse = {
+  access_token: string;
+  expires_in: number;
+  scope: string;
+  token_type: 'Bearer';
+};
 
 /**
  * Token retrieved from OAuth2
  */
-export type GoogleToken = TokenResponse['access_token'];
+export type GoogleToken = GoogleTokenResponse['access_token']; // The same type as `refresh_token`
 
 /**
  * User info retrieved from Google User API

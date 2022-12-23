@@ -2,9 +2,8 @@
   "name": "data-genero",
   "version": "1.1.0",
   "private": true,
-  "main": "build/renderer/main.js",
+  "main": "build/main.js",
   "dependencies": {
-    "@react-oauth/google": "^0.4.0",
     "@stitches/react": "^1.2.8",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -25,11 +24,11 @@
   },
   "scripts": {
     "dev:web": "react-scripts start",
-    "dev": "npm run build:renderer && concurrently 'BROWSER=none npm run dev:web' 'wait-on tcp:3000 && NODE_ENV=development electron-forge start'",
+    "dev": "nodemon --exec 'npm start' -e ts,tsx,js,json --watch src --watch renderer",
+    "start": "npm run build && electron-forge start",
     "build:renderer": "tsc --build tsconfig.renderer.json",
-    "build:app": "react-scripts build",
+    "build:app": "cross-env BUILD_PATH=./build/app PUBLIC_URL=. react-scripts build",
     "build": "npm run build:app && npm run build:renderer",
-    "test": "react-scripts test",
     "lint": "eslint .",
     "lint:markdown": "markdownlint '**/*.md' --ignore node_modules --ignore CHANGELOG.md",
     "lint:fix": "eslint . --fix --ignore-path .gitignore .",
@@ -38,8 +37,8 @@
     "validate": "npm run lint && npm run check-types:react && npm run check-types:renderer",
     "pre-commit": "lint-staged",
     "deploy": "docker compose -f docker-compose.production.yml build && docker compose -f docker-compose.production.yml up -d",
-    "package": "rm -rf build && npm run build:renderer && electron-forge package",
-    "make": "rm -rf build && npm run build:renderer && electron-forge make"
+    "package": "rm -rf build && npm run build && electron-forge package",
+    "make": "rm -rf build && npm run build && electron-forge make"
   },
   "eslintConfig": {
     "extends": [
@@ -83,6 +82,7 @@
     "@electron-forge/maker-squirrel": "^6.0.4",
     "@electron-forge/maker-zip": "^6.0.4",
     "concurrently": "^7.5.0",
+    "cross-env": "^7.0.3",
     "electron": "^21.2.0",
     "electron-debug": "^3.2.0",
     "electron-devtools-installer": "^3.2.0",
@@ -90,6 +90,7 @@
     "husky": "^8.0.0",
     "lint-staged": "^13.0.3",
     "markdownlint-cli": "^0.32.2",
+    "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
     "wait-on": "^6.0.1"
   }

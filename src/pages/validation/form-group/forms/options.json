@@ -6,8 +6,18 @@
     { "id": "mujer_trans", "text": "Mujer trans" },
     { "id": "travesti", "text": "Travesti" },
     { "id": "no_binaria", "text": "No binaria" },
-    { "id": "sd", "text": "s/d" },
+    { "id": "sd", "text": "S/D" },
     { "id": "no_corresponde", "text": "No corresponde" }
+  ],
+  "ZONA_DEL_HECHO": [
+    { "id": "zona_sur", "text": "Zona Sur" },
+    { "id": "zona_este", "text": "Zona Este" },
+    { "id": "zona_oeste", "text": "Zona Oeste" },
+    { "id": "zona_norte", "text": "Zona Norte" },
+    { "id": "provincia_de_buenos_aires", "text": "Provincia de Buenos Aires" },
+    { "id": "no_corresponde", "text": "No corresponde" },
+    { "id": "mas_de_una_zona", "text": "Más de una zona" },
+    { "id": "s/d", "text": "S/D" }
   ],
   "LUGAR_DEL_HECHO": [
     { "id": "en_auto_particular", "text": "En auto particular" },
@@ -82,7 +92,7 @@
     { "id": "diario", "text": "Diario" },
     { "id": "habitual", "text": "Habitual" },
     { "id": "eventual", "text": "Eventual" },
-    { "id": "sd", "text": "s/d" },
+    { "id": "sd", "text": "S/D" },
     { "id": "no_corresponde", "text": "No corresponde" }
   ],
   "NIVEL_INSTRUCCION": [
@@ -103,7 +113,7 @@
     },
     { "id": "universitario_completo", "text": "Universitario completo" },
     { "id": "universitario_en_curso", "text": "Universitario en curso" },
-    { "id": "sd", "text": "s/d" },
+    { "id": "sd", "text": "S/D" },
     { "id": "no_corresponde", "text": "No corresponde" }
   ],
   "MODALIDAD_DE_LA_VIOLENCIA": [
@@ -1885,5 +1895,43 @@
 
     { "id": "no_corresponde", "text": "No corresponde" },
     { "id": "sd", "text": "s/d" }
+  ],
+  "HIJOS_HIJAS_EN_COMUN": [
+    { "id": "si", "text": "Si" },
+    { "id": "no", "text": "No" }
+  ],
+
+  "RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE": [
+    { "id": "familiar", "text": "Familiar" },
+    { "id": "pareja", "text": "Pareja" },
+    { "id": "ex_pareja", "text": "Ex pareja" },
+    { "id": "jefe_empleada", "text": "Jefe empleada" },
+    { "id": "familiar_de_ex_pareja", "text": "Familiar de ex pareja" },
+    { "id": "pareja_de_la_madre", "text": "Pareja de la madre" },
+    { "id": "ninguna", "text": "Ninguna" },
+    { "id": "vecino", "text": "Vecino/a" },
+    { "id": "profesor", "text": "Profesor" },
+    {
+      "id": "propietario_del_inmueble_de_residencia",
+      "text": "Propietario del inmueble de residencia"
+    },
+    { "id": "compañero_de_trabajo", "text": "Compañero/a de trabajo" },
+    { "id": "amigo", "text": "Amigo/a" },
+    { "id": "familiar_de_pareja", "text": "Familiar de pareja" },
+    { "id": "s/d", "text": "S/D" },
+    { "id": "no_corresponde", "text": "No corresponde" }
+  ],
+  "MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO": [
+    { "id": "si", "text": "Si" },
+    { "id": "no", "text": "No" }
+  ],
+  "MATERIA": [
+    { "id": "allanamiento_autonomo", "text": "Allanamiento autónomo" },
+    { "id": "habeas_corpus", "text": "Habeas corpus" },
+    { "id": "ejecucion_de_multa", "text": "Ejecución de multa" },
+    { "id": "amparo", "text": "Amparo" },
+    { "id": "contravencional", "text": "Contravencional" },
+    { "id": "faltas", "text": "Faltas" },
+    { "id": "penal", "text": "Penal" }
   ]
 }
