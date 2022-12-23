@@ -37,7 +37,7 @@ const orderArray = [
   'FRECUENCIA_EPISODIOS',
   'RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE',
   'HIJOS_HIJAS_EN_COMUN',
-  'MEDIDAD_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO',
+  'MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO',
   'ZONA_DEL_HECHO',
   'LUGAR_DEL_HECHO',
   'TIPO_DE_RESOLUCION',
@@ -94,6 +94,13 @@ export default function validationToArray(object: DocFile['validationObject']) {
       const joined = frases.map((frase) => object[frase]).join(', ');
 
       return joined;
+    } else if (key === 'ORAL_ESCRITA') {
+      const oral = object[LabelType.TIPO_DE_AUDIENCIA_ORAL];
+      const escrita = object[LabelType.TIPO_DE_AUDIENCIA_ESCRITA];
+
+      if (oral) return 'oral';
+      else if (escrita) return 'escrita';
+      else return 'no_corresponde';
     }
 
     // Generic case, just return the value
