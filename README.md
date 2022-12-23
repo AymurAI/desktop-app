@@ -79,3 +79,7 @@ OS host
 - Melina Gatto (_Project Manager_)
 - Andy Orlandi (_Product Designer_)
 - Luciano Lapenna (_Developer_)
+
+## Special thanks
+
+- Lucia Wainfeld
