@@ -1,50 +1,51 @@
 import { useContext } from 'react';
-import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 
 import { AuthenticationContext as Context } from 'context/Authentication';
-import { GoogleToken } from 'types/google';
 import google from 'services/google';
-import logger from 'utils/logger';
+import oauth from 'services/oauth';
 
 interface UseLoginArgs {
-  onSuccess?: (token: GoogleToken) => void;
   onLogout?: () => void;
-  onError?: (
-    e: Pick<TokenResponse, 'error' | 'error_description' | 'error_uri'>
-  ) => void;
 }
 
 /**
  * Hook used to configure the `login` function.
- * @param onSuccess Function to be called when te login succeeds
- * @param onError Function called when an error is thrown
- * @returns `login()` function which opens a new window to perform the Google authentication and `logout()` function to reser the stored token
+ * @param onLogout Callback function executed when the `logout()` function is called
+ * @returns `login()` function which opens a new window to perform the Google authentication and `logout()` function to reset the stored token
  */
-export default function useLogin({
-  onSuccess,
-  onError,
-  onLogout,
-}: UseLoginArgs = {}) {
-  const { setUser } = useContext(Context);
+export default function useLogin({ onLogout }: UseLoginArgs = {}) {
+  const { setUser, startTimer, resetTimer } = useContext(Context);
 
-  const login = useGoogleLogin({
-    onSuccess: async (res) => {
+  const updateToken = async (refreshToken: string) => {
+    const newToken = await oauth.getNewToken(refreshToken);
+
+    // Replace the old token
+    setUser((cur) => (cur ? { ...cur, token: newToken } : cur));
+  };
+
+  const login = () => {
+    // Opens the window in the OS default browser
+    oauth.openConsentScreen();
+
+    // Attachs a one-time listener to this event
+    oauth.onceTokenReceived(async ({ token, refreshToken }) => {
       // Fetch user info
-      const data = await google(res.access_token).user();
-      setUser({ ...data, token: res.access_token });
+      const user = await google(token).user();
 
-      // Pass the token to perform any other action
-      onSuccess?.(res.access_token);
-    },
-    onError: async (err) => {
-      logger.error('An error ocurred while retrieving the OAuth2 token', err);
-      onError?.(err);
-    },
-  });
+      // Check if it's a valid user
+      if (user) {
+        // Update the state
+        setUser({ ...user, token, refreshToken });
+
+        startTimer(() => updateToken(refreshToken));
+      }
+    });
+  };
 
   const logout = () => {
-    onLogout?.();
     setUser(null);
+    resetTimer();
+    onLogout?.();
   };
 
   return { login, logout };

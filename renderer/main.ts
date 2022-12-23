@@ -1,7 +1,10 @@
-import { App, app, BrowserWindow } from 'electron';
+import { App, app, BrowserWindow, dialog } from 'electron';
 
 import createWindow from './createWindow';
+import { URI_SCHEME } from './env';
 import { debug, installExtensions } from './extensions';
+import { lockHandler, setDefaultProtocol } from './protocol';
+import { sendCodeToApp } from './utils/oauth';
 
 /**
  * Configures the app with handlers and other features
@@ -9,7 +12,7 @@ import { debug, installExtensions } from './extensions';
  */
 export function configureApp(app: App) {
   // Set the name to the app
-  app.setAsDefaultProtocolClient('aymurai');
+  setDefaultProtocol(app);
 
   /**
    * EVENT HANDLERS
@@ -18,6 +21,17 @@ export function configureApp(app: App) {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+
+  // Handle the protocol. In this case, we choose to show an Error Box.
+  app.on('open-url', (_, url) => {
+    const parsed = new URL(url);
+
+    if (parsed.protocol === `${URI_SCHEME}:`) {
+      sendCodeToApp(parsed);
+    } else {
+      dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
+    }
   });
 
   // On macOS it's common for applications and their menu bar to stay active until the user quits
@@ -31,6 +45,8 @@ export function configureApp(app: App) {
   try {
     // Add debug features
     await debug();
+
+    lockHandler(app);
 
     await app.whenReady();
 

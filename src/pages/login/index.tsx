@@ -4,13 +4,12 @@ import { GoogleLogo } from 'phosphor-react';
 
 import { Background, Container } from 'layout/login';
 import { Button, Subtitle, Title, Stack, Label } from 'components';
-import { useLogin, useUser, useGoogleScript } from 'hooks';
+import { useLogin, useUser } from 'hooks';
 import Callout from './Callout';
 
 export default function Login() {
   const navigate = useNavigate();
   const user = useUser();
-  const hasScriptLoaded = useGoogleScript();
 
   const { login } = useLogin();
 
@@ -34,7 +33,7 @@ export default function Login() {
 
         {/* Login */}
         <Stack direction="column" align="stretch" spacing="xl">
-          <Button onClick={() => login()} disabled={!hasScriptLoaded}>
+          <Button onClick={login}>
             <GoogleLogo weight="bold" />
             Login
           </Button>
@@ -53,7 +52,7 @@ export default function Login() {
             target="_blank"
             rel="noreferrer"
           >
-            <img src="/brand/data-genero.png" alt="DataGenero" width={127} />
+            <img src="brand/data-genero.png" alt="DataGenero" width={127} />
           </a>
         </Stack>
       </Container>

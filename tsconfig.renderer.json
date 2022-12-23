@@ -15,7 +15,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "outDir": "build/renderer"
+    "outDir": "build"
   },
   "include": [
     "renderer"
