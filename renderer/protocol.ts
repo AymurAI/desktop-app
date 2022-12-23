@@ -3,6 +3,7 @@ import path from 'path';
 import { mainWindow } from './createWindow';
 
 import { URI_SCHEME } from './env';
+import { parseArgv } from './utils/oauth';
 
 /**
  * Sets the uri scheme to handle default protocol
@@ -28,7 +29,9 @@ export function lockHandler(app: App) {
   if (!gotTheLock) {
     app.quit();
   } else {
-    app.on('second-instance', (event, commandLine, workingDirectory) => {
+    app.on('second-instance', (_, argv) => {
+      parseArgv(argv);
+
       // Someone tried to run a second instance, we should focus our window.
       if (mainWindow) {
         if (mainWindow.isMinimized()) mainWindow.restore();
