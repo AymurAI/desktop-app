@@ -1858,5 +1858,32 @@
     { "id": "venezolana", "text": "Venezolana" },
     { "id": "no_corresponde", "text": "No corresponde" },
     { "id": "sd", "text": "s/d" }
+  ],
+  "PERSONA_ACUSADA_NO_DETERMINADA": [
+    { "id": "manifestantes", "text": "Manifestantes" },
+    { "id": "organo_jurisdiccional", "text": "Órgano jurisdiccional" },
+    { "id": "pagina_web", "text": "Página web" },
+    { "id": "persona_juridica", "text": "Persona jurídica" },
+    { "id": "personal_policial", "text": "Personal policial" },
+    { "id": "usuario_de_chatstep", "text": "Usuario de Chatstep" },
+    {
+      "id": "usuario_de_cuenta_de_google",
+      "text": "Usuario de cuenta de Google"
+    },
+    { "id": "usuario_de_facebook", "text": "Usuario de Facebook" },
+    { "id": "usuario_de_imgur", "text": "Usuario de Imgur" },
+    { "id": "usuario_de_instagram", "text": "Usuario de Instagram" },
+    { "id": "usuario_de_mercado_libre", "text": "Usuario de Mercado Libre" },
+    { "id": "usuario_de_outlook", "text": "Usuario de Outlook" },
+    { "id": "usuario_de_skout", "text": "Usuario de Skout" },
+    { "id": "usuario_de_skype", "text": "Usuario de Skype" },
+    { "id": "usuario_de_tiktok", "text": "Usuario de Tiktok" },
+    { "id": "usuario_de_twitter", "text": "Usuario de Twitter" },
+    { "id": "usuario_de_whatsapp", "text": "Usuario de WhatsApp" },
+    { "id": "usuario_de_youtube", "text": "Usuario de Youtube" },
+    { "id": "usuario_microsoft", "text": "Usuario Microsoft" },
+
+    { "id": "no_corresponde", "text": "No corresponde" },
+    { "id": "sd", "text": "s/d" }
   ]
 }

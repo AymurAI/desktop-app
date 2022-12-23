@@ -20,6 +20,13 @@ export default function DatosAcusado({
             options={json.GENERO}
           />
           <Select
+            {...register(LabelType.PERSONA_ACUSADA_NO_DETERMINADA)}
+            selected={getValue(LabelType.PERSONA_ACUSADA_NO_DETERMINADA)}
+            suggestion={getSuggestion(LabelType.PERSONA_ACUSADA_NO_DETERMINADA)}
+            label='Persona acusada no determinada'
+            options={json.PERSONA_ACUSADA_NO_DETERMINADA}
+          />
+          <Select
             {...register(LabelType.NACIONALIDAD_ACUSADO)}
             selected={getValue(LabelType.NACIONALIDAD_ACUSADO)}
             suggestion={getSuggestion(LabelType.NACIONALIDAD_ACUSADO)}
@@ -30,6 +37,7 @@ export default function DatosAcusado({
             {...register(LabelType.EDAD_ACUSADO)}
             defaultValue={getValue(LabelType.EDAD_ACUSADO)}
             suggestion={getSuggestion(LabelType.EDAD_ACUSADO)}
+            type='number'
             label='Edad'
             helper='Al momento del hecho'
           />

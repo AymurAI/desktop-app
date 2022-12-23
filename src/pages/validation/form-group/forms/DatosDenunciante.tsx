@@ -33,6 +33,7 @@ export default function DatosDenunciante({
             suggestion={getSuggestion(LabelType.EDAD_DENUNCIANTE)}
             label='Edad'
             helper='Al momento del hecho'
+            type='number'
           />
           <Select
             {...register(LabelType.NIVEL_INSTRUCCION_DENUNCIANTE)}
