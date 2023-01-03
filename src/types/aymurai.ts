@@ -1,8 +1,10 @@
+import { Nullable } from './utils';
+
 // ------------
 // PREDICTION
 // ------------
 type LabelAttributes = {
-  aymurai_label: string;
+  aymurai_label: AllLabels;
   aymurai_label_subclass: string[] | null;
   aymurai_alt_text: string | null;
 };
@@ -65,8 +67,8 @@ export enum LabelType {
   RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE = 'RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE',
   HIJOS_HIJAS_EN_COMUN = 'HIJOS_HIJAS_EN_COMUN',
   MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO = 'MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO',
-
-  // DECISIONES
+}
+export enum LabelDecisiones {
   TIPO_DE_RESOLUCION = 'TIPO_DE_RESOLUCION',
   OBJETO_DE_LA_RESOLUCION = 'OBJETO_DE_LA_RESOLUCION',
   DETALLE = 'DETALLE',
@@ -77,6 +79,7 @@ export enum LabelType {
   HORA_DE_CIERRE = 'HORA_DE_CIERRE',
   DURACION = 'DURACION',
 }
+export type AllLabels = LabelType | LabelDecisiones;
 
 // --------------------
 // DOCUMENT EXTRACTION
