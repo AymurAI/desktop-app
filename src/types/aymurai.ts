@@ -89,11 +89,7 @@ export type ExportDocumentSuccess = {
 // --------------------
 // FEEDBACK
 // --------------------
-type Nullable<T> = T extends object
-  ? {
-      [K in keyof T]: Nullable<T[K] | null>;
-    }
-  : T;
+
 /**
  * Type for the object stored into the exported JSON file
  */
