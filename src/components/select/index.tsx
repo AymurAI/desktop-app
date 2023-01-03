@@ -18,7 +18,6 @@ import {
   TextContainer,
 } from './Select.styles';
 import { findOption } from './utils';
-import { useEffect } from 'react';
 
 export type SelectOption = { id: string; text: string };
 interface Props {
@@ -86,7 +85,7 @@ export default forwardRef<{ value: SelectOption | undefined }, Props>(
         <TextContainer>
           {/* LABEL */}
           {label && (
-            <Label size='s' css={{ color: '$textDefault' }}>
+            <Label size="s" css={{ color: '$textDefault' }}>
               {label}
             </Label>
           )}
@@ -110,7 +109,7 @@ export default forwardRef<{ value: SelectOption | undefined }, Props>(
           </InputContainer>
 
           {/* HELPER */}
-          {helper && <Label size='s'>{helper}</Label>}
+          {helper && <Label size="s">{helper}</Label>}
         </TextContainer>
 
         {/* OPTION LIST */}
