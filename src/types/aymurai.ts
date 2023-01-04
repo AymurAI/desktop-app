@@ -88,16 +88,3 @@ export type AllLabels = LabelType | LabelDecisiones;
 export type ExportDocumentSuccess = {
   document: string;
 };
-
-// --------------------
-// FEEDBACK
-// --------------------
-
-/**
- * Type for the object stored into the exported JSON file
- */
-export type PredictionFeedback = Nullable<
-  PredictLabel & {
-    validationText: string | boolean;
-  }
->;
