@@ -28,7 +28,7 @@ interface Props {
   suggestion?: SelectOption['text'];
   onChange?: (value: SelectOption | undefined) => void;
 }
-export default forwardRef<{ value: SelectOption | undefined }, Props>(
+export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
   function Select(
     { label, helper, options, suggestion, selected, onChange },
     ref
@@ -42,7 +42,7 @@ export default forwardRef<{ value: SelectOption | undefined }, Props>(
       ref,
       () => {
         return {
-          value: findOption(value, options),
+          value: findOption(value, options)?.id,
         };
       },
       [value, options]
