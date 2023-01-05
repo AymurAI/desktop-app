@@ -10,7 +10,7 @@ export type FormValue = string | boolean | undefined;
  */
 export type FormData = Partial<
   Record<LabelType, FormValue> & {
-    DECISIONES: Record<LabelDecisiones, FormValue>[];
+    DECISIONES: Partial<Record<LabelDecisiones, FormValue>>[];
   }
 >;
 /**
