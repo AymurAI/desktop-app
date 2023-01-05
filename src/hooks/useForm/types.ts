@@ -1,12 +1,31 @@
 import { FormEvent } from 'react';
+import { AllLabels, LabelDecisiones, LabelType } from 'types/aymurai';
 
-type GenericRef<T> = { value: T };
-export type InputRefValue = GenericRef<string>;
-export type SelectRefValue = GenericRef<
-  { id: string; text: string } | undefined
+/**
+ * Any value the form can take
+ */
+export type FormValue = string | boolean | undefined;
+/**
+ * Data structure of the whole form
+ */
+export type FormData = Partial<
+  Record<LabelType, FormValue> & {
+    DECISIONES: Record<LabelDecisiones, FormValue>[];
+  }
 >;
-export type RadioRefValue = GenericRef<boolean>;
-export type CheckboxRefValue = GenericRef<boolean>;
+/**
+ * Flat form of the `FormData` structure
+ */
+export type FlatFormData = Partial<Record<AllLabels, FormValue>>;
+
+/**
+ * Type of the reference for any componente
+ */
+export type ComponentRef = { value: string | boolean | undefined } | null;
+
+export type RegisterFunction = (name: AllLabels) => (ref: ComponentRef) => void;
+export type SubmitFunction = (data: FormData, e: FormEvent) => void;
+
 
 export type ComponentRef =
   | InputRefValue
