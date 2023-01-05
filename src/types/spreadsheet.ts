@@ -1,3 +1,5 @@
+import { FormValue } from 'hooks/useForm';
+
 /**
  * Spreadsheet's unique identifier
  */
@@ -6,7 +8,7 @@ export type SpreadsheetId = string;
 /**
  * Type of data that can be written to the dataset
  */
-export type WriteValue = string | boolean | null;
+export type WriteValue = FormValue | null;
 
 /**
  * Properties of the whole spreadsheet extracted from the metadata
