@@ -85,8 +85,8 @@ export default function validationToArray(object: DocFile['validationObject']) {
     return orderArray.map((key) => {
       // Special cases
       if (key === 'VIOLENCIA_DE_GENERO') {
-        const si = obj[LabelType.VIOLENCIA_DE_GENERO_SI];
-        const no = obj[LabelType.VIOLENCIA_DE_GENERO_NO];
+        const si = obj[LabelDecisiones.VIOLENCIA_DE_GENERO_SI];
+        const no = obj[LabelDecisiones.VIOLENCIA_DE_GENERO_NO];
 
         if (si) return true;
         else if (no) return false;
@@ -98,7 +98,7 @@ export default function validationToArray(object: DocFile['validationObject']) {
         );
         // Join the phrases by commas
         const joined = frases
-          .map((frase) => obj[frase as LabelType.FRASES_AGRESION])
+          .map((frase) => obj[frase as LabelDecisiones.FRASES_AGRESION])
           .join(', ');
 
         return joined;
