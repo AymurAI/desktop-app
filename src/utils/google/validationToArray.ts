@@ -1,6 +1,12 @@
 import { AllLabels, LabelDecisiones, LabelType } from 'types/aymurai';
 import { DocFile } from 'types/file';
 import { flatValidation } from 'utils/file';
+import {
+  treateV_X,
+  treatFRASES_AGRESION,
+  treatORAL_ESCRITA,
+  treatVIOLENCIA_FISICA,
+} from './utils';
 
 /**
  * Columns order extracted from the original dataset spreadsheet
@@ -84,37 +90,29 @@ export default function validationToArray(object: DocFile['validationObject']) {
   return flat.map((obj) => {
     return orderArray.map((key) => {
       // Special cases
-      if (key === 'VIOLENCIA_DE_GENERO') {
-        const si = obj[LabelDecisiones.VIOLENCIA_DE_GENERO_SI];
-        const no = obj[LabelDecisiones.VIOLENCIA_DE_GENERO_NO];
 
-        if (si) return 'si';
-        else if (no) return 'no';
-        return undefined;
-      } else if (key === 'FRASES_AGRESION') {
-        // Find related fields. This retrieves any field named in the format `FRASES_AGRESIONx`
-        const frases = Object.keys(obj).filter((objectKey) =>
-          objectKey.includes(key)
-        );
-        // Join the phrases by commas
-        const joined = frases
-          .map((frase) => obj[frase as LabelDecisiones.FRASES_AGRESION])
-          .join(', ');
-
-        return joined;
-      } else if (key === 'ORAL_ESCRITA') {
-        const oral = obj[LabelDecisiones.TIPO_DE_AUDIENCIA_ORAL];
-        const escrita = obj[LabelDecisiones.TIPO_DE_AUDIENCIA_ESCRITA];
-
-        if (oral) return 'oral';
-        else if (escrita) return 'escrita';
-        else return 'no_corresponde';
+      switch (key) {
+        case 'VIOLENCIA_DE_GENERO':
+          return treatVIOLENCIA_FISICA(obj);
+        case 'V_AMB':
+        case 'V_ECON':
+        case 'V_FISICA':
+        case 'V_POLIT':
+        case 'V_PSIC':
+        case 'V_SEX':
+        case 'V_SIMB':
+        case 'V_SOC':
+          return treateV_X(obj, key);
+        case 'FRASES_AGRESION':
+          return treatFRASES_AGRESION(obj);
+        case 'ORAL_ESCRITA':
+          return treatORAL_ESCRITA(obj);
+        default:
+          // Generic case, just return the value
+          // Treat the case as a defined LabelType | LabelDecisiones. In case its not, just return the undefined
+          // as this case won't create a value on the dataset as expected
+          return obj[key as AllLabels];
       }
-
-      // Generic case, just return the value
-      // Treat the case as a defined LabelType | LabelDecisiones. In case its not, just return the undefined
-      // as this case won't create a value on the dataset as expected
-      return obj[key as AllLabels];
     });
   });
 }
