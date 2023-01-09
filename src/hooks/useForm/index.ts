@@ -1,6 +1,6 @@
 import { FormEvent, useRef } from 'react';
-import { FormData, RegisterFunction, SubmitFunction } from './types';
-import { isSelect } from './utils';
+import { AllLabels, LabelDecisiones, LabelType } from 'types/aymurai';
+import { FormData, FormValue, RegisterFunction, SubmitFunction } from './types';
 
 /**
  * Creates a group of component references and a function to handle
@@ -14,11 +14,24 @@ export default function useForm() {
    * @param name Name of the reference
    * @returns A `(ref) => void` function that should be applied to the `ref={...}` prop of a component
    */
-  const register: RegisterFunction = (name) => (ref) => {
-    if (isSelect(ref)) {
-      refs.current[name] = ref.value?.id;
-    } else {
-      refs.current[name] = ref?.value;
+  const register: RegisterFunction = (name, decision) => (ref) => {
+    if (ref) {
+      // We have to alter the DECISIONES array
+      if (name in LabelDecisiones) {
+        // In case we already have an array, modify the label
+        if (refs.current.DECISIONES) {
+          const arr = refs.current.DECISIONES;
+          const i = decision ?? 0;
+
+          arr[i][name as LabelDecisiones] = ref.value;
+        } else {
+          // We have no array, create it
+          refs.current.DECISIONES = [{ [name]: ref.value }];
+        }
+      } else {
+        // Just modify the label in the object
+        refs.current[name as LabelType] = ref.value;
+      }
     }
   };
 
@@ -28,18 +41,19 @@ export default function useForm() {
    * @returns A `(event) => void` function that should be applied to the `onSubmit={...}` prop of a form
    */
   const submit = (callback: SubmitFunction) => (e: FormEvent) => {
-    e.preventDefault();
-
-    const formData: FormData = {};
-    // Transform the object of refs into a key:value pair
-    Object.keys(refs.current).forEach(
-      (key) => (formData[key] = refs.current[key])
-    );
-
-    callback(formData, e);
+    callback(refs.current);
   };
 
-  return { register, submit };
+  const addDecision = () => {
+    const arr = refs.current.DECISIONES;
+    if (arr) {
+      refs.current.DECISIONES = [...arr, {}];
+    } else {
+      refs.current.DECISIONES = [];
+    }
+  };
+
+  return { register, submit, addDecision };
 }
 
 export * from './types';

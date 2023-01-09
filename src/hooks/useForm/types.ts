@@ -1,4 +1,3 @@
-import { FormEvent } from 'react';
 import { AllLabels, LabelDecisiones, LabelType } from 'types/aymurai';
 
 /**
@@ -23,20 +22,8 @@ export type FlatFormData = Partial<Record<AllLabels, FormValue>>;
  */
 export type ComponentRef = { value: string | boolean | undefined } | null;
 
-export type RegisterFunction = (name: AllLabels) => (ref: ComponentRef) => void;
-export type SubmitFunction = (data: FormData, e: FormEvent) => void;
-
-
-export type ComponentRef =
-  | InputRefValue
-  | SelectRefValue
-  | RadioRefValue
-  | CheckboxRefValue
-  | null;
-
-export type FormData = {
-  [key: string]: string | boolean | undefined;
-};
-
-export type SubmitFunction = (data: FormData, e: FormEvent) => void;
-export type RegisterFunction = (name: string) => (ref: ComponentRef) => void;
+export type RegisterFunction = (
+  name: AllLabels,
+  decision?: number
+) => (ref: ComponentRef) => void;
+export type SubmitFunction = (data: FormData) => void;
