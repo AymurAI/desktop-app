@@ -51,7 +51,7 @@ export default withFileProtection(function Validation() {
     dispatch(validate(selectedFile.data.name));
 
     if (token) {
-      if (canContinue) {
+      if (canContinue || !hasStepper) {
         handleContinue();
       } else {
         nextFile();
