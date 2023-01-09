@@ -2,6 +2,7 @@ import Arrow from './arrow';
 import Button from './button';
 import Card from './card';
 import { Checkbox, CheckboxGroup } from './checkbox';
+import DecisionTabs from './decision-tabs';
 import FileCheck from './file-check';
 import FileContainer from './file-container';
 import FilePreview from './file-preview';
@@ -32,6 +33,7 @@ export {
   Card,
   Checkbox,
   CheckboxGroup,
+  DecisionTabs,
   FileCheck,
   FileContainer,
   FilePreview,
