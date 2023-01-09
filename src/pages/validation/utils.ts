@@ -7,15 +7,15 @@ import { DocFile } from 'types/file';
  * @returns The next available index
  */
 export function movePrevious(cur: number, state: DocFile[]) {
-  let newIndex = cur - 1;
+  let index = cur;
 
-  while (state[newIndex].validated) {
-    newIndex--;
+  do {
+    index--;
 
-    if (newIndex === 0) break;
-  }
+    if (index < 0) return undefined;
+  } while (!state[index]);
 
-  return newIndex;
+  return index;
 }
 
 /**
@@ -25,13 +25,13 @@ export function movePrevious(cur: number, state: DocFile[]) {
  * @returns The previous available index
  */
 export function moveNext(cur: number, state: DocFile[]) {
-  let newIndex = cur + 1;
+  let index = cur;
 
-  while (state[newIndex].validated) {
-    newIndex++;
+  do {
+    index++;
 
-    if (newIndex === state.length) break;
-  }
+    if (index === state.length) return undefined;
+  } while (!state[index]);
 
-  return newIndex;
+  return index;
 }
