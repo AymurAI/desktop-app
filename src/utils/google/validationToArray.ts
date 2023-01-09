@@ -88,8 +88,8 @@ export default function validationToArray(object: DocFile['validationObject']) {
         const si = obj[LabelDecisiones.VIOLENCIA_DE_GENERO_SI];
         const no = obj[LabelDecisiones.VIOLENCIA_DE_GENERO_NO];
 
-        if (si) return true;
-        else if (no) return false;
+        if (si) return 'si';
+        else if (no) return 'no';
         return undefined;
       } else if (key === 'FRASES_AGRESION') {
         // Find related fields. This retrieves any field named in the format `FRASES_AGRESIONx`
