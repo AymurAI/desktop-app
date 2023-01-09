@@ -32,13 +32,6 @@ encontrar en cualquier browser.
 
 Además de las tecnologías principales anteriormente mencionadas se usaron:
 
-- **[Docker](https://www.docker.com/)**: para poder levantar el frontend en un
-contenedor aislado del resto del sistema operativo, dándonos la confianza de que
-va a funcionar correctamente independientemente de la computadora en la que se
-instale. Se decidió proveer el frontend por separado de la aplicación con el
-objetivo de cumplir con las medidas de seguridad necesarias para poder ofrecer
-un sistema de autenticación consistente y alineado con los principios
-de Google OAuth2
 - **[Stitches](https://stitches.dev/)**: elegida como librería de estilos, nos
 permite configurar toda una lista de _tokens_ que pueden ser utilizados a lo
 largo de toda la aplicación manteniendo una alta consistencia entre los estilos.

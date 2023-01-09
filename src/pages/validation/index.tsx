@@ -27,8 +27,14 @@ export default withFileProtection(function Validation() {
   const navigate = useNavigate();
   const token = useGoogleToken();
 
-  const nextFile = () => setSelected(moveNext(selected, files));
-  const previousFile = () => setSelected(movePrevious(selected, files));
+  const nextFile = () => {
+    const newIndex = moveNext(selected, files);
+    if (newIndex) setSelected(newIndex);
+  };
+  const previousFile = () => {
+    const newIndex = movePrevious(selected, files);
+    if (newIndex) setSelected(newIndex);
+  };
 
   const hasStepper = files.length > 1;
 
@@ -42,13 +48,13 @@ export default withFileProtection(function Validation() {
   };
 
   const handleValidate = async () => {
-    if (token) {
-      dispatch(validate(selectedFile.data.name));
+    dispatch(validate(selectedFile.data.name));
 
-      if (hasStepper) {
-        nextFile();
-      } else {
+    if (token) {
+      if (canContinue || !hasStepper) {
         handleContinue();
+      } else {
+        nextFile();
       }
 
       // POST the validated data to the dataset

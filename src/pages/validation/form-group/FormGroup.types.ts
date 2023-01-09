@@ -1,10 +1,14 @@
-export type GetValueFunction = (label: string) => string;
-export type GetSuggestionFunction = (label: string) => string;
-export type GetCheckedFunction = (label: string) => boolean;
+import { RegisterFunction } from 'hooks/useForm';
+import { FormEventHandler } from 'react';
+import { AllLabels } from 'types/aymurai';
+
+export type GetSuggestionFunction = (label: AllLabels) => string;
+export type GetCheckedFunction = (label: AllLabels) => boolean;
 
 export interface FormProps {
-  fileName: string;
-  getValue: GetValueFunction;
   getSuggestion: GetSuggestionFunction;
   getChecked: GetCheckedFunction;
+  decision?: number;
+  register: RegisterFunction;
+  onSubmit: FormEventHandler;
 }

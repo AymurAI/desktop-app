@@ -1,11 +1,6 @@
-import { Stack } from 'components';
+import { Stack, Tab as FileStep, TabName as FileName } from 'components';
 import { useFiles } from 'hooks';
-import {
-  CaretButton,
-  Carousel,
-  FileName,
-  FileStep,
-} from './FileStepper.styles';
+import { CaretButton, Carousel } from './FileStepper.styles';
 import { DocFile } from 'types/file';
 import Icons from './Icons';
 import { canMoveLeft as checkLeft, canMoveRight as checkRight } from './utils';
@@ -50,7 +45,7 @@ export default function FileStepper({
       <Carousel>
         {files.map((file, i) => (
           <FileStep key={file.data.name} status={getStatus(i, file)}>
-            <FileName>{file.data.name}</FileName>
+            <FileName css={{ width: 200 }}>{file.data.name}</FileName>
             <Icons.Check status={getStatus(i, file)} />
           </FileStep>
         ))}

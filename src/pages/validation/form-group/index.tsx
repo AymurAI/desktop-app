@@ -1,17 +1,18 @@
+import { useState } from 'react';
+
 import { DocFile } from 'types/file';
 import {
-  DatosAcusado,
-  DatosDenunciante,
-  Decision,
   InfoGral,
+  DatosDenunciante,
+  DatosAcusado,
   InfoHecho,
+  Decision,
 } from './forms';
 import Container from './FormGroup.styles';
-import {
-  GetCheckedFunction,
-  GetSuggestionFunction,
-  GetValueFunction,
-} from './FormGroup.types';
+import { GetCheckedFunction, GetSuggestionFunction } from './FormGroup.types';
+import { DecisionTabs } from 'components';
+import { useFileDispatch, useForm } from 'hooks';
+import { appendValidation } from 'reducers/file/actions';
 
 type Predictions = {
   [key: string]: string;
@@ -20,6 +21,11 @@ interface Props {
   file: DocFile;
 }
 export default function FormGroup({ file }: Props) {
+  const [decision, setDecision] = useState(0);
+  const [decisionAmount, setDecisionAmount] = useState(1);
+  const { register, submit, addDecision } = useForm();
+  const dispatch = useFileDispatch();
+
   // Format the orediction into a { [string]: string } format
   const predictions: Predictions = (file.predictions ?? []).reduce(
     (prev, { attrs, text }) => ({
@@ -29,8 +35,16 @@ export default function FormGroup({ file }: Props) {
     {}
   );
 
-  const getValue: GetValueFunction = (label) =>
-    (file.validationObject[label] ?? '') as string;
+  const createDecision = () => {
+    addDecision();
+    setDecisionAmount(decisionAmount + 1);
+  };
+  const selectDecision = (n: number) => setDecision(n);
+
+  const handleSubmit = submit((data) => {
+    dispatch(appendValidation(file.data.name, data));
+  });
+
   const getSuggestion: GetSuggestionFunction = (label) =>
     predictions[label] ?? '';
   const getChecked: GetCheckedFunction = (label) =>
@@ -38,9 +52,10 @@ export default function FormGroup({ file }: Props) {
 
   const props = {
     fileName: file.data.name,
-    getValue,
     getSuggestion,
     getChecked,
+    register,
+    onSubmit: handleSubmit,
   };
 
   return (
@@ -48,8 +63,16 @@ export default function FormGroup({ file }: Props) {
       <InfoGral {...props} />
       <DatosDenunciante {...props} />
       <DatosAcusado {...props} />
-      <InfoHecho {...props} />
-      <Decision {...props} />
+
+      <DecisionTabs
+        selected={decision}
+        addDecision={createDecision}
+        {...{ decisionAmount, selectDecision }}
+      />
+      <Container key={decision}>
+        <InfoHecho {...props} decision={decision} />
+        <Decision {...props} decision={decision} />
+      </Container>
     </Container>
   );
 }

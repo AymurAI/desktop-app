@@ -1,5 +1,12 @@
-import { LabelType } from 'types/aymurai';
+import { AllLabels, LabelDecisiones, LabelType } from 'types/aymurai';
 import { DocFile } from 'types/file';
+import { flatValidation } from 'utils/file';
+import {
+  treateV_X,
+  treatFRASES_AGRESION,
+  treatORAL_ESCRITA,
+  treatVIOLENCIA_FISICA,
+} from './utils';
 
 /**
  * Columns order extracted from the original dataset spreadsheet
@@ -78,34 +85,34 @@ const orderArray = [
  * @returns An ordered array with the values from the `validationObject`
  */
 export default function validationToArray(object: DocFile['validationObject']) {
-  return orderArray.map((key) => {
-    // Special cases
-    if (key === 'VIOLENCIA_DE_GENERO') {
-      const si = object[LabelType.VIOLENCIA_DE_GENERO_SI];
-      const no = object[LabelType.VIOLENCIA_DE_GENERO_NO];
+  const flat = flatValidation(object);
 
-      if (si) return true;
-      else if (no) return false;
-      return null;
-    } else if (key === 'FRASES_AGRESION') {
-      // Find related fields. This retrieves any field named in the format `FRASES_AGRESIONx`
-      const frases = Object.keys(object).filter((objectKey) =>
-        objectKey.includes(key)
-      );
-      // Join the phrases by commas
-      const joined = frases.map((frase) => object[frase]).join(', ');
+  return flat.map((obj) => {
+    return orderArray.map((key) => {
+      // Special cases
 
-      return joined;
-    } else if (key === 'ORAL_ESCRITA') {
-      const oral = object[LabelType.TIPO_DE_AUDIENCIA_ORAL];
-      const escrita = object[LabelType.TIPO_DE_AUDIENCIA_ESCRITA];
-
-      if (oral) return 'oral';
-      else if (escrita) return 'escrita';
-      else return 'no_corresponde';
-    }
-
-    // Generic case, just return the value
-    return object[key] ?? null;
+      switch (key) {
+        case 'VIOLENCIA_DE_GENERO':
+          return treatVIOLENCIA_FISICA(obj);
+        case 'V_AMB':
+        case 'V_ECON':
+        case 'V_FISICA':
+        case 'V_POLIT':
+        case 'V_PSIC':
+        case 'V_SEX':
+        case 'V_SIMB':
+        case 'V_SOC':
+          return treateV_X(obj, key);
+        case 'FRASES_AGRESION':
+          return treatFRASES_AGRESION(obj);
+        case 'ORAL_ESCRITA':
+          return treatORAL_ESCRITA(obj);
+        default:
+          // Generic case, just return the value
+          // Treat the case as a defined LabelType | LabelDecisiones. In case its not, just return the undefined
+          // as this case won't create a value on the dataset as expected
+          return obj[key as AllLabels];
+      }
+    });
   });
 }

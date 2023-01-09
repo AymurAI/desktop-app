@@ -18,6 +18,13 @@ const fetcher = axios.create({
   baseURL: 'https://sheets.googleapis.com/v4/spreadsheets/',
 });
 
+/**
+ *
+ * @param token _Google_ access token
+ * @param id Id of the spreadsheet
+ * @param sheetNumber Positional index of the sheet
+ * @returns A `string` containing the specified sheet title
+ */
 async function getSheetTitle(
   token: GoogleToken,
   id: SpreadsheetId,
@@ -105,10 +112,8 @@ export async function writeRange(
 export async function append(
   token: GoogleToken,
   id: SpreadsheetId,
-  data: WriteValue[]
+  data: WriteValue[][]
 ) {
-  // const rows = data.length + 1; // + 1 because sheets are 1-based
-
   // Always work on the first sheet
   const sheetTitle = await getSheetTitle(token, id);
 
@@ -119,7 +124,7 @@ export async function append(
     {
       range,
       majorDimension: 'ROWS',
-      values: [data],
+      values: data,
     },
     {
       headers: auth(token),

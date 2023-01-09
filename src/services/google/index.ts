@@ -14,7 +14,7 @@ export default function google(token: GoogleToken) {
     spreadsheet: (id: SpreadsheetId) => ({
       metadata: () => getSpreadsheetMetadata(token, id),
       range: (start: string, end: string) => getRange(token, id, start, end),
-      append: (values: WriteValue[]) => append(token, id, values),
+      append: (values: WriteValue[][]) => append(token, id, values),
       write: (values: WriteValue[][], start: string, end: string) =>
         writeRange(token, id, values, start, end),
     }),

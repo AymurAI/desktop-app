@@ -1,3 +1,4 @@
+import flatValidation from './flatValidation';
 import getByName from './getByName';
 import getExtension from './getExtension';
 import convertToHTML from './convertToHTML';
@@ -7,6 +8,7 @@ import isFileValidated from './isFileValidated';
 import isValidationCompleted from './isValidationCompleted';
 
 export {
+  flatValidation,
   getByName,
   getExtension,
   convertToHTML,
