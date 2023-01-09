@@ -19,6 +19,7 @@ import Stack from './stack';
 import Stepper from './stepper';
 import Subtitle from './subtitle';
 import Suggestion from './suggestion';
+import { Tab, TabName } from './tabs';
 import Text from './text';
 import ThemeProvider from './theme-provider';
 import Title from './title';
@@ -49,6 +50,8 @@ export {
   Stepper,
   Subtitle,
   Suggestion,
+  Tab,
+  TabName,
   Text,
   ThemeProvider,
   Title,
