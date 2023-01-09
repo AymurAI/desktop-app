@@ -1,5 +1,6 @@
-import { LabelType } from 'types/aymurai';
+import { AllLabels, LabelDecisiones, LabelType } from 'types/aymurai';
 import { DocFile } from 'types/file';
+import { flatValidation } from 'utils/file';
 
 /**
  * Columns order extracted from the original dataset spreadsheet
@@ -78,34 +79,42 @@ const orderArray = [
  * @returns An ordered array with the values from the `validationObject`
  */
 export default function validationToArray(object: DocFile['validationObject']) {
-  return orderArray.map((key) => {
-    // Special cases
-    if (key === 'VIOLENCIA_DE_GENERO') {
-      const si = object[LabelType.VIOLENCIA_DE_GENERO_SI];
-      const no = object[LabelType.VIOLENCIA_DE_GENERO_NO];
+  const flat = flatValidation(object);
 
-      if (si) return true;
-      else if (no) return false;
-      return null;
-    } else if (key === 'FRASES_AGRESION') {
-      // Find related fields. This retrieves any field named in the format `FRASES_AGRESIONx`
-      const frases = Object.keys(object).filter((objectKey) =>
-        objectKey.includes(key)
-      );
-      // Join the phrases by commas
-      const joined = frases.map((frase) => object[frase]).join(', ');
+  return flat.map((obj) => {
+    return orderArray.map((key) => {
+      // Special cases
+      if (key === 'VIOLENCIA_DE_GENERO') {
+        const si = obj[LabelDecisiones.VIOLENCIA_DE_GENERO_SI];
+        const no = obj[LabelDecisiones.VIOLENCIA_DE_GENERO_NO];
 
-      return joined;
-    } else if (key === 'ORAL_ESCRITA') {
-      const oral = object[LabelType.TIPO_DE_AUDIENCIA_ORAL];
-      const escrita = object[LabelType.TIPO_DE_AUDIENCIA_ESCRITA];
+        if (si) return true;
+        else if (no) return false;
+        return undefined;
+      } else if (key === 'FRASES_AGRESION') {
+        // Find related fields. This retrieves any field named in the format `FRASES_AGRESIONx`
+        const frases = Object.keys(obj).filter((objectKey) =>
+          objectKey.includes(key)
+        );
+        // Join the phrases by commas
+        const joined = frases
+          .map((frase) => obj[frase as LabelDecisiones.FRASES_AGRESION])
+          .join(', ');
 
-      if (oral) return 'oral';
-      else if (escrita) return 'escrita';
-      else return 'no_corresponde';
-    }
+        return joined;
+      } else if (key === 'ORAL_ESCRITA') {
+        const oral = obj[LabelDecisiones.TIPO_DE_AUDIENCIA_ORAL];
+        const escrita = obj[LabelDecisiones.TIPO_DE_AUDIENCIA_ESCRITA];
 
-    // Generic case, just return the value
-    return object[key] ?? null;
+        if (oral) return 'oral';
+        else if (escrita) return 'escrita';
+        else return 'no_corresponde';
+      }
+
+      // Generic case, just return the value
+      // Treat the case as a defined LabelType | LabelDecisiones. In case its not, just return the undefined
+      // as this case won't create a value on the dataset as expected
+      return obj[key as AllLabels];
+    });
   });
 }

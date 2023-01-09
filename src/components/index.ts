@@ -2,6 +2,7 @@ import Arrow from './arrow';
 import Button from './button';
 import Card from './card';
 import { Checkbox, CheckboxGroup } from './checkbox';
+import DecisionTabs from './decision-tabs';
 import FileCheck from './file-check';
 import FileContainer from './file-container';
 import FilePreview from './file-preview';
@@ -19,6 +20,7 @@ import Stack from './stack';
 import Stepper from './stepper';
 import Subtitle from './subtitle';
 import Suggestion from './suggestion';
+import { Tab, TabName } from './tabs';
 import Text from './text';
 import ThemeProvider from './theme-provider';
 import Title from './title';
@@ -31,6 +33,7 @@ export {
   Card,
   Checkbox,
   CheckboxGroup,
+  DecisionTabs,
   FileCheck,
   FileContainer,
   FilePreview,
@@ -49,6 +52,8 @@ export {
   Stepper,
   Subtitle,
   Suggestion,
+  Tab,
+  TabName,
   Text,
   ThemeProvider,
   Title,

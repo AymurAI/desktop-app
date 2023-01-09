@@ -2,7 +2,7 @@
 // PREDICTION
 // ------------
 type LabelAttributes = {
-  aymurai_label: string;
+  aymurai_label: AllLabels;
   aymurai_label_subclass: string[] | null;
   aymurai_alt_text: string | null;
 };
@@ -39,7 +39,8 @@ export enum LabelType {
   NACIONALIDAD_ACUSADO = 'NACIONALIDAD_ACUSADO',
   EDAD_ACUSADO = 'EDAD_ACUSADO',
   NIVEL_INSTRUCCION_ACUSADO = 'NIVEL_INSTRUCCION_ACUSADO',
-
+}
+export enum LabelDecisiones {
   // INFO HECHO
   MATERIA = 'MATERIA',
   ART_INFRINGIDO = 'ART_INFRINGIDO',
@@ -66,7 +67,7 @@ export enum LabelType {
   HIJOS_HIJAS_EN_COMUN = 'HIJOS_HIJAS_EN_COMUN',
   MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO = 'MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO',
 
-  // DECISIONES
+  // DECISION
   TIPO_DE_RESOLUCION = 'TIPO_DE_RESOLUCION',
   OBJETO_DE_LA_RESOLUCION = 'OBJETO_DE_LA_RESOLUCION',
   DETALLE = 'DETALLE',
@@ -77,6 +78,7 @@ export enum LabelType {
   HORA_DE_CIERRE = 'HORA_DE_CIERRE',
   DURACION = 'DURACION',
 }
+export type AllLabels = LabelType | LabelDecisiones;
 
 // --------------------
 // DOCUMENT EXTRACTION
@@ -85,20 +87,3 @@ export enum LabelType {
 export type ExportDocumentSuccess = {
   document: string;
 };
-
-// --------------------
-// FEEDBACK
-// --------------------
-type Nullable<T> = T extends object
-  ? {
-      [K in keyof T]: Nullable<T[K] | null>;
-    }
-  : T;
-/**
- * Type for the object stored into the exported JSON file
- */
-export type PredictionFeedback = Nullable<
-  PredictLabel & {
-    validationText: string | boolean;
-  }
->;

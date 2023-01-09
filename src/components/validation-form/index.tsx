@@ -1,59 +1,56 @@
 import { CheckCircle } from 'phosphor-react';
-import { FormEvent, ReactNode, useState } from 'react';
+import {
+  Children,
+  cloneElement,
+  FormEvent,
+  FormEventHandler,
+  isValidElement,
+  ReactElement,
+  ReactNode,
+  useState,
+} from 'react';
 
 import { Button, Subtitle } from 'components';
-import { useFileDispatch } from 'hooks';
-import useForm, { RegisterFunction, FormData } from 'hooks/useForm';
-import { appendValidation } from 'reducers/file/actions';
 import { NativeComponent } from 'types/component';
 
 import { Form } from './ValidationForm.styles';
 
-interface Props extends NativeComponent<'form', 'children' | 'onSubmit'> {
-  children: (
-    addInput: (label: string) => {
-      ref: ReturnType<RegisterFunction>;
-      onChange: () => void;
-    }
-  ) => ReactNode;
+interface Props extends NativeComponent<'form'> {
+  children: ReactNode;
   title: string;
-  fileName: string;
-  onSubmit?: (formData: FormData, e: FormEvent) => void;
+  onSubmit: FormEventHandler;
 }
 export default function ValidationForm({
   children,
   title,
-  fileName,
   onSubmit,
   ...props
 }: Props) {
-  const { register, submit } = useForm();
-  const dispatch = useFileDispatch();
   const [checked, setChecked] = useState(false);
-
-  const handleSubmit = submit((data, e) => {
-    dispatch(appendValidation(fileName, data));
-
-    onSubmit?.(data, e);
-  });
 
   const handleClick = () => setChecked(true);
 
-  const handleChange = () => {
+  const onChange = () => {
     if (checked) setChecked(false);
   };
 
-  const addInput = (label: string) => {
-    return {
-      onChange: handleChange,
-      ref: register(label),
-    };
+  // Add the onChange handler to every children
+  const childrenWithHandler = Children.map(children, (child) => {
+    if (isValidElement(child)) {
+      return cloneElement(child as ReactElement, { onChange });
+    } else return child;
+  });
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    onSubmit(e);
   };
 
   return (
     <Form {...props} onSubmit={handleSubmit}>
       <Subtitle weight="strong">{title}</Subtitle>
-      {children(addInput)}
+      {childrenWithHandler}
       <Button
         size="s"
         css={{ alignSelf: 'flex-end' }}
