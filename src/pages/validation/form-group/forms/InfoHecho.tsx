@@ -12,208 +12,190 @@ import {
   Stack,
   ValidationForm,
 } from 'components';
-import { LabelType } from 'types/aymurai';
+import { LabelDecisiones } from 'types/aymurai';
 import { FormProps } from '../FormGroup.types';
 import json from './options.json';
 
 export default function DatosDenunciante({
-  fileName,
-  getValue,
   getSuggestion,
   getChecked,
+  decision,
+  onSubmit,
+  register,
 }: FormProps) {
   const [frasesAgresion, setFrasesAgresion] = useState(1);
 
   const newFraseAgresion = () => setFrasesAgresion(frasesAgresion + 1);
 
   const frasesArray = Array.from(Array(frasesAgresion).keys());
-  const fraseName = (i: number) => `${LabelType.FRASES_AGRESION}${i}`;
+  const fraseName = (i: number) => `${LabelDecisiones.FRASES_AGRESION}${i}`;
+
+  const prop = (label: LabelDecisiones) => register(label, decision);
 
   return (
-    <ValidationForm title="Información del hecho" fileName={fileName}>
-      {(register) => (
-        <>
-          <Select
-            {...register(LabelType.MATERIA)}
-            selected={getValue(LabelType.MATERIA)}
-            suggestion={getSuggestion(LabelType.MATERIA)}
-            options={json.MATERIA}
-            label="Materia"
+    <ValidationForm title="Información del hecho" onSubmit={onSubmit}>
+      <Select
+        ref={prop(LabelDecisiones.MATERIA)}
+        suggestion={getSuggestion(LabelDecisiones.MATERIA)}
+        options={json.MATERIA}
+        label="Materia"
+      />
+      <Select
+        ref={prop(LabelDecisiones.ART_INFRINGIDO)}
+        suggestion={getSuggestion(LabelDecisiones.ART_INFRINGIDO)}
+        label="Artículo infringido"
+        options={json.ART_INFRINGIDO}
+      />
+      <Select
+        ref={prop(LabelDecisiones.CODIGO_O_LEY)}
+        suggestion={getSuggestion(LabelDecisiones.CODIGO_O_LEY)}
+        label="Código o ley"
+        options={json.CODIGO_O_LEY}
+      />
+      <Select
+        ref={prop(LabelDecisiones.CONDUCTA)}
+        suggestion={getSuggestion(LabelDecisiones.CONDUCTA)}
+        label="Conducta"
+        options={json.CONDUCTA}
+      />
+      <Select
+        ref={prop(LabelDecisiones.CONDUCTA_DESCRIPCION)}
+        suggestion={getSuggestion(LabelDecisiones.CONDUCTA_DESCRIPCION)}
+        label="Descripción de la conducta"
+        options={json.CONDUCTA_DESCRIPCION}
+      />
+      <RadioGroup name="violenciaGenero" label="Violencia de género">
+        <Radio
+          checked={getSuggestion(LabelDecisiones.VIOLENCIA_DE_GENERO) === 'si'}
+          ref={prop(LabelDecisiones.VIOLENCIA_DE_GENERO_SI)}
+        >
+          Sí
+        </Radio>
+        <Radio
+          checked={getSuggestion(LabelDecisiones.VIOLENCIA_DE_GENERO) === 'no'}
+          ref={prop(LabelDecisiones.VIOLENCIA_DE_GENERO_NO)}
+        >
+          No
+        </Radio>
+      </RadioGroup>
+      <CheckboxGroup name="tipoViolencia" title="Tipo de violencia">
+        <Checkbox
+          checked={getChecked(LabelDecisiones.V_FISICA)}
+          ref={prop(LabelDecisiones.V_FISICA)}
+        >
+          Física
+        </Checkbox>
+        <Checkbox
+          ref={prop(LabelDecisiones.V_SEX)}
+          checked={getChecked(LabelDecisiones.V_SEX)}
+        >
+          Sexual
+        </Checkbox>
+        <Checkbox
+          ref={prop(LabelDecisiones.V_SIMB)}
+          checked={getChecked(LabelDecisiones.V_SIMB)}
+        >
+          Simbólica
+        </Checkbox>
+        <Checkbox
+          ref={prop(LabelDecisiones.V_PSIC)}
+          checked={getChecked(LabelDecisiones.V_PSIC)}
+        >
+          Psicológica
+        </Checkbox>
+        <Checkbox
+          ref={prop(LabelDecisiones.V_SOC)}
+          checked={getChecked(LabelDecisiones.V_SOC)}
+        >
+          Social
+        </Checkbox>
+        <Checkbox
+          ref={prop(LabelDecisiones.V_POLIT)}
+          checked={getChecked(LabelDecisiones.V_POLIT)}
+        >
+          Política
+        </Checkbox>
+        <Checkbox
+          ref={prop(LabelDecisiones.V_ECON)}
+          checked={getChecked(LabelDecisiones.V_ECON)}
+        >
+          Económica
+        </Checkbox>
+        <Checkbox
+          ref={prop(LabelDecisiones.V_AMB)}
+          checked={getChecked(LabelDecisiones.V_AMB)}
+        >
+          Ambiental
+        </Checkbox>
+      </CheckboxGroup>
+      <Select
+        ref={prop(LabelDecisiones.MODALIDAD_DE_LA_VIOLENCIA)}
+        suggestion={getSuggestion(LabelDecisiones.MODALIDAD_DE_LA_VIOLENCIA)}
+        options={json.MODALIDAD_DE_LA_VIOLENCIA}
+        label="Modalidad de la violencia"
+      />
+      <Stack direction="column" spacing="m" align="stretch">
+        {frasesArray.map((i) => (
+          <Input
+            key={i}
+            prefix={frasesArray.length > 1 ? i + 1 : undefined}
+            ref={prop(fraseName(i) as LabelDecisiones)} // Treat this dynamic Label the same way as any other
+            suggestion={getSuggestion(fraseName(i) as LabelDecisiones)}
+            label="Frases de la agresión"
           />
-          <Select
-            {...register(LabelType.ART_INFRINGIDO)}
-            selected={getValue(LabelType.ART_INFRINGIDO)}
-            suggestion={getSuggestion(LabelType.ART_INFRINGIDO)}
-            label="Artículo infringido"
-            options={json.ART_INFRINGIDO}
-          />
-          <Select
-            {...register(LabelType.CODIGO_O_LEY)}
-            selected={getValue(LabelType.CODIGO_O_LEY)}
-            suggestion={getSuggestion(LabelType.CODIGO_O_LEY)}
-            label="Código o ley"
-            options={json.CODIGO_O_LEY}
-          />
-          <Select
-            {...register(LabelType.CONDUCTA)}
-            selected={getValue(LabelType.CONDUCTA)}
-            suggestion={getSuggestion(LabelType.CONDUCTA)}
-            label="Conducta"
-            options={json.CONDUCTA}
-          />
-          <Select
-            {...register(LabelType.CONDUCTA_DESCRIPCION)}
-            selected={getValue(LabelType.CONDUCTA_DESCRIPCION)}
-            suggestion={getSuggestion(LabelType.CONDUCTA_DESCRIPCION)}
-            label="Descripción de la conducta"
-            options={json.CONDUCTA_DESCRIPCION}
-          />
-          <RadioGroup name="violenciaGenero" label="Violencia de género">
-            <Radio
-              checked={getSuggestion(LabelType.VIOLENCIA_DE_GENERO) === 'si'}
-              {...register(LabelType.VIOLENCIA_DE_GENERO_SI)}
-            >
-              Sí
-            </Radio>
-            <Radio
-              checked={getSuggestion(LabelType.VIOLENCIA_DE_GENERO) === 'no'}
-              {...register(LabelType.VIOLENCIA_DE_GENERO_NO)}
-            >
-              No
-            </Radio>
-          </RadioGroup>
-          <CheckboxGroup name="tipoViolencia" title="Tipo de violencia">
-            <Checkbox
-              checked={getChecked(LabelType.V_FISICA)}
-              {...register(LabelType.V_FISICA)}
-            >
-              Física
-            </Checkbox>
-            <Checkbox
-              {...register(LabelType.V_SEX)}
-              checked={getChecked(LabelType.V_SEX)}
-            >
-              Sexual
-            </Checkbox>
-            <Checkbox
-              {...register(LabelType.V_SIMB)}
-              checked={getChecked(LabelType.V_SIMB)}
-            >
-              Simbólica
-            </Checkbox>
-            <Checkbox
-              {...register(LabelType.V_PSIC)}
-              checked={getChecked(LabelType.V_PSIC)}
-            >
-              Psicológica
-            </Checkbox>
-            <Checkbox
-              {...register(LabelType.V_SOC)}
-              checked={getChecked(LabelType.V_SOC)}
-            >
-              Social
-            </Checkbox>
-            <Checkbox
-              {...register(LabelType.V_POLIT)}
-              checked={getChecked(LabelType.V_POLIT)}
-            >
-              Política
-            </Checkbox>
-            <Checkbox
-              {...register(LabelType.V_ECON)}
-              checked={getChecked(LabelType.V_ECON)}
-            >
-              Económica
-            </Checkbox>
-            <Checkbox
-              {...register(LabelType.V_AMB)}
-              checked={getChecked(LabelType.V_AMB)}
-            >
-              Ambiental
-            </Checkbox>
-          </CheckboxGroup>
-          <Select
-            {...register(LabelType.MODALIDAD_DE_LA_VIOLENCIA)}
-            selected={getValue(LabelType.MODALIDAD_DE_LA_VIOLENCIA)}
-            suggestion={getSuggestion(LabelType.MODALIDAD_DE_LA_VIOLENCIA)}
-            options={json.MODALIDAD_DE_LA_VIOLENCIA}
-            label="Modalidad de la violencia"
-          />
-          <Stack direction="column" spacing="m" align="stretch">
-            {frasesArray.map((i) => (
-              <Input
-                key={i}
-                prefix={frasesArray.length > 1 ? i + 1 : undefined}
-                {...register(fraseName(i))}
-                defaultValue={getValue(fraseName(i))}
-                suggestion={getSuggestion(fraseName(i))}
-                label="Frases de la agresión"
-              />
-            ))}
-            <Button
-              size="s"
-              css={{ alignSelf: 'flex-start' }}
-              variant="secondary"
-              onClick={newFraseAgresion}
-            >
-              <Plus />
-              Agregar frase
-            </Button>
-          </Stack>
-          <Select
-            {...register(LabelType.FRECUENCIA_EPISODIOS)}
-            selected={getValue(LabelType.FRECUENCIA_EPISODIOS)}
-            suggestion={getSuggestion(LabelType.FRECUENCIA_EPISODIOS)}
-            options={json.FRECUENCIA_EPISODIOS}
-            label="Frecuencia del episodio"
-          />
-          <Select
-            {...register(LabelType.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE)}
-            selected={getValue(
-              LabelType.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE
-            )}
-            suggestion={getSuggestion(
-              LabelType.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE
-            )}
-            options={json.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE}
-            label="Relación y tipo entre acusada y denunciante"
-          />
-          <Select
-            {...register(LabelType.HIJOS_HIJAS_EN_COMUN)}
-            selected={getValue(LabelType.HIJOS_HIJAS_EN_COMUN)}
-            suggestion={getSuggestion(LabelType.HIJOS_HIJAS_EN_COMUN)}
-            options={json.HIJOS_HIJAS_EN_COMUN}
-            label="Hijos/as en común"
-          />
-          <Select
-            {...register(
-              LabelType.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
-            )}
-            selected={getValue(
-              LabelType.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
-            )}
-            suggestion={getSuggestion(
-              LabelType.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
-            )}
-            options={json.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO}
-            label="Medidas de protección vigentes al momento del hecho"
-          />
-          <Select
-            {...register(LabelType.ZONA_DEL_HECHO)}
-            selected={getValue(LabelType.ZONA_DEL_HECHO)}
-            suggestion={getSuggestion(LabelType.ZONA_DEL_HECHO)}
-            options={json.ZONA_DEL_HECHO}
-            label="Zona del hecho"
-          />
-          <Select
-            {...register(LabelType.LUGAR_DEL_HECHO)}
-            selected={getValue(LabelType.LUGAR_DEL_HECHO)}
-            suggestion={getSuggestion(LabelType.LUGAR_DEL_HECHO)}
-            options={json.LUGAR_DEL_HECHO}
-            label="Lugar del hecho"
-          />
-        </>
-      )}
+        ))}
+        <Button
+          size="s"
+          css={{ alignSelf: 'flex-start' }}
+          variant="secondary"
+          onClick={newFraseAgresion}
+        >
+          <Plus />
+          Agregar frase
+        </Button>
+      </Stack>
+      <Select
+        ref={prop(LabelDecisiones.FRECUENCIA_EPISODIOS)}
+        suggestion={getSuggestion(LabelDecisiones.FRECUENCIA_EPISODIOS)}
+        options={json.FRECUENCIA_EPISODIOS}
+        label="Frecuencia del episodio"
+      />
+      <Select
+        ref={prop(LabelDecisiones.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE)}
+        suggestion={getSuggestion(
+          LabelDecisiones.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE
+        )}
+        options={json.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE}
+        label="Relación y tipo entre acusada y denunciante"
+      />
+      <Select
+        ref={prop(LabelDecisiones.HIJOS_HIJAS_EN_COMUN)}
+        suggestion={getSuggestion(LabelDecisiones.HIJOS_HIJAS_EN_COMUN)}
+        options={json.HIJOS_HIJAS_EN_COMUN}
+        label="Hijos/as en común"
+      />
+      <Select
+        ref={prop(
+          LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
+        )}
+        suggestion={getSuggestion(
+          LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
+        )}
+        options={json.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO}
+        label="Medidas de protección vigentes al momento del hecho"
+      />
+      <Select
+        ref={prop(LabelDecisiones.ZONA_DEL_HECHO)}
+        suggestion={getSuggestion(LabelDecisiones.ZONA_DEL_HECHO)}
+        options={json.ZONA_DEL_HECHO}
+        label="Zona del hecho"
+      />
+      <Select
+        ref={prop(LabelDecisiones.LUGAR_DEL_HECHO)}
+        suggestion={getSuggestion(LabelDecisiones.LUGAR_DEL_HECHO)}
+        options={json.LUGAR_DEL_HECHO}
+        label="Lugar del hecho"
+      />
     </ValidationForm>
   );
 }
