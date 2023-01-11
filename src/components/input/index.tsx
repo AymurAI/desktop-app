@@ -27,7 +27,7 @@ interface Props
   defaultValue?: string;
   onChange?: (value: string) => void;
   type?: 'text' | 'number';
-  specialCharacters?: string[];
+  specialCharacters?: string;
 }
 export default forwardRef<{ value: string }, Props>(function Input(
   {
@@ -39,7 +39,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
     defaultValue,
     onChange,
     type = 'text',
-    specialCharacters,
+    specialCharacters = '',
     ...props
   },
   ref
@@ -60,11 +60,8 @@ export default forwardRef<{ value: string }, Props>(function Input(
   const isValueEmpty = !value || value === '';
 
   const updateValue = (newValue: string) => {
-    const regexChars =
-      specialCharacters?.map((char) => `\\${char}`).join('') ?? '';
-
     if (type === 'number') {
-      const regex = new RegExp(`^[\\d${regexChars}]+$`);
+      const regex = new RegExp(`^[\\d${specialCharacters}]+$`);
       if (regex.test(newValue) || !newValue) {
         setValue(newValue);
         onChange?.(newValue);
