@@ -17,7 +17,7 @@ import {
   OptionContainer,
   TextContainer,
 } from './Select.styles';
-import { findOption, orderByPriority } from './utils';
+import { findOption } from './utils';
 
 export type SelectOption = { id: string; text: string };
 interface Props {
@@ -27,19 +27,10 @@ interface Props {
   selected?: SelectOption['id'];
   suggestion?: SelectOption['text'];
   onChange?: (value: SelectOption | undefined) => void;
-  priorityOrder?: SelectOption['id'][];
 }
 export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
   function Select(
-    {
-      label,
-      helper,
-      options,
-      suggestion,
-      selected,
-      onChange,
-      priorityOrder = [],
-    },
+    { label, helper, options, suggestion, selected, onChange },
     ref
   ) {
     const [value, setValue] = useState<SelectOption['text']>(
@@ -58,7 +49,6 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     );
 
     const isValueEmpty = !value || value === '';
-    const orderedOptions = orderByPriority(options, priorityOrder);
 
     const updateValue = (newValue: SelectOption['text']) => {
       setValue(newValue);
@@ -124,7 +114,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
 
         {/* OPTION LIST */}
         <OptionContainer>
-          {orderedOptions.map(({ id, text }) => (
+          {options.map(({ id, text }) => (
             <Option
               onClick={handleClickSelect(text)}
               onKeyDown={handleKeySelect(text)}

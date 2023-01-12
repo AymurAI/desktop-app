@@ -18,6 +18,6 @@ export const URI_SCHEME = 'aymurai.app';
 export const isDebug = process.env.NODE_ENV === 'development' ?? true;
 
 /**
- * Is the app in production mode?
+ * Is the app in development mode?
  */
 export const isProduction = process.env.NODE_ENV === 'production' ?? false;
