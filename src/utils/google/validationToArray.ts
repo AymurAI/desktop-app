@@ -1,4 +1,4 @@
-import { AllLabels, LabelDecisiones, LabelType } from 'types/aymurai';
+import { AllLabels } from 'types/aymurai';
 import { DocFile } from 'types/file';
 import { flatValidation } from 'utils/file';
 import {

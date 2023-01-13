@@ -1,6 +1,6 @@
 import { FormEvent, useRef } from 'react';
-import { AllLabels, LabelDecisiones, LabelType } from 'types/aymurai';
-import { FormData, FormValue, RegisterFunction, SubmitFunction } from './types';
+import { LabelDecisiones, LabelType } from 'types/aymurai';
+import { FormData, RegisterFunction, SubmitFunction } from './types';
 
 /**
  * Creates a group of component references and a function to handle
