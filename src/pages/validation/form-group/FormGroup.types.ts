@@ -1,6 +1,6 @@
 import { RegisterFunction } from 'hooks/useForm';
 import { FormEventHandler } from 'react';
-import { AllLabels } from 'types/aymurai';
+import { AllLabels, PredictLabel } from 'types/aymurai';
 
 export type GetSuggestionFunction = (label: AllLabels) => string;
 export type GetCheckedFunction = (label: AllLabels) => boolean;
@@ -11,4 +11,5 @@ export interface FormProps {
   decision?: number;
   register: RegisterFunction;
   onSubmit: FormEventHandler;
+  predictions?: PredictLabel[];
 }
