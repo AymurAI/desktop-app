@@ -17,7 +17,7 @@ import {
   OptionContainer,
   TextContainer,
 } from './Select.styles';
-import { findOption, orderByPriority } from './utils';
+import { findById, orderByPriority } from './utils';
 
 export type SelectOption = { id: string; text: string };
 interface Props {
@@ -25,7 +25,7 @@ interface Props {
   label?: string;
   helper?: string;
   selected?: SelectOption['id'];
-  suggestion?: SelectOption['text'];
+  suggestion?: SelectOption;
   onChange?: (value: SelectOption | undefined) => void;
   priorityOrder?: SelectOption['id'][];
 }
@@ -42,8 +42,8 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     },
     ref
   ) {
-    const [value, setValue] = useState<SelectOption['text']>(
-      findOption(selected, options)?.text ?? ''
+    const [id, setId] = useState<SelectOption['id']>(
+      findById(selected, options)?.text ?? ''
     );
 
     // Only exposes `selected` object to the parent component
@@ -51,19 +51,21 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
       ref,
       () => {
         return {
-          value: findOption(value, options)?.id,
+          value: id,
         };
       },
-      [value, options]
+      [id]
     );
 
-    const isValueEmpty = !value || value === '';
+    const isValueEmpty = !id || id === '';
     const orderedOptions = orderByPriority(options, priorityOrder);
 
-    const updateValue = (newValue: SelectOption['text']) => {
-      setValue(newValue);
+    const option = findById(id, options);
 
-      const option = findOption(newValue, options);
+    const updateValue = (newId: SelectOption['id']) => {
+      setId(newId);
+
+      const option = findById(newId, options);
       onChange?.(option);
     };
 
@@ -102,16 +104,16 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
 
           {/* INPUT */}
           <InputContainer tabIndex={-1}>
-            <Input value={value} onChange={handleChangeInput} />
+            <Input value={option?.text} onChange={handleChangeInput} />
             {suggestion && isValueEmpty && (
               <>
                 <Text css={{ lineHeight: '100%' }}>|</Text>
                 <Suggestion
-                  onClick={handleClickSelect(suggestion)}
-                  onKeyDown={handleKeySelect(suggestion)}
+                  onClick={handleClickSelect(suggestion.id)}
+                  onKeyDown={handleKeySelect(suggestion.id)}
                   tabIndex={0}
                 >
-                  {suggestion}
+                  {suggestion.text}
                 </Suggestion>
               </>
             )}
@@ -126,8 +128,8 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
         <OptionContainer>
           {orderedOptions.map(({ id, text }) => (
             <Option
-              onClick={handleClickSelect(text)}
-              onKeyDown={handleKeySelect(text)}
+              onClick={handleClickSelect(id)}
+              onKeyDown={handleKeySelect(id)}
               key={id}
               tabIndex={0}
             >
