@@ -15,6 +15,7 @@ import {
 import { LabelDecisiones } from 'types/aymurai';
 import { FormProps } from '../FormGroup.types';
 import json from './options.json';
+import preds from 'utils/predictions';
 
 export default function DatosDenunciante({
   getSuggestion,
@@ -22,6 +23,7 @@ export default function DatosDenunciante({
   decision,
   onSubmit,
   register,
+  predictions,
 }: FormProps) {
   const [frasesAgresion, setFrasesAgresion] = useState(1);
 
@@ -36,31 +38,37 @@ export default function DatosDenunciante({
     <ValidationForm title="Información del hecho" onSubmit={onSubmit}>
       <Select
         ref={prop(LabelDecisiones.MATERIA)}
-        suggestion={getSuggestion(LabelDecisiones.MATERIA)}
+        {...preds(predictions).getSelectSuggestion(LabelDecisiones.MATERIA)}
         options={json.MATERIA}
         label="Materia"
       />
       <Select
         ref={prop(LabelDecisiones.ART_INFRINGIDO)}
-        suggestion={getSuggestion(LabelDecisiones.ART_INFRINGIDO)}
+        {...preds(predictions).getSelectSuggestion(
+          LabelDecisiones.ART_INFRINGIDO
+        )}
         label="Artículo infringido"
         options={json.ART_INFRINGIDO}
       />
       <Select
         ref={prop(LabelDecisiones.CODIGO_O_LEY)}
-        suggestion={getSuggestion(LabelDecisiones.CODIGO_O_LEY)}
+        {...preds(predictions).getSelectSuggestion(
+          LabelDecisiones.CODIGO_O_LEY
+        )}
         label="Código o ley"
         options={json.CODIGO_O_LEY}
       />
       <Select
         ref={prop(LabelDecisiones.CONDUCTA)}
-        suggestion={getSuggestion(LabelDecisiones.CONDUCTA)}
+        {...preds(predictions).getSelectSuggestion(LabelDecisiones.CONDUCTA)}
         label="Conducta"
         options={json.CONDUCTA}
       />
       <Select
         ref={prop(LabelDecisiones.CONDUCTA_DESCRIPCION)}
-        suggestion={getSuggestion(LabelDecisiones.CONDUCTA_DESCRIPCION)}
+        {...preds(predictions).getSelectSuggestion(
+          LabelDecisiones.CONDUCTA_DESCRIPCION
+        )}
         label="Descripción de la conducta"
         options={json.CONDUCTA_DESCRIPCION}
       />
@@ -130,7 +138,9 @@ export default function DatosDenunciante({
       </CheckboxGroup>
       <Select
         ref={prop(LabelDecisiones.MODALIDAD_DE_LA_VIOLENCIA)}
-        suggestion={getSuggestion(LabelDecisiones.MODALIDAD_DE_LA_VIOLENCIA)}
+        {...preds(predictions).getSelectSuggestion(
+          LabelDecisiones.MODALIDAD_DE_LA_VIOLENCIA
+        )}
         options={json.MODALIDAD_DE_LA_VIOLENCIA}
         label="Modalidad de la violencia"
       />
@@ -156,13 +166,15 @@ export default function DatosDenunciante({
       </Stack>
       <Select
         ref={prop(LabelDecisiones.FRECUENCIA_EPISODIOS)}
-        suggestion={getSuggestion(LabelDecisiones.FRECUENCIA_EPISODIOS)}
+        {...preds(predictions).getSelectSuggestion(
+          LabelDecisiones.FRECUENCIA_EPISODIOS
+        )}
         options={json.FRECUENCIA_EPISODIOS}
         label="Frecuencia del episodio"
       />
       <Select
         ref={prop(LabelDecisiones.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE)}
-        suggestion={getSuggestion(
+        {...preds(predictions).getSelectSuggestion(
           LabelDecisiones.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE
         )}
         options={json.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE}
@@ -170,7 +182,9 @@ export default function DatosDenunciante({
       />
       <Select
         ref={prop(LabelDecisiones.HIJOS_HIJAS_EN_COMUN)}
-        suggestion={getSuggestion(LabelDecisiones.HIJOS_HIJAS_EN_COMUN)}
+        {...preds(predictions).getSelectSuggestion(
+          LabelDecisiones.HIJOS_HIJAS_EN_COMUN
+        )}
         options={json.HIJOS_HIJAS_EN_COMUN}
         label="Hijos/as en común"
       />
@@ -178,7 +192,7 @@ export default function DatosDenunciante({
         ref={prop(
           LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
         )}
-        suggestion={getSuggestion(
+        {...preds(predictions).getSelectSuggestion(
           LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
         )}
         options={json.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO}
@@ -186,13 +200,17 @@ export default function DatosDenunciante({
       />
       <Select
         ref={prop(LabelDecisiones.ZONA_DEL_HECHO)}
-        suggestion={getSuggestion(LabelDecisiones.ZONA_DEL_HECHO)}
+        {...preds(predictions).getSelectSuggestion(
+          LabelDecisiones.ZONA_DEL_HECHO
+        )}
         options={json.ZONA_DEL_HECHO}
         label="Zona del hecho"
       />
       <Select
         ref={prop(LabelDecisiones.LUGAR_DEL_HECHO)}
-        suggestion={getSuggestion(LabelDecisiones.LUGAR_DEL_HECHO)}
+        {...preds(predictions).getSelectSuggestion(
+          LabelDecisiones.LUGAR_DEL_HECHO
+        )}
         options={json.LUGAR_DEL_HECHO}
         label="Lugar del hecho"
       />
