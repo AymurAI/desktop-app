@@ -29,17 +29,16 @@ export function newOption(text: string): SelectOption {
 }
 
 /**
- * Returns or creates a `SelectOption` based on the given text
- * @param text Text to use as a filter
+ * Returns a `SelectOption` based on the given `id`
+ * @param id ID to use as a filter
  * @param options Current `SelectOption[]` array
- * @returns Returns the already existent option in the array or creates a new one based on the given text
+ * @returns Returns the already existent option in the array or `undefined` if it doesn't exist on the array
  */
-export function findOption(text: string | undefined, options: SelectOption[]) {
-  if (text) {
-    return options.find((option) => option.text === text) ?? newOption(text);
-  } else {
-    return undefined;
-  }
+export function findById(
+  id: SelectOption['id'] | undefined,
+  options: SelectOption[]
+) {
+  return options.find((op) => op.id === id);
 }
 
 /**
