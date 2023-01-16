@@ -14,8 +14,8 @@ import { DecisionTabs } from 'components';
 import { useFileDispatch, useForm } from 'hooks';
 import { appendValidation } from 'reducers/file/actions';
 
-type Predictions = {
-  [key: string]: string;
+type Predictions<T extends string | string[]> = {
+  [key: string]: T;
 };
 interface Props {
   file: DocFile;
@@ -27,7 +27,7 @@ export default function FormGroup({ file }: Props) {
   const dispatch = useFileDispatch();
 
   // Format the orediction into a { [string]: string } format
-  const predictions: Predictions = (file.predictions ?? []).reduce(
+  const predictions: Predictions<string> = (file.predictions ?? []).reduce(
     (prev, { attrs, text }) => ({
       ...prev,
       [attrs.aymurai_label]: text,
@@ -51,11 +51,11 @@ export default function FormGroup({ file }: Props) {
     getSuggestion(label).toLowerCase() === 'si';
 
   const props = {
-    fileName: file.data.name,
     getSuggestion,
     getChecked,
     register,
     onSubmit: handleSubmit,
+    predictions: file.predictions,
   };
 
   return (
