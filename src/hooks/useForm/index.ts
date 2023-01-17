@@ -1,4 +1,4 @@
-import { FormEvent, useRef } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { LabelDecisiones, LabelType } from 'types/aymurai';
 import nArray from 'utils/nArray';
 import { FormData, RegisterFunction, SubmitFunction } from './types';
@@ -11,6 +11,9 @@ import { FormData, RegisterFunction, SubmitFunction } from './types';
 export default function useForm(initialDecisiones = 1) {
   // Create an n-array of empty objects
   const refs = useRef<FormData>({ DECISIONES: nArray(initialDecisiones, {}) });
+  // State containing decisionAmounts. This is done in this way to make React perform a re-render
+  // in case we want to add a decision
+  const [decisionAmount, setDecisionAmount] = useState(initialDecisiones);
 
   /**
    * Adds a reference to a components value to the 'state'
@@ -49,10 +52,13 @@ export default function useForm(initialDecisiones = 1) {
 
   const addDecision = () => {
     const arr = refs.current.DECISIONES;
+
     if (arr) {
+      setDecisionAmount((dec) => dec + 1);
       refs.current.DECISIONES = [...arr, {}];
     } else {
-      refs.current.DECISIONES = [];
+      setDecisionAmount(1);
+      refs.current.DECISIONES = [{}];
     }
   };
 
@@ -60,8 +66,7 @@ export default function useForm(initialDecisiones = 1) {
     register,
     submit,
     addDecision,
-    // We are sure DECISIONES !== undefined because we define a base value at the start of the hook
-    decisionAmount: refs.current.DECISIONES!.length,
+    decisionAmount,
   };
 }
 
