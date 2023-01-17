@@ -1,6 +1,6 @@
 import { Input, Select, ValidationForm } from 'components';
 import { LabelType } from 'types/aymurai';
-import preds from 'utils/predictions';
+import { suggest } from 'utils/predictions';
 import { FormProps } from '../FormGroup.types';
 import json from './options.json';
 
@@ -14,31 +14,27 @@ export default function DatosDenunciante({
     <ValidationForm title="Datos del denunciante" onSubmit={onSubmit}>
       <Select
         ref={register(LabelType.GENERO_DENUNCIANTE)}
-        {...preds(predictions).getSelectSuggestion(
-          LabelType.GENERO_DENUNCIANTE
-        )}
+        {...suggest(predictions).select(LabelType.GENERO_DENUNCIANTE)}
         label="Género"
         options={json.GENERO}
       />
 
       <Select
         ref={register(LabelType.NACIONALIDAD_DENUNCIANTE)}
-        {...preds(predictions).getSelectSuggestion(
-          LabelType.NACIONALIDAD_DENUNCIANTE
-        )}
+        {...suggest(predictions).select(LabelType.NACIONALIDAD_DENUNCIANTE)}
         label="Nacionalidad"
         options={json.NACIONALIDAD}
       />
       <Input
         ref={register(LabelType.EDAD_DENUNCIANTE)}
-        {...preds(predictions).getTextSuggestion(LabelType.EDAD_DENUNCIANTE)}
+        {...suggest(predictions).text(LabelType.EDAD_DENUNCIANTE)}
         label="Edad"
         helper="Al momento del hecho"
         type="number"
       />
       <Select
         ref={register(LabelType.NIVEL_INSTRUCCION_DENUNCIANTE)}
-        {...preds(predictions).getSelectSuggestion(
+        {...suggest(predictions).select(
           LabelType.NIVEL_INSTRUCCION_DENUNCIANTE
         )}
         label="Nivel de instrucción"
