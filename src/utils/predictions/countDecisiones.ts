@@ -14,5 +14,6 @@ export default function countDecisiones(
   }, 0);
 
   // Default the decisions to 1 if no decision was found
+  // This is because we always have at least 1 decision active per file, no matter the predictions array
   return amount === 0 ? 1 : amount;
 }

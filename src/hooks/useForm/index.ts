@@ -1,13 +1,16 @@
 import { FormEvent, useRef } from 'react';
 import { LabelDecisiones, LabelType } from 'types/aymurai';
+import nArray from 'utils/nArray';
 import { FormData, RegisterFunction, SubmitFunction } from './types';
 
 /**
  * Creates a group of component references and a function to handle
+ * @param initialDecisiones Initial amount of decisiones
  * @returns `register()` and `submit()` functions
  */
-export default function useForm() {
-  const refs = useRef<FormData>({});
+export default function useForm(initialDecisiones = 1) {
+  // Create an n-array of empty objects
+  const refs = useRef<FormData>({ DECISIONES: nArray(initialDecisiones, {}) });
 
   /**
    * Adds a reference to a components value to the 'state'
