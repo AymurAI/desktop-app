@@ -13,6 +13,7 @@ import { GetCheckedFunction, GetSuggestionFunction } from './FormGroup.types';
 import { DecisionTabs } from 'components';
 import { useFileDispatch, useForm } from 'hooks';
 import { appendValidation } from 'reducers/file/actions';
+import { countDecisiones } from 'utils/predictions';
 
 type Predictions<T extends string | string[]> = {
   [key: string]: T;
@@ -22,8 +23,9 @@ interface Props {
 }
 export default function FormGroup({ file }: Props) {
   const [decision, setDecision] = useState(0);
-  const [decisionAmount, setDecisionAmount] = useState(1);
-  const { register, submit, addDecision } = useForm();
+  const { register, submit, addDecision, decisionAmount } = useForm(
+    countDecisiones(file.predictions)
+  );
   const dispatch = useFileDispatch();
 
   // Format the orediction into a { [string]: string } format
@@ -37,7 +39,6 @@ export default function FormGroup({ file }: Props) {
 
   const createDecision = () => {
     addDecision();
-    setDecisionAmount(decisionAmount + 1);
   };
   const selectDecision = (n: number) => setDecision(n);
 
