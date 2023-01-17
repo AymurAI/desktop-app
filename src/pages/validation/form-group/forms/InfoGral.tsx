@@ -18,6 +18,7 @@ export default function InfoGral({
       <Input
         ref={register(LabelType.NRO_REGISTRO)}
         suggestion={getSuggestion(LabelType.NRO_REGISTRO)}
+        specialCharacters="bis"
         label="Número de registro"
         type="number"
       />
@@ -35,6 +36,7 @@ export default function InfoGral({
       <Input
         ref={register(LabelType.N_EXPTE_EJE)}
         suggestion={getSuggestion(LabelType.N_EXPTE_EJE)}
+        specialCharacters="-_/"
         label="Nro de expediente"
         type="number"
       />
