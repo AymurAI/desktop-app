@@ -56,7 +56,13 @@ export default function useForm(initialDecisiones = 1) {
     }
   };
 
-  return { register, submit, addDecision };
+  return {
+    register,
+    submit,
+    addDecision,
+    // We are sure DECISIONES !== undefined because we define a base value at the start of the hook
+    decisionAmount: refs.current.DECISIONES!.length,
+  };
 }
 
 export * from './types';
