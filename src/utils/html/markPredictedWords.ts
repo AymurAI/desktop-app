@@ -21,8 +21,10 @@ function removeDuplicated(words: string[]) {
 export default function markPredictedWords(html: string, words: string[]) {
   let replaced = html;
 
+  const filteredWords = removeDuplicated(words);
+  
   // Enclose predicted words with <mark> tag
-  words.forEach((word) => {
+  filteredWords.forEach((word) => {
     replaced = replaced.replace(word, `<mark>${word}</mark>`);
   });
 
