@@ -1,61 +1,140 @@
 import { SelectOption } from 'components/select';
-import { AllLabels, PredictLabel } from 'types/aymurai';
+import { AllLabels, LabelDecisiones, PredictLabel } from 'types/aymurai';
 import { Prediction, PropertyCallback } from './types';
 
-/**
- * Transforms the predictions array into a { [label]: T } form to be used on the getters methods
- * @param predictions Array of predictions
- * @param propertyCallback
- * @returns A predictions array transformed into { [label]: T }
+export default class Suggester {
+  constructor(predictions: PredictLabel[] | undefined) {
+    this.predictions = predictions ?? [];
+  }
+
+  // ------------
+  // FIELDS
+  // ------------
+  private predictions: PredictLabel[];
+
+  // ------------
+  // PRIVATE METHODS
+  // ------------
+  /**
+   * Transforms the predictions array into a { [label]: T } form to be used on the getters methods
+   * @param propertyCallback This function is used to define which property is added when reducing
+   * @returns A predictions array transformed into { [label]: T }
+   */
+  private reducePredictions<T extends any>(
+    propertyCallback: PropertyCallback<T>
+  ): Prediction<T> {
+    const reduced = this.predictions.reduce(
+      (prev, pred) => ({
+        ...prev,
+        // Append the next value
+        [pred.attrs.aymurai_label]: propertyCallback(pred),
+      }),
+      {}
+    );
+
+    return reduced;
+  }
+
+  // ------------
+  // PUBLIC METHODS
+  // ------------
+  /**
+   * Searches for a suggestion for the given label
+   * @param label Label to check
+   * @returns The suggestion in `string | undefined` format
+   */
+  public text(label: AllLabels) {
+    const reduced = this.reducePredictions((pred) => pred.text);
+
+    return {
+      suggestion: reduced[label],
+    };
+  }
+
+  /**
+   * Searches for a suggestion option for the given label
+   * @param label Label to check
+   * @returns The suggestion as a `SelectOption` object
+   */
+  public select(label: AllLabels) {
+    const reduced = this.reducePredictions((pred) => ({
+      subclass: pred.attrs.aymurai_label_subclass ?? [],
+      text: pred.text,
+    }));
+
+    const { subclass, text } = reduced[label] ?? {};
+
+    const hasElements = !!subclass && !!subclass.length;
+    const suggestion: SelectOption | undefined =
+      hasElements && text ? { id: subclass[0], text } : undefined;
+
+    return {
+      priorityOrder: subclass,
+      suggestion,
+    };
+  }
+
+  /**
+ * @example
+ *[{
+    ...
+    "text": "violencia de género",
+    "attrs": {
+      ...
+      "aymurai_label": "VIOLENCIA_DE_GENERO",
+      "aymurai_label_subclass": [],
+    }
+  }]
  */
-function reducePredictions<T extends any>(
-  predictions: PredictLabel[],
-  propertyCallback: PropertyCallback<T>
-): Prediction<T> {
-  const reduced = predictions.reduce(
-    (prev, pred) => ({
-      ...prev,
-      // Append the next value
-      [pred.attrs.aymurai_label]: propertyCallback(pred),
-    }),
-    {}
-  );
+  violencia_genero(type: 'si' | 'no') {
+    const reduced = this.reducePredictions((pred) => pred.text);
 
-  return reduced;
-}
+    const value = reduced[LabelDecisiones.VIOLENCIA_DE_GENERO];
 
-/* GETTERS */
-// Returns the predicted text for the specified `label`
-function text(predictions: PredictLabel[], label: AllLabels) {
-  const reduced = reducePredictions(predictions, (pred) => pred.text);
+    if (value !== undefined) {
+      // Return true or false
+      return {
+        checked: type === 'si' ? !!value : !value,
+      };
+    } else return { checked: undefined };
+  }
 
-  return {
-    suggestion: reduced[label],
-  };
-}
+  /**
+ * @example
+ * [{
+ *  ...
+    "text": "violencia económica y física",
+    "attrs": {
+      "aymurai_label": "VIOLENCIA_DE_GENERO",
+      "aymurai_label_subclass": [
+        "economica",
+        "fisica"
+      ],
+    }
+  }]
+ */
+  violencia_tipo(label: LabelDecisiones) {
+    console.log(this.reducePredictions((pred) => pred));
+    const reduced = this.reducePredictions(
+      (pred) => pred.attrs.aymurai_label_subclass
+    );
+    const values: Partial<Record<LabelDecisiones, string>> = {
+      [LabelDecisiones.V_AMB]: 'ambiental',
+      [LabelDecisiones.V_ECON]: 'economica',
+      [LabelDecisiones.V_SIMB]: 'simbolica',
+      [LabelDecisiones.V_SEX]: 'sexual',
+      [LabelDecisiones.V_PSIC]: 'psicologica',
+      [LabelDecisiones.V_POLIT]: 'politica',
+      [LabelDecisiones.V_FISICA]: 'fisica',
+      [LabelDecisiones.V_SOC]: 'social',
+    };
 
-// Returns the predicted text and the suggestion (id and text) for the specified `label`
-function select(predictions: PredictLabel[], label: AllLabels) {
-  const reduced = reducePredictions(predictions, (pred) => ({
-    subclass: pred.attrs.aymurai_label_subclass ?? [],
-    text: pred.text,
-  }));
+    const labelValue = values[label];
+    // TODO optimizar la obtención del tipo de violencia de genero, ya que es el mismo label para la funcion `violencia_genero`
+    const subclass = reduced[LabelDecisiones.VIOLENCIA_DE_GENERO];
 
-  const { subclass, text } = reduced[label] ?? {};
-
-  const hasElements = !!subclass && !!subclass.length;
-  const suggestion: SelectOption | undefined =
-    hasElements && text ? { id: subclass[0], text } : undefined;
-
-  return {
-    priorityOrder: subclass,
-    suggestion,
-  };
-}
-
-export default function suggest(preds: PredictLabel[] = []) {
-  return {
-    text: (label: AllLabels) => text(preds, label),
-    select: (label: AllLabels) => select(preds, label),
-  };
+    return {
+      checked: !!subclass?.find((s) => s === labelValue),
+    };
+  }
 }

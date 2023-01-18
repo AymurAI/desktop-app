@@ -1,4 +1,4 @@
 import countDecisiones from './countDecisiones';
-import suggest from './suggestions';
+import Suggester from './suggestions';
 
-export { countDecisiones, suggest };
+export { countDecisiones, Suggester };
