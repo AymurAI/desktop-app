@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { CaretDown } from 'phosphor-react';
 
-import { Label, Suggestion, Text } from 'components';
+import { Label, Suggestion as SuggestionComponent, Text } from 'components';
 import {
   Container,
   Input,
@@ -17,15 +17,17 @@ import {
   OptionContainer,
   TextContainer,
 } from './Select.styles';
-import { findById, orderByPriority } from './utils';
+import { findById, orderByPriority, secureSuggestion } from './utils';
+import { Optional } from 'types/utils';
 
 export type SelectOption = { id: string; text: string };
+export type Suggestion = Optional<SelectOption, 'text'>;
 interface Props {
   options: SelectOption[];
   label?: string;
   helper?: string;
   selected?: SelectOption['id'];
-  suggestion?: SelectOption;
+  suggestion?: Suggestion;
   onChange?: (value: SelectOption | undefined) => void;
   priorityOrder?: SelectOption['id'][];
 }
@@ -43,7 +45,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     ref
   ) {
     const [id, setId] = useState<SelectOption['id']>(
-      findById(selected, options)?.text ?? ''
+      findById(selected, options)?.id ?? ''
     );
 
     // Only exposes `selected` object to the parent component
@@ -58,8 +60,9 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     );
 
     const isValueEmpty = !id || id === '';
-    const orderedOptions = orderByPriority(options, priorityOrder);
 
+    const securedSuggestion = secureSuggestion(suggestion, options);
+    const orderedOptions = orderByPriority(options, priorityOrder);
     const option = findById(id, options);
 
     const updateValue = (newId: SelectOption['id']) => {
@@ -105,16 +108,16 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
           {/* INPUT */}
           <InputContainer tabIndex={-1}>
             <Input value={option?.text} onChange={handleChangeInput} />
-            {suggestion && isValueEmpty && (
+            {securedSuggestion && isValueEmpty && (
               <>
                 <Text css={{ lineHeight: '100%' }}>|</Text>
-                <Suggestion
-                  onClick={handleClickSelect(suggestion.id)}
-                  onKeyDown={handleKeySelect(suggestion.id)}
+                <SuggestionComponent
+                  onClick={handleClickSelect(securedSuggestion.id)}
+                  onKeyDown={handleKeySelect(securedSuggestion.id)}
                   tabIndex={0}
                 >
-                  {suggestion.text}
-                </Suggestion>
+                  {securedSuggestion.text}
+                </SuggestionComponent>
               </>
             )}
             <CaretDown size={16} />
