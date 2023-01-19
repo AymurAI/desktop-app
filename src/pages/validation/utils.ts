@@ -13,7 +13,7 @@ export function movePrevious(cur: number, state: DocFile[]) {
     index--;
 
     if (index < 0) return undefined;
-  } while (!state[index]);
+  } while (!!state[index].validated);
 
   return index;
 }
@@ -31,7 +31,7 @@ export function moveNext(cur: number, state: DocFile[]) {
     index++;
 
     if (index === state.length) return undefined;
-  } while (!state[index]);
+  } while (!!state[index].validated);
 
   return index;
 }
