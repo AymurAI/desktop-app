@@ -15,6 +15,7 @@ import {
   InputContainer,
 } from './Input.styles';
 import { forwardRef } from 'react';
+import { CSS } from 'styles';
 
 export type InputRefValue = { value: string };
 interface Props
@@ -27,6 +28,7 @@ interface Props
   defaultValue?: string;
   onChange?: (value: string) => void;
   type?: 'text' | 'number';
+  css?: CSS;
 }
 export default forwardRef<{ value: string }, Props>(function Input(
   {
@@ -106,7 +108,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
         {/* INPUT */}
         <StyledInput
           value={value}
-          type='text'
+          type="text"
           onChange={handleChange}
           {...props}
         />
@@ -130,7 +132,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
       </InputContainer>
 
       {/* HELPER */}
-      {helper && <Label size='s'>{helper}</Label>}
+      {helper && <Label size="s">{helper}</Label>}
     </Container>
   );
 });
