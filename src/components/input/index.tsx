@@ -61,7 +61,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
 
   const updateValue = (newValue: string) => {
     if (type === 'number') {
-      const regex = new RegExp(`^[\\d${specialCharacters}]+$`);
+      const regex = new RegExp(`^[\\d${specialCharacters}.]+$`);
       if (regex.test(newValue) || !newValue) {
         setValue(newValue);
         onChange?.(newValue);
