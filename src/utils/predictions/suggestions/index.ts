@@ -1,6 +1,12 @@
 import { SelectOption } from 'components/select';
 import { AllLabels, LabelDecisiones, PredictLabel } from 'types/aymurai';
-import { Prediction, PropertyCallback } from './types';
+import {
+  Prediction,
+  PropertyCallback,
+  InputSuggestion,
+  SelectSuggestion,
+  BooleanSuggestion,
+} from './types';
 
 export default class Suggester {
   constructor(predictions: PredictLabel[] | undefined) {
@@ -43,7 +49,7 @@ export default class Suggester {
    * @param label Label to check
    * @returns The suggestion in `string | undefined` format
    */
-  public text(label: AllLabels) {
+  public text(label: AllLabels): InputSuggestion {
     const reduced = this.reducePredictions((pred) => pred.text);
 
     return {
@@ -56,7 +62,7 @@ export default class Suggester {
    * @param label Label to check
    * @returns The suggestion as a `SelectOption` object
    */
-  public select(label: AllLabels) {
+  public select(label: AllLabels): SelectSuggestion {
     const reduced = this.reducePredictions((pred) => ({
       subclass: pred.attrs.aymurai_label_subclass ?? [],
       text: pred.text,
@@ -86,7 +92,7 @@ export default class Suggester {
     }
   }]
  */
-  violencia_genero(type: 'si' | 'no') {
+  violencia_genero(type: 'si' | 'no'): BooleanSuggestion {
     const reduced = this.reducePredictions((pred) => pred.text);
 
     const value = reduced[LabelDecisiones.VIOLENCIA_DE_GENERO];
@@ -113,8 +119,7 @@ export default class Suggester {
     }
   }]
  */
-  violencia_tipo(label: LabelDecisiones) {
-    console.log(this.reducePredictions((pred) => pred));
+  violencia_tipo(label: LabelDecisiones): BooleanSuggestion {
     const reduced = this.reducePredictions(
       (pred) => pred.attrs.aymurai_label_subclass
     );
@@ -134,7 +139,44 @@ export default class Suggester {
     const subclass = reduced[LabelDecisiones.VIOLENCIA_DE_GENERO];
 
     return {
+      // Find the desired type on the subclass array
       checked: !!subclass?.find((s) => s === labelValue),
     };
+  }
+
+  art_infringido(): SelectSuggestion {
+    const reduced = this.reducePredictions(({ text }) => ({ id: text, text }));
+
+    const suggestion = reduced[LabelDecisiones.ART_INFRINGIDO];
+
+    if (suggestion) {
+      return {
+        priorityOrder: [suggestion.id],
+        suggestion,
+      };
+    } else {
+      return {
+        suggestion: undefined,
+        priorityOrder: undefined,
+      };
+    }
+  }
+  codigo_o_ley(): SelectSuggestion {
+    const reduced = this.reducePredictions(
+      (pred) => pred.attrs.aymurai_label_subclass
+    );
+
+    const suggestion = reduced[LabelDecisiones.ART_INFRINGIDO];
+
+    if (suggestion) {
+      return {
+        suggestion: { id: suggestion[0] },
+        priorityOrder: [suggestion[0]],
+      };
+    } else
+      return {
+        suggestion: undefined,
+        priorityOrder: undefined,
+      };
   }
 }
