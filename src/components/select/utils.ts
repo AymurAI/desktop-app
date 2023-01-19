@@ -1,31 +1,29 @@
+import { Necessary } from 'types/utils';
 import { removeUndefined } from 'utils/filtering';
-import { SelectOption } from '.';
+import { SelectOption, Suggestion } from '.';
 
 /**
- * Convert a simple text into the id format
- * @param text Text to convert into an id
- * @returns A text converted into an id
+ * Makes sure the text of the suggestion is defined in any way
+ * @param suggestion Suggestion to analyze
+ * @param options Options array from the JSON file
+ * @returns Same `Suggestion` format
  */
-export function textToId(text: string) {
-  // Transform the text into lowcase
-  const lowcase = text.toLowerCase();
+export function secureSuggestion(
+  suggestion: Suggestion | undefined,
+  options: SelectOption[]
+): Necessary<Suggestion, 'text'> | undefined {
+  if (suggestion) {
+    const { text, id } = suggestion;
 
-  // Replace spaces with underscores
-  const spaces = lowcase.replaceAll(' ', '_');
+    if (text) return { id, text };
+    else {
+      const option = findById(id, options);
 
-  return spaces;
-}
-
-/**
- * Creates a select option based on a text
- * @param text Text to use as a base of the option
- * @returns A new option using a text as a base
- */
-export function newOption(text: string): SelectOption {
-  return {
-    id: textToId(text),
-    text,
-  };
+      return option;
+    }
+  } else {
+    return undefined;
+  }
 }
 
 /**
