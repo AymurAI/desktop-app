@@ -65,7 +65,7 @@ export default function Decision({
         </Radio>
       </RadioGroup>
       {/* TODO ajustar posicionamiento de estos botones que se ponen en vertical cuando hay una sugerencia */}
-      <Stack spacing="l" css={{ '&>*': { flex: 1 } }} wrap="nowrap">
+      <Stack spacing="l" css={{ '&>*': { flex: 1 } }}>
         <Input
           ref={prop(LabelDecisiones.HORA_DE_INICIO)}
           {...suggester.text(LabelDecisiones.HORA_DE_INICIO)}

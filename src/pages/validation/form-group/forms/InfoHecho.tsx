@@ -41,11 +41,10 @@ export default function DatosDenunciante({
         options={json.MATERIA}
         label="Materia"
       />
-      <Select
+      <Input
         ref={prop(LabelDecisiones.ART_INFRINGIDO)}
-        {...suggester.art_infringido()}
+        {...suggester.text(LabelDecisiones.ART_INFRINGIDO)}
         label="Artículo infringido"
-        options={json.ART_INFRINGIDO}
       />
       <Select
         ref={prop(LabelDecisiones.CODIGO_O_LEY)}
