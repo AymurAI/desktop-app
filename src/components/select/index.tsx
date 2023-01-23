@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { CaretDown } from 'phosphor-react';
 
-import { Label, Suggestion, Text } from 'components';
+import { Label, Suggestion as SuggestionComponent, Text } from 'components';
 import {
   Container,
   Input,
@@ -17,24 +17,35 @@ import {
   OptionContainer,
   TextContainer,
 } from './Select.styles';
-import { findOption } from './utils';
+import { findById, orderByPriority, secureSuggestion } from './utils';
+import { Optional } from 'types/utils';
 
 export type SelectOption = { id: string; text: string };
+export type Suggestion = Optional<SelectOption, 'text'>;
 interface Props {
   options: SelectOption[];
   label?: string;
   helper?: string;
   selected?: SelectOption['id'];
-  suggestion?: SelectOption['text'];
+  suggestion?: Suggestion;
   onChange?: (value: SelectOption | undefined) => void;
+  priorityOrder?: SelectOption['id'][];
 }
 export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
   function Select(
-    { label, helper, options, suggestion, selected, onChange },
+    {
+      label,
+      helper,
+      options,
+      suggestion,
+      selected,
+      onChange,
+      priorityOrder = [],
+    },
     ref
   ) {
-    const [value, setValue] = useState<SelectOption['text']>(
-      findOption(selected, options)?.text ?? ''
+    const [id, setId] = useState<SelectOption['id']>(
+      findById(selected, options)?.id ?? ''
     );
 
     // Only exposes `selected` object to the parent component
@@ -42,18 +53,22 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
       ref,
       () => {
         return {
-          value: findOption(value, options)?.id,
+          value: id,
         };
       },
-      [value, options]
+      [id]
     );
 
-    const isValueEmpty = !value || value === '';
+    const isValueEmpty = !id || id === '';
 
-    const updateValue = (newValue: SelectOption['text']) => {
-      setValue(newValue);
+    const securedSuggestion = secureSuggestion(suggestion, options);
+    const orderedOptions = orderByPriority(options, priorityOrder);
+    const option = findById(id, options);
 
-      const option = findOption(newValue, options);
+    const updateValue = (newId: SelectOption['id']) => {
+      setId(newId);
+
+      const option = findById(newId, options);
       onChange?.(option);
     };
 
@@ -92,17 +107,17 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
 
           {/* INPUT */}
           <InputContainer tabIndex={-1}>
-            <Input value={value} onChange={handleChangeInput} />
-            {suggestion && isValueEmpty && (
+            <Input value={option?.text} onChange={handleChangeInput} readOnly />
+            {securedSuggestion && isValueEmpty && (
               <>
                 <Text css={{ lineHeight: '100%' }}>|</Text>
-                <Suggestion
-                  onClick={handleClickSelect(suggestion)}
-                  onKeyDown={handleKeySelect(suggestion)}
+                <SuggestionComponent
+                  onClick={handleClickSelect(securedSuggestion.id)}
+                  onKeyDown={handleKeySelect(securedSuggestion.id)}
                   tabIndex={0}
                 >
-                  {suggestion}
-                </Suggestion>
+                  {securedSuggestion.text}
+                </SuggestionComponent>
               </>
             )}
             <CaretDown size={16} />
@@ -114,10 +129,10 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
 
         {/* OPTION LIST */}
         <OptionContainer>
-          {options.map(({ id, text }) => (
+          {orderedOptions.map(({ id, text }) => (
             <Option
-              onClick={handleClickSelect(text)}
-              onKeyDown={handleKeySelect(text)}
+              onClick={handleClickSelect(id)}
+              onKeyDown={handleKeySelect(id)}
               key={id}
               tabIndex={0}
             >

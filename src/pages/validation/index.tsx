@@ -27,14 +27,12 @@ export default withFileProtection(function Validation() {
   const navigate = useNavigate();
   const token = useGoogleToken();
 
-  const nextFile = () => {
-    const newIndex = moveNext(selected, files);
-    if (newIndex) setSelected(newIndex);
+  const moveIndex = (newIndex: number | undefined) => {
+    if (newIndex !== undefined) setSelected(newIndex);
   };
-  const previousFile = () => {
-    const newIndex = movePrevious(selected, files);
-    if (newIndex) setSelected(newIndex);
-  };
+  const nextFile = () => moveIndex(moveNext(selected, files));
+  const previousFile = () => moveIndex(movePrevious(selected, files));
+
 
   const hasStepper = files.length > 1;
 
