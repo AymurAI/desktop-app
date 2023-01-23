@@ -92,7 +92,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
 
           {/* INPUT */}
           <InputContainer tabIndex={-1}>
-            <Input value={value} onChange={handleChangeInput} />
+            <Input value={value} onChange={handleChangeInput} readOnly/>
             {suggestion && isValueEmpty && (
               <>
                 <Text css={{ lineHeight: '100%' }}>|</Text>
