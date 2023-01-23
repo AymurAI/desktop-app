@@ -29,6 +29,7 @@ interface Props
   onChange?: (value: string) => void;
   type?: 'text' | 'number';
   css?: CSS;
+  specialCharacters?: string;
 }
 export default forwardRef<{ value: string }, Props>(function Input(
   {
@@ -40,6 +41,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
     defaultValue,
     onChange,
     type = 'text',
+    specialCharacters = '',
     ...props
   },
   ref
@@ -61,7 +63,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
 
   const updateValue = (newValue: string) => {
     if (type === 'number') {
-      const regex = /^\d+$/;
+      const regex = new RegExp(`^[\\d${specialCharacters}.]+$`);
       if (regex.test(newValue) || !newValue) {
         setValue(newValue);
         onChange?.(newValue);

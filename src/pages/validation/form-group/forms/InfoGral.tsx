@@ -14,6 +14,7 @@ export default function InfoGral({ onSubmit, register, suggester }: FormProps) {
       <Input
         ref={register(LabelType.NRO_REGISTRO)}
         {...suggester.text(LabelType.NRO_REGISTRO)}
+        specialCharacters="bis"
         label="Número de registro"
         type="number"
       />
@@ -31,6 +32,7 @@ export default function InfoGral({ onSubmit, register, suggester }: FormProps) {
       <Input
         ref={register(LabelType.N_EXPTE_EJE)}
         {...suggester.text(LabelType.N_EXPTE_EJE)}
+        specialCharacters="-_/"
         label="Nro de expediente"
         type="number"
       />

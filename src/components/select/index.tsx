@@ -107,7 +107,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
 
           {/* INPUT */}
           <InputContainer tabIndex={-1}>
-            <Input value={option?.text} onChange={handleChangeInput} />
+            <Input value={option?.text} onChange={handleChangeInput} readOnly />
             {securedSuggestion && isValueEmpty && (
               <>
                 <Text css={{ lineHeight: '100%' }}>|</Text>
