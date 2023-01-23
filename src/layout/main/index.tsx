@@ -1,14 +1,13 @@
 import { Outlet } from 'react-router-dom';
 
 import { Title, ProfileInfo, Stepper } from 'components';
-import withAuthProtection from 'features/withAuthProtection';
 import { Props } from './Main.types';
 import { Section, Footer, Header, Layout } from './Main.styles';
 import FileProvider from 'context/File';
 
 export { Section, Footer };
 
-export default withAuthProtection(function Main({ children, ...props }: Props) {
+export default function Main({ children, ...props }: Props) {
   return (
     <Layout {...props}>
       <Header>
@@ -26,4 +25,4 @@ export default withAuthProtection(function Main({ children, ...props }: Props) {
       </FileProvider>
     </Layout>
   );
-});
+}
