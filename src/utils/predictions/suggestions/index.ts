@@ -120,9 +120,16 @@ export default class Suggester {
   }]
  */
   violencia_tipo(label: LabelDecisiones): BooleanSuggestion {
-    const reduced = this.reducePredictions(
-      (pred) => pred.attrs.aymurai_label_subclass
-    );
+    // Reduce the predictions, merging VIOLENCIA_DE_GENERO subclasses
+    const subclasses = this.predictions.reduce<string[]>((prev, pred) => {
+      const label = pred.attrs.aymurai_label;
+      const subclass = pred.attrs.aymurai_label_subclass;
+
+      if (label === LabelDecisiones.VIOLENCIA_DE_GENERO && subclass) {
+        return [...prev, ...subclass];
+      } else return prev;
+    }, []);
+
     const values: Partial<Record<LabelDecisiones, string>> = {
       [LabelDecisiones.V_AMB]: 'ambiental',
       [LabelDecisiones.V_ECON]: 'economica',
@@ -134,13 +141,12 @@ export default class Suggester {
       [LabelDecisiones.V_SOC]: 'social',
     };
 
+    // Type of VIOLENCIA_TIPO
     const labelValue = values[label];
-    // TODO optimizar la obtención del tipo de violencia de genero, ya que es el mismo label para la funcion `violencia_genero`
-    const subclass = reduced[LabelDecisiones.VIOLENCIA_DE_GENERO];
 
     return {
       // Find the desired type on the subclass array
-      checked: !!subclass?.find((s) => s === labelValue),
+      checked: !!subclasses.find((s) => s === labelValue),
     };
   }
 

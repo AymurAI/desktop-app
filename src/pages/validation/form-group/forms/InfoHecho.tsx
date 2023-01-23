@@ -23,7 +23,6 @@ export default function DatosDenunciante({
   register,
   suggester,
 }: FormProps) {
-  console.log('Receibev decision: ', decision);
   const [frasesAgresion, setFrasesAgresion] = useState(1);
 
   const newFraseAgresion = () => setFrasesAgresion(frasesAgresion + 1);
