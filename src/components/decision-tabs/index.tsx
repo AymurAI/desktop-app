@@ -2,6 +2,7 @@ import { Plus as Icon } from 'phosphor-react';
 
 import { Stack, TabName, Tab } from 'components';
 import { PlusButton } from './DecisionTabs.styles';
+import nArray from 'utils/nArray';
 
 interface Props {
   selected: number;
@@ -17,7 +18,7 @@ export default function DecisionTabs({
   selectDecision,
   css,
 }: Props) {
-  const decisionArr = Array.from(Array(decisionAmount).keys());
+  const decisionArr = nArray(decisionAmount, undefined).map((_, i) => i);
 
   const selectDecisionHandler = (n: number) => () => selectDecision(n);
 

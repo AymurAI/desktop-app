@@ -1,13 +1,19 @@
-import { FormEvent, useRef } from 'react';
-import { AllLabels, LabelDecisiones, LabelType } from 'types/aymurai';
-import { FormData, FormValue, RegisterFunction, SubmitFunction } from './types';
+import { FormEvent, useRef, useState } from 'react';
+import { LabelDecisiones, LabelType } from 'types/aymurai';
+import nArray from 'utils/nArray';
+import { FormData, RegisterFunction, SubmitFunction } from './types';
 
 /**
  * Creates a group of component references and a function to handle
+ * @param initialDecisiones Initial amount of decisiones
  * @returns `register()` and `submit()` functions
  */
-export default function useForm() {
-  const refs = useRef<FormData>({});
+export default function useForm(initialDecisiones = 1) {
+  // Create an n-array of empty objects
+  const refs = useRef<FormData>({ DECISIONES: nArray(initialDecisiones, {}) });
+  // State containing decisionAmounts. This is done in this way to make React perform a re-render
+  // in case we want to add a decision
+  const [decisionAmount, setDecisionAmount] = useState(initialDecisiones);
 
   /**
    * Adds a reference to a components value to the 'state'
@@ -46,14 +52,22 @@ export default function useForm() {
 
   const addDecision = () => {
     const arr = refs.current.DECISIONES;
+
     if (arr) {
+      setDecisionAmount((dec) => dec + 1);
       refs.current.DECISIONES = [...arr, {}];
     } else {
-      refs.current.DECISIONES = [];
+      setDecisionAmount(1);
+      refs.current.DECISIONES = [{}];
     }
   };
 
-  return { register, submit, addDecision };
+  return {
+    register,
+    submit,
+    addDecision,
+    decisionAmount,
+  };
 }
 
 export * from './types';
