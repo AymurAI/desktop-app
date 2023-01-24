@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { AuthenticationContext as Context } from 'context/Authentication';
 import google from 'services/google';
 import oauth from 'services/oauth';
+import { OnlineUser } from 'types/user';
 
 interface UseLoginArgs {
   onLogout?: () => void;
@@ -20,10 +21,10 @@ export default function useLogin({ onLogout }: UseLoginArgs = {}) {
     const newToken = await oauth.getNewToken(refreshToken);
 
     // Replace the old token
-    setUser((cur) => (cur ? { ...cur, token: newToken } : cur));
+    setUser((cur) => (cur ? ({ ...cur, token: newToken } as OnlineUser) : cur));
   };
 
-  const login = () => {
+  const loginOnline = () => {
     // Opens the window in the OS default browser
     oauth.openConsentScreen();
 
@@ -35,13 +36,20 @@ export default function useLogin({ onLogout }: UseLoginArgs = {}) {
       // Check if it's a valid user
       if (user) {
         // Update the state
-        setUser({ ...user, token, refreshToken });
+        setUser({ ...user, token, refreshToken, online: true });
 
         startTimer(() => updateToken(refreshToken));
       }
     });
   };
+  const loginOffline = () => {
+    setUser({ online: false, token: '' });
+  };
 
+  const login = {
+    online: loginOnline,
+    offline: loginOffline,
+  };
   const logout = () => {
     setUser(null);
     resetTimer();
