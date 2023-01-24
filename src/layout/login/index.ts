@@ -22,7 +22,7 @@ export const Container = styled('div', {
   justifyContent: 'center',
   alignItems: 'center',
   flex: 1,
-  gap: '$xl',
+  gap: 48,
 
   margin: '$xl',
 
