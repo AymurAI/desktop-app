@@ -14,7 +14,7 @@ const router = createRouter([
   {
     // Main as a layout element
     path: '/',
-    element: <MainLayout></MainLayout>,
+    element: <MainLayout />,
     children: [
       { path: 'onboarding', element: <Onboarding /> },
       { path: 'preview', element: <Preview /> },
