@@ -1,4 +1,4 @@
-import { useGoogleToken } from 'hooks';
+import { useUser } from 'hooks';
 import { ComponentType, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,15 +11,15 @@ export default function withAuthProtection<T extends JSX.IntrinsicAttributes>(
   Component: ComponentType<T>
 ) {
   return (props: T) => {
-    const token = useGoogleToken();
+    const user = useUser();
     const navigate = useNavigate();
 
     // Check if a token is stored on the app
     useEffect(() => {
-      if (!token || token === '') {
+      if (!user) {
         navigate('/login');
       }
-    }, [token, navigate]);
+    }, [user, navigate]);
 
     return <Component {...props}></Component>;
   };
