@@ -37,6 +37,7 @@ export default function Callout() {
           {props.subtitle}
         </Subtitle>
       </Stack>
+      {/* TODO agregar el onClick a este boton */}
       <Button size="s" variant="secondary">
         {props.buttonText}
       </Button>
