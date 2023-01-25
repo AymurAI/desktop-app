@@ -65,10 +65,13 @@ export default function Finish() {
           href={DATASET_URL}
           target="_blank"
           rel="noreferrer"
+          size="l"
         >
           Ver set de datos
         </Button>
-        <Button onClick={handleRestart}>Cargar más documentos</Button>
+        <Button onClick={handleRestart} size="l">
+          Cargar más documentos
+        </Button>
       </Footer>
     </>
   );
