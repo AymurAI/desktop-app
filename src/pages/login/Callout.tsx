@@ -11,13 +11,10 @@ export default function Callout() {
       css={{ width: 300, bg: '$infoSecondary', p: '$m' }}
     >
       <Info weight="regular" size={24} color={colors.infoPrimary} />
-      <Stack direction="column">
-        <Text size="xs">
-          Para ingresar a la plataforma debes utilizar tu cuenta de Google
-          habilitada por el juzgado.
-        </Text>
-        <Text size="xs">No olvides utilizar siempre la misma cuenta.</Text>
-      </Stack>
+      <Text size="xs">
+        Si utilizas tu cuenta de Google, no olvides utilizar siempre la misma
+        cuenta habilitada por el juzgado.
+      </Text>
     </Stack>
   );
 }

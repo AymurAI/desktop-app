@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleLogo } from 'phosphor-react';
+import { GoogleLogo, Monitor } from 'phosphor-react';
 
 import { Background, Container } from 'layout/login';
 import { Button, Subtitle, Title, Stack, Label } from 'components';
@@ -17,7 +17,7 @@ export default function Login() {
    * Ensures the user state has been successfully updated before navigating to the `/home`
    */
   useEffect(() => {
-    if (user && user.token !== '') navigate('/onboarding');
+    if (user) navigate('/onboarding');
   }, [user, navigate]);
 
   return (
@@ -32,11 +32,30 @@ export default function Login() {
         </Stack>
 
         {/* Login */}
-        <Stack direction="column" align="stretch" spacing="xl">
-          <Button onClick={login}>
-            <GoogleLogo weight="bold" />
-            Login
-          </Button>
+        <Stack
+          direction="column"
+          spacing="m"
+          align="stretch"
+          css={{ width: 300 }}
+        >
+          <Subtitle weight="strong" size="s" css={{ textAlign: 'center' }}>
+            ¿Donde prefieres guardar la información que proceses con AymurAI?
+          </Subtitle>
+
+          {/* Buttons */}
+          <Stack direction="column" align="center" spacing="s">
+            <Button onClick={login.offline}>
+              <Monitor weight="bold" />
+              Local
+            </Button>
+            <Subtitle size="s">o</Subtitle>
+            <Button onClick={login.online}>
+              <GoogleLogo weight="bold" />
+              Login
+            </Button>
+          </Stack>
+
+          {/* Callout */}
           <Callout />
         </Stack>
 
