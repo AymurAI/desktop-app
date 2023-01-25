@@ -6,6 +6,7 @@ import isAllowed from './isAllowed';
 import isAlreadyLoaded from './isAlreadyLoaded';
 import isFileValidated from './isFileValidated';
 import isValidationCompleted from './isValidationCompleted';
+import submitValidations from './submitValidations';
 
 export {
   flatValidation,
@@ -16,4 +17,5 @@ export {
   isAlreadyLoaded,
   isFileValidated,
   isValidationCompleted,
+  submitValidations,
 };
