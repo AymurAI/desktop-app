@@ -14,6 +14,7 @@ import { Footer, Section } from 'layout/main';
 import { removeAllFiles } from 'reducers/file/actions';
 import { Anchor } from './Anchor';
 import { DATASET_URL } from 'utils/config';
+import Callout from './Callout';
 
 export default function Finish() {
   const files = useFiles();
@@ -46,6 +47,7 @@ export default function Finish() {
               <FileCheck key={data.name} fileName={data.name}></FileCheck>
             ))}
           </Grid>
+          <Callout />
         </Card>
       </Section>
       <Footer>
