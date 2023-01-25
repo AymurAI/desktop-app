@@ -15,6 +15,8 @@ const Component = styled('div', {
   padding: '$m $l',
 
   backgroundColor: '$infoSecondary',
+
+  borderRadius: '$xxs',
 });
 
 export default function Callout() {
