@@ -19,7 +19,7 @@ import {
 } from 'utils/file';
 import { validate } from 'reducers/file/actions';
 import { moveNext, movePrevious } from './utils';
-import exportFeedback from 'services/feedback';
+import filesystem from 'services/filesystem';
 
 export default withFileProtection(function Validation() {
   // HOOKS
@@ -66,7 +66,7 @@ export default withFileProtection(function Validation() {
     });
 
     // Export the feedback JSON
-    await exportFeedback(selectedFile);
+    await filesystem.feedback.export(selectedFile);
   };
 
   return (
