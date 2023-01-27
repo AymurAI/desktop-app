@@ -18,7 +18,7 @@ import google from 'services/google';
 import { spreadsheetURLToId, validationToArray } from 'utils/google';
 import { DATASET_URL } from 'utils/config';
 import { moveNext, movePrevious } from './utils';
-import exportFeedback from 'services/feedback';
+import filesystem from 'services/filesystem';
 
 export default withFileProtection(function Validation() {
   const files = useFiles();
@@ -32,7 +32,6 @@ export default withFileProtection(function Validation() {
   };
   const nextFile = () => moveIndex(moveNext(selected, files));
   const previousFile = () => moveIndex(movePrevious(selected, files));
-
 
   const hasStepper = files.length > 1;
 
@@ -61,7 +60,7 @@ export default withFileProtection(function Validation() {
         .append(validationToArray(selectedFile.validationObject));
 
       // Export the feedback JSON
-      await exportFeedback(selectedFile);
+      await filesystem.feedback.export(selectedFile);
     } else {
       throw new Error(
         'No token was found, cannot POST the data to the Google API!'
