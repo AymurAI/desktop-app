@@ -1,3 +1,4 @@
+import excelStructure from './excelStructure';
 import flatValidation from './flatValidation';
 import getByName from './getByName';
 import getExtension from './getExtension';
@@ -8,6 +9,7 @@ import isFileValidated from './isFileValidated';
 import isValidationCompleted from './isValidationCompleted';
 
 export {
+  excelStructure,
   flatValidation,
   getByName,
   getExtension,
