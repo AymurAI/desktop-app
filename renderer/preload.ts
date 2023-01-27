@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('filesystem', {
   excel: {
     read: () => ipcRenderer.invoke('EXCEL_READ'),
     write: (buffer: Buffer) => ipcRenderer.invoke('EXCEL_WRITE', buffer),
+    open: () => ipcRenderer.invoke('EXCEL_OPEN'),
   },
 });
 

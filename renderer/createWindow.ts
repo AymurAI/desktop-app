@@ -69,6 +69,7 @@ export default function createWindow() {
   );
   ipcMain.handle('EXCEL_READ', excel.read);
   ipcMain.handle('EXCEL_WRITE', (_, buffer: Buffer) => excel.write(buffer));
+  ipcMain.handle('EXCEL_OPEN', excel.open);
 
   // OAUTH
   ipcMain.handle('GET_CHALLENGE_CODE', crypto.getChallengeCode);
