@@ -51,7 +51,7 @@ export default function Login() {
             <Subtitle size="s">o</Subtitle>
             <Button onClick={login.online}>
               <GoogleLogo weight="bold" />
-              Login
+              Google
             </Button>
           </Stack>
 

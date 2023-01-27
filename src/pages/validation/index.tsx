@@ -60,7 +60,7 @@ export default withFileProtection(function Validation() {
     }
     // POST the validated data to the dataset
     await submitValidations({
-      online: user?.online,
+      isOnline: user?.online,
       token,
       validations: selectedFile.validationObject,
     });
