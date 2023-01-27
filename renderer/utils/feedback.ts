@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
-import { homedir } from 'os';
-import path from 'path';
+
+import { EXPORTS_FOLDER } from '../env';
 
 function getDate() {
   const now = new Date(Date.now());
@@ -25,7 +25,7 @@ function formatName(fileName: string) {
 }
 
 function getFolder() {
-  const home = path.resolve(homedir(), 'AppData/Local/AymurAI/feedback'); // This path is based on Windows OS
+  const home = `${EXPORTS_FOLDER}/feedback`; // This path is based on Windows OS
 
   return home;
 }
