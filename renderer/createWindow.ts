@@ -2,7 +2,7 @@ import { BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 
 import { isDebug, isProduction } from './env';
-import { resolveHTMLPath, crypto, feedback } from './utils';
+import { resolveHTMLPath, crypto, feedback, excel } from './utils';
 
 export let mainWindow: BrowserWindow | null;
 
@@ -67,6 +67,9 @@ export default function createWindow() {
   ipcMain.handle('EXPORT_FEEDBACK', (_, fileName: string, data: object) =>
     feedback.export(fileName, data)
   );
+  ipcMain.handle('EXCEL_READ', excel.read);
+  ipcMain.handle('EXCEL_WRITE', (_, buffer: Buffer) => excel.write(buffer));
+
   // OAUTH
   ipcMain.handle('GET_CHALLENGE_CODE', crypto.getChallengeCode);
   ipcMain.handle('GET_VERIFIER_CODE', crypto.getVerifierCode);

@@ -9,7 +9,12 @@ function read() {
   return fs.readFile(`${EXPORTS_FOLDER}/set_de_datos.xlsx`);
 }
 
+function write(buffer: Buffer) {
+  // ...
+}
+
 const excel = {
   read,
+  write,
 };
 export default excel;
