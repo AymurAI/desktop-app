@@ -1,5 +1,5 @@
 import resolveHTMLPath from './resolveHTMLPath';
-import exportFeedback from './feedback';
+import feedback from './feedback';
 import crypto from './crypto';
 
-export { resolveHTMLPath, exportFeedback, crypto };
+export { resolveHTMLPath, feedback, crypto };

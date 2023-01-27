@@ -40,10 +40,7 @@ async function mkdir() {
  * @param fileName Name of the file
  * @param content Validation object
  */
-export default async function exportFeedback(
-  fileName: string,
-  content: object
-) {
+async function exportFeedback(fileName: string, content: object) {
   const date = getDate();
   const name = formatName(fileName);
   const dataPath = getFolder();
@@ -55,3 +52,8 @@ export default async function exportFeedback(
   // Create file
   await fs.writeFile(`${dataPath}/${name}--${date}.json`, json, { flag: 'w' });
 }
+
+const feedback = {
+  export: exportFeedback,
+};
+export default feedback;
