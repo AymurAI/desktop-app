@@ -29,7 +29,7 @@ function sha256(str: string) {
  * Creates the PKCE OAuth2 verifier code
  * @returns The verifier code in `string` format
  */
-export function getVerifierCode() {
+function getVerifierCode() {
   if (!VERIFIER_PHRASE) {
     throw new Error(
       'VERIFIER_PHRASE not found! Check your .env file before packaging the app!'
@@ -43,9 +43,15 @@ export function getVerifierCode() {
  * Creates the PKCE OAuth2 challenge code
  * @returns The challenge code in `string` format
  */
-export function getChallengeCode() {
+function getChallengeCode() {
   const verifier = getVerifierCode();
 
   const challenge = toBase64(sha256(verifier));
   return challenge;
 }
+
+const crypto = {
+  getChallengeCode,
+  getVerifierCode,
+};
+export default crypto;

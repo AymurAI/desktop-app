@@ -2,8 +2,7 @@ import { BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 
 import { isDebug, isProduction } from './env';
-import { resolveHTMLPath } from './utils';
-import { getChallengeCode, getVerifierCode } from './utils/crypto';
+import { resolveHTMLPath, crypto } from './utils';
 import exportFeedback from './utils/feedback';
 
 export let mainWindow: BrowserWindow | null;
@@ -68,6 +67,7 @@ export default function createWindow() {
   ipcMain.handle('EXPORT_FEEDBACK', (_, fileName: string, data: object) =>
     exportFeedback(fileName, data)
   );
-  ipcMain.handle('GET_CHALLENGE_CODE', () => getChallengeCode());
-  ipcMain.handle('GET_VERIFIER_CODE', () => getVerifierCode());
+  // OAUTH
+  ipcMain.handle('GET_CHALLENGE_CODE', crypto.getChallengeCode);
+  ipcMain.handle('GET_VERIFIER_CODE', crypto.getVerifierCode);
 }
