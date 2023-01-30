@@ -14,8 +14,7 @@ export default async function offline(validations: FormValue[][]) {
   const worksheet = workbook.worksheets[0];
   worksheet.addRows(validations);
 
-  const buffer = (await workbook.xlsx.writeBuffer()) as Buffer;
-  await filesystem.excel.write(buffer);
+  await filesystem.excel.write(workbook);
 
   return workbook;
 }
