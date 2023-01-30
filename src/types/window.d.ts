@@ -9,6 +9,7 @@ declare global {
       excel: {
         read: () => Promise<Buffer>;
         write: (buffer: Buffer) => Promise<void>;
+        open: () => Promise<string>;
       };
     };
     oauth?: {

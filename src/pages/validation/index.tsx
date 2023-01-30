@@ -8,37 +8,42 @@ import {
   Grid,
   SectionTitle,
 } from 'components';
-import { useFileDispatch, useFiles, useGoogleToken } from 'hooks';
+import { useFileDispatch, useFiles, useGoogleToken, useUser } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import FormGroup from './form-group';
 import withFileProtection from 'features/withFileProtection';
-import { isFileValidated, isValidationCompleted } from 'utils/file';
+import {
+  isFileValidated,
+  isValidationCompleted,
+  submitValidations,
+} from 'utils/file';
 import { validate } from 'reducers/file/actions';
-import google from 'services/google';
-import { spreadsheetURLToId, validationToArray } from 'utils/google';
-import { DATASET_URL } from 'utils/config';
 import { moveNext, movePrevious } from './utils';
 import filesystem from 'services/filesystem';
 
 export default withFileProtection(function Validation() {
+  // HOOKS
   const files = useFiles();
   const [selected, setSelected] = useState(0);
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
   const token = useGoogleToken();
+  const user = useUser();
 
-  const moveIndex = (newIndex: number | undefined) => {
-    if (newIndex !== undefined) setSelected(newIndex);
-  };
-  const nextFile = () => moveIndex(moveNext(selected, files));
-  const previousFile = () => moveIndex(movePrevious(selected, files));
-
+  // FIELDS
   const hasStepper = files.length > 1;
 
   const selectedFile = files[selected];
   // Check if the validation was completed on all the files
   const canContinue = isValidationCompleted(files);
   const canValidate = isFileValidated(selectedFile);
+
+  // HANDLERS
+  const moveIndex = (newIndex: number | undefined) => {
+    if (newIndex !== undefined) setSelected(newIndex);
+  };
+  const nextFile = () => moveIndex(moveNext(selected, files));
+  const previousFile = () => moveIndex(movePrevious(selected, files));
 
   const handleContinue = () => {
     navigate('/finish');
@@ -47,25 +52,21 @@ export default withFileProtection(function Validation() {
   const handleValidate = async () => {
     dispatch(validate(selectedFile.data.name));
 
-    if (token) {
-      if (canContinue || !hasStepper) {
-        handleContinue();
-      } else {
-        nextFile();
-      }
-
-      // POST the validated data to the dataset
-      await google(token)
-        .spreadsheet(spreadsheetURLToId(DATASET_URL))
-        .append(validationToArray(selectedFile.validationObject));
-
-      // Export the feedback JSON
-      await filesystem.feedback.export(selectedFile);
+    // TODO Verificar que no sea necesario un `if(token)` en esta linea
+    if (canContinue || !hasStepper) {
+      handleContinue();
     } else {
-      throw new Error(
-        'No token was found, cannot POST the data to the Google API!'
-      );
+      nextFile();
     }
+    // POST the validated data to the dataset
+    await submitValidations({
+      isOnline: user?.online,
+      token,
+      validations: selectedFile.validationObject,
+    });
+
+    // Export the feedback JSON
+    await filesystem.feedback.export(selectedFile);
   };
 
   return (
