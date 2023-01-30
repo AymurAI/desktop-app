@@ -9,17 +9,19 @@ import {
   Text,
   Button,
 } from 'components';
-import { useFileDispatch, useFiles } from 'hooks';
+import { useFileDispatch, useFiles, useUser } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import { removeAllFiles } from 'reducers/file/actions';
 import { Anchor } from './Anchor';
 import { DATASET_URL } from 'utils/config';
 import Callout from './Callout';
+import filesystem from 'services/filesystem';
 
 export default function Finish() {
   const files = useFiles();
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
+  const user = useUser();
 
   const handleRestart = () => {
     dispatch(removeAllFiles());
@@ -58,17 +60,28 @@ export default function Finish() {
         >
           <img src="brand/data-genero.png" alt="DataGenero" width={127} />
         </Anchor>
-        <Button
-          css={{ textDecoration: 'none' }}
-          variant="secondary"
-          as="a"
-          href={DATASET_URL}
-          target="_blank"
-          rel="noreferrer"
-          size="l"
-        >
-          Ver set de datos
-        </Button>
+        {user?.online ? (
+          <Button
+            css={{ textDecoration: 'none' }}
+            variant="secondary"
+            as="a"
+            href={DATASET_URL}
+            target="_blank"
+            rel="noreferrer"
+            size="l"
+          >
+            Ver set de datos
+          </Button>
+        ) : (
+          <Button
+            variant="secondary"
+            size="l"
+            onClick={() => filesystem.excel.open()}
+          >
+            Ver set de datos
+          </Button>
+        )}
+
         <Button onClick={handleRestart} size="l">
           Cargar más documentos
         </Button>
