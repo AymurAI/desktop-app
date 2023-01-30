@@ -12,7 +12,7 @@ interface Props {
 /**
  * Submits the data through the appropiate way. Saves into the filesystem when
  * `online=false` and to the cloud when `online=true`
- * @param online Has the user authenticated through Google OAuth?
+ * @param isOnline Has the user authenticated through Google OAuth?
  * @param token Auth token, used to interact with Google Spreadsheet API
  * @param validations All the validated data for a single file
  */
