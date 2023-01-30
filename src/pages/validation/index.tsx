@@ -50,23 +50,14 @@ export default withFileProtection(function Validation() {
   };
 
   const handleValidate = async () => {
+    // Set validated = true so the file is no longer accesible through the FileStepper component
     dispatch(validate(selectedFile.data.name));
 
-    // TODO Verificar que no sea necesario un `if(token)` en esta linea
     if (canContinue || !hasStepper) {
       handleContinue();
     } else {
       nextFile();
     }
-    // POST the validated data to the dataset
-    await submitValidations({
-      isOnline: user?.online,
-      token,
-      validations: selectedFile.validationObject,
-    });
-
-    // Export the feedback JSON
-    await filesystem.feedback.export(selectedFile);
   };
 
   return (
