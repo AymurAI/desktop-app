@@ -47,7 +47,7 @@ async function exportFeedback(fileName: string, content: object) {
   }
 
   // Create file
-  await fs.writeFile(`${EXPORTS_FOLDER}/${name}--${date}.json`, json, {
+  await fs.writeFile(`${FEEDBACK_FOLDER}/${name}--${date}.json`, json, {
     flag: 'w',
   });
 }
