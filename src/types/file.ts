@@ -22,7 +22,7 @@ export type DocFile = {
    */
   validated?: boolean;
   /**
-   *
+   * Data from the form
    */
   validationObject: FormData;
 };
