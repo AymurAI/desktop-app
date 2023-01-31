@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
-import { homedir } from 'os';
-import path from 'path';
+
+import { EXPORTS_FOLDER } from '../env';
 
 function getDate() {
   const now = new Date(Date.now());
@@ -25,7 +25,7 @@ function formatName(fileName: string) {
 }
 
 function getFolder() {
-  const home = path.resolve(homedir(), 'AppData/Local/AymurAI/feedback'); // This path is based on Windows OS
+  const home = `${EXPORTS_FOLDER}/feedback`; // This path is based on Windows OS
 
   return home;
 }
@@ -40,10 +40,7 @@ async function mkdir() {
  * @param fileName Name of the file
  * @param content Validation object
  */
-export default async function exportFeedback(
-  fileName: string,
-  content: object
-) {
+async function exportFeedback(fileName: string, content: object) {
   const date = getDate();
   const name = formatName(fileName);
   const dataPath = getFolder();
@@ -55,3 +52,8 @@ export default async function exportFeedback(
   // Create file
   await fs.writeFile(`${dataPath}/${name}--${date}.json`, json, { flag: 'w' });
 }
+
+const feedback = {
+  export: exportFeedback,
+};
+export default feedback;

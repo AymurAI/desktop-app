@@ -5,6 +5,11 @@ contextBridge.exposeInMainWorld('filesystem', {
     export: (fileName: string, object: object) =>
       ipcRenderer.invoke('EXPORT_FEEDBACK', fileName, object),
   },
+  excel: {
+    read: () => ipcRenderer.invoke('EXCEL_READ'),
+    write: (buffer: Buffer) => ipcRenderer.invoke('EXCEL_WRITE', buffer),
+    open: () => ipcRenderer.invoke('EXCEL_OPEN'),
+  },
 });
 
 type OnceAuthCodeReceived = (authCode: string) => void;

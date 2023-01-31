@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-import { GoogleToken } from 'types/google';
-import { User } from 'types/user';
+import { GoogleToken, GoogleUser } from 'types/google';
 import { auth } from './utils';
 
 /**
@@ -17,6 +16,6 @@ const fetcher = axios.create({
  * @returns All the info related to the OAuth2 token. Including profile picture, email, id, etc
  */
 export async function getUser(token: GoogleToken) {
-  const { data } = await fetcher.get<User>('/', { headers: auth(token) });
+  const { data } = await fetcher.get<GoogleUser>('/', { headers: auth(token) });
   return data;
 }
