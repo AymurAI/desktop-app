@@ -4,14 +4,14 @@ export const Wrapper = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   flexWrap: 'wrap',
-  justifyContent: 'start',
+  justifyContent: 'center',
   alignItems: 'center',
   gap: '$s',
 
   position: 'relative',
 
   // Settings to enable ellipsis on file name
-  maxWidth: 150,
+  maxWidth: 175,
   '& p': {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
