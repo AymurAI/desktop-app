@@ -77,8 +77,9 @@ const Button = styled('button', {
         },
 
         '&:disabled': {
-          color: '$textOnButtonDefault',
+          color: '$textOnButtonDisabled',
           bg: '$bgSecondary',
+          borderColor: '$actionDisabled',
         },
       },
       tertiary: {
