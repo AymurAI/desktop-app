@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -12,24 +13,28 @@ import {
 import { useFileDispatch, useFiles, useUser } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import { removeAllFiles } from 'reducers/file/actions';
-import { Anchor } from './Anchor';
 import { DATASET_URL } from 'utils/config';
-import Callout from './Callout';
 import filesystem from 'services/filesystem';
-import { useEffect } from 'react';
 import { submitValidations } from 'utils/file';
 import { DocFile } from 'types/file';
+import Anchor from './Anchor';
+import Callout from './Callout';
 
 export default function Finish() {
   const files = useFiles();
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
   const user = useUser();
+  const [errorNames, setErrorNames] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleRestart = () => {
     dispatch(removeAllFiles());
     navigate('/onboarding');
   };
+
+  const checkForErrors = (fileName: string) =>
+    !!errorNames.find((name) => name === fileName);
 
   const submit = async (file: DocFile) => {
     try {
@@ -73,13 +78,18 @@ export default function Finish() {
         <Card>
           <Subtitle>Archivos procesados</Subtitle>
           <Grid
-            columns={5}
+            columns={4}
             spacing="xl"
             justify="center"
             css={{ width: '100%' }}
           >
             {files.map(({ data }) => (
-              <FileCheck key={data.name} fileName={data.name}></FileCheck>
+              <FileCheck
+                key={data.name}
+                fileName={data.name}
+                hasError={checkForErrors(data.name)}
+                {...{ isLoading }}
+              ></FileCheck>
             ))}
           </Grid>
           <Callout />
