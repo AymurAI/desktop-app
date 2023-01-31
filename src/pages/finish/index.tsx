@@ -16,6 +16,9 @@ import { Anchor } from './Anchor';
 import { DATASET_URL } from 'utils/config';
 import Callout from './Callout';
 import filesystem from 'services/filesystem';
+import { useEffect } from 'react';
+import { submitValidations } from 'utils/file';
+import { DocFile } from 'types/file';
 
 export default function Finish() {
   const files = useFiles();
@@ -27,6 +30,36 @@ export default function Finish() {
     dispatch(removeAllFiles());
     navigate('/onboarding');
   };
+
+  const submit = async (file: DocFile) => {
+    try {
+      // POST the validated data to the dataset
+      await submitValidations({
+        isOnline: user!.online,
+        token: user!.token,
+        validations: file.validationObject,
+      });
+    } catch {
+      setErrorNames((names) => [...names, file.data.name]);
+    }
+
+    // Export the feedback JSON
+    await filesystem.feedback.export(files);
+  };
+
+  // At first render, submit all the data
+  useEffect(() => {
+    if (user) {
+      Promise.all(
+        files.map(async (f) => {
+          await submit(f);
+        })
+      ).then(() => setIsLoading(false));
+    }
+
+    // We strictly need to run this effect once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

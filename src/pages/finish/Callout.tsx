@@ -1,9 +1,11 @@
-import { Info } from 'phosphor-react';
+import { CheckCircle, Info } from 'phosphor-react';
 
 import { colors } from 'styles/tokens';
 import { styled } from 'styles';
 import { Button, Stack, Subtitle } from 'components';
-import { useUser } from 'hooks';
+import { useFiles, useLogin, useUser } from 'hooks';
+import { submitValidations } from 'utils/file';
+import { useEffect, useRef, useState } from 'react';
 
 const Component = styled('div', {
   display: 'flex',
@@ -20,14 +22,66 @@ const Component = styled('div', {
 });
 
 export default function Callout() {
+  const [submitted, setSubmitted] = useState<boolean>();
   const user = useUser();
+  const files = useFiles();
+  const initialFlow = useRef<boolean>(!!user?.online);
+  const { login } = useLogin();
+
+  const isOnline = initialFlow.current;
 
   const props = {
-    subtitle: user?.online
+    subtitle: isOnline
       ? 'Tus datos se guardaron en tu cuenta de Google ¿Quieres guardarlo en tu local también?'
       : 'Tus datos se guardaron en un carpeta en tu local ¿Quieres guardarlo en tu cuenta de Google también?',
-    buttonText: user?.online ? 'Guardar en local' : 'Guardar en Google',
+    buttonText: isOnline ? 'Guardar en local' : 'Guardar en Google',
+    // If we switched modes, this means we have POSTed the data to the cloud
+    buttonDisabled: submitted,
   };
+
+  const handleCreateBackup = async () => {
+    if (isOnline) {
+      // POST the data in order
+      for (let file of files) {
+        // We are working in online mode, must write to the filesystem
+        await submitValidations({
+          isOnline: false,
+          token: '',
+          validations: file.validationObject,
+        });
+      }
+
+      setSubmitted(true);
+    } else {
+      // We are working in local, must upload the data to the cloud
+      // This function doesn't immediately POST the data. It updates the user state
+      // forcing to run the below effect
+
+      // TODO optimizar esta funcion, añadiendo un callback onLogin. El objetivo de esto es remover
+      // el useEffect
+      login.online();
+    }
+  };
+
+  useEffect(() => {
+    const f = async () => {
+      // POST the data in order
+      for (let file of files) {
+        await submitValidations({
+          isOnline: user!.online,
+          token: user!.token,
+          validations: file.validationObject,
+        });
+      }
+
+      setSubmitted(true);
+    };
+
+    // We changed mode to online, now is the correcto moment to POST the data
+    if (user && user.online !== initialFlow.current) {
+      f();
+    }
+  }, [user, files]);
 
   return (
     <Component>
@@ -38,8 +92,16 @@ export default function Callout() {
         </Subtitle>
       </Stack>
       {/* TODO agregar el onClick a este boton */}
-      <Button size="s" variant="secondary">
+      <Button
+        size="s"
+        variant="secondary"
+        onClick={handleCreateBackup}
+        disabled={props.buttonDisabled}
+      >
         {props.buttonText}
+        {submitted && (
+          <CheckCircle size={18} color={colors.textOnButtonDisabled} />
+        )}
       </Button>
     </Component>
   );

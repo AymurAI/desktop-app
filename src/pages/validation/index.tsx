@@ -8,18 +8,13 @@ import {
   Grid,
   SectionTitle,
 } from 'components';
-import { useFileDispatch, useFiles, useGoogleToken, useUser } from 'hooks';
+import { useFileDispatch, useFiles } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import FormGroup from './form-group';
 import withFileProtection from 'features/withFileProtection';
-import {
-  isFileValidated,
-  isValidationCompleted,
-  submitValidations,
-} from 'utils/file';
+import { isFileValidated, isValidationCompleted } from 'utils/file';
 import { validate } from 'reducers/file/actions';
 import { moveNext, movePrevious } from './utils';
-import filesystem from 'services/filesystem';
 
 export default withFileProtection(function Validation() {
   // HOOKS
@@ -27,8 +22,6 @@ export default withFileProtection(function Validation() {
   const [selected, setSelected] = useState(0);
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
-  const token = useGoogleToken();
-  const user = useUser();
 
   // FIELDS
   const hasStepper = files.length > 1;
@@ -50,23 +43,14 @@ export default withFileProtection(function Validation() {
   };
 
   const handleValidate = async () => {
+    // Set validated = true so the file is no longer accesible through the FileStepper component
     dispatch(validate(selectedFile.data.name));
 
-    // TODO Verificar que no sea necesario un `if(token)` en esta linea
     if (canContinue || !hasStepper) {
       handleContinue();
     } else {
       nextFile();
     }
-    // POST the validated data to the dataset
-    await submitValidations({
-      isOnline: user?.online,
-      token,
-      validations: selectedFile.validationObject,
-    });
-
-    // Export the feedback JSON
-    await filesystem.feedback.export(selectedFile);
   };
 
   return (
