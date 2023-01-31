@@ -30,8 +30,24 @@ export const Card = styled('div', {
   height: 200,
   width: 150,
 
-  bg: '$bgPrimary',
-  b: '$sizes$xs solid $borderPrimary',
-  boxShadow: '0px 0px $sizes$xs rgba(0, 0, 0, 0.1)',
+  borderWidth: '$sizes$xs',
+  borderStyle: 'solid',
   borderRadius: '$s',
+  boxShadow: '0px 0px $sizes$xs rgba(0, 0, 0, 0.1)',
+
+  variants: {
+    hasError: {
+      true: {
+        bg: '$errorSecondary',
+        borderColor: '$errorPrimary',
+      },
+      false: {
+        bg: '$bgPrimary',
+        borderColor: '$borderPrimary',
+      },
+    },
+  },
+  defaultVariants: {
+    hasError: false,
+  },
 });
