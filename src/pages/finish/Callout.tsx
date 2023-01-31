@@ -100,7 +100,11 @@ export default function Callout() {
       >
         {props.buttonText}
         {submitted && (
-          <CheckCircle size={18} color={colors.textOnButtonDisabled} />
+          <CheckCircle
+            size={16}
+            color={colors.textOnButtonDisabled}
+            weight="bold"
+          />
         )}
       </Button>
     </Component>
