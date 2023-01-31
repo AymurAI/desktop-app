@@ -1,5 +1,7 @@
 import { styled } from 'styles';
 
-export const Anchor = styled('a', {
+const Anchor = styled('a', {
   mr: 'auto',
 });
+
+export default Anchor;
