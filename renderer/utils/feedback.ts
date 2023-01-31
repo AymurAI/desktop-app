@@ -27,15 +27,8 @@ function formatName(fileName: string) {
   return `aymurai--${formattedName}`;
 }
 
-function getFolder() {
-  const home = `${EXPORTS_FOLDER}/feedback`; // This path is based on Windows OS
-
-  return home;
-}
-
 async function mkdir() {
-  const dataPath = getFolder();
-  await fs.mkdir(dataPath, { recursive: true });
+  await fs.mkdir(FEEDBACK_FOLDER, { recursive: true });
 }
 
 /**
@@ -46,7 +39,6 @@ async function mkdir() {
 async function exportFeedback(fileName: string, content: object) {
   const date = getDate();
   const name = formatName(fileName);
-  const dataPath = getFolder();
   const json = JSON.stringify(content);
 
   // Create directory if necessary
@@ -55,7 +47,9 @@ async function exportFeedback(fileName: string, content: object) {
   }
 
   // Create file
-  await fs.writeFile(`${dataPath}/${name}--${date}.json`, json, { flag: 'w' });
+  await fs.writeFile(`${EXPORTS_FOLDER}/${name}--${date}.json`, json, {
+    flag: 'w',
+  });
 }
 
 const feedback = {
