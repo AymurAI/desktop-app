@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import { shell } from 'electron';
 
 import { EXPORTS_FOLDER } from '../env';
+import filesystem from './filesystem';
 
 const FILENAME = 'set_de_datos.xlsx';
 const PATH = `${EXPORTS_FOLDER}/${FILENAME}`;
@@ -18,8 +19,13 @@ function read() {
  * Writes a .xlsx file to the filesystem
  * @param buffer Data buffer to write. This is the .xlsx file
  */
-function write(buffer: Buffer) {
-  fs.writeFile(PATH, buffer);
+async function write(buffer: Buffer) {
+  // Create directory if necessary
+  if (!(await filesystem.exists(EXPORTS_FOLDER))) {
+    await fs.mkdir(EXPORTS_FOLDER, { recursive: true });
+  }
+
+  await fs.writeFile(PATH, buffer);
 }
 
 /**
