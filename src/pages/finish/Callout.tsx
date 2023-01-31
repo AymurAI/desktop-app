@@ -28,17 +28,6 @@ export default function Callout() {
   const initialFlow = useRef<boolean>(!!user?.online);
   const { login } = useLogin();
 
-  useEffect(() => {
-    // We changed modes, now is the moment to POST the data
-    if (user && user.online !== initialFlow.current) {
-      submitValidations({
-        isOnline: user.online,
-        token: user.token,
-        validations: files.map((v) => v.validationObject),
-      }).then(() => setSubmitted(true));
-    }
-  }, [user, files]);
-
   const isOnline = initialFlow.current;
 
   const props = {
@@ -52,19 +41,47 @@ export default function Callout() {
 
   const handleCreateBackup = async () => {
     if (isOnline) {
-      // We are working in online mode, must write to the filesystem
-      await submitValidations({
-        isOnline: false,
-        token: '',
-        validations: files.map((v) => v.validationObject),
-      });
+      // POST the data in order
+      for (let file of files) {
+        // We are working in online mode, must write to the filesystem
+        await submitValidations({
+          isOnline: false,
+          token: '',
+          validations: file.validationObject,
+        });
+      }
 
       setSubmitted(true);
     } else {
       // We are working in local, must upload the data to the cloud
+      // This function doesn't immediately POST the data. It updates the user state
+      // forcing to run the below effect
+
+      // TODO optimizar esta funcion, añadiendo un callback onLogin. El objetivo de esto es remover
+      // el useEffect
       login.online();
     }
   };
+
+  useEffect(() => {
+    const f = async () => {
+      // POST the data in order
+      for (let file of files) {
+        await submitValidations({
+          isOnline: user!.online,
+          token: user!.token,
+          validations: file.validationObject,
+        });
+      }
+
+      setSubmitted(true);
+    };
+
+    // We changed mode to online, now is the correcto moment to POST the data
+    if (user && user.online !== initialFlow.current) {
+      f();
+    }
+  }, [user, files]);
 
   return (
     <Component>
