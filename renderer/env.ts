@@ -18,7 +18,7 @@ export const URI_SCHEME = 'aymurai.app';
 /**
  * Exports folder
  */
-export const EXPORTS_FOLDER = path.resolve(homedir(), 'AppData/Local/AymurAI');
+export const EXPORTS_FOLDER = path.resolve(homedir(), 'Documents/AymurAI');
 
 /**
  * Is the app in development mode?
