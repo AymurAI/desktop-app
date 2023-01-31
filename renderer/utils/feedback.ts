@@ -1,6 +1,9 @@
 import { promises as fs } from 'fs';
 
 import { EXPORTS_FOLDER } from '../env';
+import filesystem from './filesystem';
+
+const FEEDBACK_FOLDER = `${EXPORTS_FOLDER}/feedback`;
 
 function getDate() {
   const now = new Date(Date.now());
@@ -46,8 +49,10 @@ async function exportFeedback(fileName: string, content: object) {
   const dataPath = getFolder();
   const json = JSON.stringify(content);
 
-  // Create directory
-  await mkdir();
+  // Create directory if necessary
+  if (!(await filesystem.exists(FEEDBACK_FOLDER))) {
+    await mkdir();
+  }
 
   // Create file
   await fs.writeFile(`${dataPath}/${name}--${date}.json`, json, { flag: 'w' });
