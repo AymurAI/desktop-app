@@ -1,4 +1,4 @@
-# Data Genero Desktop App
+# AymurAI Desktop App
 
 ## Technologies
 
