@@ -1,6 +1,6 @@
 {
   "name": "data-genero",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "main": "build/main.js",
   "dependencies": {
@@ -14,6 +14,7 @@
     "@types/react-dom": "^18.0.8",
     "axios": "^1.1.3",
     "electron-squirrel-startup": "^1.0.0",
+    "exceljs": "^4.3.0",
     "mammoth": "^1.5.1",
     "phosphor-react": "^1.4.1",
     "react": "^18.2.0",

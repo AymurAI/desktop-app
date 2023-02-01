@@ -1,3 +1,6 @@
+import { homedir } from 'os';
+import path from 'path';
+
 // ------------------------
 // CONFIG VARIABLES
 // ------------------------
@@ -11,6 +14,11 @@ export const DEV_PORT = 3000;
  * Custom URI scheme name
  */
 export const URI_SCHEME = 'aymurai.app';
+
+/**
+ * Exports folder
+ */
+export const EXPORTS_FOLDER = path.resolve(homedir(), 'Documents/AymurAI');
 
 /**
  * Is the app in development mode?

@@ -1,6 +1,9 @@
 import { promises as fs } from 'fs';
-import { homedir } from 'os';
-import path from 'path';
+
+import { EXPORTS_FOLDER } from '../env';
+import filesystem from './filesystem';
+
+const FEEDBACK_FOLDER = `${EXPORTS_FOLDER}/feedback`;
 
 function getDate() {
   const now = new Date(Date.now());
@@ -24,15 +27,8 @@ function formatName(fileName: string) {
   return `aymurai--${formattedName}`;
 }
 
-function getFolder() {
-  const home = path.resolve(homedir(), 'AppData/Local/AymurAI/feedback'); // This path is based on Windows OS
-
-  return home;
-}
-
 async function mkdir() {
-  const dataPath = getFolder();
-  await fs.mkdir(dataPath, { recursive: true });
+  await fs.mkdir(FEEDBACK_FOLDER, { recursive: true });
 }
 
 /**
@@ -40,18 +36,23 @@ async function mkdir() {
  * @param fileName Name of the file
  * @param content Validation object
  */
-export default async function exportFeedback(
-  fileName: string,
-  content: object
-) {
+async function exportFeedback(fileName: string, content: object) {
   const date = getDate();
   const name = formatName(fileName);
-  const dataPath = getFolder();
   const json = JSON.stringify(content);
 
-  // Create directory
-  await mkdir();
+  // Create directory if necessary
+  if (!(await filesystem.exists(FEEDBACK_FOLDER))) {
+    await mkdir();
+  }
 
   // Create file
-  await fs.writeFile(`${dataPath}/${name}--${date}.json`, json, { flag: 'w' });
+  await fs.writeFile(`${FEEDBACK_FOLDER}/${name}--${date}.json`, json, {
+    flag: 'w',
+  });
 }
+
+const feedback = {
+  export: exportFeedback,
+};
+export default feedback;

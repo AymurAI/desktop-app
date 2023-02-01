@@ -9,6 +9,9 @@ export default function ProfileInfo() {
   const user = useUser();
   const navigate = useNavigate();
 
+  // Only render ProfilePicture when the user is in online mode
+  const hasProfilePicture = !!user?.online;
+
   const { logout } = useLogin({
     onLogout: () => {
       navigate('/login');
@@ -17,14 +20,16 @@ export default function ProfileInfo() {
 
   return (
     <Stack spacing="l">
-      <Tooltip text={`${user?.given_name} ${user?.family_name}`}>
-        <ProfilePicture
-          src={user?.picture}
-          alt="Profile picture"
-          referrerPolicy="no-referrer"
-          tabIndex={0}
-        />
-      </Tooltip>
+      {hasProfilePicture && (
+        <Tooltip text={`${user?.given_name} ${user?.family_name}`}>
+          <ProfilePicture
+            src={user?.picture}
+            alt="Profile picture"
+            referrerPolicy="no-referrer"
+            tabIndex={0}
+          />
+        </Tooltip>
+      )}
       <Tooltip text="Cerrar sesión">
         <Button css={{ p: 2 }} onClick={logout}>
           <SignOut size={32}></SignOut>

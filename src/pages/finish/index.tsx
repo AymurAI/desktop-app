@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -9,21 +10,61 @@ import {
   Text,
   Button,
 } from 'components';
-import { useFileDispatch, useFiles } from 'hooks';
+import { useFileDispatch, useFiles, useUser } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import { removeAllFiles } from 'reducers/file/actions';
-import { Anchor } from './Anchor';
 import { DATASET_URL } from 'utils/config';
+import filesystem from 'services/filesystem';
+import { submitValidations } from 'utils/file';
+import { DocFile } from 'types/file';
+import Anchor from './Anchor';
+import Callout from './Callout';
 
 export default function Finish() {
   const files = useFiles();
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
+  const user = useUser();
+  const [errorNames, setErrorNames] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleRestart = () => {
     dispatch(removeAllFiles());
     navigate('/onboarding');
   };
+
+  const checkForErrors = (fileName: string) =>
+    !!errorNames.find((name) => name === fileName);
+
+  const submit = async (file: DocFile) => {
+    try {
+      // POST the validated data to the dataset
+      await submitValidations({
+        isOnline: user!.online,
+        token: user!.token,
+        validations: file.validationObject,
+      });
+    } catch {
+      setErrorNames((names) => [...names, file.data.name]);
+    }
+
+    // Export the feedback JSON
+    await filesystem.feedback.export(files);
+  };
+
+  // At first render, submit all the data
+  useEffect(() => {
+    if (user) {
+      Promise.all(
+        files.map(async (f) => {
+          await submit(f);
+        })
+      ).then(() => setIsLoading(false));
+    }
+
+    // We strictly need to run this effect once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -37,15 +78,21 @@ export default function Finish() {
         <Card>
           <Subtitle>Archivos procesados</Subtitle>
           <Grid
-            columns={5}
+            columns={4}
             spacing="xl"
             justify="center"
             css={{ width: '100%' }}
           >
             {files.map(({ data }) => (
-              <FileCheck key={data.name} fileName={data.name}></FileCheck>
+              <FileCheck
+                key={data.name}
+                fileName={data.name}
+                hasError={checkForErrors(data.name)}
+                {...{ isLoading }}
+              ></FileCheck>
             ))}
           </Grid>
+          <Callout />
         </Card>
       </Section>
       <Footer>
@@ -56,17 +103,31 @@ export default function Finish() {
         >
           <img src="brand/data-genero.png" alt="DataGenero" width={127} />
         </Anchor>
-        <Button
-          css={{ textDecoration: 'none' }}
-          variant="secondary"
-          as="a"
-          href={DATASET_URL}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Ver set de datos
+        {user?.online ? (
+          <Button
+            css={{ textDecoration: 'none' }}
+            variant="secondary"
+            as="a"
+            href={DATASET_URL}
+            target="_blank"
+            rel="noreferrer"
+            size="l"
+          >
+            Ver set de datos
+          </Button>
+        ) : (
+          <Button
+            variant="secondary"
+            size="l"
+            onClick={() => filesystem.excel.open()}
+          >
+            Ver set de datos
+          </Button>
+        )}
+
+        <Button onClick={handleRestart} size="l">
+          Cargar más documentos
         </Button>
-        <Button onClick={handleRestart}>Cargar más documentos</Button>
       </Footer>
     </>
   );
