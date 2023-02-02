@@ -4,8 +4,8 @@ const ErrorText = styled('p', {
   fontStyle: 'italic',
   color: '$errorPrimary',
   textAlign: 'center',
-  fontSize: '$subtitleMd',
-  lineHeight: '$subtitleMd',
+  fontSize: '$subtitleSm',
+  lineHeight: '$subtitleSm',
   fontWeight: '$default',
 });
 
