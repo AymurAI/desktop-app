@@ -27,6 +27,7 @@ export const EXTERNAL_URLS = [
   'https://www.datagenero.org/',
   'https://accounts.google.com/o/oauth2/v2/auth',
   'https://docs.google.com/spreadsheets',
+  'https://www.aymurai.info',
 ];
 
 /**
