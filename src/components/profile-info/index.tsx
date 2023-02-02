@@ -1,4 +1,4 @@
-import { SignOut } from 'phosphor-react';
+import { SignOut, Info } from 'phosphor-react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, Stack, Tooltip } from 'components';
@@ -19,7 +19,7 @@ export default function ProfileInfo() {
   });
 
   return (
-    <Stack spacing="l">
+    <Stack spacing="l" align="center">
       {hasProfilePicture && (
         <Tooltip text={`${user?.given_name} ${user?.family_name}`}>
           <ProfilePicture
@@ -35,6 +35,9 @@ export default function ProfileInfo() {
           <SignOut size={32}></SignOut>
         </Button>
       </Tooltip>
+      <a href="https://www.aymurai.info/" target="_blank" rel="noreferrer">
+        <Info size={32} />
+      </a>
     </Stack>
   );
 }
