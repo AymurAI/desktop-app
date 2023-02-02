@@ -42,8 +42,6 @@ export default function FormGroup({ file }: Props) {
   return (
     <Container>
       <InfoGral {...props} />
-      <DatosDenunciante {...props} />
-      <DatosAcusado {...props} />
 
       <DecisionTabs
         selected={decision}
@@ -54,6 +52,9 @@ export default function FormGroup({ file }: Props) {
         <InfoHecho {...props} decision={decision} />
         <Decision {...props} decision={decision} />
       </Container>
+
+      <DatosDenunciante {...props} />
+      <DatosAcusado {...props} />
     </Container>
   );
 }
