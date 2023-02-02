@@ -40,7 +40,7 @@ export default function Decision({
       />
       <Select
         ref={prop(LabelDecisiones.DECISION)}
-        {...suggester.select(LabelDecisiones.DECISION)}
+        {...suggester.decision()}
         options={json.DECISION}
         label="Decisión"
       />
