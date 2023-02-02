@@ -185,17 +185,4 @@ export default class Suggester {
         priorityOrder: undefined,
       };
   }
-
-  decision(): SelectSuggestion {
-    const reduced = this.reducePredictions(
-      ({ attrs }) => attrs.aymurai_label_subclass ?? []
-    );
-
-    const suggestion = reduced[LabelDecisiones.DECISION];
-
-    return {
-      priorityOrder: undefined,
-      suggestion: suggestion ? { id: suggestion[0] } : undefined,
-    };
-  }
 }
