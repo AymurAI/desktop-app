@@ -67,8 +67,6 @@ _Electron_
 
 ### Deployment
 
-- `deploy`: genera la imagen del frontend en base al `Dockerfile.production` y
-luego la despliega en su propio container de _Docker_
 - `package`: genera la aplicación empaquetada en la carpeta `/out`. El tipo de
 aplicación depende del OS host
 - `make`: genera un instalador de la aplicación empaquetada. También depende del
@@ -77,6 +75,7 @@ OS host
 ##  Colaborators
 
 - Melina Gatto (_Project Manager_)
+- Luciana Vega (_Project Manager_)
 - Andy Orlandi (_Product Designer_)
 - Luciano Lapenna (_Developer_)
 

@@ -21,6 +21,16 @@ export const URI_SCHEME = 'aymurai.app';
 export const EXPORTS_FOLDER = path.resolve(homedir(), 'Documents/AymurAI');
 
 /**
+ * URLs that must be opened in a native browser tab
+ */
+export const EXTERNAL_URLS = [
+  'https://www.datagenero.org/',
+  'https://accounts.google.com/o/oauth2/v2/auth',
+  'https://docs.google.com/spreadsheets',
+  'https://www.aymurai.info',
+];
+
+/**
  * Is the app in development mode?
  */
 export const isDebug = process.env.NODE_ENV === 'development' ?? true;

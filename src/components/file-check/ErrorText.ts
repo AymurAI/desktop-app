@@ -1,10 +1,12 @@
-import { Subtitle } from 'components';
 import { styled } from 'styles';
 
-const ErrorText = styled(Subtitle, {
+const ErrorText = styled('p', {
   fontStyle: 'italic',
   color: '$errorPrimary',
   textAlign: 'center',
+  fontSize: '$subtitleSm',
+  lineHeight: '$subtitleSm',
+  fontWeight: '$default',
 });
 
 export default ErrorText;
