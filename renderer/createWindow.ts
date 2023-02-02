@@ -1,7 +1,7 @@
 import { BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 
-import { isDebug, isProduction } from './env';
+import { EXTERNAL_URLS, isDebug, isProduction } from './env';
 import { resolveHTMLPath, crypto, feedback, excel } from './utils';
 
 export let mainWindow: BrowserWindow | null;
@@ -32,11 +32,6 @@ function configureWindow(window: BrowserWindow | null) {
   });
 
   window.webContents.on('new-window', (e, url) => {
-    const EXTERNAL_URLS = [
-      'https://www.datagenero.org/',
-      'https://accounts.google.com/o/oauth2/v2/auth',
-    ];
-
     // Check if the url is in the 'whitelist'
     if (!!EXTERNAL_URLS.find((val) => url.includes(val))) {
       e.preventDefault();
