@@ -5,6 +5,7 @@ import { predict } from 'services/aymurai';
 import { PredictLabel } from 'types/aymurai';
 import { toPlainParagraphs } from 'utils/html';
 import { addPredictions, removePredictions } from 'reducers/file/actions';
+import taskbar from 'services/taskbar';
 
 export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
 
@@ -81,6 +82,8 @@ export default function usePredict(
               dispatch(addPredictions(file.name, prediction));
             });
 
+            // Notify the user that the process has finished
+            taskbar().notify();
             updateStatus('completed');
           }
         })
