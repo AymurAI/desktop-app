@@ -1,11 +1,16 @@
+import taskbarAPI from './utils';
+
 /**
- * Interface for the taskbar API
- * @returns Taskbar functionalities
+ * Notify the user with a sound and an action on the taskbar/dock
  */
-export default function taskbar() {
-  if (window.taskbar) return window.taskbar;
-  else
-    throw new Error(
-      'There was an error trying to use the "taskbar" API, check your preload script'
-    );
+function notify() {
+  taskbarAPI().notify();
+  const audio = new Audio('audio/notification.mp3');
+  audio.play();
 }
+
+const taskbar = {
+  notify,
+};
+
+export default taskbar;
