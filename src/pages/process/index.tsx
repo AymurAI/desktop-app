@@ -18,6 +18,7 @@ import withFileProtection from 'features/withFileProtection';
 import { filterUnprocessed, removeAllPredictions } from 'reducers/file/actions';
 import { initProcessState, canContinue, replace } from './utils';
 import { PredictStatus } from 'hooks/usePredict';
+import taskbar from 'services/taskbar';
 
 export default withFileProtection(function Process() {
   const navigate = useNavigate();
@@ -47,6 +48,16 @@ export default withFileProtection(function Process() {
     dispatch(filterUnprocessed());
     navigate('/validation');
   };
+
+  // Not ideal to use an useEffect to change an state, but doing it ina proper way
+  // requires refactor to change state based on process state
+  useEffect(() => {
+    if (canContinue(process) && !isToastVisible) {
+      taskbar.notify();
+      setIsToastVisible(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canContinue(process)]);
 
   return (
     <>
