@@ -26,6 +26,7 @@ import ThemeProvider from './theme-provider';
 import Title from './title';
 import Tooltip from './tooltip';
 import ValidationForm from './validation-form';
+import SearchBar from './search-bar';
 
 export {
   Arrow,
@@ -59,4 +60,5 @@ export {
   Title,
   Tooltip,
   ValidationForm,
+  SearchBar,
 };
