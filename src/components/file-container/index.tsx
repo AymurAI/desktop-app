@@ -27,11 +27,13 @@ export default function FileContainer({ file }: Props) {
   return (
     <S.Container>
       <S.SearchBarWrapper>
-        <SearchBar
-          html={searchedHtml}
-          word={searchText}
-          onChange={handleChange}
-        />
+        <S.SearchBarPadding>
+          <SearchBar
+            html={searchedHtml}
+            word={searchText}
+            onChange={handleChange}
+          />
+        </S.SearchBarPadding>
       </S.SearchBarWrapper>
       <S.File dangerouslySetInnerHTML={{ __html: searchedHtml }}></S.File>
     </S.Container>
