@@ -25,6 +25,13 @@ export const Input = styled('input', {
   color: '$textDefault',
 
   p: 0,
+  flex: 1,
   border: 'none',
   outline: 'none',
+});
+
+export const Counter = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '$xxs',
 });
