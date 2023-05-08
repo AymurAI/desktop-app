@@ -18,15 +18,34 @@ function removeDuplicated(words: string[]) {
  * @param words Words to be matched inside the HTML
  * @returns The same HTML but with the given words enclosed in `<mark>` tags
  */
-export default function markPredictedWords(html: string, words: string[]) {
+function predicted(html: string, words: string[]) {
   let replaced = html;
 
   const filteredWords = removeDuplicated(words);
-  
+
   // Enclose predicted words with <mark> tag
   filteredWords.forEach((word) => {
-    replaced = replaced.replace(word, `<mark>${word}</mark>`);
+    replaced = replaced.replace(
+      word,
+      `<mark class="predicted-word">${word}</mark>`
+    );
   });
 
   return replaced;
 }
+
+function searched(html: string | null, word: string) {
+  if (!html) return '';
+  if (word.length <= 2) return html;
+
+  const regex = new RegExp(word, 'gi');
+  //
+  return html.replaceAll(regex, `<mark class="searched-word">$&</mark>`);
+}
+
+const mark = {
+  predicted,
+  searched,
+};
+
+export default mark;
