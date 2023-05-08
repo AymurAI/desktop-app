@@ -1,20 +1,39 @@
+import { useState } from 'react';
+
 import { useFileParser } from 'hooks';
 import { DocFile } from 'types/file';
-import { markPredictedWords } from 'utils/html';
+import { markWords } from 'utils/html';
 
-import Container from './FileContainer.styles';
+import * as S from './FileContainer.styles';
+import { SearchBar } from 'components';
 
 interface Props {
   file: DocFile;
 }
+
 export default function FileContainer({ file }: Props) {
   const predictions = file.predictions!.map((label) => label.text);
+  const [searchText, setSearchText] = useState('');
 
-  const html = useFileParser(file.data, (html) =>
-    markPredictedWords(html, predictions)
+  const markedHtml = useFileParser(file.data, (html) =>
+    markWords.predicted(html, predictions)
   );
+  const searchedHtml = markWords.searched(markedHtml, searchText);
+
+  const handleChange = (text: string) => {
+    setSearchText(text);
+  };
 
   return (
-    <Container dangerouslySetInnerHTML={{ __html: html ?? '' }}></Container>
+    <S.Container>
+      <S.SearchBarWrapper>
+        <SearchBar
+          html={searchedHtml}
+          word={searchText}
+          onChange={handleChange}
+        />
+      </S.SearchBarWrapper>
+      <S.File dangerouslySetInnerHTML={{ __html: searchedHtml }}></S.File>
+    </S.Container>
   );
 }
