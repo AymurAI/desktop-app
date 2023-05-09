@@ -26,28 +26,29 @@ export default function SearchBar({ onChange, html, word }: Props) {
   };
 
   const scrollToComponent = (n: number) => {
+    const index = n - 1;
     const components = document.querySelectorAll('mark.searched-word');
+    if (components.length === 0 || components.length < n) return;
 
-    if (components.length === 0 || !components[n - 1]) return;
-    console.log(components);
-    components[n - 1].scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const next = () => {
-    if (match === 1) return;
-
-    setMatch((prev) => {
-      scrollToComponent(prev - 1);
-      return prev - 1;
+    components[index].scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest',
     });
   };
+
   const previous = () => {
-    if (match === getCount()) return;
-    setMatch((prev) => {
-      scrollToComponent(prev + 1);
-      return prev + 1;
-    });
+    if (match === 1) return;
+    setMatch((prev) => prev - 1);
   };
+  const next = () => {
+    if (match === getCount()) return;
+    setMatch((prev) => prev + 1);
+  };
+
+  useEffect(() => {
+    scrollToComponent(match);
+  }, [match]);
 
   return (
     <S.Wrapper>
@@ -61,11 +62,11 @@ export default function SearchBar({ onChange, html, word }: Props) {
              
           </p> */}
           <Stack direction="row" wrap="nowrap" spacing="xxs">
-            <Button onClick={next} variant="none" disabled={match === 1}>
+            <Button onClick={previous} variant="none" disabled={match === 1}>
               <Previous size={24} />
             </Button>
             <Button
-              onClick={previous}
+              onClick={next}
               variant="none"
               disabled={match === getCount()}
             >
