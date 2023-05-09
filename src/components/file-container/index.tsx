@@ -16,7 +16,8 @@ export default function FileContainer({ file }: Props) {
   const [searchText, setSearchText] = useState('');
 
   const markedHtml = useFileParser(file.data, (html) =>
-    markWords.predicted(html, predictions)
+    // Only render predictions if the search bar is not used
+    searchText.length > 2 ? html : markWords.predicted(html, predictions)
   );
   const searchedHtml = markWords.searched(markedHtml, searchText);
 
