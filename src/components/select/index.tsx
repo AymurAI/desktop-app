@@ -19,6 +19,7 @@ import {
 } from './Select.styles';
 import { findById, orderByPriority, secureSuggestion } from './utils';
 import { Optional } from 'types/utils';
+import useFilterTimer from './useFilterTimer';
 
 export type SelectOption = { id: string; text: string };
 export type Suggestion = Optional<SelectOption, 'text'>;
@@ -59,18 +60,19 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
       [id]
     );
 
-    const isValueEmpty = !id || id === '';
-
-    const securedSuggestion = secureSuggestion(suggestion, options);
     const orderedOptions = orderByPriority(options, priorityOrder);
-    const option = findById(id, options);
-
     const updateValue = (newId: SelectOption['id']) => {
       setId(newId);
 
       const option = findById(newId, options);
       onChange?.(option);
     };
+
+    const handleFilterChange = useFilterTimer(options, updateValue);
+
+    const securedSuggestion = secureSuggestion(suggestion, options);
+    const isValueEmpty = !id || id === '';
+    const option = findById(id, options);
 
     const handleClickSelect =
       (text: string) => (e: MouseEvent<HTMLLIElement>) => {
@@ -96,7 +98,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     };
 
     return (
-      <Container>
+      <Container onKeyDown={handleFilterChange}>
         <TextContainer>
           {/* LABEL */}
           {label && (
