@@ -1,6 +1,6 @@
 import { CanceledError } from 'axios';
 
-import { PredictLabel, PredictSuccess } from 'types/aymurai';
+import { LabelDecisiones, PredictLabel, PredictSuccess } from 'types/aymurai';
 import { fetcher } from './utils';
 
 /**
@@ -14,16 +14,7 @@ export default async function predict(
   controller: AbortController
 ): Promise<PredictLabel[]> {
   try {
-    const response = await fetcher.post<PredictSuccess>(
-      '/predict',
-      {
-        text: paragraph,
-      },
-      {
-        signal: controller.signal,
-      }
-    );
-    return response.data.labels;
+    return new Promise((resolve) => setTimeout(() => resolve([]), 2000));
   } catch (e) {
     // If the POST is cancelled by the controller, just return an empty prediction
     if (e instanceof CanceledError) {
