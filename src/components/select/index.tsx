@@ -68,7 +68,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
       onChange?.(option);
     };
 
-    const handleFilterChange = useFilterTimer(options, updateValue);
+    const filterHook = useFilterTimer(options, updateValue);
 
     const securedSuggestion = secureSuggestion(suggestion, options);
     const isValueEmpty = !id || id === '';
@@ -98,7 +98,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     };
 
     return (
-      <Container onKeyDown={handleFilterChange}>
+      <Container {...filterHook}>
         <TextContainer>
           {/* LABEL */}
           {label && (
