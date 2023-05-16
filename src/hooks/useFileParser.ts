@@ -36,5 +36,5 @@ export default function useFileParser(
     if (!html && extension === 'doc') parseDoc(file).then(updateHTML);
   }, [file, extension, html, updateHTML]);
 
-  return html;
+  return html ?? '';
 }
