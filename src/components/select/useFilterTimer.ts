@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { SelectOption } from '.';
+import regex from 'utils/regex';
 
 type Timeout = ReturnType<typeof setTimeout>;
 
@@ -18,9 +19,6 @@ export default function useFilterTimer(
   // Clear the filter state
   const clearFilter = () => setFilter('');
 
-  // Generate regex expression based on a word
-  const getRegex = () => new RegExp(`\\b${filter}\\w*`, 'gi');
-
   const scrollToOption = () => {
     if (containerRef.current === null) return;
 
@@ -30,10 +28,9 @@ export default function useFilterTimer(
 
     if (items.length === 0) return;
 
-    const regex = getRegex();
-    const filtered = items.filter((item) => item.textContent?.match(regex));
+    const regExp = regex.whole(filter);
+    const filtered = items.filter((item) => item.textContent?.match(regExp));
     const first = filtered[0];
-    console.log(first);
 
     if (first) {
       first.scrollIntoView({
@@ -45,9 +42,9 @@ export default function useFilterTimer(
   };
 
   const selectOption = () => {
-    const regex = getRegex();
+    const regExp = regex.whole(filter);
 
-    const filtered = options.filter(({ text }) => text.match(regex));
+    const filtered = options.filter(({ text }) => text.match(regExp));
     const firstOption = filtered[0];
 
     if (firstOption) updateValue(firstOption.id);
@@ -58,12 +55,12 @@ export default function useFilterTimer(
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(clearFilter, 500);
 
-    if (!filter) return;
-
-    // Set filtered option
-    selectOption();
-    // Scroll to that option
-    scrollToOption();
+    if (filter) {
+      // Set filtered option
+      selectOption();
+      // Scroll to that option
+      scrollToOption();
+    }
   }, [filter]);
 
   const handleFilterChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
