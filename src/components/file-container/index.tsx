@@ -15,11 +15,13 @@ export default function FileContainer({ file }: Props) {
   const predictions = file.predictions!.map((label) => label.text);
   const [searchText, setSearchText] = useState('');
 
-  const markedHtml = useFileParser(file.data, (html) =>
-    // Only render predictions if the search bar is not used
-    searchText.length > 2 ? html : markWords.predicted(html, predictions)
-  );
-  const searchedHtml = markWords.searched(markedHtml, searchText);
+  const isSearchEnabled = searchText.length > 2;
+
+  const html = useFileParser(file.data);
+
+  const alterHtml = isSearchEnabled
+    ? markWords.searched(html, searchText)
+    : markWords.predicted(html, predictions);
 
   const handleChange = (text: string) => {
     setSearchText(text);
@@ -30,13 +32,13 @@ export default function FileContainer({ file }: Props) {
       <S.SearchBarWrapper>
         <S.SearchBarPadding>
           <SearchBar
-            html={searchedHtml}
+            html={alterHtml}
             word={searchText}
             onChange={handleChange}
           />
         </S.SearchBarPadding>
       </S.SearchBarWrapper>
-      <S.File dangerouslySetInnerHTML={{ __html: searchedHtml }}></S.File>
+      <S.File dangerouslySetInnerHTML={{ __html: alterHtml }}></S.File>
     </S.Container>
   );
 }
