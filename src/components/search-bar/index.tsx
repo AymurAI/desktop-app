@@ -8,6 +8,7 @@ import {
 import Button from '../button';
 import Stack from '../stack';
 import Label from '../label';
+import regex from 'utils/regex';
 
 import * as S from './SearchBar.styles';
 import type { Props } from './SearchBar.types';
@@ -17,7 +18,7 @@ export default function SearchBar({ onChange, html, word }: Props) {
 
   const getCount = () => {
     if (word.length <= 2) return 0;
-    else return html.match(new RegExp(word, 'ig'))?.length || 0;
+    else return html.match(regex.includes(word))?.length || 0;
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
