@@ -1,3 +1,5 @@
+import regex from 'utils/regex';
+
 /**
  * Removes duplicated words from the predictions array
  * @param words Words array, containing all the predictions
@@ -38,9 +40,9 @@ function searched(html: string | null, word: string) {
   if (!html) return '';
   if (word.length <= 2) return html;
 
-  const regex = new RegExp(word, 'gi');
+  const regExp = regex.includes(word);
   //
-  return html.replaceAll(regex, `<mark class="searched-word">$&</mark>`);
+  return html.replaceAll(regExp, `<mark class="searched-word">$&</mark>`);
 }
 
 const mark = {
