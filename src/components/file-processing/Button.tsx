@@ -15,12 +15,12 @@ export default function Button({ status, onStop, onReplace }: Props) {
   };
 
   return status === 'processing' ? (
-    <BaseButton onClick={onStop} variant="secondary" css={style}>
+    <BaseButton onClick={onStop} variant="secondary" css={style} size="s">
       <Stop weight="bold" />
       Detener
     </BaseButton>
   ) : (
-    <BaseButton onClick={onReplace} variant="secondary" css={style}>
+    <BaseButton onClick={onReplace} variant="secondary" css={style} size="s">
       <Restart weight="bold" />
       Reemplazar archivo
     </BaseButton>
