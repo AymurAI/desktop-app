@@ -45,7 +45,8 @@ const includes = (word: string) => new RegExp(replaceVowels(word), 'gi');
 /**
  * Matches all the WORDS that matches the given word
  */
-const whole = (word: string) => new RegExp(`\\b${word}\\w*`, 'gi');
+const whole = (word: string) =>
+  new RegExp(`\\b${replaceVowels(word)}\\w*`, 'gi');
 
 const regex = {
   includes,
