@@ -83,7 +83,6 @@ export default function usePredict(
             });
 
             // Notify the user that the process has finished
-            taskbar.notify();
             updateStatus('completed');
           }
         })
