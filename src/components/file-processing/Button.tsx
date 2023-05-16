@@ -22,7 +22,7 @@ export default function Button({ status, onStop, onReplace }: Props) {
   ) : (
     <BaseButton onClick={onReplace} variant="secondary" css={style} size="s">
       <Restart weight="bold" />
-      Reemplazar archivo
+      Reemplazar
     </BaseButton>
   );
 }
