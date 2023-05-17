@@ -26,6 +26,7 @@ import ThemeProvider from './theme-provider';
 import Title from './title';
 import Tooltip from './tooltip';
 import ValidationForm from './validation-form';
+import Toast from './toast';
 import SearchBar from './search-bar';
 
 export {
@@ -60,5 +61,6 @@ export {
   Title,
   Tooltip,
   ValidationForm,
+  Toast,
   SearchBar,
 };

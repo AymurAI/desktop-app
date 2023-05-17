@@ -39,3 +39,13 @@ export const isDebug = process.env.NODE_ENV === 'development' ?? true;
  * Is the app in production mode?
  */
 export const isProduction = process.env.NODE_ENV === 'production' ?? false;
+
+/**
+ * Is the app running on Windows?
+ */
+export const isWindows = process.platform === 'win32';
+
+/**
+ * Is the app running on macOS?
+ */
+export const isMac = process.platform === 'darwin';

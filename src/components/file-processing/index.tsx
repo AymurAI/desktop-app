@@ -1,10 +1,11 @@
+import { X } from 'phosphor-react';
 import { ChangeEventHandler, useRef } from 'react';
 
-import { HiddenInput, Stack } from 'components';
+import { HiddenInput, Stack, Button as BaseButton } from 'components';
 import Button from './Button';
 import ProgressBar from './ProgressBar';
 import { useFileDispatch, usePredict } from 'hooks';
-import { replaceFile } from 'reducers/file/actions';
+import { replaceFile, removeFile } from 'reducers/file/actions';
 import { PredictStatus } from 'hooks/usePredict';
 
 interface Props {
@@ -44,6 +45,11 @@ export default function FileProcessing({
     abort();
   };
 
+  const remove = () => {
+    abort();
+    dispatch(removeFile(file.name));
+  };
+
   return (
     <Stack align="center" spacing="m" css={{ width: '100%' }}>
       <HiddenInput
@@ -62,6 +68,9 @@ export default function FileProcessing({
         onStop={handleStop}
         onReplace={handleOpenFinder}
       />
+      <BaseButton variant="none" onClick={remove}>
+        <X />
+      </BaseButton>
     </Stack>
   );
 }
