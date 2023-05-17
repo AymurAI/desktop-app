@@ -27,6 +27,7 @@ import Title from './title';
 import Tooltip from './tooltip';
 import ValidationForm from './validation-form';
 import Toast from './toast';
+import SearchBar from './search-bar';
 
 export {
   Arrow,
@@ -61,4 +62,5 @@ export {
   Tooltip,
   ValidationForm,
   Toast,
+  SearchBar,
 };
