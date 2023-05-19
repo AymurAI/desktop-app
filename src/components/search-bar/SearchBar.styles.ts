@@ -13,10 +13,19 @@ export const Wrapper = styled('div', {
   border: '1px solid $borderPrimary',
   borderRadius: '$xl',
 
+  cursor: 'text',
+
   '&:focus-within': {
     border: '1px solid $borderPrimaryAlt',
     boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.16)',
   },
+});
+
+export const InputContainer = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '$xxs',
+  flex: 1,
 });
 
 export const Input = styled('input', {
@@ -25,13 +34,21 @@ export const Input = styled('input', {
   color: '$textDefault',
 
   p: 0,
-  flex: 1,
+  width: '$xxl',
+
   border: 'none',
   outline: 'none',
 });
 
-export const Counter = styled('div', {
+export const SuggestionContainer = styled('div', {
   display: 'flex',
-  alignItems: 'center',
-  gap: '$xxs',
+  gap: '$s',
+});
+
+export const InputSuggestion = styled('mark', {
+  backgroundColor: '$primaryAlt',
+  fontFamily: '$primary',
+  padding: '0px $sizes$s',
+  borderRadius: '$s',
+  cursor: 'pointer',
 });
