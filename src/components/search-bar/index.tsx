@@ -1,82 +1,83 @@
-import { useEffect, useState } from 'react';
-import {
-  MagnifyingGlass,
-  CaretUp as Previous,
-  CaretDown as Next,
-} from 'phosphor-react';
+import { useRef, useState } from 'react';
+import { MagnifyingGlass } from 'phosphor-react';
 
-import Button from '../button';
-import Stack from '../stack';
-import Label from '../label';
+import Text from '../text';
 import regex from 'utils/regex';
 
 import * as S from './SearchBar.styles';
 import type { Props } from './SearchBar.types';
+import useScroll from './useScroll';
+import Counter from './Counter';
+import { getFirstPrediction } from './utils';
+
+const INITIAL_VALUE = 1;
 
 export default function SearchBar({ onChange, html, word }: Props) {
-  const [match, setMatch] = useState(1);
+  const [count, setCount] = useState(INITIAL_VALUE);
+  useScroll(count);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const getCount = () => {
-    if (word.length <= 2) return 0;
+  const isSearching = word.length > 2;
+  const firstPrediction = getFirstPrediction(isSearching, word, html);
+
+  const next = () => {
+    if (count === getMatchCount()) return;
+    setCount((prev) => prev + 1);
+  };
+
+  const previous = () => {
+    if (count === 1) return;
+    setCount((prev) => prev - 1);
+  };
+
+  const reset = () => setCount(INITIAL_VALUE);
+
+  const getMatchCount = () => {
+    if (!isSearching) return 0;
     else return html.match(regex.includes(word))?.length || 0;
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    setMatch(1);
+
+    reset();
     onChange(value);
   };
 
-  const scrollToComponent = (n: number) => {
-    const index = n - 1;
-    const components = document.querySelectorAll('mark.searched-word');
-    if (components.length === 0 || components.length < n) return;
-
-    components[index].scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'nearest',
-    });
+  const focus = () => {
+    inputRef.current?.focus();
   };
 
-  const previous = () => {
-    if (match === 1) return;
-    setMatch((prev) => prev - 1);
-  };
-  const next = () => {
-    if (match === getCount()) return;
-    setMatch((prev) => prev + 1);
-  };
+  const selectWord = (e: React.MouseEvent) => {
+    e.stopPropagation();
 
-  useEffect(() => {
-    scrollToComponent(match);
-  }, [match]);
+    if (firstPrediction && inputRef.current) {
+      reset();
+      onChange(firstPrediction);
+      inputRef.current.value = firstPrediction;
+    }
+  };
 
   return (
-    <S.Wrapper>
+    <S.Wrapper onClick={focus}>
       <MagnifyingGlass size={24} />
-      <S.Input onChange={handleChange} placeholder="Buscar" type="text" />
-      {getCount() !== 0 && (
-        <S.Counter>
-          <Label css={{ color: '$textDefault' }}>{match}</Label>
-          <Label>de {getCount()}</Label>
-          {/* <p>
-             
-          </p> */}
-          <Stack direction="row" wrap="nowrap" spacing="xxs">
-            <Button onClick={previous} variant="none" disabled={match === 1}>
-              <Previous size={24} />
-            </Button>
-            <Button
-              onClick={next}
-              variant="none"
-              disabled={match === getCount()}
-            >
-              <Next size={24} />
-            </Button>
-          </Stack>
-        </S.Counter>
-      )}
+      <S.InputContainer>
+        <S.Input
+          ref={inputRef}
+          onChange={handleChange}
+          placeholder="Buscar"
+          type="text"
+        />
+        {isSearching && firstPrediction && (
+          <S.SuggestionContainer>
+            <Text css={{ lineHeight: '100%' }}>|</Text>
+            <S.InputSuggestion onClick={selectWord}>
+              {firstPrediction}
+            </S.InputSuggestion>
+          </S.SuggestionContainer>
+        )}
+      </S.InputContainer>
+      <Counter {...{ next, previous, getMatchCount, count }} />
     </S.Wrapper>
   );
 }
