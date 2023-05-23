@@ -23,7 +23,6 @@ import filterOptions, {
   secureSuggestion,
 } from './utils';
 import { Optional } from 'types/utils';
-import useFilterTimer from './useFilterTimer';
 
 export type SelectOption = { id: string; text: string };
 export type Suggestion = Optional<SelectOption, 'text'>;
@@ -73,8 +72,6 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
       onChange?.(option);
     };
 
-    const filterHook = useFilterTimer(options, updateValue);
-
     const securedSuggestion = secureSuggestion(suggestion, options);
     const isValueEmpty = !id || id === '';
     const option = findById(id, options);
@@ -103,7 +100,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     };
 
     return (
-      <Container {...filterHook}>
+      <Container>
         <TextContainer>
           {/* LABEL */}
           {label && (
