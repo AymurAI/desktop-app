@@ -17,7 +17,11 @@ import {
   OptionContainer,
   TextContainer,
 } from './Select.styles';
-import { findById, orderByPriority, secureSuggestion } from './utils';
+import filterOptions, {
+  findById,
+  orderByPriority,
+  secureSuggestion,
+} from './utils';
 import { Optional } from 'types/utils';
 import useFilterTimer from './useFilterTimer';
 
@@ -61,6 +65,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     );
 
     const orderedOptions = orderByPriority(options, priorityOrder);
+    const filteredOptions = filterOptions(orderedOptions, id);
     const updateValue = (newId: SelectOption['id']) => {
       setId(newId);
 
@@ -131,7 +136,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
 
         {/* OPTION LIST */}
         <OptionContainer>
-          {orderedOptions.map(({ id, text }) => (
+          {filteredOptions.map(({ id, text }) => (
             <Option
               onClick={handleClickSelect(id)}
               onKeyDown={handleKeySelect(id)}
