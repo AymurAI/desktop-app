@@ -28,7 +28,7 @@ export const globalStyles = globalCss({
     borderRadius: 8,
   },
   'mark.searched-word': {
-    backgroundColor: '$primaryAlt',
+    backgroundColor: '$bgSecondaryAlt',
 
     fontFamily: '$file',
 
