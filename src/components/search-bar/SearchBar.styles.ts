@@ -46,7 +46,7 @@ export const SuggestionContainer = styled('div', {
 });
 
 export const InputSuggestion = styled('mark', {
-  backgroundColor: '$primaryAlt',
+  backgroundColor: '$bgSecondaryAlt',
   fontFamily: '$primary',
   padding: '0px $sizes$s',
   borderRadius: '$s',
