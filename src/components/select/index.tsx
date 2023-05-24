@@ -13,13 +13,16 @@ import {
   Container,
   Input,
   InputContainer,
-  Option,
-  OptionContainer,
   TextContainer,
 } from './Select.styles';
-import { findById, orderByPriority, secureSuggestion } from './utils';
+import {
+  filterOptions,
+  findById,
+  orderByPriority,
+  secureSuggestion,
+} from './utils';
 import { Optional } from 'types/utils';
-import useFilterTimer from './useFilterTimer';
+import List from './List';
 
 export type SelectOption = { id: string; text: string };
 export type Suggestion = Optional<SelectOption, 'text'>;
@@ -61,14 +64,13 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     );
 
     const orderedOptions = orderByPriority(options, priorityOrder);
+    const filteredOptions = filterOptions(orderedOptions, id);
     const updateValue = (newId: SelectOption['id']) => {
       setId(newId);
 
       const option = findById(newId, options);
       onChange?.(option);
     };
-
-    const filterHook = useFilterTimer(options, updateValue);
 
     const securedSuggestion = secureSuggestion(suggestion, options);
     const isValueEmpty = !id || id === '';
@@ -98,7 +100,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     };
 
     return (
-      <Container {...filterHook}>
+      <Container>
         <TextContainer>
           {/* LABEL */}
           {label && (
@@ -109,7 +111,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
 
           {/* INPUT */}
           <InputContainer tabIndex={-1}>
-            <Input value={option?.text} onChange={handleChangeInput} readOnly />
+            <Input value={option?.text} onChange={handleChangeInput} />
             {securedSuggestion && isValueEmpty && (
               <>
                 <Text css={{ lineHeight: '100%' }}>|</Text>
@@ -130,18 +132,11 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
         </TextContainer>
 
         {/* OPTION LIST */}
-        <OptionContainer>
-          {orderedOptions.map(({ id, text }) => (
-            <Option
-              onClick={handleClickSelect(id)}
-              onKeyDown={handleKeySelect(id)}
-              key={id}
-              tabIndex={0}
-            >
-              {text}
-            </Option>
-          ))}
-        </OptionContainer>
+        <List
+          options={filteredOptions}
+          onClick={handleClickSelect}
+          onKeyDown={handleKeySelect}
+        />
       </Container>
     );
   }

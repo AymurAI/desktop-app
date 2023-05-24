@@ -40,7 +40,7 @@ export const Input = styled('input', {
 
   color: '$textDefault',
 
-  cursor: 'pointer',
+  cursor: 'text',
 
   outline: 'none',
   b: 'none',
