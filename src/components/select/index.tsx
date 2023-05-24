@@ -17,7 +17,8 @@ import {
   OptionContainer,
   TextContainer,
 } from './Select.styles';
-import filterOptions, {
+import {
+  filterOptions,
   findById,
   orderByPriority,
   secureSuggestion,

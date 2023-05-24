@@ -68,6 +68,6 @@ export function orderByPriority(
  * @param word Word to use as a filter
  * @returns Returns the options that match the given word
  */
-export default function filterOptions(options: SelectOption[], word: string) {
+export function filterOptions(options: SelectOption[], word: string) {
   return options.filter(({ text }) => text.match(regex.includes(word)));
 }
