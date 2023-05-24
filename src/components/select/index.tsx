@@ -13,8 +13,6 @@ import {
   Container,
   Input,
   InputContainer,
-  Option,
-  OptionContainer,
   TextContainer,
 } from './Select.styles';
 import {
@@ -24,6 +22,7 @@ import {
   secureSuggestion,
 } from './utils';
 import { Optional } from 'types/utils';
+import List from './List';
 
 export type SelectOption = { id: string; text: string };
 export type Suggestion = Optional<SelectOption, 'text'>;
@@ -133,18 +132,11 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
         </TextContainer>
 
         {/* OPTION LIST */}
-        <OptionContainer>
-          {filteredOptions.map(({ id, text }) => (
-            <Option
-              onClick={handleClickSelect(id)}
-              onKeyDown={handleKeySelect(id)}
-              key={id}
-              tabIndex={0}
-            >
-              {text}
-            </Option>
-          ))}
-        </OptionContainer>
+        <List
+          options={filteredOptions}
+          onClick={handleClickSelect}
+          onKeyDown={handleKeySelect}
+        />
       </Container>
     );
   }
