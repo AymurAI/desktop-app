@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Bell } from 'phosphor-react';
 
 import { useFiles, useFileDispatch } from 'hooks';
@@ -51,7 +51,7 @@ export default withFileProtection(function Process() {
     <>
       <Section>
         <Toast isVisible={isToastVisible} onClose={hideToast} icon={<Bell />}>
-          Se finalizo el análisis de tus documentos.
+          Se finalizó el análisis de tus documentos.
         </Toast>
         <SectionTitle onClick={handlePrevious}>
           2. Procesamiento de los archivos
