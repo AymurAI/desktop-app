@@ -11,6 +11,7 @@ import {
   ToggleSelectedAction,
   ValidateAction,
   FilterUnprocessedAction,
+  RemoveFileAction,
 } from './actions';
 import { addFiles, replaceFile, updateFromState } from './utils';
 
@@ -24,6 +25,7 @@ export type Action =
   | ToggleSelectedAction
   | RemoveAllPredictionsAction
   | RemoveAllFilesAction
+  | RemoveFileAction
   | RemovePredictionsAction
   | ReplaceFileAction
   | FilterUnselectedAction
@@ -98,6 +100,11 @@ export default function reducer(state: State, action: Action): State {
     // ----------------
     case ActionTypes.REMOVE_ALL_FILES: {
       return [];
+    }
+    case ActionTypes.REMOVE_FILE: {
+      const { fileName } = payload;
+
+      return state.filter((file) => file.data.name !== fileName);
     }
     // ----------------
     // REPLACE FILE

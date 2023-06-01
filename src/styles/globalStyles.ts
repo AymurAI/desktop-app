@@ -18,12 +18,21 @@ export const globalStyles = globalCss({
     fontFamily: '$primary',
   },
 
-  mark: {
+  'mark.predicted-word': {
     backgroundColor: '$primaryAlt',
 
     fontFamily: '$file',
 
     padding: '0px 8px',
+
+    borderRadius: 8,
+  },
+  'mark.searched-word': {
+    backgroundColor: '$bgSecondaryAlt',
+
+    fontFamily: '$file',
+
+    padding: '0px 2px',
 
     borderRadius: 8,
   },

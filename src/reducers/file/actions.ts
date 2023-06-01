@@ -13,6 +13,7 @@ export enum ActionTypes {
   REMOVE_ALL_PREDICTIONS = 'REMOVE_ALL_PREDICTIONS',
   REMOVE_PREDICTIONS = 'REMOVE_PREDICTIONS',
   REMOVE_ALL_FILES = 'REMOVE_ALL_FILES',
+  REMOVE_FILE = 'REMOVE_FILE',
   REPLACE_FILE = 'REPLACE_FILE',
   VALIDATE = 'VALIDATE',
   APPEND_VALIDATION = 'APPEND_VALIDATION',
@@ -84,6 +85,20 @@ export function removeAllFiles(): RemoveAllFilesAction {
   return {
     type: ActionTypes.REMOVE_ALL_FILES,
     payload: {},
+  };
+}
+
+export type RemoveFileAction = Action<
+  ActionTypes.REMOVE_FILE,
+  { fileName: string }
+>;
+/**
+ * Removes a single file from the array
+ */
+export function removeFile(fileName: string): RemoveFileAction {
+  return {
+    type: ActionTypes.REMOVE_FILE,
+    payload: { fileName },
   };
 }
 

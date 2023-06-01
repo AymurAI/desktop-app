@@ -1,4 +1,4 @@
-import { App, app, BrowserWindow, dialog } from 'electron';
+import { app, BrowserWindow, dialog } from 'electron';
 
 import createWindow from './createWindow';
 import { URI_SCHEME } from './env';
@@ -10,7 +10,7 @@ import { sendCodeToApp } from './utils/oauth';
  * Configures the app with handlers and other features
  * @param app App instance, after the `whenReady()`
  */
-export function configureApp(app: App) {
+export function configureApp() {
   // Set the name to the app
   setDefaultProtocol(app);
 
@@ -51,7 +51,7 @@ export function configureApp(app: App) {
     createWindow();
 
     // Configures the app
-    configureApp(app);
+    configureApp();
   } catch (e) {
     console.error('An error occurred while starting the app', e);
   }
