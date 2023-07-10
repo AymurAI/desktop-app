@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { Bell } from 'phosphor-react';
 
 import { useFiles, useFileDispatch } from 'hooks';
 import { Footer, Section } from 'layout/main';
@@ -11,17 +12,20 @@ import {
   Text,
   Subtitle,
   FileProcessing,
+  Toast,
 } from 'components';
 import withFileProtection from 'features/withFileProtection';
 import { filterUnprocessed, removeAllPredictions } from 'reducers/file/actions';
 import { initProcessState, canContinue, replace } from './utils';
 import { PredictStatus } from 'hooks/usePredict';
+import useNotify from './useNotify';
 
 export default withFileProtection(function Process() {
   const navigate = useNavigate();
   const dispatch = useFileDispatch();
   const files = useFiles();
   const [process, setProcess] = useState(initProcessState(files));
+  const { isToastVisible, hideToast } = useNotify(process);
 
   const handleStatusChange = (name: string) => (newValue: PredictStatus) => {
     // Replace the newValue
@@ -46,6 +50,9 @@ export default withFileProtection(function Process() {
   return (
     <>
       <Section>
+        <Toast isVisible={isToastVisible} onClose={hideToast} icon={<Bell />}>
+          Se finalizó el análisis de tus documentos.
+        </Toast>
         <SectionTitle onClick={handlePrevious}>
           2. Procesamiento de los archivos
         </SectionTitle>

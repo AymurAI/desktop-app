@@ -1,4 +1,4 @@
-import { Stop, ArrowCounterClockwise as Restart } from 'phosphor-react';
+import { Stop, ArrowsLeftRight as Restart } from 'phosphor-react';
 
 import { Button as BaseButton } from 'components';
 import { PredictStatus } from 'hooks/usePredict';
@@ -10,18 +10,19 @@ interface Props {
 }
 export default function Button({ status, onStop, onReplace }: Props) {
   const style = {
-    width: 200,
+    minWidth: 210,
+    gap: '$xs',
   };
 
   return status === 'processing' ? (
-    <BaseButton onClick={onStop} variant="secondary" css={style}>
-      <Stop />
+    <BaseButton onClick={onStop} variant="secondary" css={style} size="s">
+      <Stop weight="bold" />
       Detener
     </BaseButton>
   ) : (
-    <BaseButton onClick={onReplace} variant="secondary" css={style}>
-      <Restart />
-      Reemplazar archivo
+    <BaseButton onClick={onReplace} variant="secondary" css={style} size="s">
+      <Restart weight="bold" />
+      Reemplazar
     </BaseButton>
   );
 }
