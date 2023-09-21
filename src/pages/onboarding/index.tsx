@@ -52,8 +52,8 @@ export default function Onboarding() {
               <>
                 Esta herramienta te permitirá subir las resoluciones del juzgado
                 para que sean analizadas por una inteligencia artificial que
-                extraerá la información relevante con perspectiva de género que
-                debe ser anonimizada.
+                anonimizará los datos sensibles de las personas involucradas y
+                de los hechos del caso.
               </>
             )}
           </Text>
@@ -79,7 +79,11 @@ export default function Onboarding() {
           <Arrow.Right />
           <Card
             step={3}
-            text="Valida que la información identificada sea correcta"
+            text={
+              user?.function === FunctionType.ANONYMIZER
+                ? "Valida que la información a anonimizar sea correcta"
+                : "Valida que la información identificada sea correcta"
+            }
           />
           <Arrow.Right />
           <Card
@@ -100,7 +104,7 @@ export default function Onboarding() {
           accept=".doc,.docx"
           ref={inputRef}
           onChange={handleAddedFiles}
-          multiple={user?.function == FunctionType.DATASET ? true : false}
+          multiple={user?.function === FunctionType.DATASET ? true : false}
           tabIndex={-1}
         />
         <Text size="s">Formatos válidos: .doc y .docx</Text>
