@@ -12,6 +12,7 @@ import { Background, Container } from "layout/login";
 import { Button, Subtitle, Title, Stack, Label } from "components";
 import { useLogin, useUser } from "hooks";
 import Callout from "./Callout";
+import { FunctionType } from "types/user";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -74,14 +75,14 @@ export default function Login() {
               <Subtitle weight="strong" size="s" css={{ textAlign: "center" }}>
                 ¿Cual función vas a utilizar?
               </Subtitle>
-              <Button onClick={login.offline}>
+              <Button onClick={() => login.offline(FunctionType.DATASET)}>
                 <Database weight="bold" />
                 Set de datos
               </Button>
               <Subtitle size="s" css={{ textAlign: "center" }}>
                 o
               </Subtitle>
-              <Button onClick={login.offline}>
+              <Button onClick={() => login.offline(FunctionType.ANONYMIZER)}>
                 <Detective weight="bold" />
                 Anonimizador
               </Button>
