@@ -72,7 +72,7 @@ export default function Preview() {
             <Subtitle>Archivos seleccionados</Subtitle>
           )}
           <Grid
-            columns={1}
+            columns={user?.function === FunctionType.ANONYMIZER ? 1 : 5}
             spacing="xl"
             justify="center"
             css={{ width: "100%" }}

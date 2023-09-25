@@ -1,7 +1,4 @@
 import { styled } from "styles";
-import { useContext } from "react";
-import { AuthenticationContext as Context } from "context/Authentication";
-import { FunctionType } from "types/user";
 
 export const Wrapper = styled("div", {
   display: "flex",
