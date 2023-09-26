@@ -11,11 +11,13 @@ import { fetcher } from "./utils";
  */
 export default async function predict(
   paragraph: string,
-  controller: AbortController
+  controller: AbortController,
+  route: string
 ): Promise<PredictLabel[]> {
   try {
+    console.log(route);
     const response = await fetcher.post<PredictSuccess>(
-      "/datapublic/predict",
+      route,
       {
         text: paragraph,
       },
