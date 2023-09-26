@@ -1,12 +1,16 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback } from "react";
 
-import { useFileDispatch, useFileParser } from 'hooks';
-import { predict } from 'services/aymurai';
-import { PredictLabel } from 'types/aymurai';
-import { toPlainParagraphs } from 'utils/html';
-import { addPredictions, removePredictions } from 'reducers/file/actions';
+import { useFileDispatch, useFileParser } from "hooks";
+import { predict } from "services/aymurai";
+import { PredictLabel } from "types/aymurai";
+import { toPlainParagraphs } from "utils/html";
+import { addPredictions, removePredictions } from "reducers/file/actions";
 
-export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
+import { useContext } from "react";
+import { AuthenticationContext as Context } from "context/Authentication";
+import { FunctionType } from "types/user";
+
+export type PredictStatus = "processing" | "error" | "stopped" | "completed";
 
 interface UsePredictOptions {
   onStatusChange?: (status: PredictStatus) => void;
@@ -20,7 +24,8 @@ export default function usePredict(
   file: File,
   { onStatusChange }: UsePredictOptions = {}
 ) {
-  const [status, setStatus] = useState<PredictStatus>('processing');
+  const { user } = useContext(Context);
+  const [status, setStatus] = useState<PredictStatus>("processing");
   const [progress, setProgress] = useState(0);
   const [promises, setPromises] = useState<Promise<PredictLabel[]>[]>([]);
 
@@ -46,7 +51,7 @@ export default function usePredict(
     setPromises([]);
     dispatch(removePredictions(file.name));
     setProgress(0);
-    updateStatus('stopped');
+    updateStatus("stopped");
   };
 
   // Generate Promises
@@ -58,7 +63,13 @@ export default function usePredict(
       const paragraphs = toPlainParagraphs(html);
 
       const promises = paragraphs.map(async (p) => {
-        const prediction = await predict(p, controller.current);
+        const prediction = await predict(
+          p,
+          controller.current,
+          user?.function === FunctionType.ANONYMIZER
+            ? "/anonymizer/predict"
+            : "/datapublic/predict"
+        );
 
         // Increase progress %
         setProgress((current) => current + 1 / paragraphs.length);
@@ -81,10 +92,10 @@ export default function usePredict(
               dispatch(addPredictions(file.name, prediction));
             });
 
-            updateStatus('completed');
+            updateStatus("completed");
           }
         })
-        .catch(() => updateStatus('error'));
+        .catch(() => updateStatus("error"));
     }
   }, [promises, file.name, dispatch, updateStatus]);
 
