@@ -1,4 +1,4 @@
-import regex from 'utils/regex';
+import regex from "utils/regex";
 
 /**
  * Removes duplicated words from the predictions array
@@ -36,8 +36,33 @@ function predicted(html: string, words: string[]) {
   return replaced;
 }
 
+function anonymizer(html: string, words: string[], tags: any[]) {
+  let replaced = html;
+
+  const filteredWords = removeDuplicated(words);
+
+  // Enclose predicted words with <mark> tag
+  filteredWords.forEach((word) => {
+    replaced = replaced.replace(
+      word,
+      `<mark class="predicted-word">${word} <strong>${getTag(
+        tags,
+        word
+      )}</strong></mark>`
+    );
+  });
+
+  return replaced;
+}
+
+function getTag(tags: any, word: string) {
+  const tag = tags.find((data: any) => data.text === word);
+
+  return tag?.tag;
+}
+
 function searched(html: string | null, word: string) {
-  if (!html) return '';
+  if (!html) return "";
   if (word.length <= 2) return html;
 
   const regExp = regex.includes(word);
@@ -47,6 +72,7 @@ function searched(html: string | null, word: string) {
 
 const mark = {
   predicted,
+  anonymizer,
   searched,
 };
 

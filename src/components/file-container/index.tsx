@@ -13,12 +13,16 @@ interface Props {
 
 export default function FileContainer({ file }: Props) {
   const predictions = file.predictions!.map((label) => label.text);
+  const predictionsTags = file.predictions!.map((label) => ({
+    text: label.text,
+    tag: label.attrs.aymurai_label,
+  }));
   const [searchText, setSearchText] = useState("");
 
   const isSearchEnabled = searchText.length > 2;
 
   const predictedHtml = useFileParser(file.data, (html) =>
-    markWords.predicted(html, predictions)
+    markWords.anonymizer(html, predictions, predictionsTags)
   );
   const searchedHtml = isSearchEnabled
     ? markWords.searched(predictedHtml, searchText)
@@ -29,10 +33,14 @@ export default function FileContainer({ file }: Props) {
   };
 
   const clickHandler = (e: any) => {
+    console.log(file);
     const el = e.target.closest("mark");
     if (el && e.currentTarget.contains(el)) {
+      console.log(e.target.outerText);
+      console.log(e.target.outerHTML);
     }
   };
+
   return (
     <S.Container>
       <S.SearchBarWrapper>
