@@ -7,7 +7,7 @@ import regex from "utils/regex";
  */
 function removeDuplicated(words: string[]) {
   return words.reduce<string[]>((prev, cur) => {
-    const isDuplicated = prev.find((t) => t === cur);
+    const isDuplicated = prev.find((t) => t.includes(cur));
 
     if (isDuplicated) return prev;
     else return [...prev, cur];
@@ -45,10 +45,10 @@ function anonymizer(html: string, words: string[], tags: any[]) {
   filteredWords.forEach((word) => {
     replaced = replaced.replace(
       word,
-      `<mark class="predicted-word">${word} <strong>${getTag(
+      `<mark class="predicted-word"> ${word} <strong>${getTag(
         tags,
         word
-      )}</strong></mark>`
+      )}</strong> <close id="${word}">X</close></mark>`
     );
   });
 

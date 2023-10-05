@@ -11,7 +11,7 @@ export const globalStyles = globalCss({
       border: "0",
       verticalAlign: "baseline",
       boxSizing: "border-box",
-      color: "$textDefault",
+      color: "$tertiary",
     },
 
   "*": {
@@ -23,12 +23,37 @@ export const globalStyles = globalCss({
 
     fontFamily: "$file",
 
-    padding: "0px 8px",
+    padding: "0px 0px 0px 2px",
 
     borderRadius: 8,
+    "& strong": {
+      fontSize: "12px",
+      padding: "0px",
+      margin: "0px",
+    },
+    "& close": {
+      visibility: "hidden",
+      position: "relative",
+      backgroundColor: "$errorPrimary",
+      color: "$white",
+      padding: "3px 5px",
+      borderRadius: 8,
+      cursor: "pointer",
+      fontSize: "10px",
+      fontWeight: "heavy",
+      textAlign: "center",
+      top: "-10px",
+      right: "-5px",
+    },
 
-    cursor: "pointer",
+    "&:hover": {
+      cursor: "pointer",
+      "& close": {
+        visibility: "visible",
+      },
+    },
   },
+
   "mark.searched-word": {
     backgroundColor: "$bgSecondaryAlt",
 
