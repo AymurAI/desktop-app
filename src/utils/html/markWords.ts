@@ -36,20 +36,26 @@ function predicted(html: string, words: string[]) {
   return replaced;
 }
 
-function anonymizer(html: string, words: string[], tags: any[]) {
+function anonymizer(
+  html: string,
+  words: string[],
+  tags: any[],
+  removedTexts: string[]
+) {
   let replaced = html;
 
   const filteredWords = removeDuplicated(words);
-
   // Enclose predicted words with <mark> tag
   filteredWords.forEach((word) => {
-    replaced = replaced.replace(
-      word,
-      `<mark class="predicted-word"> ${word} <strong>${getTag(
-        tags,
-        word
-      )}</strong> <close id="${word}">X</close></mark>`
-    );
+    if (!removedTexts.includes(word)) {
+      replaced = replaced.replace(
+        word,
+        `<mark class="predicted-word"> ${word} <strong>${getTag(
+          tags,
+          word
+        )}</strong> <close id="${word}">X</close></mark>`
+      );
+    }
   });
 
   return replaced;
