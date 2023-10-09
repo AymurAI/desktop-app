@@ -1,18 +1,26 @@
-import { useRef, useState } from 'react';
-import { MagnifyingGlass } from 'phosphor-react';
+import { useRef, useState } from "react";
+import { MagnifyingGlass } from "phosphor-react";
 
-import Text from '../text';
-import regex from 'utils/regex';
+import Text from "../text";
+import regex from "utils/regex";
 
-import * as S from './SearchBar.styles';
-import type { Props } from './SearchBar.types';
-import useScroll from './useScroll';
-import Counter from './Counter';
-import { getFirstPrediction } from './utils';
+import * as S from "./SearchBar.styles";
+import type { Props } from "./SearchBar.types";
+import useScroll from "./useScroll";
+import Counter from "./Counter";
+import { getFirstPrediction } from "./utils";
+import { Grid, Select } from "components";
+import { anonymizerLabels } from "types/aymurai";
+import Container from "pages/validation/form-group/FormGroup.styles";
 
 const INITIAL_VALUE = 1;
 
-export default function SearchBar({ onChange, html, word }: Props) {
+export default function SearchBar({
+  onChange,
+  onSelectChange,
+  html,
+  word,
+}: Props) {
   const [count, setCount] = useState(INITIAL_VALUE);
   useScroll(count);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -58,26 +66,37 @@ export default function SearchBar({ onChange, html, word }: Props) {
     }
   };
 
+  //Select functions
+
   return (
-    <S.Wrapper onClick={focus}>
-      <MagnifyingGlass size={24} />
-      <S.InputContainer>
-        <S.Input
-          ref={inputRef}
-          onChange={handleChange}
-          placeholder="Buscar"
-          type="text"
-        />
-        {isSearching && firstPrediction && (
-          <S.SuggestionContainer>
-            <Text css={{ lineHeight: '100%' }}>|</Text>
-            <S.InputSuggestion onClick={selectWord}>
-              {firstPrediction}
-            </S.InputSuggestion>
-          </S.SuggestionContainer>
-        )}
-      </S.InputContainer>
-      <Counter {...{ next, previous, getMatchCount, count }} />
-    </S.Wrapper>
+    <>
+      <Grid columns={2} spacing="none" justify="stretch" align="stretch">
+        <S.Wrapper onClick={focus}>
+          <MagnifyingGlass size={24} />
+          <S.InputContainer>
+            <S.Input
+              ref={inputRef}
+              onChange={handleChange}
+              placeholder="Buscar"
+              type="text"
+            />
+            {isSearching && firstPrediction && (
+              <S.SuggestionContainer>
+                <Text css={{ lineHeight: "100%" }}>|</Text>
+                <S.InputSuggestion onClick={selectWord}>
+                  {firstPrediction}
+                </S.InputSuggestion>
+              </S.SuggestionContainer>
+            )}
+          </S.InputContainer>
+
+          <Counter {...{ next, previous, getMatchCount, count }} />
+        </S.Wrapper>
+
+        <Container css={{ "margin-left": "10px" }}>
+          <Select options={anonymizerLabels} onChange={onSelectChange} />
+        </Container>
+      </Grid>
+    </>
   );
 }
