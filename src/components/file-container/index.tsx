@@ -51,8 +51,16 @@ export default function FileContainer({ file }: Props) {
     ? anonymizedHtml
     : predictedHtml;
 
-  const handleChange = (text: string) => {
+  const handleChange = (text: string, selected?: boolean) => {
     setSearchText(text);
+
+    if (selected && selectedTag) {
+      setPredictions([...predictions, text!]);
+      setPredictionsTags([
+        ...predictionsTags,
+        { text: text!, tag: selectedTag?.id },
+      ]);
+    }
   };
 
   const clickHandler = (e: any) => {

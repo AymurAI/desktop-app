@@ -61,12 +61,10 @@ export default function SearchBar({
 
     if (firstPrediction && inputRef.current) {
       reset();
-      onChange(firstPrediction);
+      onChange(firstPrediction, true);
       inputRef.current.value = firstPrediction;
     }
   };
-
-  //Select functions
 
   return (
     <>
