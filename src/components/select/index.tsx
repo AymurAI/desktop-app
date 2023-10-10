@@ -5,37 +5,37 @@ import {
   forwardRef,
   useImperativeHandle,
   ChangeEvent,
-} from 'react';
-import { CaretDown } from 'phosphor-react';
+} from "react";
+import { CaretDown } from "phosphor-react";
 
-import { Label, Suggestion as SuggestionComponent, Text } from 'components';
+import { Label, Suggestion as SuggestionComponent, Text } from "components";
 import {
   Container,
   Input,
   InputContainer,
   TextContainer,
-} from './Select.styles';
+} from "./Select.styles";
 import {
   filterOptions,
   findById,
   orderByPriority,
   secureSuggestion,
-} from './utils';
-import { Optional } from 'types/utils';
-import List from './List';
+} from "./utils";
+import { Optional } from "types/utils";
+import List from "./List";
 
 export type SelectOption = { id: string; text: string };
-export type Suggestion = Optional<SelectOption, 'text'>;
+export type Suggestion = Optional<SelectOption, "text">;
 interface Props {
   options: SelectOption[];
   label?: string;
   helper?: string;
-  selected?: SelectOption['id'];
+  selected?: SelectOption["id"];
   suggestion?: Suggestion;
   onChange?: (value: SelectOption | undefined) => void;
-  priorityOrder?: SelectOption['id'][];
+  priorityOrder?: SelectOption["id"][];
 }
-export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
+export default forwardRef<{ value: SelectOption["id"] | undefined }, Props>(
   function Select(
     {
       label,
@@ -48,8 +48,8 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     },
     ref
   ) {
-    const [id, setId] = useState<SelectOption['id']>(
-      findById(selected, options)?.id ?? ''
+    const [id, setId] = useState<SelectOption["id"]>(
+      findById(selected, options)?.id ?? ""
     );
 
     // Only exposes `selected` object to the parent component
@@ -65,7 +65,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
 
     const orderedOptions = orderByPriority(options, priorityOrder);
     const filteredOptions = filterOptions(orderedOptions, id);
-    const updateValue = (newId: SelectOption['id']) => {
+    const updateValue = (newId: SelectOption["id"]) => {
       setId(newId);
 
       const option = findById(newId, options);
@@ -73,7 +73,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
     };
 
     const securedSuggestion = secureSuggestion(suggestion, options);
-    const isValueEmpty = !id || id === '';
+    const isValueEmpty = !id || id === "";
     const option = findById(id, options);
 
     const handleClickSelect =
@@ -85,9 +85,9 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
 
     const handleKeySelect =
       (text: string) => (e: KeyboardEvent<HTMLLIElement>) => {
-        if (e.code === 'Escape') {
+        if (e.code === "Escape") {
           e.currentTarget.blur();
-        } else if (e.code === 'Enter' || e.code === 'Space') {
+        } else if (e.code === "Enter" || e.code === "Space") {
           e.preventDefault(); // Prevent scroll
 
           updateValue(text);
@@ -104,7 +104,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
         <TextContainer>
           {/* LABEL */}
           {label && (
-            <Label size="s" css={{ color: '$textDefault' }}>
+            <Label size="s" css={{ color: "$textDefault" }}>
               {label}
             </Label>
           )}
@@ -114,7 +114,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
             <Input value={option?.text} onChange={handleChangeInput} />
             {securedSuggestion && isValueEmpty && (
               <>
-                <Text css={{ lineHeight: '100%' }}>|</Text>
+                <Text css={{ lineHeight: "100%" }}>|</Text>
                 <SuggestionComponent
                   onClick={handleClickSelect(securedSuggestion.id)}
                   onKeyDown={handleKeySelect(securedSuggestion.id)}
