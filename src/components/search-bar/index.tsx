@@ -12,6 +12,8 @@ import { getFirstPrediction } from "./utils";
 import { Grid, Select } from "components";
 import { anonymizerLabels } from "types/aymurai";
 import Container from "pages/validation/form-group/FormGroup.styles";
+import { useUser } from "hooks";
+import { FunctionType } from "types/user";
 
 const INITIAL_VALUE = 1;
 
@@ -21,6 +23,7 @@ export default function SearchBar({
   html,
   word,
 }: Props) {
+  const user = useUser();
   const [count, setCount] = useState(INITIAL_VALUE);
   useScroll(count);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -68,7 +71,12 @@ export default function SearchBar({
 
   return (
     <>
-      <Grid columns={2} spacing="none" justify="stretch" align="stretch">
+      <Grid
+        columns={user?.function === FunctionType.ANONYMIZER ? 2 : 1}
+        spacing="none"
+        justify="stretch"
+        align="stretch"
+      >
         <S.Wrapper onClick={focus}>
           <MagnifyingGlass size={24} />
           <S.InputContainer>
@@ -91,9 +99,11 @@ export default function SearchBar({
           <Counter {...{ next, previous, getMatchCount, count }} />
         </S.Wrapper>
 
-        <Container css={{ "margin-left": "10px" }}>
-          <Select options={anonymizerLabels} onChange={onSelectChange} />
-        </Container>
+        {user?.function === FunctionType.ANONYMIZER && (
+          <Container css={{ "margin-left": "10px" }}>
+            <Select options={anonymizerLabels} onChange={onSelectChange} />
+          </Container>
+        )}
       </Grid>
     </>
   );

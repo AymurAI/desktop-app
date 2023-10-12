@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Card,
@@ -9,16 +9,18 @@ import {
   Subtitle,
   Text,
   Button,
-} from 'components';
-import { useFileDispatch, useFiles, useUser } from 'hooks';
-import { Footer, Section } from 'layout/main';
-import { removeAllFiles } from 'reducers/file/actions';
-import { DATASET_URL } from 'utils/config';
-import filesystem from 'services/filesystem';
-import { submitValidations } from 'utils/file';
-import { DocFile } from 'types/file';
-import Anchor from './Anchor';
-import Callout from './Callout';
+} from "components";
+import { useFileDispatch, useFiles, useUser } from "hooks";
+import { Footer, Section } from "layout/main";
+import { removeAllFiles } from "reducers/file/actions";
+import { DATASET_URL } from "utils/config";
+import filesystem from "services/filesystem";
+import { submitValidations } from "utils/file";
+import { DocFile } from "types/file";
+import Anchor from "./Anchor";
+import Callout from "./Callout";
+import { FunctionType } from "types/user";
+import useAnonymizer from "hooks/useAnonymized";
 
 export default function Finish() {
   const files = useFiles();
@@ -30,9 +32,9 @@ export default function Finish() {
 
   const handleRestart = () => {
     dispatch(removeAllFiles());
-    navigate('/onboarding');
+    navigate("/onboarding");
   };
-
+  const anonymizedText = useAnonymizer();
   const checkForErrors = (fileName: string) =>
     !!errorNames.find((name) => name === fileName);
 
@@ -66,22 +68,47 @@ export default function Finish() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const downloadDocument = () => {
+    var header =
+      "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+      "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+      "xmlns='http://www.w3.org/TR/REC-html40'>" +
+      "<head><meta charset='utf-8'></head><body>";
+    var footer = "</body></html>";
+    var sourceHTML = header + anonymizedText + footer;
+
+    var source =
+      "data:application/vnd.ms-word;charset=utf-8," +
+      encodeURIComponent(sourceHTML);
+    var fileDownload = document.createElement("a");
+    document.body.appendChild(fileDownload);
+    fileDownload.href = source;
+    fileDownload.download = "document.doc";
+    fileDownload.click();
+    document.body.removeChild(fileDownload);
+  };
+
   return (
     <>
       <Section>
         <SectionTitle>4. Finalización</SectionTitle>
-        <Text css={{ maxWidth: '60%' }}>
-          Los datos encontrados por AymurAI y posteriormente validados ya son
-          parte del set de datos abiertos con perspectiva de género.
+        <Text css={{ maxWidth: "60%" }}>
+          {user?.function === FunctionType.ANONYMIZER
+            ? "Los datos encontrados por AymurAI y posteriormente validados ya han sido anonimizados correctamente."
+            : "Los datos encontrados por AymurAI y posteriormente validados ya son parte del set de datos abiertos con perspectiva de género."}
         </Text>
 
         <Card>
-          <Subtitle>Archivos procesados</Subtitle>
+          <Subtitle>
+            {user?.function === FunctionType.ANONYMIZER
+              ? "Archivo procesado"
+              : "Archivos procesados"}
+          </Subtitle>
           <Grid
             columns={4}
             spacing="xl"
             justify="center"
-            css={{ width: '100%' }}
+            css={{ width: "100%" }}
           >
             {files.map(({ data }) => (
               <FileCheck
@@ -92,7 +119,7 @@ export default function Finish() {
               ></FileCheck>
             ))}
           </Grid>
-          <Callout />
+          {user?.function !== FunctionType.ANONYMIZER && <Callout />}
         </Card>
       </Section>
       <Footer>
@@ -105,7 +132,7 @@ export default function Finish() {
         </Anchor>
         {user?.online ? (
           <Button
-            css={{ textDecoration: 'none' }}
+            css={{ textDecoration: "none" }}
             variant="secondary"
             as="a"
             href={DATASET_URL}
@@ -119,14 +146,22 @@ export default function Finish() {
           <Button
             variant="secondary"
             size="l"
-            onClick={() => filesystem.excel.open()}
+            onClick={() =>
+              user?.function === FunctionType.ANONYMIZER
+                ? downloadDocument()
+                : filesystem.excel.open()
+            }
           >
-            Ver set de datos
+            {user?.function === FunctionType.ANONYMIZER
+              ? "Descargar documento"
+              : "Ver set de datos"}
           </Button>
         )}
 
         <Button onClick={handleRestart} size="l">
-          Cargar más documentos
+          {user?.function === FunctionType.ANONYMIZER
+            ? "Cargar un nuevo documento"
+            : "Cargaar más documentos"}
         </Button>
       </Footer>
     </>

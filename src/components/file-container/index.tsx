@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useFileParser } from "hooks";
 import { DocFile } from "types/file";
@@ -10,6 +10,7 @@ import { useContext } from "react";
 import { AuthenticationContext as Context } from "context/Authentication";
 import { FunctionType } from "types/user";
 import { SelectOption } from "components/select";
+import { AnonymizerContext } from "context/Anonymizer";
 
 interface Props {
   file: DocFile;
@@ -35,6 +36,11 @@ export default function FileContainer({ file }: Props) {
     fileHTML,
     predictions,
     predictionsTags
+  );
+  const { setAnonymizedText } = useContext(AnonymizerContext);
+  //here we store the html that is going to be converted to docx
+  setAnonymizedText(
+    markWords.anonymizer(fileHTML, predictions, predictionsTags, true)
   );
 
   const [searchText, setSearchText] = useState("");
