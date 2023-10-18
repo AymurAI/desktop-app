@@ -84,10 +84,29 @@ export enum LabelDecisiones {
 export type AllLabels = LabelType | LabelDecisiones;
 
 export const anonymizerLabels: SelectOption[] = [
+  { id: "DNI", text: "DNI" },
   { id: "PER", text: "Persona" },
-  { id: "TELEFONO", text: "Telefono" },
+  { id: "TEL", text: "Número de teléfono" },
+  { id: "CORREO_ELECTRÓNICO", text: "Correo electrónico" },
+  { id: "BANCO", text: "Banco" },
+  { id: "CBU", text: "Clave Bancaria Uniforme " },
+  { id: "CUIJ", text: "Clave única de identificacioón judicial" },
+  { id: "CUIT_CUIL", text: "Código única de identificacioón laboral" },
   { id: "DIRECCION", text: "Dirección" },
+  { id: "LOC", text: "Localidad" },
+  { id: "EDAD", text: "Edad" },
+  { id: "ESTUDIOS", text: "Estudios" },
   { id: "FECHA", text: "Fecha" },
+  { id: "LINK", text: "Link" },
+  { id: "LOC", text: "Localidad" },
+  { id: "MARCA_AUTOMOVIL", text: "Marca automóvil" },
+  { id: "NACIONALIDAD", text: "Nacionalidad" },
+  { id: "NUM_ACTUACION", text: "Número actuación" },
+  { id: "NUM_CAJA_AHORRO", text: "Número caja ahorro" },
+  { id: "NUM_EXPEDIENTE", text: "Número expediente" },
+  { id: "NUM_MATRICULA", text: "Número matrícula" },
+  { id: "PATENTE_DOMINIO", text: "Patente dominio" },
+  { id: "TEXTO_ANONIMIZAR", text: "Texto anonimizar" },
 ];
 
 // --------------------
