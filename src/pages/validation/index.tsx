@@ -34,7 +34,10 @@ export default withFileProtection(function Validation() {
   const selectedFile = files[selected];
   // Check if the validation was completed on all the files
   const canContinue = isValidationCompleted(files);
-  const canValidate = isFileValidated(selectedFile);
+  const canValidate =
+    user?.function === FunctionType.ANONYMIZER
+      ? true
+      : isFileValidated(selectedFile);
 
   // HANDLERS
   const moveIndex = (newIndex: number | undefined) => {
@@ -94,7 +97,9 @@ export default withFileProtection(function Validation() {
           </Button>
         ) : (
           <Button size="l" onClick={handleValidate} disabled={!canValidate}>
-            Validar documento
+            {user?.function === FunctionType.ANONYMIZER
+              ? "Anonimizar documento"
+              : "Validar documento"}
           </Button>
         )}
       </Footer>

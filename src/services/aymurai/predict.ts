@@ -15,7 +15,6 @@ export default async function predict(
   route: string
 ): Promise<PredictLabel[]> {
   try {
-    console.log(route);
     const response = await fetcher.post<PredictSuccess>(
       route,
       {
