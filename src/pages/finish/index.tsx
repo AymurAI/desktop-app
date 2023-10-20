@@ -21,6 +21,8 @@ import Anchor from "./Anchor";
 import Callout from "./Callout";
 import { FunctionType } from "types/user";
 import useAnonymizer from "hooks/useAnonymized";
+import convertDocxToOdt from "services/aymurai/docx-to-odt";
+import { saveAs } from "file-saver";
 
 export default function Finish() {
   const files = useFiles();
@@ -68,7 +70,7 @@ export default function Finish() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const downloadDocument = () => {
+  const downloadDocument = async () => {
     var header =
       "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
       "xmlns:w='urn:schemas-microsoft-com:office:word' " +
@@ -77,15 +79,15 @@ export default function Finish() {
     var footer = "</body></html>";
     var sourceHTML = header + anonymizedText + footer;
 
-    var source =
-      "data:application/vnd.ms-word;charset=utf-8," +
-      encodeURIComponent(sourceHTML);
-    var fileDownload = document.createElement("a");
-    document.body.appendChild(fileDownload);
-    fileDownload.href = source;
-    fileDownload.download = "document.doc";
-    fileDownload.click();
-    document.body.removeChild(fileDownload);
+    var docBlob = new Blob(["\ufeff", sourceHTML], {
+      type: "application/msword",
+    });
+
+    const docFile = new File([docBlob], "document.doc");
+    const odtFile = await convertDocxToOdt(docFile);
+    var odtBlob = new Blob([odtFile.data]);
+
+    saveAs(odtBlob, files[0].data.name.split(".")[0] + ".odt");
   };
 
   return (
