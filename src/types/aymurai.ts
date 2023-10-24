@@ -90,8 +90,8 @@ export const anonymizerLabels: SelectOption[] = [
   { id: "CORREO_ELECTRÓNICO", text: "Correo electrónico" },
   { id: "BANCO", text: "Banco" },
   { id: "CBU", text: "Clave Bancaria Uniforme " },
-  { id: "CUIJ", text: "Clave única de identificacioón judicial" },
-  { id: "CUIT_CUIL", text: "Código única de identificacioón laboral" },
+  { id: "CUIJ", text: "Clave única de identificación judicial" },
+  { id: "CUIT_CUIL", text: "Código única de identificación laboral" },
   { id: "DIRECCION", text: "Dirección" },
   { id: "LOC", text: "Localidad" },
   { id: "EDAD", text: "Edad" },
@@ -114,5 +114,7 @@ export const anonymizerLabels: SelectOption[] = [
 // --------------------
 
 export type ExportDocumentSuccess = {
+  header?: string[];
   document: string;
+  footer?: string[];
 };

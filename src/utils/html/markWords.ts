@@ -40,12 +40,33 @@ function anonymizer(
   html: string,
   words: string[],
   tags: any[],
-  anonimize: boolean = false
+  anonimize: boolean = false,
+  header?: string
 ) {
-  let replaced = html;
+  let headerImg = "";
+  let headerBody = "";
+
+  if (header) {
+    const splitHeader = header
+      ?.split("<p>")
+      .map((text) => text.replaceAll("</p>", ""));
+    headerImg = splitHeader?.find((text) => text.includes("img")) ?? "";
+    if (headerImg) {
+      headerImg = `<p>${headerImg}</p>`;
+    }
+
+    headerBody = splitHeader
+      .map((text) => {
+        if (!text.includes("img") && text !== "") return `<p>${text}</p>`;
+
+        return "";
+      })
+      .join("");
+  }
+  let replaced = headerBody + html;
 
   const filteredWords = removeDuplicated(words);
-  // Enclose predicted words with <mark> tag
+
   filteredWords.forEach((word) => {
     replaced = replaced.replaceAll(
       word,
@@ -59,7 +80,7 @@ function anonymizer(
     );
   });
 
-  return replaced;
+  return headerImg + replaced;
 }
 
 function getTag(tags: any, word: string) {

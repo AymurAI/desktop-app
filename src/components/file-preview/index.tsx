@@ -27,7 +27,9 @@ export default function FilePreview({ file }: Props) {
           onChange={() => dispatch(toggleSelected(file.data.name))}
         ></Checkbox>
       )}
-      <FileContainer dangerouslySetInnerHTML={{ __html: html ?? "" }} />
+      <FileContainer
+        dangerouslySetInnerHTML={{ __html: html.document ?? "" }}
+      />
       <Text size="s">{file.data.name}</Text>
     </Wrapper>
   );
