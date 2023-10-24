@@ -11,7 +11,6 @@ import { AuthenticationContext as Context } from "context/Authentication";
 import { FunctionType } from "types/user";
 import { SelectOption } from "components/select";
 import { AnonymizerContext } from "context/Anonymizer";
-import { anonymizerLabels } from "types/aymurai";
 
 interface Props {
   file: DocFile;
@@ -44,7 +43,13 @@ export default function FileContainer({ file }: Props) {
   const { setAnonymizedText } = useContext(AnonymizerContext);
   //here we store the html that is going to be converted to docx
   setAnonymizedText(
-    markWords.anonymizer(fileHTML.document, predictions, anonymizerLabels, true)
+    markWords.anonymizer(
+      fileHTML.document,
+      predictions,
+      predictionsTags,
+      true,
+      fileHTML.header
+    )
   );
 
   const [searchText, setSearchText] = useState("");

@@ -87,7 +87,7 @@ export default function Finish() {
     const odtFile = await convertDocxToOdt(docFile);
     var odtBlob = new Blob([odtFile.data]);
 
-    saveAs(odtBlob, files[0].data.name.split(".")[0] + ".odt");
+    saveAs(odtBlob, files[0].data.name.split(".")[0] + "_anonimizado.odt");
   };
 
   return (
