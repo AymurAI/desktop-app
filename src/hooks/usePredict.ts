@@ -1,13 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 
-import { useFileDispatch, useFileParser } from "hooks";
+import { useFileDispatch, useFileParser, useUser } from "hooks";
 import { predict } from "services/aymurai";
 import { PredictLabel } from "types/aymurai";
 import { toPlainParagraphs } from "utils/html";
 import { addPredictions, removePredictions } from "reducers/file/actions";
 
-import { useContext } from "react";
-import { AuthenticationContext as Context } from "context/Authentication";
 import { FunctionType } from "types/user";
 
 export type PredictStatus = "processing" | "error" | "stopped" | "completed";
@@ -24,7 +22,8 @@ export default function usePredict(
   file: File,
   { onStatusChange }: UsePredictOptions = {}
 ) {
-  const { user } = useContext(Context);
+  const user = useUser();
+
   const [status, setStatus] = useState<PredictStatus>("processing");
   const [progress, setProgress] = useState(0);
   const [promises, setPromises] = useState<Promise<PredictLabel[]>[]>([]);
