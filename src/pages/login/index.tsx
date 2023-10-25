@@ -106,7 +106,7 @@ export default function Login() {
             target="_blank"
             rel="noreferrer"
           >
-            <img src="brand/data-genero.png" alt="DataGenero" width={127} />
+            <img src="brand/data-genero.png" alt="DataGenero" width={170} />
           </a>
         </Stack>
       </Container>
