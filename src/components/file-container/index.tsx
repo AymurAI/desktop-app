@@ -1,13 +1,12 @@
 import { useState } from "react";
 
-import { useFileParser } from "hooks";
+import { useFileParser, useUser } from "hooks";
 import { DocFile } from "types/file";
 import { markWords } from "utils/html";
 
 import * as S from "./FileContainer.styles";
 import { SearchBar } from "components";
 import { useContext } from "react";
-import { AuthenticationContext as Context } from "context/Authentication";
 import { FunctionType } from "types/user";
 import { SelectOption } from "components/select";
 import { AnonymizerContext } from "context/Anonymizer";
@@ -17,8 +16,7 @@ interface Props {
 }
 
 export default function FileContainer({ file }: Props) {
-  const { user } = useContext(Context);
-
+  const user = useUser();
   const fileHTML = useFileParser(file.data, (html) => html);
 
   const [predictions, setPredictions] = useState<string[]>(

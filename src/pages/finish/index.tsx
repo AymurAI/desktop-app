@@ -130,7 +130,7 @@ export default function Finish() {
           target="_blank"
           rel="noreferrer"
         >
-          <img src="brand/data-genero.png" alt="DataGenero" width={127} />
+          <img src="brand/data-genero.png" alt="DataGenero" width={150} />
         </Anchor>
         {user?.online ? (
           <Button

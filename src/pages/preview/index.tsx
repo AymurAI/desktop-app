@@ -11,7 +11,7 @@ import {
   HiddenInput,
   SectionTitle,
 } from "components";
-import { useFileDispatch, useFiles } from "hooks";
+import { useFileDispatch, useFiles, useUser } from "hooks";
 import { Footer, Section } from "layout/main";
 import {
   addFiles,
@@ -19,12 +19,10 @@ import {
   removeAllFiles,
 } from "reducers/file/actions";
 
-import { useContext } from "react";
-import { AuthenticationContext as Context } from "context/Authentication";
 import { FunctionType } from "types/user";
 
 export default function Preview() {
-  const { user } = useContext(Context);
+  const user = useUser();
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Bell } from "phosphor-react";
 
-import { useFiles, useFileDispatch } from "hooks";
+import { useFiles, useFileDispatch, useUser } from "hooks";
 import { Footer, Section } from "layout/main";
 import {
   SectionTitle,
@@ -20,17 +20,15 @@ import { initProcessState, canContinue, replace } from "./utils";
 import { PredictStatus } from "hooks/usePredict";
 import useNotify from "./useNotify";
 
-import { useContext } from "react";
-import { AuthenticationContext as Context } from "context/Authentication";
 import { FunctionType } from "types/user";
 
 export default withFileProtection(function Process() {
+  const user = useUser();
   const navigate = useNavigate();
   const dispatch = useFileDispatch();
   const files = useFiles();
   const [process, setProcess] = useState(initProcessState(files));
   const { isToastVisible, hideToast } = useNotify(process);
-  const { user } = useContext(Context);
 
   const handleStatusChange = (name: string) => (newValue: PredictStatus) => {
     // Replace the newValue

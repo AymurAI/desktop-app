@@ -3,16 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 import { Button, HiddenInput, Stack, Text, Title, Arrow } from "components";
 import { Section, Footer } from "layout/main";
-import { useFileDispatch } from "hooks";
+import { useFileDispatch, useUser } from "hooks";
 import { Card } from "./cards";
 import { addFiles } from "reducers/file/actions";
-import { useContext } from "react";
-import { AuthenticationContext as Context } from "context/Authentication";
 import { FunctionType } from "types/user";
 
 export default function Onboarding() {
-  const { user } = useContext(Context);
-
+  const user = useUser();
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useFileDispatch();
   const navigate = useNavigate();

@@ -8,7 +8,7 @@ import {
   Grid,
   SectionTitle,
 } from "components";
-import { useFileDispatch, useFiles } from "hooks";
+import { useFileDispatch, useFiles, useUser } from "hooks";
 import { Footer, Section } from "layout/main";
 import FormGroup from "./form-group";
 import withFileProtection from "features/withFileProtection";
@@ -16,8 +16,6 @@ import { isFileValidated, isValidationCompleted } from "utils/file";
 import { validate } from "reducers/file/actions";
 import { moveNext, movePrevious } from "./utils";
 
-import { useContext } from "react";
-import { AuthenticationContext as Context } from "context/Authentication";
 import { FunctionType } from "types/user";
 
 export default withFileProtection(function Validation() {
@@ -26,7 +24,7 @@ export default withFileProtection(function Validation() {
   const [selected, setSelected] = useState(0);
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
-  const { user } = useContext(Context);
+  const user = useUser();
 
   // FIELDS
   const hasStepper = files.length > 1;
