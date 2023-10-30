@@ -119,10 +119,7 @@ export default function FileContainer({ file }: Props) {
       <S.File
         onClick={clickHandler}
         dangerouslySetInnerHTML={{
-          __html:
-            user?.function === FunctionType.ANONYMIZER
-              ? anonymizedHtml
-              : predictedHtml,
+          __html: searchedHtml,
         }}
       ></S.File>
     </S.Container>
