@@ -2,7 +2,7 @@ import { BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 
 import { EXTERNAL_URLS, isDebug, isProduction } from './env';
-import { resolveHTMLPath, crypto, feedback, excel } from './utils';
+import { resolveHTMLPath, crypto, feedback, excel, taskbar } from './utils';
 
 export let mainWindow: BrowserWindow | null;
 
@@ -69,4 +69,7 @@ export default function createWindow() {
   // OAUTH
   ipcMain.handle('GET_CHALLENGE_CODE', crypto.getChallengeCode);
   ipcMain.handle('GET_VERIFIER_CODE', crypto.getVerifierCode);
+
+  // TASKBAR
+  ipcMain.handle('TASKBAR_NOTIFY', taskbar.notify);
 }

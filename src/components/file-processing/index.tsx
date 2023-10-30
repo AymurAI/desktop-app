@@ -1,11 +1,12 @@
-import { ChangeEventHandler, useRef } from 'react';
+import { X } from "phosphor-react";
+import { ChangeEventHandler, useRef } from "react";
 
-import { HiddenInput, Stack } from 'components';
-import Button from './Button';
-import ProgressBar from './ProgressBar';
-import { useFileDispatch, usePredict } from 'hooks';
-import { replaceFile } from 'reducers/file/actions';
-import { PredictStatus } from 'hooks/usePredict';
+import { HiddenInput, Stack, Button as BaseButton } from "components";
+import Button from "./Button";
+import ProgressBar from "./ProgressBar";
+import { useFileDispatch, usePredict } from "hooks";
+import { replaceFile, removeFile } from "reducers/file/actions";
+import { PredictStatus } from "hooks/usePredict";
 
 interface Props {
   file: File;
@@ -44,24 +45,32 @@ export default function FileProcessing({
     abort();
   };
 
+  const remove = () => {
+    abort();
+    dispatch(removeFile(file.name));
+  };
+
   return (
-    <Stack align="center" spacing="m" css={{ width: '100%' }}>
+    <Stack align="center" spacing="m" css={{ width: "100%" }}>
       <HiddenInput
         multiple={false}
-        css={{ position: 'absolute' }}
+        css={{ position: "absolute" }}
         ref={inputRef}
         onChange={handleAddedFile}
       />
       <ProgressBar
         status={status}
         fileName={file.name}
-        progress={status === 'stopped' ? 0 : Math.round(progress * 100)}
+        progress={status === "stopped" ? 0 : Math.round(progress * 100)}
       />
       <Button
         status={status}
         onStop={handleStop}
         onReplace={handleOpenFinder}
       />
+      <BaseButton variant="none" onClick={remove}>
+        <X />
+      </BaseButton>
     </Stack>
   );
 }

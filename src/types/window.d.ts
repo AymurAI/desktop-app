@@ -1,5 +1,6 @@
 type OnceAuthCodeReceivedCallback = (authCode: string | null) => void;
 
+// Add functions to window object from the renderer process (Electron)
 declare global {
   interface Window {
     filesystem?: {
@@ -18,6 +19,9 @@ declare global {
       onceAuthCodeReceived: (
         callback: OnceAuthCodeReceivedCallback
       ) => Promise<void>;
+    };
+    taskbar?: {
+      notify: () => Promise<void>;
     };
   }
 }

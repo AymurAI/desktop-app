@@ -1,6 +1,8 @@
 import { Label, Stack } from 'components';
 import { PredictStatus } from 'hooks/usePredict';
 import { Bar, BarContainer } from './FileProcessing.styles';
+import { CheckCircle } from 'phosphor-react';
+import { ProgressLabel } from './ProgressLabel';
 
 interface Props {
   fileName: string;
@@ -11,7 +13,11 @@ export default function ProgressBar({ fileName, progress, status }: Props) {
   const getProgressText = () => {
     const text = {
       processing: `${progress}%`,
-      completed: `${progress}%`,
+      completed: (
+        <>
+          <CheckCircle></CheckCircle> Carga finalizada 100%
+        </>
+      ),
       error: 'Error de carga de archivo. Volvelo a intentar',
       stopped: 'Detuviste el procesamiento de este archivo',
     };
@@ -26,16 +32,13 @@ export default function ProgressBar({ fileName, progress, status }: Props) {
         <Label status={status === 'error' ? 'error' : 'default'}>
           {fileName}
         </Label>
-        <Label
-          status={status === 'error' ? 'error' : 'default'}
-          css={{ fontStyle: 'italic' }}
-        >
+        <ProgressLabel progress={status} css={{}}>
           {getProgressText()}
-        </Label>
+        </ProgressLabel>
       </Stack>
 
       <BarContainer>
-        <Bar css={{ width: `${progress}%` }} />
+        <Bar isCompleted={progress === 100} css={{ width: `${progress}%` }} />
       </BarContainer>
     </Stack>
   );

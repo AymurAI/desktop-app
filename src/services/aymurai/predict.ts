@@ -1,7 +1,7 @@
-import { CanceledError } from 'axios';
+import { CanceledError } from "axios";
 
-import { PredictLabel, PredictSuccess } from 'types/aymurai';
-import { fetcher } from './utils';
+import { PredictLabel, PredictSuccess } from "types/aymurai";
+import { fetcher } from "./utils";
 
 /**
  * Realiza una petición a la AI para poder obtener predicciones en base a un párrafo
@@ -11,11 +11,12 @@ import { fetcher } from './utils';
  */
 export default async function predict(
   paragraph: string,
-  controller: AbortController
+  controller: AbortController,
+  route: string
 ): Promise<PredictLabel[]> {
   try {
     const response = await fetcher.post<PredictSuccess>(
-      '/predict',
+      route,
       {
         text: paragraph,
       },

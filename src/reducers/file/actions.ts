@@ -1,21 +1,22 @@
-import { FormData } from 'hooks/useForm';
-import { PredictLabel } from 'types/aymurai';
+import { FormData } from "hooks/useForm";
+import { PredictLabel } from "types/aymurai";
 
 /**
  * List of action types.
  */
 export enum ActionTypes {
-  ADD = 'ADD',
-  ADD_PREDICTIONS = 'ADD_PREDICTIONS',
-  FILTER_UNSELECTED = 'FILTER_UNSELECTED',
-  FILTER_UNPROCESSED = 'FILTER_UNPROCESSED',
-  TOGGLE_SELECTED = 'TOGGLE_SELECTED',
-  REMOVE_ALL_PREDICTIONS = 'REMOVE_ALL_PREDICTIONS',
-  REMOVE_PREDICTIONS = 'REMOVE_PREDICTIONS',
-  REMOVE_ALL_FILES = 'REMOVE_ALL_FILES',
-  REPLACE_FILE = 'REPLACE_FILE',
-  VALIDATE = 'VALIDATE',
-  APPEND_VALIDATION = 'APPEND_VALIDATION',
+  ADD = "ADD",
+  ADD_PREDICTIONS = "ADD_PREDICTIONS",
+  FILTER_UNSELECTED = "FILTER_UNSELECTED",
+  FILTER_UNPROCESSED = "FILTER_UNPROCESSED",
+  TOGGLE_SELECTED = "TOGGLE_SELECTED",
+  REMOVE_ALL_PREDICTIONS = "REMOVE_ALL_PREDICTIONS",
+  REMOVE_PREDICTIONS = "REMOVE_PREDICTIONS",
+  REMOVE_ALL_FILES = "REMOVE_ALL_FILES",
+  REMOVE_FILE = "REMOVE_FILE",
+  REPLACE_FILE = "REPLACE_FILE",
+  VALIDATE = "VALIDATE",
+  APPEND_VALIDATION = "APPEND_VALIDATION",
 }
 
 /**
@@ -84,6 +85,20 @@ export function removeAllFiles(): RemoveAllFilesAction {
   return {
     type: ActionTypes.REMOVE_ALL_FILES,
     payload: {},
+  };
+}
+
+export type RemoveFileAction = Action<
+  ActionTypes.REMOVE_FILE,
+  { fileName: string }
+>;
+/**
+ * Removes a single file from the array
+ */
+export function removeFile(fileName: string): RemoveFileAction {
+  return {
+    type: ActionTypes.REMOVE_FILE,
+    payload: { fileName },
   };
 }
 

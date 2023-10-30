@@ -32,7 +32,7 @@ export default function DecisionTabs({
           onClick={selectDecisionHandler(dec)}
           status={selected === dec ? 'focus' : 'default'}
         >
-          <TabName css={{ cursor: 'pointer' }}>Decision {dec + 1}</TabName>
+          <TabName css={{ cursor: 'pointer' }}>Decisión {dec + 1}</TabName>
         </Tab>
       ))}
       <PlusButton variant="secondary" onClick={addDecision}>

@@ -22,3 +22,7 @@ contextBridge.exposeInMainWorld('oauth', {
   onceAuthCodeReceived: (callback: OnceAuthCodeReceived) =>
     ipcRenderer.once('AUTH_CODE_RECEIVED', (_, authCode) => callback(authCode)),
 });
+
+contextBridge.exposeInMainWorld('taskbar', {
+  notify: () => ipcRenderer.invoke('TASKBAR_NOTIFY'),
+});
