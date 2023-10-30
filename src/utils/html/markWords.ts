@@ -40,7 +40,7 @@ function anonymizer(
   html: string,
   words: string[],
   tags: any[],
-  anonimize: boolean = false,
+  anonymize: boolean = false,
   header?: string
 ) {
   let headerImg = "";
@@ -68,16 +68,17 @@ function anonymizer(
   const filteredWords = removeDuplicated(words);
 
   filteredWords.forEach((word) => {
-    replaced = replaced.replaceAll(
-      word,
+    if (word !== ":" && word !== "=")
+      replaced = replaced.replaceAll(
+        word,
 
-      anonimize
-        ? `<strong>${getTag(tags, word)}</strong>`
-        : `<mark class="predicted-word"> ${word} <strong>${getTag(
-            tags,
-            word
-          )}</strong> <close id="${word}">X</close></mark>`
-    );
+        anonymize
+          ? `<strong>< ${getTag(tags, word)} ></strong>`
+          : `<mark class="predicted-word"> ${word} <strong>${getTag(
+              tags,
+              word
+            )}</strong> <close id="${word}">X</close></mark>`
+      );
   });
 
   return headerImg + replaced;
