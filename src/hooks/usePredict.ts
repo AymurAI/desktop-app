@@ -56,10 +56,10 @@ export default function usePredict(
   // Generate Promises
   useEffect(() => {
     // If the HTML is valid and we have no promises yet
-    if (html.document && promises.length === 0) {
+    if (html.document && html.header && promises.length === 0) {
       // Restart the prediction process
       dispatch(removePredictions(file.name));
-      const paragraphs = toPlainParagraphs(html.document);
+      const paragraphs = toPlainParagraphs(html.header + html.document);
 
       const promises = paragraphs.map(async (p) => {
         const prediction = await predict(
@@ -78,7 +78,14 @@ export default function usePredict(
 
       setPromises(promises);
     }
-  }, [html.document, dispatch, promises.length, file.name, user?.function]);
+  }, [
+    html.document,
+    html.header,
+    dispatch,
+    promises.length,
+    file.name,
+    user?.function,
+  ]);
 
   // Completed promises
   useEffect(() => {
