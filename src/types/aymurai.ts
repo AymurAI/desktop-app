@@ -98,7 +98,6 @@ export const anonymizerLabels: SelectOption[] = [
   { id: "ESTUDIOS", text: "Estudios" },
   { id: "FECHA", text: "Fecha" },
   { id: "LINK", text: "Link" },
-  { id: "LOC", text: "Localidad" },
   { id: "MARCA_AUTOMOVIL", text: "Marca automóvil" },
   { id: "NACIONALIDAD", text: "Nacionalidad" },
   { id: "NUM_ACTUACION", text: "Número actuación" },
