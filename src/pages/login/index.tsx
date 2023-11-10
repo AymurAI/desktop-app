@@ -19,13 +19,13 @@ export default function Login() {
   const user = useUser();
 
   const { login } = useLogin();
-  const [isLocal, setIsLocal] = useState(false);
+  const [isLocal, setIsLocal] = useState(user ? !user?.online : false);
 
   /**
    * Ensures the user state has been successfully updated before navigating to the `/home`
    */
   useEffect(() => {
-    if (user) navigate("/onboarding");
+    if (user && user.function !== "") navigate("/onboarding");
   }, [user, navigate]);
 
   return (
