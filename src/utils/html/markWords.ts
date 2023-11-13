@@ -73,7 +73,7 @@ function anonymizer(
         word,
 
         anonymize
-          ? `<strong>< ${getTag(tags, word)} ></strong>`
+          ? `<strong>&lt;${getTag(tags, word)}&gt;</strong>`
           : `<mark class="predicted-word"> ${word} <strong>${getTag(
               tags,
               word
