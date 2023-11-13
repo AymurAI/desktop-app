@@ -44,6 +44,7 @@ export default function useLogin({ onLogout }: UseLoginArgs = {}) {
   };
   const loginOffline = (funcType: FunctionType) => {
     setUser({ online: false, function: funcType, token: "" });
+    onLogout?.();
   };
 
   const login = {
