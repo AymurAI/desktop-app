@@ -68,7 +68,7 @@ function anonymizer(
   const filteredWords = removeDuplicated(words);
 
   filteredWords.forEach((word) => {
-    if (word !== ":" && word !== "=")
+    if (word !== ":" && word !== ";" && word !== "=")
       replaced = replaced.replaceAll(
         word,
 
