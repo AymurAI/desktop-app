@@ -20,11 +20,13 @@ export default function FileContainer({ file }: Props) {
   const fileHTML = useFileParser(file.data, (html) => html);
 
   const [predictions, setPredictions] = useState<string[]>(
-    file.predictions!.map((label) => label.text)
+    file.predictions!.map((label) =>
+      label.aymurai_alt_text ? label.aymurai_alt_text : label.text
+    )
   );
   const [predictionsTags, setPredictionsTags] = useState<any[]>(
     file.predictions!.map((label) => ({
-      text: label.text,
+      text: label.aymurai_alt_text ? label.aymurai_alt_text : label.text,
       tag: label.attrs.aymurai_label,
     }))
   );

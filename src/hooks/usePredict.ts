@@ -94,8 +94,35 @@ export default function usePredict(
         .then((result) => {
           // Check if the prediction process is still ongoing
           if (!cancelled.current) {
-            result.forEach((prediction) => {
-              dispatch(addPredictions(file.name, prediction));
+            result.forEach((prediction, i) => {
+              if (prediction.length > 0) {
+                //remove special characters
+                let newPrediction = prediction
+                  .map((data) => ({
+                    ...data,
+                    aymurai_alt_text: data.text.replace(/^[“.,]+|[“.,]+$/g, ""),
+                  }))
+                  .flatMap((data) => {
+                    if (data.attrs.aymurai_label === "PER") {
+                      //Split by special character
+                      const split = data.aymurai_alt_text.split(/[.,“\-=/_]/);
+
+                      let newData: PredictLabel[] = [];
+                      split.forEach((label) => {
+                        newData.push({
+                          ...data,
+                          text: label.trim(),
+                          aymurai_alt_text: label.trim(),
+                        });
+                      });
+                      return newData;
+                    }
+
+                    return data;
+                  });
+
+                dispatch(addPredictions(file.name, newPrediction));
+              }
             });
 
             updateStatus("completed");

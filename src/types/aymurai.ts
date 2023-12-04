@@ -12,6 +12,7 @@ type LabelAttributes = {
 
 export type PredictLabel = {
   text: string;
+  aymurai_alt_text?: string;
   start_char: number;
   end_char: number;
   attrs: LabelAttributes;
@@ -81,7 +82,11 @@ export enum LabelDecisiones {
   HORA_DE_CIERRE = "HORA_DE_CIERRE",
   DURACION = "DURACION",
 }
-export type AllLabels = LabelType | LabelDecisiones;
+export enum LabelAnonimizer {
+  PER = "PER",
+}
+
+export type AllLabels = LabelType | LabelDecisiones | LabelAnonimizer;
 
 export const anonymizerLabels: SelectOption[] = [
   { id: "DNI", text: "DNI" },
