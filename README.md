@@ -17,7 +17,7 @@ Other technologies
 ##  Getting started
 
 1. Clone the repository
-1. Add your Google OAuth Client ID as an `.env` file
+1. Add your [Google OAuth Client ID](https://developers.google.com/identity/protocols/oauth2) as an `.env` file
 
    ```bash
    $ vim .env
