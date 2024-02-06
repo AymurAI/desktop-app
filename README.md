@@ -39,9 +39,17 @@ Other technologies
 
 ## Run Aymurai API
 
-```sh
-docker run -p 8899:8899 -h -d registry.gitlab.com/collective.ai/datagenero-public/aymurai-api-prod:2023-10-20
-```
+1. First download the image
+
+  ```sh
+  docker pull registry.gitlab.com/collective.ai/datagenero-public/aymurai-api-prod
+  ```
+
+2. And then create the corresponding container
+
+  ```sh
+  docker run -p 8899:8899 -h -d registry.gitlab.com/collective.ai/datagenero-public/aymurai-api-prod:latest
+  ```
 
 ## Scripts
 
