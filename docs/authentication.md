@@ -44,6 +44,11 @@ guardarlos en la sesión.
 obtener el _access token_ y el _refresh token_. Para actualizar el _access token_
 se utiliza el _refresh token_ y un timer cada 45min.
 
+> 💡 Para pasar la información devuelta a la app de _React_ se utiliza un
+[deep link](https://www.electronjs.org/docs/latest/tutorial/launch-app-from-url-in-another-app).
+Suele suceder que en modo _development_ no quede definido el _protocol_ para el
+_deep link_, por lo que se debe usar la versión productiva.
+
 ![Electron PKCE para OAuth2](./images/electron_pkce.png)
 
 > 💡 [Más información](./excel/spreadsheet-api.md) en cómo se utiliza la
