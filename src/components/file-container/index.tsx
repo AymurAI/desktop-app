@@ -1,15 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from 'react';
 
-import { useFileParser, useUser } from "hooks";
-import { DocFile } from "types/file";
-import { markWords } from "utils/html";
+import { useFileParser, useUser } from 'hooks';
+import { DocFile } from 'types/file';
+import { markWords } from 'utils/html';
 
-import * as S from "./FileContainer.styles";
-import { SearchBar } from "components";
-import { useContext } from "react";
-import { FunctionType } from "types/user";
-import { SelectOption } from "components/select";
-import { AnonymizerContext } from "context/Anonymizer";
+import * as S from './FileContainer.styles';
+import { SearchBar } from 'components';
+import { FunctionType } from 'types/user';
+import { SelectOption } from 'components/select';
+import { AnonymizerContext } from 'context/Anonymizer';
+import { reverse as reverseHash } from 'utils/html/hashWord';
 
 interface Props {
   file: DocFile;
@@ -52,7 +52,7 @@ export default function FileContainer({ file }: Props) {
     )
   );
 
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const isSearchEnabled = searchText.length > 2;
 
   const searchedHtml = isSearchEnabled
@@ -79,15 +79,15 @@ export default function FileContainer({ file }: Props) {
   };
 
   const clickHandler = (e: any) => {
-    const el = e.target.closest("close");
+    const el = e.target.closest('button.remove-tag');
+    const id = reverseHash(e.target.id);
+
     if (el && e.currentTarget.contains(el)) {
-      const filteredPredictions = predictions.filter(
-        (value) => value !== e.target.id
-      );
+      const filteredPredictions = predictions.filter((value) => value !== id);
       setPredictions(filteredPredictions);
 
       const filteredPredictionsTags = predictionsTags.filter(
-        (value) => value?.text !== e.target.id
+        (value) => value?.text !== id
       );
       setPredictionsTags(filteredPredictionsTags);
     }

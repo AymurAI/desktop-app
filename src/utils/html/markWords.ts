@@ -1,4 +1,5 @@
-import regex from "utils/regex";
+import regex from 'utils/regex';
+import { hash } from './hashWord';
 
 /**
  * Removes duplicated words from the predictions array
@@ -43,42 +44,46 @@ function anonymizer(
   anonymize: boolean = false,
   header?: string
 ) {
-  let headerImg = "";
-  let headerBody = "";
+  let headerImg = '';
+  let headerBody = '';
 
   if (header) {
     const splitHeader = header
-      ?.split("<p>")
-      .map((text) => text.replaceAll("</p>", ""));
-    headerImg = splitHeader?.find((text) => text.includes("img")) ?? "";
+      ?.split('<p>')
+      .map((text) => text.replaceAll('</p>', ''));
+    headerImg = splitHeader?.find((text) => text.includes('img')) ?? '';
     if (headerImg) {
       headerImg = `<p>${headerImg}</p>`;
     }
 
     headerBody = splitHeader
       .map((text) => {
-        if (!text.includes("img") && text !== "") return `<p>${text}</p>`;
+        if (!text.includes('img') && text !== '') return `<p>${text}</p>`;
 
-        return "";
+        return '';
       })
-      .join("");
+      .join('');
   }
   let replaced = headerBody + html;
 
   const filteredWords = removeDuplicated(words);
 
   filteredWords.forEach((word) => {
-    if (word !== ":" && word !== ";" && word !== "=")
+    if (word !== ':' && word !== ';' && word !== '=') {
+      const tag = getTag(tags, word);
+      const hashedWord = hash(word);
+
       replaced = replaced.replaceAll(
         word,
-
         anonymize
-          ? `<strong>&lt;${getTag(tags, word)}&gt;</strong>`
-          : `<mark class="predicted-word"> ${word} <strong>${getTag(
-              tags,
-              word
-            )}</strong> <close id="${word}">X</close></mark>`
+          ? `<strong class="strong-dunno">${tag}</strong>`
+          : `<mark class="predicted-word">
+              <span>${word}</span>
+              <strong>${tag}</strong>
+              <button id="${hashedWord}" class="remove-tag">X</button>
+            </mark>`
       );
+    }
   });
 
   return headerImg + replaced;
@@ -91,7 +96,7 @@ function getTag(tags: any, word: string) {
 }
 
 function searched(html: string | null, word: string) {
-  if (!html) return "";
+  if (!html) return '';
   if (word.length <= 2) return html;
 
   const regExp = regex.includes(word);
