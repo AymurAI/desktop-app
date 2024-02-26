@@ -62,7 +62,7 @@ function anonymizer(
     const tag = getTag(tags, word);
 
     return anonymize
-      ? `<strong>${tag}</strong>`
+      ? `<strong>&lt;${tag}&gt;</strong>`
       : `<mark class="predicted-word">
           <span>${word}</span>
           <strong>${tag}</strong>
