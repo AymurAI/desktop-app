@@ -1,5 +1,32 @@
 import findAndReplaceDOMText from 'findandreplacedomtext';
 
+/**
+ * Wraps a word with a mark element, adding a class to it.
+ * @param className Class name to be added to the mark element.
+ * @returns `HTMLElement`.
+ */
+export const markWrapper =
+  (className: string) => (word: string, dom: Document) => {
+    const el = dom.createElement('mark');
+    el.classList.add(className);
+    el.innerText = word;
+    return el;
+  };
+
+/**
+ * Wraps a word with a generic HTML element.
+ * @param html A function that receives a word that should be inserted in the 'template'.
+ * @returns `HTMLElement`.
+ */
+export const wrapperFromString =
+  (html: (word: string) => string) => (word: string, dom: Document) => {
+    const el = dom.createElement('div');
+    el.innerHTML = html(word);
+
+    // Return the first child, because the div wrapper is not needed.
+    return el.children[0] as HTMLElement;
+  };
+
 interface ReplacerArgs {
   html: string;
   words: string[] | RegExp[];
