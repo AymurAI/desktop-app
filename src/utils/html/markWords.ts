@@ -63,12 +63,11 @@ function anonymizer(
 
     return anonymize
       ? `<strong>${tag}</strong>`
-      : `
-    <mark class="predicted-word">
-      <span>${word}</span>
-      <strong>${tag}</strong>
-      <button class="remove-tag" id="${hash(word)}">X</button>
-    </mark>`;
+      : `<mark class="predicted-word">
+          <span>${word}</span>
+          <strong>${tag}</strong>
+          <button class="remove-tag" id="${hash(word)}">X</button>
+        </mark>`;
   });
 
   const replacedHTML = replaceWords({
