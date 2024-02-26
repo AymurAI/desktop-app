@@ -1,5 +1,6 @@
 import regex from 'utils/regex';
 import { hash } from './hashWord';
+import { markWrapper, replaceWords, wrapperFromString } from './replaceWords';
 
 /**
  * Removes duplicated words from the predictions array
@@ -22,19 +23,11 @@ function removeDuplicated(words: string[]) {
  * @returns The same HTML but with the given words enclosed in `<mark>` tags
  */
 function predicted(html: string, words: string[]) {
-  let replaced = html;
-
-  const filteredWords = removeDuplicated(words);
-
-  // Enclose predicted words with <mark> tag
-  filteredWords.forEach((word) => {
-    replaced = replaced.replaceAll(
-      word,
-      `<mark class="predicted-word">${word}</mark>`
-    );
+  return replaceWords({
+    html,
+    words: removeDuplicated(words),
+    wrapper: markWrapper('predicted-word'),
   });
-
-  return replaced;
 }
 
 function anonymizer(
@@ -64,29 +57,26 @@ function anonymizer(
       })
       .join('');
   }
-  let replaced = headerBody + html;
 
-  const filteredWords = removeDuplicated(words);
+  const wrapper = wrapperFromString((word) => {
+    const tag = getTag(tags, word);
 
-  filteredWords.forEach((word) => {
-    if (word !== ':' && word !== ';' && word !== '=') {
-      const tag = getTag(tags, word);
-      const hashedWord = hash(word);
-
-      replaced = replaced.replaceAll(
-        word,
-        anonymize
-          ? `<strong class="strong-dunno">${tag}</strong>`
-          : `<mark class="predicted-word">
-              <span>${word}</span>
-              <strong>${tag}</strong>
-              <button id="${hashedWord}" class="remove-tag">X</button>
-            </mark>`
-      );
-    }
+    return anonymize
+      ? `<strong>${tag}</strong>`
+      : `<mark class="predicted-word">
+          <span>${word}</span>
+          <strong>${tag}</strong>
+          <button class="remove-tag" id="${hash(word)}">X</button>
+        </mark>`;
   });
 
-  return headerImg + replaced;
+  const replacedHTML = replaceWords({
+    html,
+    words: removeDuplicated(words),
+    wrapper,
+  });
+
+  return headerImg + headerBody + replacedHTML;
 }
 
 function getTag(tags: any, word: string) {
@@ -100,8 +90,12 @@ function searched(html: string | null, word: string) {
   if (word.length <= 2) return html;
 
   const regExp = regex.includes(word);
-  //
-  return html.replaceAll(regExp, `<mark class="searched-word">$&</mark>`);
+
+  return replaceWords({
+    html,
+    words: [regExp],
+    wrapper: markWrapper('searched-word'),
+  });
 }
 
 const mark = {
