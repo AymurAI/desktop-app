@@ -9,8 +9,9 @@ export const hash = (word: string) => {
 
   try {
     return window.btoa(sanitized);
-  } catch {
+  } catch (e) {
     console.error('Error parsing word:', word);
+    console.error(e);
     return 'err';
   }
 };
