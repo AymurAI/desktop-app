@@ -4,9 +4,15 @@
  * @returns A `string` representing the hashed word.
  */
 export const hash = (word: string) => {
-  const sanitized = word.replaceAll(/“|”/g, '"');
+  // FIXME: improve sanitization
+  const sanitized = word.replaceAll(/“|”/g, '"').replaceAll(/‘|’/g, "'");
 
-  return window.btoa(sanitized);
+  try {
+    return window.btoa(sanitized);
+  } catch {
+    console.error('Error parsing word:', word);
+    return 'err';
+  }
 };
 
 /**

@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-import { parseDoc } from "services/aymurai";
-import convertDocxToHTML from "services/aymurai/convert-docx-to-html";
-import { convertToHTML, getExtension } from "utils/file";
+import { parseDoc } from 'services/aymurai';
+import convertDocxToHTML from 'services/aymurai/convert-docx-to-html';
+import { convertToHTML, getExtension } from 'utils/file';
+import { addParagraphIds } from 'utils/html';
 
 type PostProcessCallback = (html: string) => string;
 /**
@@ -16,7 +17,7 @@ export default function useFileParser(
   onPostProcess?: PostProcessCallback
 ) {
   const [html, setHtml] = useState<string | null>(null);
-  const [header, setHeader] = useState<string | undefined>("");
+  const [header, setHeader] = useState<string | undefined>('');
 
   const updateHTML = useCallback(
     (html: string) => {
@@ -29,17 +30,20 @@ export default function useFileParser(
   const extension = getExtension(file);
 
   // Check if the file object has any parsed HTML attached to it
-  if (!html && extension === "docx") {
+  if (!html && extension === 'docx') {
     convertToHTML(file, updateHTML);
     convertDocxToHTML(file).then((res) => {
-      setHeader(res.data.header?.join("").toString());
+      setHeader(res.data.header?.join('').toString());
     });
   }
 
   useEffect(() => {
     // Check if the file object has any parsed HTML attached to it
-    if (!html && extension === "doc") parseDoc(file).then(updateHTML);
+    if (!html && extension === 'doc') parseDoc(file).then(updateHTML);
   }, [file, extension, html, updateHTML]);
 
-  return { document: html ?? "", header: header ?? "" };
+  return {
+    document: addParagraphIds(html ?? ''),
+    header: addParagraphIds(header ?? ''),
+  };
 }
