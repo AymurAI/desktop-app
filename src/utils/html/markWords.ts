@@ -1,6 +1,9 @@
 import regex from 'utils/regex';
-import { hash } from './hashWord';
-import { markWrapper, replaceWords, wrapperFromString } from './replaceWords';
+import { markWrapper, recursiveReplace, replaceWords } from './replaceWords';
+import { groupPredictions } from 'services/aymurai';
+
+const virtualDOM = (html: string) =>
+  new DOMParser().parseFromString(html, 'text/html');
 
 /**
  * Removes duplicated words from the predictions array
@@ -32,8 +35,7 @@ function predicted(html: string, words: string[]) {
 
 function anonymizer(
   html: string,
-  words: string[],
-  tags: any[],
+  predictions: ReturnType<typeof groupPredictions>,
   anonymize: boolean = false,
   header?: string
 ) {
@@ -58,31 +60,20 @@ function anonymizer(
       .join('');
   }
 
-  const wrapper = wrapperFromString((word) => {
-    const tag = getTag(tags, word);
+  const dom = virtualDOM(html);
+  // TODO: agregar funcionalidad para agregar una predicción usando la búsqueda
 
-    return anonymize
-      ? `<strong>&lt;${tag}&gt;</strong>`
-      : `<mark class="predicted-word">
-          <span>${word}</span>
-          <strong>${tag}</strong>
-          <button class="remove-tag" id="${hash(word)}">X</button>
-        </mark>`;
+  // For each prediction, search the corresponding word within the paragraph and tag it
+  predictions.forEach((predictions, id) => {
+    const paragraphElement = dom.getElementById(id);
+    if (!paragraphElement) return;
+
+    predictions.forEach((pred) => {
+      recursiveReplace(paragraphElement, pred, anonymize);
+    });
   });
 
-  const replacedHTML = replaceWords({
-    html,
-    words: removeDuplicated(words),
-    wrapper,
-  });
-
-  return headerImg + headerBody + replacedHTML;
-}
-
-function getTag(tags: any, word: string) {
-  const tag = tags.find((data: any) => data.text === word);
-
-  return tag?.tag;
+  return headerImg + headerBody + dom.body.innerHTML;
 }
 
 function searched(html: string | null, word: string) {
