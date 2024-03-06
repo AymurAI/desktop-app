@@ -61,7 +61,7 @@ export const replaceWords = ({
   const virtualDOM = new DOMParser().parseFromString(html, 'text/html');
 
   words.forEach((word) => {
-    if (word === ':' || word === ';' || word === '=') return;
+    if (word === ':' || word === ';' || word === '=' || word === ' ') return;
 
     findAndReplaceDOMText(virtualDOM.body, {
       find: word,
