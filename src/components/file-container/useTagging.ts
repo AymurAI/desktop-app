@@ -1,15 +1,19 @@
 import { useState } from 'react';
-import {
-  GroupedPredictions,
-  groupPredictions,
-} from 'services/aymurai/groupPredictions';
+import { GroupedPredictions } from 'services/aymurai/groupPredictions';
 import { id as getParagraphId } from 'utils/html/addParagraphId';
 import { DocFile } from 'types/file';
 
-interface AddRemoveTag {
-  paragraph: string;
+interface AddTag {
+  paragraph?: string;
   text: string;
   tag: string;
+  index: number;
+}
+interface RemoveTag {
+  text: string;
+  tag: string;
+  paragraphId: string;
+  index: number;
 }
 /**
  * Hook to manage the tagging of the predictions.
@@ -18,12 +22,15 @@ interface AddRemoveTag {
  */
 export const useTagging = (file: DocFile) => {
   const [tags, setTags] = useState<GroupedPredictions>(
-    groupPredictions(file.predictions)
+    //groupPredictions(file.predictions)
+    new Map()
   );
 
-  const addTag = ({ paragraph, text, tag }: AddRemoveTag) => {
+  const addTag = ({ paragraph, text, tag, index }: AddTag) => {
+    // If the predicted text is not in the document, we don't add the tag
+    if (!paragraph) return;
+
     const id = getParagraphId(paragraph);
-    const index = paragraph.indexOf(text);
 
     const newTag = { text, tag, index };
 
@@ -37,16 +44,14 @@ export const useTagging = (file: DocFile) => {
     }
   };
 
-  const removeTag = ({ paragraph, text, tag }: AddRemoveTag) => {
-    const id = getParagraphId(paragraph);
-
-    if (tags.has(id)) {
-      const currentTags = tags.get(id) ?? [];
+  const removeTag = ({ paragraphId, text, tag, index }: RemoveTag) => {
+    if (tags.has(paragraphId)) {
+      const currentTags = tags.get(paragraphId) ?? [];
       const filtered = currentTags.filter(
-        (t) => t.text !== text && t.tag !== tag
+        (t) => t.text !== text || t.tag !== tag || t.index !== index
       );
 
-      setTags(new Map(tags).set(id, filtered));
+      setTags(new Map(tags).set(paragraphId, filtered));
     }
   };
 
