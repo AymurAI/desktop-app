@@ -1,8 +1,8 @@
+import { MappedPrediction } from 'services/aymurai/groupPredictions';
 import { hash } from './hashWord';
 
 type AnonymizerArgs = {
-  tag: string;
-  word?: string;
+  pred: MappedPrediction;
   anonymizing: boolean;
 };
 /**
@@ -12,11 +12,8 @@ type AnonymizerArgs = {
  * @param word The word to be rendered.
  * @returns A new `HTMLElement` with the tag and the word, `mark` or `strong` depending on the `anonymizing` value.
  */
-export const anonymizeWrapper = ({
-  anonymizing,
-  tag,
-  word,
-}: AnonymizerArgs) => {
+export const anonymizeWrapper = ({ anonymizing, pred }: AnonymizerArgs) => {
+  const { tag, text: word, index } = pred;
   let element: HTMLElement;
 
   if (anonymizing) {
@@ -28,7 +25,9 @@ export const anonymizeWrapper = ({
     element.innerHTML = `
       <span>${word}</span>
       <strong>${tag}</strong>
-      <button class="remove-tag" id="${hash(word!)}">X</button>
+      <button class="remove-tag" data-text="${hash(word!)}" data-tag="${hash(
+      tag
+    )}" data-i="${index}">X</button>
     `;
   }
 

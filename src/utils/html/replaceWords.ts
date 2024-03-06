@@ -1,6 +1,6 @@
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { MappedPrediction } from 'services/aymurai/groupPredictions';
-import { anonymizeWrapper } from './markWrapper';
+import { anonymizeWrapper } from './wrappers';
 
 const MARK_ELEMENT = 'MARK';
 
