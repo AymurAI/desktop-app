@@ -1,6 +1,28 @@
 import { PredictLabel } from 'types/aymurai';
 import { id as getParagraphId } from 'utils/html/addParagraphId';
 
+/**
+ * Generates the id for each paragraph based on the text and creates a map to easily get the initial paragraph text.
+ * @param html HTML content to be analyzed. Should be the initial HTML content of the document.
+ * @returns A map with the paragraph id as key and the paragraph text as value
+ */
+export const groupParagraphs = (html: string): Map<string, string> => {
+  const map = new Map<string, string>();
+
+  // Uses a virtual DOM to get each paragraph
+  const dom = new DOMParser().parseFromString(html, 'text/html');
+  const elements = Array.from(dom.body.children);
+
+  elements.forEach((el) => {
+    if (el instanceof HTMLElement && el.innerText) {
+      const id = getParagraphId(el.innerText);
+      map.set(id, el.innerText);
+    }
+  });
+
+  return map;
+};
+
 export interface MappedPrediction {
   text: string;
   tag: string;
