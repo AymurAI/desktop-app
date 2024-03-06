@@ -1,4 +1,106 @@
 import findAndReplaceDOMText from 'findandreplacedomtext';
+import { MappedPrediction } from 'services/aymurai/groupPredictions';
+import { anonymizeWrapper } from './markWrapper';
+
+const MARK_ELEMENT = 'MARK';
+
+/**
+ * Counts the offset of the node in relation to its siblings and sums it to the initial value, if provided.
+ * @param node Node to start counting the offset.
+ * @param init Initial offset value.
+ * @returns The offset of the node in relation to its siblings.
+ */
+export const countSiblingOffset = (
+  node: HTMLElement | Text,
+  init: number = 0
+) => {
+  let offset = init;
+  let sibling = node.previousSibling;
+
+  while (sibling) {
+    let text: string | null;
+    if (sibling instanceof HTMLElement && sibling.tagName === MARK_ELEMENT) {
+      // Uses the <span> first child to get the text
+      const child = sibling.firstElementChild as HTMLElement;
+      text = child.textContent;
+    } else {
+      text = sibling.textContent;
+    }
+
+    offset += text?.length ?? 0;
+    sibling = sibling.previousSibling;
+  }
+
+  return offset;
+};
+
+/**
+ * Checks if the word is present in the Text node and counts the offset of
+ * the text node in relation to its siblings.
+ * @param node Text node to use its text and siblings to calculate the offset.
+ * @param pred Prediction tag to find in the text node.
+ * @returns `true` if the replace should be done, `false` otherwise.
+ */
+const shouldReplace = (node: Text, pred: MappedPrediction) => {
+  const text = node.textContent!;
+  const found = text.includes(pred.text);
+  const startIndex = pred.index - countSiblingOffset(node);
+
+  return found && startIndex >= 0 && startIndex <= text.length;
+};
+
+/**
+ * Creates a fragment that will be later used to replace the text node.
+ * @param element Element to replace or edit.
+ * @param pred Prediction information used to make the replacement.
+ * @param anonymize If the replacement should be prepared to make the output document.
+ * @returns A new fragment with the replaced text.
+ */
+const replace = (element: Text, pred: MappedPrediction, anonymize: boolean) => {
+  const fragment = document.createDocumentFragment();
+
+  // The start index is calculated by substracting the index on the original
+  // paragraph (AI prediction) with the real offset of the text node (node.previousSibling loop)
+  const start = pred.index - countSiblingOffset(element);
+  const first = element.textContent!.slice(0, start);
+  const last = element.textContent!.slice(start + pred.text.length);
+
+  console.log(element.textContent, start, start + pred.text.length);
+
+  fragment.append(first ?? '');
+  // TODO: accept a wrapper as a parameter to be able to change the mark element
+  fragment.appendChild(anonymizeWrapper({ anonymizing: anonymize, pred }));
+  fragment.append(last ?? '');
+
+  return fragment;
+};
+
+/**
+ * Recursively replaces the text nodes with the predictions.
+ * @param node Node to start the replacement.
+ * @param pred Prediction tag to find in the text node.
+ * @param anonymize If the replacement should be prepared to make the output document.
+ */
+export const recursiveReplace = (
+  node: HTMLElement | Text,
+  pred: MappedPrediction,
+  anonymize: boolean
+) => {
+  const children = Array.from(node.childNodes);
+
+  for (const child of children) {
+    if (child instanceof Text && child.textContent) {
+      if (shouldReplace(child, pred)) {
+        const parent = child.parentElement!;
+        parent.appendChild(replace(child, pred, anonymize));
+        parent.removeChild(child);
+        return;
+      }
+    } else if (child instanceof HTMLElement && child.tagName !== MARK_ELEMENT) {
+      recursiveReplace(child, pred, anonymize);
+    } else continue;
+  }
+};
 
 /**
  * Wraps a word with a mark element, adding a class to it.
