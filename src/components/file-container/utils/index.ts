@@ -1,1 +1,1 @@
-export { selectionHasNode } from 'utils/html';
+export { selectionHasNode } from './selectionHasNode';
