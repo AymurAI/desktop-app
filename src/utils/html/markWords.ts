@@ -1,6 +1,11 @@
-import regex from 'utils/regex';
-import { markWrapper, recursiveReplace, replaceWords } from './replaceWords';
+import {
+  countSiblingOffset,
+  markWrapper,
+  recursiveReplace,
+  replaceWords,
+} from './replaceWords';
 import { groupPredictions } from 'services/aymurai';
+import { searchWrapper } from './wrappers';
 
 const virtualDOM = (html: string) =>
   new DOMParser().parseFromString(html, 'text/html');
@@ -76,17 +81,73 @@ function anonymizer(
   return headerImg + headerBody + dom.body.innerHTML;
 }
 
-function searched(html: string | null, word: string) {
-  if (!html) return '';
-  if (word.length <= 2) return html;
+const createFragment = (
+  splitted: string[],
+  search: string,
+  tag: string | undefined,
+  offset: number,
+  wholeText: string
+) => {
+  const fragment = document.createDocumentFragment();
+  // TODO: sanitize this regex
+  const regex = new RegExp(search, 'g');
 
-  const regExp = regex.includes(word);
+  splitted.forEach((el, i) => {
+    fragment.append(el);
 
-  return replaceWords({
-    html,
-    words: [regExp],
-    wrapper: markWrapper('searched-word'),
+    if (i !== splitted.length - 1) {
+      // Get the index for the word in the current node
+      const result = regex.exec(wholeText);
+      if (!result) return;
+
+      const index = offset + result.index;
+      fragment.appendChild(
+        searchWrapper({ text: search, index, tag: tag ?? '' })
+      );
+    }
   });
+
+  return fragment;
+};
+
+function searched(html: string | null, word: string, tag: string | undefined) {
+  if (!html) return '';
+  if (word.length <= 1) return html;
+
+  const dom = virtualDOM(html);
+  const xpath = `.//text()[contains(.,'${word}')]`;
+
+  const result = document.evaluate(
+    xpath,
+    dom.body,
+    null,
+    XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+    null
+  );
+  let textNodes: Text[] = [];
+
+  let element = result.iterateNext();
+
+  while (element) {
+    textNodes.push(element as Text);
+    element = result.iterateNext();
+  }
+
+  textNodes.forEach((node) => {
+    // If the node is inside a mark element, skip it
+    if (node.parentElement?.closest('mark')) return;
+
+    const text = node.textContent ?? '';
+    const split = text.split(word);
+
+    // Get the offset of the node, so it can be added to the button
+    const siblingOffset = countSiblingOffset(node);
+    const fragment = createFragment(split, word, tag, siblingOffset, text);
+
+    node.replaceWith(fragment);
+  });
+
+  return dom.body.innerHTML;
 }
 
 const mark = {
