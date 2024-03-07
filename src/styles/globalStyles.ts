@@ -66,13 +66,9 @@ export const globalStyles = globalCss({
 
     '&:hover': {
       cursor: 'pointer',
-      '& button.add-tag': {
-        visibility: 'visible',
-      },
     },
 
     '& button.add-tag': {
-      visibility: 'hidden',
       position: 'relative',
       backgroundColor: '$successPrimary',
       color: '$white',
