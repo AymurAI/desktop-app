@@ -21,8 +21,8 @@ export const countSiblingOffset = (
     let text: string | null;
     if (sibling instanceof HTMLElement && sibling.tagName === MARK_ELEMENT) {
       // Uses the <span> first child to get the text
-      const child = sibling.firstElementChild as HTMLElement;
-      text = child.textContent;
+      const child = sibling.querySelector('span') as HTMLElement;
+      text = child.innerText;
     } else {
       text = sibling.textContent;
     }
@@ -46,7 +46,7 @@ const shouldReplace = (node: Text, pred: MappedPrediction) => {
   const found = text.includes(pred.text);
   const startIndex = pred.index - countSiblingOffset(node);
 
-  return found && startIndex >= 0 && startIndex <= text.length;
+  return found && startIndex >= 0 && startIndex <= text.length - 1;
 };
 
 /**
