@@ -63,6 +63,28 @@ export const globalStyles = globalCss({
     padding: '0px 2px',
 
     borderRadius: 8,
+
+    '&:hover': {
+      cursor: 'pointer',
+      '& button.add-tag': {
+        visibility: 'visible',
+      },
+    },
+
+    '& button.add-tag': {
+      visibility: 'hidden',
+      position: 'relative',
+      backgroundColor: '$successPrimary',
+      color: '$white',
+      padding: '2px 5px',
+      borderRadius: 8,
+      cursor: 'pointer',
+      fontSize: '12px',
+      fontWeight: 'heavy',
+      textAlign: 'center',
+      top: '-10px',
+      right: '-5px',
+      border: 'none',
+    },
   },
-  'button.remove-tag': {},
 });
