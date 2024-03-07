@@ -65,8 +65,6 @@ const replace = (element: Text, pred: MappedPrediction, anonymize: boolean) => {
   const first = element.textContent!.slice(0, start);
   const last = element.textContent!.slice(start + pred.text.length);
 
-  console.log(element.textContent, start, start + pred.text.length);
-
   fragment.append(first ?? '');
   // TODO: accept a wrapper as a parameter to be able to change the mark element
   fragment.appendChild(anonymizeWrapper({ anonymizing: anonymize, pred }));
