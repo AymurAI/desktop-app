@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { GroupedPredictions } from 'services/aymurai/groupPredictions';
+import {
+  GroupedPredictions,
+  groupPredictions,
+} from 'services/aymurai/groupPredictions';
 import { id as getParagraphId } from 'utils/html/addParagraphId';
 import { DocFile } from 'types/file';
 
@@ -22,8 +25,7 @@ interface RemoveTag {
  */
 export const useTagging = (file: DocFile) => {
   const [tags, setTags] = useState<GroupedPredictions>(
-    //groupPredictions(file.predictions)
-    new Map()
+    groupPredictions(file.predictions)
   );
 
   const addTag = ({ paragraph, text, tag, index }: AddTag) => {
