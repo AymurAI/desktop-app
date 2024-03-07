@@ -38,7 +38,7 @@ export const groupPredictions = (predictions: PredictLabel[] | undefined) => {
   if (!predictions) return map;
 
   predictions.forEach((p) => {
-    const text = p.attrs.aymurai_alt_text ?? p.text;
+    const text = p.text ?? p.attrs.aymurai_alt_text;
     const tag = p.attrs.aymurai_label;
     const index = p.start_char;
 
