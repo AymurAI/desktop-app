@@ -5,6 +5,39 @@ import { anonymizeWrapper } from './wrappers';
 const MARK_ELEMENT = 'MARK';
 
 /**
+ * Returns the previous siblings of the node.
+ * @param node Node to start the search.
+ * @returns An array of `ChildNodes[]`.
+ */
+const getPreviousSiblings = (node: ChildNode) => {
+  const siblings = [];
+  let element: ChildNode | null = node;
+
+  while ((element = element.previousSibling)) {
+    siblings.push(element);
+  }
+  return siblings;
+};
+
+/**
+ * Counts the number of characters in the text nodes recursively.
+ * @param nodes Children nodes to analyze.
+ * @returns The number of characters in the text nodes.
+ */
+const countTextLength = (nodes: ChildNode[]): number => {
+  return nodes.reduce((acc, cur) => {
+    if (cur instanceof HTMLElement) {
+      if (cur.tagName === 'MARK') {
+        const span = cur.querySelector('span');
+        return acc + (span?.innerText?.length ?? 0);
+      } else return acc + countTextLength(Array.from(cur.childNodes));
+    } else if (cur instanceof Text) {
+      return acc + (cur.textContent?.length ?? 0);
+    } else return acc;
+  }, 0);
+};
+
+/**
  * Counts the offset of the node in relation to its siblings and sums it to the initial value, if provided.
  * @param node Node to start counting the offset.
  * @param init Initial offset value.
@@ -14,24 +47,16 @@ export const countSiblingOffset = (
   node: HTMLElement | Text,
   init: number = 0
 ) => {
-  let offset = init;
-  let sibling = node.previousSibling;
+  // Find the nearest node to the parent before finding siblings
+  let parent = node;
 
-  while (sibling) {
-    let text: string | null;
-    if (sibling instanceof HTMLElement && sibling.tagName === MARK_ELEMENT) {
-      // Uses the <span> first child to get the text
-      const child = sibling.querySelector('span') as HTMLElement;
-      text = child.innerText;
-    } else {
-      text = sibling.textContent;
-    }
-
-    offset += text?.length ?? 0;
-    sibling = sibling.previousSibling;
+  // If the parent is not the paragraph itself, keep going up until one below the paragraph
+  while (parent.parentElement?.tagName !== 'P') {
+    parent = parent.parentElement!;
   }
 
-  return offset;
+  const previousSiblings = getPreviousSiblings(parent);
+  return countTextLength(previousSiblings) + init;
 };
 
 /**
