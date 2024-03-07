@@ -122,7 +122,7 @@ export default function FileContainer({ file }: Props) {
       // The word and the tag is stored in the button itself
       // FIXME: remove ignores
       // @ts-ignore
-      const word = reverseHash(close.attributes['data-text']!.value);
+      const word = close.attributes['data-text']!.value;
       // @ts-ignore
       const tag = reverseHash(close.attributes['data-tag']!.value);
       // @ts-ignore
@@ -138,9 +138,7 @@ export default function FileContainer({ file }: Props) {
         });
 
         // setSearchText('');
-      } else {
-        removeTag({ text: word, tag, paragraphId, index });
-      }
+      } else removeTag({ text: word, tag, paragraphId, index });
     }
   };
 

@@ -20,7 +20,7 @@ export const searchWrapper = ({ text, tag, index }: MappedPrediction) => {
       hasTag
         ? `
         <strong>${tag}</strong>
-        <button class="add-tag" data-text="${hash(text!)}" data-tag="${hash(
+        <button class="add-tag" data-text="${text}" data-tag="${hash(
             tag
           )}" data-i="${index}">+</button>`
         : ''
@@ -55,7 +55,7 @@ export const anonymizeWrapper = ({ anonymizing, pred }: AnonymizerArgs) => {
     element.innerHTML = `
       <span>${word}</span>
       <strong>${tag}</strong>
-      <button class="remove-tag" data-text="${hash(word!)}" data-tag="${hash(
+      <button class="remove-tag" data-text="${word}" data-tag="${hash(
       tag
     )}" data-i="${index}">X</button>
     `;
