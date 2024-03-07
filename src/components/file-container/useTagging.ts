@@ -38,6 +38,9 @@ export const useTagging = (file: DocFile) => {
 
     if (tags.has(id)) {
       const currentTags = tags.get(id) ?? [];
+      // Prevents adding the same tag twice
+      if (currentTags.some((t) => t.text === text && t.tag === tag)) return;
+
       const sorted = [...currentTags, newTag].sort((a, b) => a.index - b.index);
 
       setTags(new Map(tags).set(id, sorted));
