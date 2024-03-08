@@ -25,7 +25,9 @@ export default function FileContainer({ file }: Props) {
     return html;
   });
   const { tags, addTag, removeTag } = useTagging(file);
-  const initialParagraphs = groupParagraphs(fileHTML.document);
+  const initialParagraphs = groupParagraphs(
+    fileHTML.header + fileHTML.document
+  );
 
   const [predictions, setPredictions] = useState<string[]>(
     file.predictions!.map((label) =>

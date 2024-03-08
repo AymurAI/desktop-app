@@ -65,7 +65,7 @@ function anonymizer(
       .join('');
   }
 
-  const dom = virtualDOM(html);
+  const dom = virtualDOM(headerBody + headerImg + html);
   // TODO: agregar funcionalidad para agregar una predicción usando la búsqueda
 
   // For each prediction, search the corresponding word within the paragraph and tag it
@@ -78,7 +78,7 @@ function anonymizer(
     });
   });
 
-  return headerImg + headerBody + dom.body.innerHTML;
+  return dom.body.innerHTML;
 }
 
 const createFragment = (
