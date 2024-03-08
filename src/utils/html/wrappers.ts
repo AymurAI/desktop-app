@@ -49,6 +49,8 @@ export const anonymizeWrapper = ({ anonymizing, pred }: AnonymizerArgs) => {
   if (anonymizing) {
     element = document.createElement('strong');
     element.innerText = `<${tag}>`;
+    // @ts-ignore
+    element.setAttribute('data-word', word);
   } else {
     element = document.createElement('mark');
     element.className = 'predicted-word';
