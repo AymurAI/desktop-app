@@ -115,7 +115,8 @@ function searched(html: string | null, word: string, tag: string | undefined) {
   if (word.length <= 1) return html;
 
   const dom = virtualDOM(html);
-  const xpath = `.//text()[contains(.,'${word}')]`;
+  // Use translate to make the XPath case insensitive while searching
+  const xpath = `.//text()[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'${word.toLowerCase()}')]`;
 
   const result = document.evaluate(
     xpath,
@@ -138,11 +139,24 @@ function searched(html: string | null, word: string, tag: string | undefined) {
     if (node.parentElement?.closest('mark')) return;
 
     const text = node.textContent ?? '';
-    const split = text.split(word);
+    const regex = new RegExp(word.replace(/[#-.]|[[-^]|[?|{}]/g, '\\$&'), 'gi');
+
+    const index = text.search(regex);
+    if (index === -1) return;
+
+    const first = text.slice(0, index);
+    const casedWord = text.slice(index, index + word.length);
+    const last = text.slice(index + word.length);
 
     // Get the offset of the node, so it can be added to the button
     const siblingOffset = countSiblingOffset(node);
-    const fragment = createFragment(split, word, tag, siblingOffset, text);
+    const fragment = createFragment(
+      [first, last],
+      casedWord,
+      tag,
+      siblingOffset,
+      text
+    );
 
     node.replaceWith(fragment);
   });
