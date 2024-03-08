@@ -1,7 +1,7 @@
-import { CanceledError } from "axios";
+import { CanceledError } from 'axios';
 
-import { PredictLabel, PredictSuccess } from "types/aymurai";
-import { fetcher } from "./utils";
+import { PredictLabel, PredictSuccess } from 'types/aymurai';
+import { fetcher } from './utils';
 
 /**
  * Realiza una petición a la AI para poder obtener predicciones en base a un párrafo
@@ -24,7 +24,7 @@ export default async function predict(
         signal: controller.signal,
       }
     );
-    return response.data.labels;
+    return response.data.labels.map((l) => ({ ...l, paragraph }));
   } catch (e) {
     // If the POST is cancelled by the controller, just return an empty prediction
     if (e instanceof CanceledError) {

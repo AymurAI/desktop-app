@@ -1,14 +1,14 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from 'react';
 
-import { useFileDispatch, useFileParser, useUser } from "hooks";
-import { predict } from "services/aymurai";
-import { PredictLabel } from "types/aymurai";
-import { toPlainParagraphs } from "utils/html";
-import { addPredictions, removePredictions } from "reducers/file/actions";
+import { useFileDispatch, useFileParser, useUser } from 'hooks';
+import { predict } from 'services/aymurai';
+import { PredictLabel } from 'types/aymurai';
+import { toPlainParagraphs } from 'utils/html';
+import { addPredictions, removePredictions } from 'reducers/file/actions';
 
-import { FunctionType } from "types/user";
+import { FunctionType } from 'types/user';
 
-export type PredictStatus = "processing" | "error" | "stopped" | "completed";
+export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
 
 interface UsePredictOptions {
   onStatusChange?: (status: PredictStatus) => void;
@@ -24,7 +24,7 @@ export default function usePredict(
 ) {
   const user = useUser();
 
-  const [status, setStatus] = useState<PredictStatus>("processing");
+  const [status, setStatus] = useState<PredictStatus>('processing');
   const [progress, setProgress] = useState(0);
   const [promises, setPromises] = useState<Promise<PredictLabel[]>[]>([]);
 
@@ -50,7 +50,7 @@ export default function usePredict(
     setPromises([]);
     dispatch(removePredictions(file.name));
     setProgress(0);
-    updateStatus("stopped");
+    updateStatus('stopped');
   };
 
   // Generate Promises
@@ -66,8 +66,8 @@ export default function usePredict(
           p,
           controller.current,
           user?.function === FunctionType.ANONYMIZER
-            ? "/anonymizer/predict"
-            : "/datapublic/predict"
+            ? '/anonymizer/predict'
+            : '/datapublic/predict'
         );
 
         // Increase progress %
@@ -94,41 +94,15 @@ export default function usePredict(
         .then((result) => {
           // Check if the prediction process is still ongoing
           if (!cancelled.current) {
-            result.forEach((prediction, i) => {
-              if (prediction.length > 0) {
-                //remove special characters
-                let newPrediction = prediction
-                  .map((data) => ({
-                    ...data,
-                    aymurai_alt_text: data.text.replace(/^[“.,]+|[“.,]+$/g, ""),
-                  }))
-                  .flatMap((data) => {
-                    if (data.attrs.aymurai_label === "PER") {
-                      //Split by special character
-                      const split = data.aymurai_alt_text.split(/[.,“\-=/_]/);
-
-                      let newData: PredictLabel[] = [];
-                      split.forEach((label) => {
-                        newData.push({
-                          ...data,
-                          text: label.trim(),
-                          aymurai_alt_text: label.trim(),
-                        });
-                      });
-                      return newData;
-                    }
-
-                    return data;
-                  });
-
-                dispatch(addPredictions(file.name, newPrediction));
-              }
+            result.forEach((prediction) => {
+              if (prediction.length > 0)
+                dispatch(addPredictions(file.name, prediction));
             });
 
-            updateStatus("completed");
+            updateStatus('completed');
           }
         })
-        .catch(() => updateStatus("error"));
+        .catch(() => updateStatus('error'));
     }
   }, [promises, file.name, dispatch, updateStatus]);
 

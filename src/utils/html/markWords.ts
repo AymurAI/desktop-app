@@ -1,6 +1,14 @@
-import regex from 'utils/regex';
-import { hash } from './hashWord';
-import { markWrapper, replaceWords, wrapperFromString } from './replaceWords';
+import {
+  countSiblingOffset,
+  markWrapper,
+  recursiveReplace,
+  replaceWords,
+} from './replaceWords';
+import { groupPredictions } from 'services/aymurai';
+import { searchWrapper } from './wrappers';
+
+const virtualDOM = (html: string) =>
+  new DOMParser().parseFromString(html, 'text/html');
 
 /**
  * Removes duplicated words from the predictions array
@@ -32,8 +40,7 @@ function predicted(html: string, words: string[]) {
 
 function anonymizer(
   html: string,
-  words: string[],
-  tags: any[],
+  predictions: ReturnType<typeof groupPredictions>,
   anonymize: boolean = false,
   header?: string
 ) {
@@ -58,44 +65,103 @@ function anonymizer(
       .join('');
   }
 
-  const wrapper = wrapperFromString((word) => {
-    const tag = getTag(tags, word);
+  const dom = virtualDOM(headerBody + headerImg + html);
+  // TODO: agregar funcionalidad para agregar una predicción usando la búsqueda
 
-    return anonymize
-      ? `<strong>&lt;${tag}&gt;</strong>`
-      : `<mark class="predicted-word">
-          <span>${word}</span>
-          <strong>${tag}</strong>
-          <button class="remove-tag" id="${hash(word)}">X</button>
-        </mark>`;
+  // For each prediction, search the corresponding word within the paragraph and tag it
+  predictions.forEach((predictions, id) => {
+    const paragraphElement = dom.getElementById(id);
+    if (!paragraphElement) return;
+
+    predictions.forEach((pred) => {
+      recursiveReplace(paragraphElement, pred, anonymize);
+    });
   });
 
-  const replacedHTML = replaceWords({
-    html,
-    words: removeDuplicated(words),
-    wrapper,
+  return dom.body.innerHTML;
+}
+
+const createFragment = (
+  splitted: string[],
+  search: string,
+  tag: string | undefined,
+  offset: number,
+  wholeText: string
+) => {
+  const fragment = document.createDocumentFragment();
+  // TODO: sanitize this regex
+  const regex = new RegExp(search, 'g');
+
+  splitted.forEach((el, i) => {
+    fragment.append(el);
+
+    if (i !== splitted.length - 1) {
+      // Get the index for the word in the current node
+      const result = regex.exec(wholeText);
+      if (!result) return;
+
+      const index = offset + result.index;
+      fragment.appendChild(
+        searchWrapper({ text: search, index, tag: tag ?? '' })
+      );
+    }
   });
 
-  return headerImg + headerBody + replacedHTML;
-}
+  return fragment;
+};
 
-function getTag(tags: any, word: string) {
-  const tag = tags.find((data: any) => data.text === word);
-
-  return tag?.tag;
-}
-
-function searched(html: string | null, word: string) {
+function searched(html: string | null, word: string, tag: string | undefined) {
   if (!html) return '';
-  if (word.length <= 2) return html;
+  if (word.length <= 1) return html;
 
-  const regExp = regex.includes(word);
+  const dom = virtualDOM(html);
+  // Use translate to make the XPath case insensitive while searching
+  const xpath = `.//text()[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'${word.toLowerCase()}')]`;
 
-  return replaceWords({
-    html,
-    words: [regExp],
-    wrapper: markWrapper('searched-word'),
+  const result = document.evaluate(
+    xpath,
+    dom.body,
+    null,
+    XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+    null
+  );
+  let textNodes: Text[] = [];
+
+  let element = result.iterateNext();
+
+  while (element) {
+    textNodes.push(element as Text);
+    element = result.iterateNext();
+  }
+
+  textNodes.forEach((node) => {
+    // If the node is inside a mark element, skip it
+    if (node.parentElement?.closest('mark')) return;
+
+    const text = node.textContent ?? '';
+    const regex = new RegExp(word.replace(/[#-.]|[[-^]|[?|{}]/g, '\\$&'), 'gi');
+
+    const index = text.search(regex);
+    if (index === -1) return;
+
+    const first = text.slice(0, index);
+    const casedWord = text.slice(index, index + word.length);
+    const last = text.slice(index + word.length);
+
+    // Get the offset of the node, so it can be added to the button
+    const siblingOffset = countSiblingOffset(node);
+    const fragment = createFragment(
+      [first, last],
+      casedWord,
+      tag,
+      siblingOffset,
+      text
+    );
+
+    node.replaceWith(fragment);
   });
+
+  return dom.body.innerHTML;
 }
 
 const mark = {

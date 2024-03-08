@@ -74,7 +74,6 @@ const whole = (word: string) => new RegExp(`\\b${sanitize(word)}\\w*`, 'gi');
 const htmlTag = (word: string, tag: string) => {
   const sanitized = sanitize(word);
 
-  console.log(sanitized);
   return new RegExp(`<${tag}\\s*.*?>(${sanitized})</${tag}>([A-zÀ-ú]*)`, 'i');
 };
 
