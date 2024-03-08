@@ -13,6 +13,7 @@ export const Header = styled('header', {
   justifyContent: 'space-between',
   alignItems: 'center',
 
+  zIndex: 2,
   px: 150,
   py: '$l',
   gap: 10,
