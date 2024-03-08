@@ -1,5 +1,5 @@
 export interface Props {
-  getMatchCount: () => number;
+  matchesCount: number;
   count: number;
   next: () => void;
   previous: () => void;
