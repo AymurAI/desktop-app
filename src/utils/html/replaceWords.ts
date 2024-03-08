@@ -114,9 +114,7 @@ export const recursiveReplace = (
   for (const child of children) {
     if (child instanceof Text && child.textContent) {
       if (shouldReplace(child, pred)) {
-        const parent = child.parentElement!;
-        parent.appendChild(replace(child, pred, anonymize));
-        parent.removeChild(child);
+        child.replaceWith(replace(child, pred, anonymize));
         return;
       }
     } else if (child instanceof HTMLElement && child.tagName !== MARK_ELEMENT) {
