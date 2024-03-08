@@ -30,7 +30,13 @@ const countTextLength = (nodes: ChildNode[]): number => {
       if (cur.tagName === 'MARK') {
         const span = cur.querySelector('span');
         return acc + (span?.innerText?.length ?? 0);
-      } else return acc + countTextLength(Array.from(cur.childNodes));
+        // @ts-ignore
+      } else if (cur.tagName === 'STRONG' && cur.attributes['data-word']) {
+        // @ts-ignore
+        return acc + (cur.attributes['data-word'].value.length ?? 0);
+      } else {
+        return acc + countTextLength(Array.from(cur.childNodes));
+      }
     } else if (cur instanceof Text) {
       return acc + (cur.textContent?.length ?? 0);
     } else return acc;
@@ -47,6 +53,16 @@ export const countSiblingOffset = (
   node: HTMLElement | Text,
   init: number = 0
 ) => {
+  // First, calculate the length of the siblings for the current Node in case it's already subdivided.
+  let currentLength = 0;
+  if (
+    node.parentElement?.tagName !== 'P' &&
+    node.parentElement?.tagName !== 'MARK'
+  ) {
+    const currentSiblings = getPreviousSiblings(node);
+    currentLength = countTextLength(currentSiblings);
+  }
+
   // Find the nearest node to the parent before finding siblings
   let parent = node;
 
@@ -55,8 +71,10 @@ export const countSiblingOffset = (
     parent = parent.parentElement!;
   }
 
-  const previousSiblings = getPreviousSiblings(parent);
-  return countTextLength(previousSiblings) + init;
+  const parentSiblings = getPreviousSiblings(parent);
+  const parentLength = countTextLength(parentSiblings);
+
+  return currentLength + parentLength + init;
 };
 
 /**
@@ -69,9 +87,15 @@ export const countSiblingOffset = (
 const shouldReplace = (node: Text, pred: MappedPrediction) => {
   const text = node.textContent!;
   const found = text.includes(pred.text);
+
+  if (!found) return false;
+
+  // By substracting we find if the index is inside the text node, and not in the siblings
+  // If it's positive, it's inside the text node
+  // If it's negative, it's in the previous siblings
   const startIndex = pred.index - countSiblingOffset(node);
 
-  return found && startIndex >= 0 && startIndex <= text.length - 1;
+  return startIndex >= 0 && startIndex <= text.length;
 };
 
 /**
@@ -91,7 +115,6 @@ const replace = (element: Text, pred: MappedPrediction, anonymize: boolean) => {
   const last = element.textContent!.slice(start + pred.text.length);
 
   fragment.append(first ?? '');
-  // TODO: accept a wrapper as a parameter to be able to change the mark element
   fragment.appendChild(anonymizeWrapper({ anonymizing: anonymize, pred }));
   fragment.append(last ?? '');
 
