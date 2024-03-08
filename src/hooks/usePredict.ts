@@ -56,9 +56,7 @@ export default function usePredict(
   // Generate Promises
   useEffect(() => {
     // If the HTML is valid and we have no promises yet
-    // TODO: investigate if this conditions causes any issues
-    // console.log(!!html.document, !!html.header, promises.length === 0);
-    if (html.document && promises.length === 0) {
+    if (html.document && html.header && promises.length === 0) {
       // Restart the prediction process
       dispatch(removePredictions(file.name));
       const paragraphs = toPlainParagraphs(html.header + html.document);
