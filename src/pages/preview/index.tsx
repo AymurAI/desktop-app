@@ -1,5 +1,5 @@
-import { ChangeEventHandler, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { ChangeEventHandler, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Text,
@@ -10,16 +10,19 @@ import {
   Grid,
   HiddenInput,
   SectionTitle,
-} from 'components';
-import { useFileDispatch, useFiles } from 'hooks';
-import { Footer, Section } from 'layout/main';
+} from "components";
+import { useFileDispatch, useFiles, useUser } from "hooks";
+import { Footer, Section } from "layout/main";
 import {
   addFiles,
   filterUnselected,
   removeAllFiles,
-} from 'reducers/file/actions';
+} from "reducers/file/actions";
+
+import { FunctionType } from "types/user";
 
 export default function Preview() {
+  const user = useUser();
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
@@ -30,7 +33,7 @@ export default function Preview() {
 
   const handlePrevious = () => {
     dispatch(removeAllFiles());
-    navigate('/onboarding');
+    navigate("/onboarding");
   };
 
   const handleSelectFile = () => {
@@ -50,7 +53,7 @@ export default function Preview() {
 
   const handleConfirmFiles = () => {
     dispatch(filterUnselected());
-    navigate('/process');
+    navigate("/process");
   };
 
   return (
@@ -58,15 +61,19 @@ export default function Preview() {
       {/* MAIN SECTION */}
       <Section spacing="xl">
         <SectionTitle onClick={handlePrevious}>
-          1. Previsualización de archivos
+          {user?.function === FunctionType.ANONYMIZER
+            ? " 1. Previsualización del archivo"
+            : " 1. Previsualización de archivos"}
         </SectionTitle>
         <Card>
-          <Subtitle>Archivos seleccionados</Subtitle>
+          {user?.function === FunctionType.DATASET && (
+            <Subtitle>Archivos seleccionados</Subtitle>
+          )}
           <Grid
-            columns={5}
+            columns={user?.function === FunctionType.ANONYMIZER ? 1 : 5}
             spacing="xl"
             justify="center"
-            css={{ width: '100%' }}
+            css={{ width: "100%" }}
           >
             {files.map((file) => (
               <FilePreview key={file.data.name} file={file}></FilePreview>
@@ -85,10 +92,14 @@ export default function Preview() {
           multiple
           tabIndex={-1}
         />
-        <Text size="s">Formatos válidos: .doc y .docx</Text>
-        <Button onClick={handleSelectFile} size="l" variant="secondary">
-          Cargar más documentos
-        </Button>
+        {user?.function === FunctionType.DATASET && (
+          <>
+            <Text size="s">Formatos válidos: .doc y .docx</Text>
+            <Button onClick={handleSelectFile} size="l" variant="secondary">
+              Cargar más documentos
+            </Button>
+          </>
+        )}
         <Button
           onClick={handleConfirmFiles}
           disabled={!isAnyFileSelected}

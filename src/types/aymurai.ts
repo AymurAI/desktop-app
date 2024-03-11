@@ -1,5 +1,8 @@
 // ------------
 // PREDICTION
+
+import { SelectOption } from 'components/select';
+
 // ------------
 type LabelAttributes = {
   aymurai_label: AllLabels;
@@ -9,9 +12,11 @@ type LabelAttributes = {
 
 export type PredictLabel = {
   text: string;
+  aymurai_alt_text?: string;
   start_char: number;
   end_char: number;
   attrs: LabelAttributes;
+  paragraph: string;
 };
 export type PredictSuccess = {
   document: string;
@@ -78,12 +83,43 @@ export enum LabelDecisiones {
   HORA_DE_CIERRE = 'HORA_DE_CIERRE',
   DURACION = 'DURACION',
 }
-export type AllLabels = LabelType | LabelDecisiones;
+export enum LabelAnonimizer {
+  PER = 'PER',
+}
+
+export type AllLabels = LabelType | LabelDecisiones | LabelAnonimizer;
+
+export const anonymizerLabels: SelectOption[] = [
+  { id: 'DNI', text: 'DNI' },
+  { id: 'PER', text: 'Persona' },
+  { id: 'TEL', text: 'Número de teléfono' },
+  { id: 'CORREO_ELECTRÓNICO', text: 'Correo electrónico' },
+  { id: 'BANCO', text: 'Banco' },
+  { id: 'CBU', text: 'Clave Bancaria Uniforme ' },
+  { id: 'CUIJ', text: 'Clave única de identificación judicial' },
+  { id: 'CUIT_CUIL', text: 'Código única de identificación laboral' },
+  { id: 'DIRECCION', text: 'Dirección' },
+  { id: 'LOC', text: 'Localidad' },
+  { id: 'EDAD', text: 'Edad' },
+  { id: 'ESTUDIOS', text: 'Estudios' },
+  { id: 'FECHA', text: 'Fecha' },
+  { id: 'LINK', text: 'Link' },
+  { id: 'MARCA_AUTOMOVIL', text: 'Marca automóvil' },
+  { id: 'NACIONALIDAD', text: 'Nacionalidad' },
+  { id: 'NUM_ACTUACION', text: 'Número actuación' },
+  { id: 'NUM_CAJA_AHORRO', text: 'Número caja ahorro' },
+  { id: 'NUM_EXPEDIENTE', text: 'Número expediente' },
+  { id: 'NUM_MATRICULA', text: 'Número matrícula' },
+  { id: 'PATENTE_DOMINIO', text: 'Patente dominio' },
+  { id: 'TEXTO_ANONIMIZAR', text: 'Texto anonimizar' },
+];
 
 // --------------------
 // DOCUMENT EXTRACTION
 // --------------------
 
 export type ExportDocumentSuccess = {
+  header?: string[];
   document: string;
+  footer?: string[];
 };

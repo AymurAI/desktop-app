@@ -19,9 +19,8 @@ interface Props {
 }
 export default function FormGroup({ file }: Props) {
   const [decision, setDecision] = useState(0);
-  const { register, submit, addDecision, decisionAmount } = useForm(
-    countDecisiones(file.predictions)
-  );
+  const { register, submit, addDecision, decisionAmount, getDecisionValue } =
+    useForm(countDecisiones(file.predictions));
   const dispatch = useFileDispatch();
 
   const createDecision = () => {
@@ -38,6 +37,10 @@ export default function FormGroup({ file }: Props) {
     onSubmit: handleSubmit,
     suggester: new Suggester(file.predictions),
   };
+  const decisionProps = {
+    ...props,
+    getDecisionValue,
+  };
 
   return (
     <Container>
@@ -49,8 +52,8 @@ export default function FormGroup({ file }: Props) {
         {...{ decisionAmount, selectDecision }}
       />
       <Container key={decision}>
-        <InfoHecho {...props} decision={decision} />
-        <Decision {...props} decision={decision} />
+        <InfoHecho {...decisionProps} decision={decision} />
+        <Decision {...decisionProps} decision={decision} />
       </Container>
 
       <DatosDenunciante {...props} />

@@ -11,11 +11,12 @@ import { fetcher } from './utils';
  */
 export default async function predict(
   paragraph: string,
-  controller: AbortController
+  controller: AbortController,
+  route: string
 ): Promise<PredictLabel[]> {
   try {
     const response = await fetcher.post<PredictSuccess>(
-      '/predict',
+      route,
       {
         text: paragraph,
       },
@@ -23,7 +24,7 @@ export default async function predict(
         signal: controller.signal,
       }
     );
-    return response.data.labels;
+    return response.data.labels.map((l) => ({ ...l, paragraph }));
   } catch (e) {
     // If the POST is cancelled by the controller, just return an empty prediction
     if (e instanceof CanceledError) {

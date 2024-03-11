@@ -1,10 +1,12 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 
-import { useFileDispatch, useFileParser } from 'hooks';
+import { useFileDispatch, useFileParser, useUser } from 'hooks';
 import { predict } from 'services/aymurai';
 import { PredictLabel } from 'types/aymurai';
 import { toPlainParagraphs } from 'utils/html';
 import { addPredictions, removePredictions } from 'reducers/file/actions';
+
+import { FunctionType } from 'types/user';
 
 export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
 
@@ -20,6 +22,8 @@ export default function usePredict(
   file: File,
   { onStatusChange }: UsePredictOptions = {}
 ) {
+  const user = useUser();
+
   const [status, setStatus] = useState<PredictStatus>('processing');
   const [progress, setProgress] = useState(0);
   const [promises, setPromises] = useState<Promise<PredictLabel[]>[]>([]);
@@ -52,13 +56,19 @@ export default function usePredict(
   // Generate Promises
   useEffect(() => {
     // If the HTML is valid and we have no promises yet
-    if (html && promises.length === 0) {
+    if (html.document && html.header && promises.length === 0) {
       // Restart the prediction process
       dispatch(removePredictions(file.name));
-      const paragraphs = toPlainParagraphs(html);
+      const paragraphs = toPlainParagraphs(html.header + html.document);
 
       const promises = paragraphs.map(async (p) => {
-        const prediction = await predict(p, controller.current);
+        const prediction = await predict(
+          p,
+          controller.current,
+          user?.function === FunctionType.ANONYMIZER
+            ? '/anonymizer/predict'
+            : '/datapublic/predict'
+        );
 
         // Increase progress %
         setProgress((current) => current + 1 / paragraphs.length);
@@ -68,7 +78,14 @@ export default function usePredict(
 
       setPromises(promises);
     }
-  }, [html, dispatch, promises.length, file.name]);
+  }, [
+    html.document,
+    html.header,
+    dispatch,
+    promises.length,
+    file.name,
+    user?.function,
+  ]);
 
   // Completed promises
   useEffect(() => {
@@ -78,7 +95,8 @@ export default function usePredict(
           // Check if the prediction process is still ongoing
           if (!cancelled.current) {
             result.forEach((prediction) => {
-              dispatch(addPredictions(file.name, prediction));
+              if (prediction.length > 0)
+                dispatch(addPredictions(file.name, prediction));
             });
 
             updateStatus('completed');

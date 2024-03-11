@@ -1,4 +1,4 @@
-import { convertToHtml as bufferToHtml } from 'mammoth/mammoth.browser';
+import { convertToHtml as bufferToHtml } from "mammoth/mammoth.browser";
 
 type ReaderCallback = (result: ArrayBuffer) => Promise<void>;
 /**
