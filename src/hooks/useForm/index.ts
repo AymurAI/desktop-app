@@ -62,11 +62,21 @@ export default function useForm(initialDecisiones = 1) {
     }
   };
 
+  const getDecisionValue = (n: number) => (field: LabelDecisiones) => {
+    const arr = refs.current.DECISIONES;
+
+    if (arr && n in arr && field in arr[n]) {
+      return arr[n][field];
+    }
+    return '';
+  };
+
   return {
     register,
     submit,
     addDecision,
     decisionAmount,
+    getDecisionValue,
   };
 }
 
