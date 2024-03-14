@@ -14,12 +14,16 @@ export const Header = styled('header', {
   alignItems: 'center',
 
   zIndex: 2,
-  px: 150,
+  px: '$xl',
   py: '$l',
   gap: 10,
 
   bg: '$white',
   bb: '1px solid $borderPrimary',
+
+  '@xl': {
+    px: 150,
+  },
 });
 
 export const Section = styled('section', {

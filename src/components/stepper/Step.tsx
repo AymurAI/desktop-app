@@ -59,7 +59,18 @@ export default function Step({ currentStep, step, children }: Props) {
   return (
     <Stack align="center">
       <Number status={getStatus()}>{step}</Number>
-      {getStatus() === 'focus' && <Label>{children}</Label>}
+      {getStatus() === 'focus' && (
+        <Label
+          css={{
+            display: 'none',
+            '@lg': {
+              display: 'block',
+            },
+          }}
+        >
+          {children}
+        </Label>
+      )}
     </Stack>
   );
 }
