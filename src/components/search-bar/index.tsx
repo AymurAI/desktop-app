@@ -25,7 +25,7 @@ export default function SearchBar({
 }: Props) {
   const user = useUser();
   const [count, setCount] = useState(INITIAL_VALUE);
-  useScroll(count);
+  useScroll(count, word);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isSearching = word.length > 2;
