@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   GoogleLogo,
   Monitor,
   Detective,
   Database,
   ArrowBendUpLeft,
-} from "phosphor-react";
+} from 'phosphor-react';
 
-import { Background, Container } from "layout/login";
-import { Button, Subtitle, Title, Stack, Label } from "components";
-import { useLogin, useUser } from "hooks";
-import Callout from "./Callout";
-import { FunctionType } from "types/user";
+import { Background, Container } from 'layout/login';
+import { Button, Subtitle, Title, Stack, Label } from 'components';
+import { useLogin, useUser } from 'hooks';
+import Callout from './Callout';
+import { FunctionType } from 'types/user';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -25,81 +25,92 @@ export default function Login() {
    * Ensures the user state has been successfully updated before navigating to the `/home`
    */
   useEffect(() => {
-    if (user && user.function !== "") navigate("/onboarding");
+    if (user && user.function !== '') navigate('/onboarding');
   }, [user, navigate]);
 
   return (
     <Background>
       <Container>
-        {/*  Title */}
-        <Stack direction="column" align="center">
-          <Subtitle>Te damos la bienvenida a</Subtitle>
-          <Title weight="heavy" size="main">
-            AymurAI
-          </Title>
-        </Stack>
-
-        {/* Login */}
         <Stack
           direction="column"
-          spacing="m"
-          align="stretch"
-          css={{ width: 300 }}
+          justify="center"
+          align="center"
+          style={{ flex: 1 }}
         >
-          {!isLocal && (
-            <>
-              <Subtitle weight="strong" size="s" css={{ textAlign: "center" }}>
-                ¿Donde prefieres guardar la información que proceses con
-                AymurAI?
-              </Subtitle>
-              {/* Buttons */}
-              <Stack direction="column" align="center" spacing="s">
-                <Button onClick={() => setIsLocal(true)}>
-                  <Monitor weight="bold" />
-                  Local
-                </Button>
-                <Subtitle size="s">o</Subtitle>
-                <Button onClick={login.online}>
-                  <GoogleLogo weight="bold" />
-                  Google
-                </Button>
-              </Stack>
+          {/*  Title */}
+          <Stack direction="column" align="center">
+            <Subtitle>Te damos la bienvenida a</Subtitle>
+            <Title weight="heavy" size="main">
+              AymurAI
+            </Title>
+          </Stack>
 
-              {/* Callout */}
-              <Callout />
-            </>
-          )}
+          {/* Login */}
+          <Stack
+            direction="column"
+            spacing="m"
+            align="stretch"
+            css={{ width: 300 }}
+          >
+            {!isLocal && (
+              <>
+                <Subtitle
+                  weight="strong"
+                  size="s"
+                  css={{ textAlign: 'center' }}
+                >
+                  ¿Donde prefieres guardar la información que proceses con
+                  AymurAI?
+                </Subtitle>
+                {/* Buttons */}
+                <Stack direction="column" align="center" spacing="s">
+                  <Button onClick={() => setIsLocal(true)}>
+                    <Monitor weight="bold" />
+                    Local
+                  </Button>
+                  <Subtitle size="s">o</Subtitle>
+                  <Button onClick={login.online}>
+                    <GoogleLogo weight="bold" />
+                    Google
+                  </Button>
+                </Stack>
 
-          {isLocal && (
-            <>
-              <Subtitle weight="strong" size="s" css={{ textAlign: "center" }}>
-                ¿Cual función vas a utilizar?
-              </Subtitle>
-              <Button onClick={() => login.offline(FunctionType.DATASET)}>
-                <Database weight="bold" />
-                Set de datos
-              </Button>
-              <Subtitle size="s" css={{ textAlign: "center" }}>
-                o
-              </Subtitle>
-              <Button onClick={() => login.offline(FunctionType.ANONYMIZER)}>
-                <Detective weight="bold" />
-                Anonimizador
-              </Button>
-              <Button variant={"secondary"} onClick={() => setIsLocal(false)}>
-                <ArrowBendUpLeft weight="bold" />
-                Volver al inicio
-              </Button>
-            </>
-          )}
+                {/* Callout */}
+                <Callout />
+              </>
+            )}
+
+            {isLocal && (
+              <>
+                <Subtitle
+                  weight="strong"
+                  size="s"
+                  css={{ textAlign: 'center' }}
+                >
+                  ¿Cual función vas a utilizar?
+                </Subtitle>
+                <Button onClick={() => login.offline(FunctionType.DATASET)}>
+                  <Database weight="bold" />
+                  Set de datos
+                </Button>
+                <Subtitle size="s" css={{ textAlign: 'center' }}>
+                  o
+                </Subtitle>
+                <Button onClick={() => login.offline(FunctionType.ANONYMIZER)}>
+                  <Detective weight="bold" />
+                  Anonimizador
+                </Button>
+                <Button variant={'secondary'} onClick={() => setIsLocal(false)}>
+                  <ArrowBendUpLeft weight="bold" />
+                  Volver al inicio
+                </Button>
+              </>
+            )}
+          </Stack>
         </Stack>
 
         {/* DataGenero info */}
-        <Stack
-          direction="column"
-          align="center"
-          style={{ position: "fixed", bottom: 48 }}
-        >
+        <Stack direction="column" align="center" spacing="none">
           <Label size="s">Plataforma hecha por</Label>
           <a
             href="https://www.datagenero.org/"
