@@ -23,3 +23,8 @@ export const DATASET_URL =
  * Token refresh interval = 45 min x 60s x 1000ms
  */
 export const REFRESH_INTERVAL = 45 * 60 * 1000;
+
+/**
+ * AymurAI API URL
+ */
+export const AYMURAI_API_URL = `http://localhost:${PREDICT_PORT}`;
