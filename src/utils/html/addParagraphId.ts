@@ -4,6 +4,7 @@ import { hash } from './hashWord';
  * Generates a string ready to be used as an ID by splitting and hashing the paragraph.
  * @param paragraph Paragraph to be hashed.
  * @returns A `string` representing the hashed paragraph.
+ * @deprecated
  */
 export const id = (paragraph: string) => {
   const start = paragraph.slice(0, 15);
@@ -15,6 +16,7 @@ export const id = (paragraph: string) => {
  * Generates and adds an id to each paragraph (directly <p> descendants) in the HTML string.
  * @param html HTML string.
  * @returns The same HTML string but with paragraph ids.
+ * @deprecated
  */
 export const addParagraphIds = (html: string) => {
   const dom = new DOMParser().parseFromString(html, 'text/html');
