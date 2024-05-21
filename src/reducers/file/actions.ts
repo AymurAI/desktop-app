@@ -1,22 +1,23 @@
-import { FormData } from "hooks/useForm";
-import { PredictLabel } from "types/aymurai";
+import { FormData } from 'hooks/useForm';
+import { DocumentParagraph, PredictLabel } from 'types/aymurai';
 
 /**
  * List of action types.
  */
 export enum ActionTypes {
-  ADD = "ADD",
-  ADD_PREDICTIONS = "ADD_PREDICTIONS",
-  FILTER_UNSELECTED = "FILTER_UNSELECTED",
-  FILTER_UNPROCESSED = "FILTER_UNPROCESSED",
-  TOGGLE_SELECTED = "TOGGLE_SELECTED",
-  REMOVE_ALL_PREDICTIONS = "REMOVE_ALL_PREDICTIONS",
-  REMOVE_PREDICTIONS = "REMOVE_PREDICTIONS",
-  REMOVE_ALL_FILES = "REMOVE_ALL_FILES",
-  REMOVE_FILE = "REMOVE_FILE",
-  REPLACE_FILE = "REPLACE_FILE",
-  VALIDATE = "VALIDATE",
-  APPEND_VALIDATION = "APPEND_VALIDATION",
+  ADD = 'ADD',
+  ADD_PREDICTIONS = 'ADD_PREDICTIONS',
+  ADD_PARAGRAPHS = 'ADD_PARAGRAPHS',
+  FILTER_UNSELECTED = 'FILTER_UNSELECTED',
+  FILTER_UNPROCESSED = 'FILTER_UNPROCESSED',
+  TOGGLE_SELECTED = 'TOGGLE_SELECTED',
+  REMOVE_ALL_PREDICTIONS = 'REMOVE_ALL_PREDICTIONS',
+  REMOVE_PREDICTIONS = 'REMOVE_PREDICTIONS',
+  REMOVE_ALL_FILES = 'REMOVE_ALL_FILES',
+  REMOVE_FILE = 'REMOVE_FILE',
+  REPLACE_FILE = 'REPLACE_FILE',
+  VALIDATE = 'VALIDATE',
+  APPEND_VALIDATION = 'APPEND_VALIDATION',
 }
 
 /**
@@ -190,5 +191,27 @@ export function filterUnprocessed(): FilterUnprocessedAction {
   return {
     type: ActionTypes.FILTER_UNPROCESSED,
     payload: {},
+  };
+}
+
+export type AddParagraphsAction = Action<
+  ActionTypes.ADD_PARAGRAPHS,
+  {
+    paragraphs: DocumentParagraph[];
+    fileName: string;
+  }
+>;
+/**
+ * Adds paragraphs to the state from the endpoint `/document-extract`
+ * @param paragraphs List of paragraphs to be added
+ * @param fileName Name of the file to be modified
+ */
+export function addParagraphs(
+  paragraphs: DocumentParagraph[],
+  fileName: string
+): AddParagraphsAction {
+  return {
+    type: ActionTypes.ADD_PARAGRAPHS,
+    payload: { paragraphs, fileName },
   };
 }
