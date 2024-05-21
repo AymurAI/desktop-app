@@ -1,49 +1,35 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { addParagraphs } from 'reducers/file/actions';
 
-import { parseDoc } from 'services/aymurai';
-import convertDocxToHTML from 'services/aymurai/convert-docx-to-html';
-import { convertToHTML, getExtension } from 'utils/file';
-import { addParagraphIds } from 'utils/html';
+import { getParagraphs } from 'services/aymurai';
+import { DocFile } from 'types/file';
 
-type PostProcessCallback = (html: string) => string;
+import { useFileDispatch } from './useFiles';
+
 /**
- * Converts a file to HTML `string`
- * @param file Parses a `.docx` file into HMTL
- * @param onPostProcess Function to be applied after the parsing process was completed
- * @returns The parsed HTML in `string` format
+ * Fetches the paragraphs of a file and adds them to the state. Also, returns the paragraphs
+ * @param file File to be analyzed
+ * @returns List of paragraphs with their metadata
  */
-export default function useFileParser(
-  file: File,
-  onPostProcess?: PostProcessCallback
-) {
-  const [html, setHtml] = useState<string | null>(null);
-  const [header, setHeader] = useState<string | undefined>('');
-
-  const updateHTML = useCallback(
-    (html: string) => {
-      const result = onPostProcess?.(html) ?? html;
-      setHtml(result);
-    },
-    [onPostProcess]
-  );
-
-  const extension = getExtension(file);
-
-  // Check if the file object has any parsed HTML attached to it
-  if (!html && extension === 'docx') {
-    convertToHTML(file, updateHTML);
-    convertDocxToHTML(file).then((res) => {
-      setHeader(res.data.header?.join('').toString());
-    });
-  }
+export function useFileParser(file: DocFile) {
+  const dispatch = useFileDispatch();
 
   useEffect(() => {
-    // Check if the file object has any parsed HTML attached to it
-    if (!html && extension === 'doc') parseDoc(file).then(updateHTML);
-  }, [file, extension, html, updateHTML]);
+    let loaded = false;
+    const fetchParagraphs = async () => {
+      // Prevents the function from running multiple times or if the paragraphs've already been loaded
+      if (!loaded && !file.paragraphs) {
+        const response = await getParagraphs(file.data);
+        dispatch(addParagraphs(response, file.data.name));
+      }
+    };
 
-  return {
-    document: addParagraphIds(html ?? ''),
-    header: addParagraphIds(header ?? ''),
-  };
+    fetchParagraphs();
+
+    return () => {
+      loaded = true;
+    };
+  }, [file]);
+
+  return file.paragraphs;
 }

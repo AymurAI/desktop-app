@@ -1,61 +1,22 @@
-import { useState } from 'react';
-
-import { DocumentParagraph, PredictLabel } from 'types/aymurai';
-import { getParagraphId } from 'utils/file/getParagraphId';
+import { DocumentParagraph } from 'types/aymurai';
+import { randomUUID } from 'crypto';
+// TODO: implement getParagraphId
+// import { getParagraphId } from 'utils/file/getParagraphId';
 
 import * as S from './FileRenderer.styles';
-import { generateSplits } from './generateSplits';
-import { Mark } from './Mark';
-import { annotationWithSearch, labelToAnnotation } from './annotations';
-import { Annotation } from './types';
 
-interface ParagraphProps {
-  children: string;
-  annotations?: Annotation[];
-  id: string;
-}
-const Paragraph = ({ children, annotations = [], id }: ParagraphProps) => {
-  const splits = generateSplits(children, annotations);
-
-  return (
-    <S.Paragraph id={id}>
-      {splits.map((s) => {
-        const content = children.slice(s.start, s.end);
-        const key = `${s.start}-${s.end}`;
-
-        return <Mark {...{ annotation: s, key }}>{content}</Mark>;
-      })}
-    </S.Paragraph>
-  );
-};
+const getParagraphId = () => randomUUID();
 
 interface Props {
-  paragraphs: DocumentParagraph[];
-  labels?: Map<string, PredictLabel[]>;
+  children: DocumentParagraph[];
 }
-export default function FileRenderer({ paragraphs, labels }: Props) {
-  const [search, setSearch] = useState('');
-
+export default function FileRenderer({ children }: Props) {
   return (
-    <S.Container>
-      {/* TODO: add search bar */}
-      <S.File>
-        {paragraphs.map((p) => {
-          const content = p.plain_text;
-          const id = getParagraphId(content);
-
-          const labelAnnotations = labelToAnnotation(labels?.get(id) ?? []);
-          const annotations = annotationWithSearch(
-            labelAnnotations,
-            search,
-            content
-          );
-
-          return (
-            <Paragraph {...{ key: id, id, annotations }}>{content}</Paragraph>
-          );
-        })}
-      </S.File>
-    </S.Container>
+    <div>
+      {children.map(({ plain_text }) => {
+        const id = getParagraphId();
+        return <S.Paragraph {...{ id, key: id }}>{plain_text}</S.Paragraph>;
+      })}
+    </div>
   );
 }
