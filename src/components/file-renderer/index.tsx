@@ -5,7 +5,10 @@ import { randomUUID } from 'crypto';
 
 import * as S from './FileRenderer.styles';
 
-const getParagraphId = () => randomUUID();
+const getParagraphId = (paragraph: string) => {
+  void paragraph;
+  return window.btoa(Date.now().toString())
+};
 
 interface Props {
   children: DocumentParagraph[];
@@ -14,7 +17,7 @@ export default function FileRenderer({ children }: Props) {
   return (
     <div>
       {children.map(({ plain_text }) => {
-        const id = getParagraphId();
+        const id = getParagraphId(plain_text);
         return <S.Paragraph {...{ id, key: id }}>{plain_text}</S.Paragraph>;
       })}
     </div>
