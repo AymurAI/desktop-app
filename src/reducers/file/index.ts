@@ -12,6 +12,7 @@ import {
   ValidateAction,
   FilterUnprocessedAction,
   RemoveFileAction,
+  AddParagraphsAction,
 } from './actions';
 import { addFiles, replaceFile, updateFromState } from './utils';
 
@@ -31,7 +32,8 @@ export type Action =
   | FilterUnselectedAction
   | ValidateAction
   | AppendValidationAction
-  | FilterUnprocessedAction;
+  | FilterUnprocessedAction
+  | AddParagraphsAction;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -143,6 +145,18 @@ export default function reducer(state: State, action: Action): State {
         ...cur,
         // Append to the already created object
         validationObject: { ...cur.validationObject, ...validation },
+      }));
+    }
+
+    // ----------------
+    // ADD PARAGRAPHS
+    // ----------------
+    case ActionTypes.ADD_PARAGRAPHS: {
+      const { fileName, paragraphs } = payload;
+
+      return update(fileName, (cur) => ({
+        ...cur,
+        paragraphs: paragraphs,
       }));
     }
 
