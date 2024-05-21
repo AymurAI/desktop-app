@@ -12,7 +12,7 @@ export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
 interface UsePredictOptions {
   onStatusChange?: (status: PredictStatus) => void;
 }
-export default function usePredict(
+export function usePredict(
   file: DocFile,
   { onStatusChange }: UsePredictOptions
 ) {

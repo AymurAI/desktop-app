@@ -11,7 +11,7 @@ import { useFileDispatch } from './useFiles';
  * @param file File to be analyzed
  * @returns List of paragraphs with their metadata
  */
-export default function useFileParser(file: DocFile) {
+export function useFileParser(file: DocFile) {
   const dispatch = useFileDispatch();
 
   useEffect(() => {
