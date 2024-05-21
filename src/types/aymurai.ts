@@ -123,3 +123,21 @@ export type ExportDocumentSuccess = {
   document: string;
   footer?: string[];
 };
+
+
+interface DocumentMetadata {
+  start: number;
+  end: number;
+  fragments: {
+    text: string;
+    normalized_text: string;
+    start: number;
+    end: number;
+    fragment_index: number;
+    paragraph_index: number;
+  }[];
+}
+export interface DocumentParagraph {
+  plain_text: string;
+  metadata: DocumentMetadata;
+}
