@@ -1,5 +1,27 @@
 import { styled } from 'styles';
 
+export const Container = styled('div', {
+  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+
+  zIndex: 1,
+  overflowY: 'scroll',
+});
+
+export const File = styled('div', {
+  p: '$xl',
+
+  '& p, & span, & strong, & em': {
+    fontFamily: '$file',
+    fontSize: 16,
+    lineHeight: '100%',
+    my: '1em',
+  },
+});
+
+export const Paragraph = styled('p', {
+  margin: '8px 0px',
+});
+
 export const Button = styled('button', {
   visibility: 'hidden',
   position: 'relative',
