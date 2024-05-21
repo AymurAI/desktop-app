@@ -1,7 +1,7 @@
 import { FC, HTMLAttributes, PropsWithChildren } from 'react';
 
 import { Annotation, Metadata } from './types';
-import * as S from './FileRenderer.styles';
+import * as S from './FileAnnotator.styles';
 
 interface MarkProps extends PropsWithChildren, HTMLAttributes<HTMLSpanElement> {
   annotation: Annotation;
