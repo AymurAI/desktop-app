@@ -1,7 +1,12 @@
 import { CanceledError } from 'axios';
 
-import { PredictLabel, PredictSuccess } from 'types/aymurai';
+import { PredictLabel, Workflows } from 'types/aymurai';
 import { fetcher } from './utils';
+
+interface PredictResponse {
+  document: string;
+  labels: PredictLabel[];
+}
 
 /**
  * Realiza una petición a la AI para poder obtener predicciones en base a un párrafo
@@ -12,10 +17,10 @@ import { fetcher } from './utils';
 export default async function predict(
   paragraph: string,
   controller: AbortController,
-  route: string
+  route: Workflows = 'datapublic'
 ): Promise<PredictLabel[]> {
   try {
-    const response = await fetcher.post<PredictSuccess>(
+    const response = await fetcher.post<PredictResponse>(
       route,
       {
         text: paragraph,
@@ -31,6 +36,7 @@ export default async function predict(
       return [];
       // Otherwise, throw again the same error
     } else {
+      console.error(e);
       const { message } = e as Error;
       throw new Error(message);
     }
