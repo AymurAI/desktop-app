@@ -1,11 +1,12 @@
 import { useFileDispatch, useUser, useFileParser } from 'hooks';
-import { Checkbox, FileRenderer, Text } from 'components';
+import { Checkbox, Text } from 'components';
+import { toggleSelected } from 'reducers/file/actions';
+import { getParagraphId } from 'utils/file/getParagraphId';
 
 import { FunctionType } from 'types/user';
 import { DocFile } from 'types/file';
 
 import * as S from './FilePreview.styles';
-import { toggleSelected } from 'reducers/file/actions';
 
 interface Props {
   file: DocFile;
@@ -29,7 +30,10 @@ export default function FilePreview({ file }: Props) {
 
       <S.FileContainer>
         {paragraphs ? (
-          <FileRenderer>{paragraphs}</FileRenderer>
+          paragraphs.map((text) => {
+            const id = getParagraphId(text);
+            return <S.Paragraph {...{ id, key: id }}>{text}</S.Paragraph>;
+          })
         ) : (
           /* TODO: implement laoding spinner */
           <Text>Loading...</Text>
