@@ -1,9 +1,11 @@
-// ------------
-// PREDICTION
-
 import { SelectOption } from 'components/select';
 
 // ------------
+// PREDICTION
+// ------------
+
+export type Workflows = 'datapublic' | 'anonymizer';
+
 type LabelAttributes = {
   aymurai_label: AllLabels;
   aymurai_label_subclass: string[] | null;
@@ -17,10 +19,6 @@ export type PredictLabel = {
   end_char: number;
   attrs: LabelAttributes;
   paragraph: string;
-};
-export type PredictSuccess = {
-  document: string;
-  labels: PredictLabel[];
 };
 
 export enum LabelType {
@@ -118,13 +116,6 @@ export const anonymizerLabels: SelectOption[] = [
 // DOCUMENT EXTRACTION
 // --------------------
 
-export type ExportDocumentSuccess = {
-  header?: string[];
-  document: string;
-  footer?: string[];
-};
-
-
 interface DocumentMetadata {
   start: number;
   end: number;
@@ -139,5 +130,5 @@ interface DocumentMetadata {
 }
 export interface DocumentParagraph {
   plain_text: string;
-  metadata: DocumentMetadata;
+  metadata?: DocumentMetadata;
 }
