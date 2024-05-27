@@ -36,14 +36,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     {/* Provides the Google OAuth2 token */}
-    <AnonymizerProvider>
-      {/* Provides anonymized data to be exported*/}
-      <AuthProvider>
-        {/* Stitches global styles */}
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </AuthProvider>
-    </AnonymizerProvider>
+    <AuthProvider>
+      {/* Stitches global styles */}
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
