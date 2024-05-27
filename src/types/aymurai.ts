@@ -116,13 +116,6 @@ export const anonymizerLabels: SelectOption[] = [
 // DOCUMENT EXTRACTION
 // --------------------
 
-export type ExportDocumentSuccess = {
-  header?: string[];
-  document: string;
-  footer?: string[];
-};
-
-
 interface DocumentMetadata {
   start: number;
   end: number;
@@ -137,5 +130,5 @@ interface DocumentMetadata {
 }
 export interface DocumentParagraph {
   plain_text: string;
-  metadata: DocumentMetadata;
+  metadata?: DocumentMetadata;
 }
