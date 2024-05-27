@@ -1,4 +1,4 @@
-import { DocumentParagraph, PredictLabel } from './aymurai';
+import { PredictLabel } from './aymurai';
 import { FormData } from 'hooks/useForm';
 
 /**
@@ -12,7 +12,9 @@ export type DocFile = {
   /**
    * File paragraph data and their metadate
    */
-  paragraphs?: DocumentParagraph[];
+  paragraphs?: string[];
+  // TODO: wait for backend to define if the property is required
+  // paragraphs?: DocumentParagraph[];
   /**
    * Used on the 'preview' page to detect which files have to be processed
    */
