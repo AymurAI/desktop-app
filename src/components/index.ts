@@ -27,7 +27,6 @@ import Tooltip from './tooltip';
 import ValidationForm from './validation-form';
 import Toast from './toast';
 import SearchBar from './search-bar';
-import FileRenderer from './file-renderer';
 import FileAnnotator from './file-annotator';
 
 export {
@@ -63,6 +62,5 @@ export {
   ValidationForm,
   Toast,
   SearchBar,
-  FileRenderer,
   FileAnnotator,
 };
