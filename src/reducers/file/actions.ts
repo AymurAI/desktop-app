@@ -18,6 +18,8 @@ export enum ActionTypes {
   REPLACE_FILE = 'REPLACE_FILE',
   VALIDATE = 'VALIDATE',
   APPEND_VALIDATION = 'APPEND_VALIDATION',
+  APPEND_PREDICTION = 'APPEND_PREDICTION',
+  REMOVE_PREDICTION = 'REMOVE_PREDICTION',
 }
 
 /**
@@ -213,5 +215,49 @@ export function addParagraphs(
   return {
     type: ActionTypes.ADD_PARAGRAPHS,
     payload: { paragraphs, fileName },
+  };
+}
+
+export type AppendPrediction = Action<
+  ActionTypes.APPEND_PREDICTION,
+  {
+    prediction: PredictLabel;
+    fileName: string;
+  }
+>;
+/**
+ * Appends a new user made prediction to the file
+ * @param prediction User made prediction on the file. Should only be used when anonymizing.
+ * @param fileName Name of the file to be modified
+ */
+export function appendPrediction(
+  fileName: string,
+  prediction: PredictLabel
+): AppendPrediction {
+  return {
+    type: ActionTypes.APPEND_PREDICTION,
+    payload: { prediction, fileName },
+  };
+}
+
+export type RemovePrediction = Action<
+  ActionTypes.REMOVE_PREDICTION,
+  {
+    prediction: PredictLabel;
+    fileName: string;
+  }
+>;
+/**
+ * Removes a user made prediction from the file
+ * @param predictionId ID of the prediction to be removed
+ * @param fileName Name of the file to be modified
+ */
+export function removePrediction(
+  fileName: string,
+  prediction: PredictLabel
+): RemovePrediction {
+  return {
+    type: ActionTypes.REMOVE_PREDICTION,
+    payload: { prediction, fileName },
   };
 }
