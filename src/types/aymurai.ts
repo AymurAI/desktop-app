@@ -116,19 +116,20 @@ export const anonymizerLabels: SelectOption[] = [
 // DOCUMENT EXTRACTION
 // --------------------
 
-interface DocumentMetadata {
-  start: number;
-  end: number;
-  fragments: {
-    text: string;
-    normalized_text: string;
-    start: number;
-    end: number;
-    fragment_index: number;
-    paragraph_index: number;
-  }[];
-}
-export interface DocumentParagraph {
-  plain_text: string;
-  metadata?: DocumentMetadata;
-}
+// TODO: wait for backend to define if the XML metadata property is required
+// interface DocumentMetadata {
+//   start: number;
+//   end: number;
+//   fragments: {
+//     text: string;
+//     normalized_text: string;
+//     start: number;
+//     end: number;
+//     fragment_index: number;
+//     paragraph_index: number;
+//   }[];
+// }
+// export interface DocumentParagraph {
+//   plain_text: string;
+//   // metadata?: DocumentMetadata;
+// }
