@@ -31,7 +31,7 @@ export const useScroll = (word: string) => {
   const isSearching = word.length >= SEARCH_MIN_LENGTH;
 
   // Handlers
-  const clear = () => {
+  const clearTimer = () => {
     if (timer.current) {
       clearTimeout(timer.current);
       timer.current = null;
@@ -55,7 +55,7 @@ export const useScroll = (word: string) => {
     if (word.length >= 2) {
       setTimeout(() => scrollToComponent(1), SCROLL_DEBOUNCE);
     }
-    return () => clear();
+    return () => clearTimer();
   }, [word]);
 
   /**
@@ -63,7 +63,7 @@ export const useScroll = (word: string) => {
    */
   useEffect(() => {
     setTimeout(() => scrollToComponent(count), SCROLL_DEBOUNCE);
-    return () => clear();
+    return () => clearTimer();
   }, [count]);
 
   /**
@@ -72,6 +72,8 @@ export const useScroll = (word: string) => {
   useLayoutEffect(() => {
     const getMatchCount = () => {
       if (!isSearching) return 0;
+
+      setCount(1);
       return find().length;
     };
 
