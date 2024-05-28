@@ -11,7 +11,7 @@ export const File = styled('div', {
   px: '$xl',
   pb: '$xl',
 
-  '& p, & span, & strong, & em': {
+  '& p, & span, & em': {
     fontFamily: '$file',
     fontSize: 16,
     lineHeight: '100%',
@@ -58,15 +58,9 @@ export const Button = styled('button', {
   },
 });
 export const Mark = styled('mark', {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '$s',
   position: 'relative',
-
   overflowWrap: 'break-word',
-  fontFamily: '$file',
-
-  padding: '0px 0px 0px 2px',
+  padding: '0px  2px',
   borderRadius: 8,
 
   [`&:hover ${Button}`]: {
@@ -81,7 +75,7 @@ export const Mark = styled('mark', {
         '& strong': {
           fontSize: '12px',
           padding: '0px',
-          margin: '0px',
+          ml: '6px',
         },
       },
       search: {

@@ -54,7 +54,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
           {...props}
           {...metadata}
         >
-          {children}
+          <span>{children}</span>
 
           {annotation.type === 'tag' && <strong>{annotation.tag}</strong>}
           {isAnnotable && annotation.tag && (
