@@ -1,3 +1,5 @@
+import RegexEscape from 'regex-escape';
+
 /**
  * Given a vowel, returns a 'regex' that matches the vowel with or without accent
  */
@@ -38,37 +40,9 @@ const replaceVowels = (char: string) => {
 };
 
 /**
- * Replaces all the special characters with a backslash so they can be used in a regex.
- */
-const replaceEscaped = (word: string) => {
-  const escapedChars = [
-    '(',
-    ')',
-    '[',
-    ']',
-    '{',
-    '}',
-    '.',
-    '*',
-    '+',
-    '?',
-    '$',
-    '\\',
-    '|',
-  ];
-  let parsed = word;
-
-  for (const char of escapedChars) {
-    parsed = parsed.replaceAll(char, `\\${char}`);
-  }
-
-  return parsed;
-};
-
-/**
  * Using the two replace functions, returns a sanitized word that can be used in a regex
  */
-const sanitize = (word: string) => replaceVowels(replaceEscaped(word));
+const sanitize = (word: string) => replaceVowels(RegexEscape(word));
 
 /**
  * Matches all the text that contains the word
