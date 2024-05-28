@@ -38,6 +38,17 @@ export const FileContainer = styled('div', {
 
   // Only shows text that fits into the box
   overflow: 'hidden',
+
+  variants: {
+    isLoading: {
+      true: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      false: {},
+    },
+  },
 });
 
 export const Paragraph = styled('p', {
