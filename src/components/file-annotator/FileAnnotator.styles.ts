@@ -24,7 +24,7 @@ export const Paragraph = styled('p', {
 
 export const Button = styled('button', {
   visibility: 'hidden',
-  position: 'relative',
+  position: 'absolute',
   color: '$white',
   padding: '3px 5px',
   borderRadius: 8,
@@ -57,6 +57,11 @@ export const Button = styled('button', {
   },
 });
 export const Mark = styled('mark', {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '$s',
+  position: 'relative',
+
   fontFamily: '$file',
 
   padding: '0px 0px 0px 2px',
@@ -94,4 +99,9 @@ export const Mark = styled('mark', {
     type: 'tag',
     annotable: false,
   },
+});
+
+export const SearchPadding = styled('div', {
+  pt: '$l',
+  px: '$l',
 });
