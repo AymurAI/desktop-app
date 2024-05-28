@@ -28,6 +28,7 @@ import ValidationForm from './validation-form';
 import Toast from './toast';
 import SearchBar from './search-bar';
 import FileAnnotator from './file-annotator';
+import Spinner from './spinner';
 
 export {
   Arrow,
@@ -63,4 +64,5 @@ export {
   Toast,
   SearchBar,
   FileAnnotator,
+  Spinner,
 };

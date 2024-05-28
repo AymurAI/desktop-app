@@ -1,5 +1,5 @@
 import { CheckCircle, XCircle } from 'phosphor-react';
-import Spinner from './Spinner';
+import { Spinner } from 'components';
 
 import { colors } from 'styles/tokens';
 
