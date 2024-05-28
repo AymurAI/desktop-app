@@ -1,3 +1,5 @@
+import { AllLabels } from 'types/aymurai';
+
 export interface BaseAnnotation {
   start: number;
   end: number;
@@ -6,7 +8,7 @@ export interface BaseAnnotation {
 export interface LabelAnnotation extends BaseAnnotation {
   type: 'tag' | 'search';
   paragraphId: string;
-  tag: string;
+  tag?: AllLabels;
 }
 export interface TextAnnotation extends BaseAnnotation {
   type: 'text';
@@ -18,6 +20,5 @@ export type Split = Annotation;
 export interface Metadata {
   'data-start': number;
   'data-end': number;
-  'data-paragraphid'?: string;
   'data-tag'?: string;
 }

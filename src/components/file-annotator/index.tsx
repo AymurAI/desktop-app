@@ -1,14 +1,17 @@
 import { useState } from 'react';
 
-import { DocumentParagraph, PredictLabel } from 'types/aymurai';
 import { getParagraphId } from 'utils/file/getParagraphId';
-import FileSearchBar from 'components/file-search-bar';
+import { SearchBar } from './SearchBar';
 
 import * as S from './FileAnnotator.styles';
 import { generateSplits } from './generateSplits';
 import { Mark } from './Mark';
-import { annotationWithSearch, labelToAnnotation } from './annotations';
 import { Annotation } from './types';
+import { DocFile } from 'types/file';
+import AnnotationProvider from 'context/Annotation';
+import { createAnnotationsWithSearch } from './annotations';
+import { SelectOption } from 'components/select';
+import { AllLabels } from 'types/aymurai';
 
 interface ParagraphProps {
   children: string;
@@ -31,32 +34,46 @@ const Paragraph = ({ children, annotations = [], id }: ParagraphProps) => {
 };
 
 interface Props {
-  paragraphs: DocumentParagraph[];
-  labels?: Map<string, PredictLabel[]>;
+  file: DocFile;
+  isAnnotable?: boolean;
 }
-export default function FileAnnotator({ paragraphs, labels }: Props) {
+export default function FileAnnotator({ file, isAnnotable = false }: Props) {
   const [search, setSearch] = useState('');
+  const [searchTag, setSearchTag] = useState<AllLabels | null>(null);
+
+  const paragraphs = file.paragraphs!;
+
+  const selectChangeHandler = (option?: SelectOption) => {
+    // We're sure the option is an AllLabels enum.
+    // Check the type following the SearchBar component
+    setSearchTag((option?.id as AllLabels) ?? null);
+  };
 
   return (
     <S.Container>
-      {/* TODO: add search bar */}
-      <FileSearchBar onChange={setSearch} hasSelect></FileSearchBar>
+      <S.SearchPadding>
+        <SearchBar
+          onChange={setSearch}
+          onSelectChange={selectChangeHandler}
+          isAnnotable={isAnnotable}
+        ></SearchBar>
+      </S.SearchPadding>
       <S.File>
-        {paragraphs.map((p) => {
-          const content = p.plain_text;
-          const id = getParagraphId(content);
+        <AnnotationProvider {...{ file, isAnnotable, searchTag }}>
+          {paragraphs.map((text) => {
+            const id = getParagraphId(text);
 
-          const labelAnnotations = labelToAnnotation(labels?.get(id) ?? []);
-          const annotations = annotationWithSearch(
-            labelAnnotations,
-            search,
-            content
-          );
-
-          return (
-            <Paragraph {...{ key: id, id, annotations }}>{content}</Paragraph>
-          );
-        })}
+            const annotations = createAnnotationsWithSearch(
+              file.predictions ?? [],
+              search,
+              text,
+              searchTag
+            );
+            return (
+              <Paragraph {...{ key: id, id, annotations }}>{text}</Paragraph>
+            );
+          })}
+        </AnnotationProvider>
       </S.File>
     </S.Container>
   );
