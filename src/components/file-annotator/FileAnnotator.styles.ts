@@ -8,7 +8,8 @@ export const Container = styled('div', {
 });
 
 export const File = styled('div', {
-  p: '$xl',
+  px: '$xl',
+  pb: '$xl',
 
   '& p, & span, & strong, & em': {
     fontFamily: '$file',
@@ -62,6 +63,7 @@ export const Mark = styled('mark', {
   gap: '$s',
   position: 'relative',
 
+  overflowWrap: 'break-word',
   fontFamily: '$file',
 
   padding: '0px 0px 0px 2px',
@@ -101,7 +103,11 @@ export const Mark = styled('mark', {
   },
 });
 
-export const SearchPadding = styled('div', {
-  pt: '$l',
-  px: '$l',
+export const SearchContainer = styled('div', {
+  p: '$l',
+
+  zIndex: 1,
+  top: 0,
+  position: 'sticky',
+  background: 'white',
 });

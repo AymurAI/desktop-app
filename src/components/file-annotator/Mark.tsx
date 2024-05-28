@@ -54,8 +54,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
           {...props}
           {...metadata}
         >
-          {/* Added double space to better denote the separation between words.*/}
-          {children.replaceAll(' ', '\u00a0\u00a0')}
+          {children}
 
           {annotation.type === 'tag' && <strong>{annotation.tag}</strong>}
           {isAnnotable && annotation.tag && (

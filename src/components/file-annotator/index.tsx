@@ -51,13 +51,13 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
 
   return (
     <S.Container>
-      <S.SearchPadding>
+      <S.SearchContainer>
         <SearchBar
           onChange={setSearch}
           onSelectChange={selectChangeHandler}
           isAnnotable={isAnnotable}
         ></SearchBar>
-      </S.SearchPadding>
+      </S.SearchContainer>
       <S.File>
         <AnnotationProvider {...{ file, isAnnotable, searchTag }}>
           {paragraphs.map((text) => {
