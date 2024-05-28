@@ -1,7 +1,7 @@
 import { Necessary } from 'types/utils';
 import { removeUndefined } from 'utils/filtering';
 import { SelectOption, Suggestion } from '.';
-import regex from 'utils/regex';
+import { includes } from 'utils/regex';
 
 /**
  * Makes sure the text of the suggestion is defined in any way
@@ -69,5 +69,5 @@ export function orderByPriority(
  * @returns Returns the options that match the given word
  */
 export function filterOptions(options: SelectOption[], word: string) {
-  return options.filter(({ text }) => text.match(regex.includes(word)));
+  return options.filter(({ text }) => text.match(includes(word)));
 }
