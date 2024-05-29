@@ -55,13 +55,15 @@ export default function Finish() {
 
   // At first render, submit all the data
   useEffect(() => {
-    if (user) {
-      Promise.all(
-        files.map(async (f) => {
-          await submit(f);
-        })
-      ).then(() => setIsLoading(false));
-    }
+    const submitAll = async () => {
+      if (!user) return;
+
+      for (const file of files) {
+        await submit(file);
+      }
+    };
+
+    submitAll().then(() => setIsLoading(false));
 
     // We strictly need to run this effect once
     // eslint-disable-next-line react-hooks/exhaustive-deps
