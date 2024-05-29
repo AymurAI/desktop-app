@@ -73,8 +73,6 @@ export default function AnnotationProvider({
     );
     const [start, end] = getBoundaries(selection);
 
-    console.log(selection);
-
     add({
       start_char: start + offset,
       end_char: end + offset,
