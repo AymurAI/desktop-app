@@ -1,22 +1,20 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Button,
-  FileContainer,
   FileStepper,
   Grid,
   SectionTitle,
-} from "components";
-import { useFileDispatch, useFiles, useUser } from "hooks";
-import { Footer, Section } from "layout/main";
-import FormGroup from "./form-group";
-import withFileProtection from "features/withFileProtection";
-import { isFileValidated, isValidationCompleted } from "utils/file";
-import { validate } from "reducers/file/actions";
-import { moveNext, movePrevious } from "./utils";
-
-import { FunctionType } from "types/user";
+  FileAnnotator,
+} from 'components';
+import { useFileDispatch, useFiles } from 'hooks';
+import { Footer, Section } from 'layout/main';
+import FormGroup from './form-group';
+import withFileProtection from 'features/withFileProtection';
+import { isFileValidated, isValidationCompleted } from 'utils/file';
+import { validate } from 'reducers/file/actions';
+import { moveNext, movePrevious } from './utils';
 
 export default withFileProtection(function Validation() {
   // HOOKS
@@ -24,7 +22,6 @@ export default withFileProtection(function Validation() {
   const [selected, setSelected] = useState(0);
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
-  const user = useUser();
 
   // FIELDS
   const hasStepper = files.length > 1;
@@ -32,10 +29,7 @@ export default withFileProtection(function Validation() {
   const selectedFile = files[selected];
   // Check if the validation was completed on all the files
   const canContinue = isValidationCompleted(files);
-  const canValidate =
-    user?.function === FunctionType.ANONYMIZER
-      ? true
-      : isFileValidated(selectedFile);
+  const canValidate = isFileValidated(selectedFile);
 
   // HANDLERS
   const moveIndex = (newIndex: number | undefined) => {
@@ -45,7 +39,7 @@ export default withFileProtection(function Validation() {
   const previousFile = () => moveIndex(movePrevious(selected, files));
 
   const handleContinue = () => {
-    navigate("/finish");
+    navigate('/finish/dataset');
   };
 
   const handleValidate = async () => {
@@ -62,26 +56,24 @@ export default withFileProtection(function Validation() {
   return (
     <>
       <Grid
-        columns={user?.function === FunctionType.ANONYMIZER ? 1 : 2}
+        columns={2}
         spacing="none"
         justify="stretch"
         align="stretch"
-        css={{ overflow: "hidden" }}
+        css={{ overflow: 'hidden' }}
       >
-        <FileContainer
+        <FileAnnotator
           key={selectedFile.data.name}
           file={selectedFile}
-        ></FileContainer>
-        {user?.function === FunctionType.DATASET && (
-          <Section css={{ px: 100, overflowY: "scroll" }} spacing="xxl">
-            <SectionTitle>3. Validación de datos</SectionTitle>
-            <FormGroup key={selectedFile.data.name} file={selectedFile} />
-          </Section>
-        )}
+        ></FileAnnotator>
+        <Section css={{ px: 100, overflowY: 'scroll' }} spacing="xxl">
+          <SectionTitle>3. Validación de datos</SectionTitle>
+          <FormGroup key={selectedFile.data.name} file={selectedFile} />
+        </Section>
       </Grid>
       <Footer
         css={{
-          justifyContent: hasStepper ? "space-between" : "flex-end",
+          justifyContent: hasStepper ? 'space-between' : 'flex-end',
           gap: 150,
         }}
       >
@@ -95,9 +87,7 @@ export default withFileProtection(function Validation() {
           </Button>
         ) : (
           <Button size="l" onClick={handleValidate} disabled={!canValidate}>
-            {user?.function === FunctionType.ANONYMIZER
-              ? "Anonimizar documento"
-              : "Validar documento"}
+            Validar documento
           </Button>
         )}
       </Footer>
