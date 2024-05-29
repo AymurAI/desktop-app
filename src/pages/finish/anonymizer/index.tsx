@@ -55,7 +55,6 @@ export default function Anonymizer() {
 
     anonymize(file)
       .then((blob) => {
-        console.log('blob: ', blob);
         setFileURI(URL.createObjectURL(blob));
         setStatus('success');
       })

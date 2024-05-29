@@ -52,8 +52,6 @@ export const generateSplits = (
   // Represents the last index used to split
   let i = 0;
 
-  console.log(sortedTokens);
-
   sortedTokens.forEach((token, tokenIndex) => {
     // Avoid token superposition on search tokens
     if (
