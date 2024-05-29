@@ -26,16 +26,20 @@ export const Paragraph = styled('p', {
 export const Button = styled('button', {
   visibility: 'hidden',
   position: 'absolute',
-  color: '$white',
-  padding: '3px 5px',
-  borderRadius: 8,
-  cursor: 'pointer',
-  fontSize: '10px',
-  fontWeight: 'heavy',
-  textAlign: 'center',
   top: '-10px',
   right: '-5px',
+
+  height: '$m',
+  width: '$m',
+  padding: 0,
+  borderRadius: '50%',
   border: 'none',
+
+  fontSize: '14px',
+  fontWeight: 'heavy',
+  cursor: 'pointer',
+  color: '$white',
+  textAlign: 'center',
 
   variants: {
     type: {
