@@ -33,7 +33,7 @@ export const anonymize = async (file: DocFile) => {
   // TODO: add annotations whenever the backend implements it
   // formData.append('annotations', JSON.stringify(body(file)));
 
-  const response = await fetcher.post<Buffer>(
+  const response = await fetcher.post<ArrayBuffer>(
     '/anonymizer/anonymize-document',
     formData,
     {
@@ -45,8 +45,5 @@ export const anonymize = async (file: DocFile) => {
     }
   );
 
-  const data = Uint8Array.from(response.data);
-  return new Blob([data.buffer], {
-    type: 'application/vnd.oasis.opendocument.text',
-  });
+  return new Blob([response.data]);
 };
