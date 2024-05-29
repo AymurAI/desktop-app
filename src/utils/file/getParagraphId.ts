@@ -3,7 +3,7 @@
  * @param word The word to be hashed.
  * @returns A `string` representing the hashed word.
  */
-export const hash = (word: string) => {
+const hash = (word: string) => {
   // FIXME: improve sanitization
   const sanitized = word.replaceAll(/“|”/g, '"').replaceAll(/‘|’/g, "'");
 
@@ -17,10 +17,12 @@ export const hash = (word: string) => {
 };
 
 /**
- * Reverses a hashed word, obtaining the original word.
- * @param hash The _base64_ hashed word to be reversed.
- * @returns A `string` representing the original word.
+ * Generates a string ready to be used as an ID by splitting and hashing the paragraph.
+ * @param paragraph Paragraph to be hashed.
+ * @returns A `string` representing the hashed paragraph.
  */
-export const reverse = (hash: string) => {
-  return window.atob(hash);
+export const getParagraphId = (paragraph: string) => {
+  const start = paragraph.slice(0, 15);
+  const end = paragraph.slice(-15);
+  return hash(start + end).slice(0, 30);
 };

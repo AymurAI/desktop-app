@@ -2,7 +2,6 @@ import excelStructure from './excelStructure';
 import flatValidation from './flatValidation';
 import getByName from './getByName';
 import getExtension from './getExtension';
-import convertToHTML from './convertToHTML';
 import isAllowed from './isAllowed';
 import isAlreadyLoaded from './isAlreadyLoaded';
 import isFileValidated from './isFileValidated';
@@ -14,7 +13,6 @@ export {
   flatValidation,
   getByName,
   getExtension,
-  convertToHTML,
   isAllowed,
   isAlreadyLoaded,
   isFileValidated,

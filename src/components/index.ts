@@ -4,7 +4,6 @@ import Card from './card';
 import { Checkbox, CheckboxGroup } from './checkbox';
 import DecisionTabs from './decision-tabs';
 import FileCheck from './file-check';
-import FileContainer from './file-container';
 import FilePreview from './file-preview';
 import FileProcessing from './file-processing';
 import FileStepper from './file-stepper';
@@ -27,8 +26,8 @@ import Title from './title';
 import Tooltip from './tooltip';
 import ValidationForm from './validation-form';
 import Toast from './toast';
-import SearchBar from './search-bar';
-import FileRenderer from './file-renderer';
+import FileAnnotator from './file-annotator';
+import Spinner from './spinner';
 
 export {
   Arrow,
@@ -38,7 +37,6 @@ export {
   CheckboxGroup,
   DecisionTabs,
   FileCheck,
-  FileContainer,
   FilePreview,
   FileProcessing,
   FileStepper,
@@ -63,6 +61,6 @@ export {
   Tooltip,
   ValidationForm,
   Toast,
-  SearchBar,
-  FileRenderer,
+  FileAnnotator,
+  Spinner,
 };

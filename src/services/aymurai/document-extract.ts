@@ -1,4 +1,3 @@
-import { Workflows } from 'types/aymurai';
 import { fetcher } from './utils';
 
 interface ParagraphsResponse {

@@ -18,7 +18,7 @@ export type PredictLabel = {
   start_char: number;
   end_char: number;
   attrs: LabelAttributes;
-  paragraph: string;
+  paragraphId: string;
 };
 
 export enum LabelType {

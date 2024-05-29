@@ -52,7 +52,7 @@ export function usePredict(
 
       const promises = paragraphs.map(async (p) => {
         const prediction = await predict(
-          p.plain_text,
+          p,
           controller.current,
           isAnonimizing ? 'anonymizer' : 'datapublic'
         );

@@ -1,18 +1,16 @@
+import * as S from './SearchBar.styles';
 import { CaretUp as PreviousIcon, CaretDown as NextIcon } from 'phosphor-react';
 
-import Label from '../../label';
-import Stack from '../../stack';
-import Button from '../../button';
+import { Label, Stack, Button } from 'components';
 
-import type { Props } from './Counter.types';
-import * as S from './Counter.styles';
+interface Props {
+  matchesCount: number;
+  count: number;
+  next: () => void;
+  previous: () => void;
+}
 
-export default function Counter({
-  matchesCount,
-  next,
-  previous,
-  count,
-}: Props) {
+export const Counter = ({ matchesCount, previous, next, count }: Props) => {
   // Only return the counter if there is a match
   if (matchesCount === 0) return null;
 
@@ -30,4 +28,4 @@ export default function Counter({
       </Stack>
     </S.Counter>
   );
-}
+};

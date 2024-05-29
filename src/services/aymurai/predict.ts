@@ -2,10 +2,11 @@ import { CanceledError } from 'axios';
 
 import { PredictLabel, Workflows } from 'types/aymurai';
 import { fetcher } from './utils';
+import { getParagraphId as id } from 'utils/file/getParagraphId';
 
 interface PredictResponse {
   document: string;
-  labels: PredictLabel[];
+  labels: Omit<PredictLabel, 'paragraphId'>[];
 }
 
 /**
@@ -21,7 +22,7 @@ export default async function predict(
 ): Promise<PredictLabel[]> {
   try {
     const response = await fetcher.post<PredictResponse>(
-      route,
+      `/${route}/predict`,
       {
         text: paragraph,
       },
@@ -29,7 +30,13 @@ export default async function predict(
         signal: controller.signal,
       }
     );
-    return response.data.labels.map((l) => ({ ...l, paragraph }));
+
+    const data = response.data.labels.map((l) => ({
+      ...l,
+      paragraphId: id(paragraph),
+    }));
+
+    return data;
   } catch (e) {
     // If the POST is cancelled by the controller, just return an empty prediction
     if (e instanceof CanceledError) {
