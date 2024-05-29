@@ -1,5 +1,5 @@
 import { useFileDispatch, useUser, useFileParser } from 'hooks';
-import { Checkbox, Spinner, Stack, Text } from 'components';
+import { Checkbox, Spinner, Text } from 'components';
 import { toggleSelected } from 'reducers/file/actions';
 import { getParagraphId } from 'utils/file/getParagraphId';
 
