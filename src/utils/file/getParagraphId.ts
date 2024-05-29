@@ -1,14 +1,12 @@
+import RegexEscape from 'regex-escape';
 /**
  * Hashes a word using _base64_ encoding.
  * @param word The word to be hashed.
  * @returns A `string` representing the hashed word.
  */
 const hash = (word: string) => {
-  // FIXME: improve sanitization
-  const sanitized = word.replaceAll(/“|”/g, '"').replaceAll(/‘|’/g, "'");
-
   try {
-    return window.btoa(sanitized);
+    return window.btoa(RegexEscape(word));
   } catch (e) {
     console.error('Error parsing word:', word);
     console.error(e);
