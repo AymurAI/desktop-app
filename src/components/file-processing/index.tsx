@@ -1,15 +1,16 @@
-import { X } from "phosphor-react";
-import { ChangeEventHandler, useRef } from "react";
+import { X } from 'phosphor-react';
+import { ChangeEventHandler, useRef } from 'react';
 
-import { HiddenInput, Stack, Button as BaseButton } from "components";
-import Button from "./Button";
-import ProgressBar from "./ProgressBar";
-import { useFileDispatch, usePredict } from "hooks";
-import { replaceFile, removeFile } from "reducers/file/actions";
-import { PredictStatus } from "hooks/usePredict";
+import { HiddenInput, Stack, Button as BaseButton } from 'components';
+import Button from './Button';
+import ProgressBar from './ProgressBar';
+import { useFileDispatch } from 'hooks';
+import { replaceFile, removeFile } from 'reducers/file/actions';
+import { usePredict, PredictStatus } from 'hooks/usePredict';
+import { DocFile } from 'types/file';
 
 interface Props {
-  file: File;
+  file: DocFile;
   onStatusChange?: (newStatus: PredictStatus) => void;
   onFileReplace?: (newName: string) => void;
 }
@@ -36,7 +37,7 @@ export default function FileProcessing({
       // Only one file can be used to replace the old one
       if (files.length > 0) {
         onFileReplace?.(files[0].name);
-        dispatch(replaceFile(file.name, files[0]));
+        dispatch(replaceFile(file.data.name, files[0]));
       }
     }
   };
@@ -47,21 +48,21 @@ export default function FileProcessing({
 
   const remove = () => {
     abort();
-    dispatch(removeFile(file.name));
+    dispatch(removeFile(file.data.name));
   };
 
   return (
-    <Stack align="center" spacing="m" css={{ width: "100%" }}>
+    <Stack align="center" spacing="m" css={{ width: '100%' }}>
       <HiddenInput
         multiple={false}
-        css={{ position: "absolute" }}
+        css={{ position: 'absolute' }}
         ref={inputRef}
         onChange={handleAddedFile}
       />
       <ProgressBar
         status={status}
-        fileName={file.name}
-        progress={status === "stopped" ? 0 : Math.round(progress * 100)}
+        fileName={file.data.name}
+        progress={status === 'stopped' ? 0 : Math.round(progress * 100)}
       />
       <Button
         status={status}

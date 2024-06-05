@@ -1,3 +1,4 @@
+import { PredictLabel } from 'types/aymurai';
 import { DocFile } from 'types/file';
 import { isAllowed, isAlreadyLoaded } from 'utils/file';
 
@@ -78,4 +79,19 @@ export function replaceFile(fileName: string, newFile: File, state: DocFile[]) {
     );
     return replaced;
   } else return state;
+}
+
+/**
+ * Compares two predictions to check if they are equal
+ * @param a First prediction to compare
+ * @param b Second prediction to compare
+ * @returns `true` if the predictions are equal, `false` otherwise.
+ */
+export function comparePrediction(a: PredictLabel, b: PredictLabel) {
+  return (
+    a.start_char === b.start_char &&
+    a.end_char === b.end_char &&
+    a.text === b.text &&
+    a.attrs.aymurai_label === b.attrs.aymurai_label
+  );
 }

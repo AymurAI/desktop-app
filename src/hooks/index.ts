@@ -1,18 +1,17 @@
-import useFileParser from "./useFileParser";
-import { useFiles, useFileDispatch } from "./useFiles";
-import useForm from "./useForm";
-import useGoogleToken from "./useGoogleToken";
-import useLogin from "./useLogin";
-import useUser from "./useUser";
-import usePredict from "./usePredict";
+import { useFiles, useFileDispatch } from './useFiles';
+import useForm from './useForm';
+import useGoogleToken from './useGoogleToken';
+import useLogin from './useLogin';
+import useUser from './useUser';
+
+export { usePredict } from './usePredict';
+export { useFileParser } from './useFileParser';
 
 export {
   useFiles,
   useFileDispatch,
-  useFileParser,
   useForm,
   useGoogleToken,
   useLogin,
   useUser,
-  usePredict,
 };
