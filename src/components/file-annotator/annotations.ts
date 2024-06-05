@@ -1,7 +1,7 @@
 import { AllLabels, PredictLabel } from 'types/aymurai';
 import { Annotation } from './types';
-import { getParagraphId as id } from 'utils/file/getParagraphId';
 import { includes } from 'utils/regex';
+import { Paragraph } from 'types/file';
 
 export const SEARCH_MIN_LENGTH = 3;
 
@@ -49,12 +49,12 @@ const findSearchIndexes = (paragraph: string, search: string) => {
  */
 const getSearchAnnotations = (
   search: string,
-  paragraph: string,
+  paragraph: Paragraph,
   label: AllLabels | null
 ): Annotation[] => {
   if (!search || search.length < SEARCH_MIN_LENGTH) return [];
 
-  const indexes = findSearchIndexes(paragraph, search);
+  const indexes = findSearchIndexes(paragraph.value, search);
   return indexes.map(
     (el) =>
       ({
@@ -62,7 +62,7 @@ const getSearchAnnotations = (
         end: el + search.length,
         type: 'search',
         tag: label,
-        paragraphId: id(paragraph),
+        paragraphId: paragraph.id,
       } as Annotation)
   );
 };
@@ -102,12 +102,10 @@ const predictionsToMap = (
 export const createAnnotationsWithSearch = (
   predictions: PredictLabel[],
   search: string,
-  paragraph: string,
+  paragraph: Paragraph,
   searchLabel: AllLabels | null
 ): Annotation[] => {
-  const paragraphId = id(paragraph);
-
-  const matchingLabels = predictionsToMap(predictions).get(paragraphId) ?? [];
+  const matchingLabels = predictionsToMap(predictions).get(paragraph.id) ?? [];
   const matchingAnnotations = labelToAnnotation(matchingLabels);
   const searchAnnotations = getSearchAnnotations(
     search,

@@ -1,24 +1,27 @@
-// import { PredictLabel } from 'types/aymurai';
+import { PredictLabel } from 'types/aymurai';
 import { DocFile } from 'types/file';
-// import { getParagraphId as id } from 'utils/file/getParagraphId';
 
 import { fetcher } from './utils';
 
-// type Body = {
-//   // The paragraph
-//   document: string;
-//   labels: PredictLabel[];
-// }[];
+interface Body {
+  data: {
+    // The paragraph
+    document: string;
+    labels: PredictLabel[];
+  }[];
+}
 
-// const body = (file: DocFile): Body => {
-//   const paragraphs = file.paragraphs ?? [];
-//   const labels = file.predictions ?? [];
+const body = (file: DocFile): Body => {
+  const paragraphs = file.paragraphs ?? [];
+  const labels = file.predictions ?? [];
 
-//   return paragraphs.map((p) => ({
-//     document: p,
-//     labels: labels.filter((l) => l.paragraphId === id(p)),
-//   }));
-// };
+  return {
+    data: paragraphs.map((p) => ({
+      document: p.value,
+      labels: labels.filter((l) => l.paragraphId === p.id),
+    })),
+  };
+};
 
 /**
  * Anonymize a document
@@ -31,7 +34,7 @@ export const anonymize = async (file: DocFile) => {
   const formData = new FormData();
   formData.append('file', file.data);
   // TODO: add annotations whenever the backend implements it
-  // formData.append('annotations', JSON.stringify(body(file)));
+  formData.append('annotations', JSON.stringify(body(file)));
 
   const response = await fetcher.post<ArrayBuffer>(
     '/anonymizer/anonymize-document',
