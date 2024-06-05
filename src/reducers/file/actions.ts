@@ -1,5 +1,6 @@
 import { FormData } from 'hooks/useForm';
 import { PredictLabel } from 'types/aymurai';
+import { Paragraph } from 'types/file';
 
 /**
  * List of action types.
@@ -199,7 +200,7 @@ export function filterUnprocessed(): FilterUnprocessedAction {
 export type AddParagraphsAction = Action<
   ActionTypes.ADD_PARAGRAPHS,
   {
-    paragraphs: string[];
+    paragraphs: Paragraph[];
     fileName: string;
   }
 >;
@@ -209,7 +210,7 @@ export type AddParagraphsAction = Action<
  * @param fileName Name of the file to be modified
  */
 export function addParagraphs(
-  paragraphs: string[],
+  paragraphs: Paragraph[],
   fileName: string
 ): AddParagraphsAction {
   return {

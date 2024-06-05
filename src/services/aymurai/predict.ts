@@ -1,8 +1,9 @@
 import { CanceledError } from 'axios';
 
 import { PredictLabel, Workflows } from 'types/aymurai';
+import { Paragraph } from 'types/file';
+
 import { fetcher } from './utils';
-import { getParagraphId as id } from 'utils/file/getParagraphId';
 
 interface PredictResponse {
   document: string;
@@ -16,7 +17,7 @@ interface PredictResponse {
  * @returns Una lista de `PredictLabel` con las predicciones
  */
 export default async function predict(
-  paragraph: string,
+  paragraph: Paragraph,
   controller: AbortController,
   route: Workflows = 'datapublic'
 ): Promise<PredictLabel[]> {
@@ -24,7 +25,7 @@ export default async function predict(
     const response = await fetcher.post<PredictResponse>(
       `/${route}/predict`,
       {
-        text: paragraph,
+        text: paragraph.value,
       },
       {
         signal: controller.signal,
@@ -33,7 +34,7 @@ export default async function predict(
 
     const data = response.data.labels.map((l) => ({
       ...l,
-      paragraphId: id(paragraph),
+      paragraphId: paragraph.id,
     }));
 
     return data;

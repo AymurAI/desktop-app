@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { getParagraphId } from 'utils/file/getParagraphId';
 import { SearchBar } from './SearchBar';
 
 import * as S from './FileAnnotator.styles';
@@ -60,17 +59,17 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
       </S.SearchContainer>
       <S.File>
         <AnnotationProvider {...{ file, isAnnotable, searchTag }}>
-          {paragraphs.map((text) => {
-            const id = getParagraphId(text);
-
+          {paragraphs.map((p) => {
             const annotations = createAnnotationsWithSearch(
               file.predictions ?? [],
               search,
-              text,
+              p,
               searchTag
             );
             return (
-              <Paragraph {...{ key: id, id, annotations }}>{text}</Paragraph>
+              <Paragraph {...{ key: p.id, id: p.id, annotations }}>
+                {p.value}
+              </Paragraph>
             );
           })}
         </AnnotationProvider>

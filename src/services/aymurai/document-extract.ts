@@ -1,4 +1,6 @@
+import { Paragraph } from 'types/file';
 import { fetcher } from './utils';
+import { getParagraphId } from 'utils/file/getParagraphId';
 
 interface ParagraphsResponse {
   document: string[];
@@ -11,7 +13,7 @@ interface ParagraphsResponse {
  * @param file File to be analyzed
  * @returns A list of paragraphs with their metadata
  */
-export async function getParagraphs(file: File): Promise<string[]> {
+export async function getParagraphs(file: File): Promise<Paragraph[]> {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -23,5 +25,8 @@ export async function getParagraphs(file: File): Promise<string[]> {
     }
   );
 
-  return response.data.document;
+  return response.data.document.map((p, i) => ({
+    value: p,
+    id: getParagraphId(p, i),
+  }));
 }
