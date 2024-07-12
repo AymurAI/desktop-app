@@ -12,8 +12,16 @@ import {
   ValidateAction,
   FilterUnprocessedAction,
   RemoveFileAction,
+  AddParagraphsAction,
+  AppendPrediction,
+  RemovePrediction,
 } from './actions';
-import { addFiles, replaceFile, updateFromState } from './utils';
+import {
+  addFiles,
+  comparePrediction,
+  replaceFile,
+  updateFromState,
+} from './utils';
 
 import { DocFile } from 'types/file';
 
@@ -31,7 +39,10 @@ export type Action =
   | FilterUnselectedAction
   | ValidateAction
   | AppendValidationAction
-  | FilterUnprocessedAction;
+  | FilterUnprocessedAction
+  | AddParagraphsAction
+  | AppendPrediction
+  | RemovePrediction;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -146,6 +157,47 @@ export default function reducer(state: State, action: Action): State {
       }));
     }
 
+    // ----------------
+    // ADD PARAGRAPHS
+    // ----------------
+    case ActionTypes.ADD_PARAGRAPHS: {
+      const { fileName, paragraphs } = payload;
+
+      return update(fileName, (cur) => ({
+        ...cur,
+        paragraphs: paragraphs,
+      }));
+    }
+
+    // ----------------
+    // APPEND PREDICTION
+    // ----------------
+    case ActionTypes.APPEND_PREDICTION: {
+      const { fileName, prediction } = payload;
+
+      return update(fileName, (cur) => ({
+        ...cur,
+        predictions: [...(cur.predictions ?? []), prediction],
+      }));
+    }
+
+    // ----------------
+    // REMOVE PREDICTION
+    // ----------------
+    case ActionTypes.REMOVE_PREDICTION: {
+      const { fileName, prediction } = payload;
+
+      return update(fileName, (cur) => ({
+        ...cur,
+        predictions: cur.predictions?.filter(
+          (p) => !comparePrediction(prediction, p)
+        ),
+      }));
+    }
+
+    // ----------------
+    // ADD PARAGRAPHS
+    // ----------------
     default:
       return state;
   }

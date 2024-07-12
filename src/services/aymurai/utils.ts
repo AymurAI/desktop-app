@@ -1,7 +1,6 @@
-import axios from "axios";
-
-import { PREDICT_PORT } from "utils/config";
+import axios from 'axios';
+import { AYMURAI_API_URL } from 'utils/config';
 
 export const fetcher = axios.create({
-  baseURL: `http://localhost:${PREDICT_PORT}`,
+  baseURL: AYMURAI_API_URL,
 });

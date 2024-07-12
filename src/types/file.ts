@@ -1,6 +1,11 @@
 import { PredictLabel } from './aymurai';
 import { FormData } from 'hooks/useForm';
 
+export interface Paragraph {
+  value: string;
+  id: string;
+}
+
 /**
  * Type that defines the properties of a processed file
  */
@@ -9,6 +14,10 @@ export type DocFile = {
    * .doc or .docx file contents
    */
   data: File;
+  /**
+   * File paragraph data and their metadate
+   */
+  paragraphs?: Paragraph[];
   /**
    * Used on the 'preview' page to detect which files have to be processed
    */
