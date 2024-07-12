@@ -2,14 +2,18 @@
 
 ## Technologies
 
-Main technologies:
+### Main technologies
 
-- **React** as the _main framework_
-- **TypeScript** as the _type code checker tool_
-- **Electron** as the _deployment and packaging tool_
-- **Stitches** as the _styling library_
+- ⚛️ **React** + 🆎 **TypeScript** as the _main framework_ with _type checking_
+tools
+- ⚡ **Electron** as the _deployment and packaging tool_. It also serves the
+purpose of communicating the webapp with the _NodeJS_ process.
+- 🪡 **Stitches** as the _styling library_
+- 🛣️ **React Router** as the _routing library_ to navigate across the webapp
+- 📄 **Mammoth** + **ExcelJS** as the _libraries_ to read and write `.docx` and
+datasheet files
 
-Other technologies
+### Other technologies
 
 - **npm** as the _package manager_
 - **ESLint** as the _code linter_
@@ -17,7 +21,8 @@ Other technologies
 ##  Getting started
 
 1. Clone the repository
-1. Add your Google OAuth Client ID as an `.env` file
+1. Add your [Google OAuth Client ID](https://developers.google.com/identity/protocols/oauth2)
+as an `.env` file
 
    ```bash
    $ vim .env
@@ -36,6 +41,20 @@ Other technologies
    ```bash
    npm run dev
    ```
+
+## Run Aymurai API
+
+1. First download the image
+
+    ```sh
+    docker pull registry.gitlab.com/collective.ai/datagenero-public/aymurai-api-prod
+    ```
+
+2. And then create the corresponding container
+
+    ```sh
+    docker run -p 8899:8899 -h -d registry.gitlab.com/collective.ai/datagenero-public/aymurai-api-prod:latest
+    ```
 
 ## Scripts
 

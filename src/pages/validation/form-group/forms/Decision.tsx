@@ -7,7 +7,7 @@ import {
   ValidationForm,
 } from 'components';
 import { LabelDecisiones } from 'types/aymurai';
-import { FormProps } from '../FormGroup.types';
+import { FormDecisionProps } from '../FormGroup.types';
 import json from './options.json';
 
 export default function Decision({
@@ -15,8 +15,11 @@ export default function Decision({
   decision,
   onSubmit,
   suggester,
-}: FormProps) {
+  getDecisionValue,
+}: FormDecisionProps) {
   const prop = (label: LabelDecisiones) => register(label, decision);
+
+  const defaultValue = getDecisionValue(decision ?? 0);
 
   return (
     <ValidationForm title="Decisión/es" onSubmit={onSubmit}>
@@ -25,24 +28,30 @@ export default function Decision({
         {...suggester.select(LabelDecisiones.TIPO_DE_RESOLUCION)}
         label="Tipo de la resolución"
         options={json.TIPO_DE_RESOLUCION}
+        selected={defaultValue(LabelDecisiones.TIPO_DE_RESOLUCION) as string}
       />
       <Select
         ref={prop(LabelDecisiones.OBJETO_DE_LA_RESOLUCION)}
         {...suggester.select(LabelDecisiones.OBJETO_DE_LA_RESOLUCION)}
         options={json.OBJETO_DE_LA_RESOLUCION}
         label="Objeto de resolución"
+        selected={
+          defaultValue(LabelDecisiones.OBJETO_DE_LA_RESOLUCION) as string
+        }
       />
       <Select
         ref={prop(LabelDecisiones.DETALLE)}
         {...suggester.select(LabelDecisiones.DETALLE)}
         label="Detalle"
         options={json.DETALLE}
+        selected={defaultValue(LabelDecisiones.DETALLE) as string}
       />
       <Select
         ref={prop(LabelDecisiones.DECISION)}
         {...suggester.decision()}
         options={json.DECISION}
         label="Decisión"
+        selected={defaultValue(LabelDecisiones.DECISION) as string}
       />
       <RadioGroup name="tipoAudiencia">
         <Radio
@@ -51,6 +60,9 @@ export default function Decision({
           //   getSuggestion(LabelDecisiones.TIPO_DE_AUDIENCIA_ORAL) === 'oral'
           // }
           ref={prop(LabelDecisiones.TIPO_DE_AUDIENCIA_ORAL)}
+          checked={
+            defaultValue(LabelDecisiones.TIPO_DE_AUDIENCIA_ORAL) as boolean
+          }
         >
           Oral
         </Radio>
@@ -60,6 +72,9 @@ export default function Decision({
           //   'escrita'
           // }
           ref={prop(LabelDecisiones.TIPO_DE_AUDIENCIA_ESCRITA)}
+          checked={
+            defaultValue(LabelDecisiones.TIPO_DE_AUDIENCIA_ESCRITA) as boolean
+          }
         >
           Escrita
         </Radio>
@@ -70,17 +85,20 @@ export default function Decision({
           ref={prop(LabelDecisiones.HORA_DE_INICIO)}
           {...suggester.text(LabelDecisiones.HORA_DE_INICIO)}
           label="Hora de inicio"
+          defaultValue={defaultValue(LabelDecisiones.HORA_DE_INICIO) as string}
         />
         <Input
           ref={prop(LabelDecisiones.HORA_DE_CIERRE)}
           {...suggester.text(LabelDecisiones.HORA_DE_CIERRE)}
           label="Hora de cierre"
+          defaultValue={defaultValue(LabelDecisiones.HORA_DE_CIERRE) as string}
         />
       </Stack>
       <Input
         ref={prop(LabelDecisiones.DURACION)}
         {...suggester.text(LabelDecisiones.DURACION)}
         label="Duración"
+        defaultValue={defaultValue(LabelDecisiones.DURACION) as string}
       />
     </ValidationForm>
   );

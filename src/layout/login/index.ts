@@ -19,11 +19,12 @@ export const Container = styled('div', {
 
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
   alignItems: 'center',
   flex: 1,
-  gap: 48,
+  gap: '$l',
 
+  padding: '$l',
   margin: '$xl',
 
   b: '1px solid $borderPrimary',

@@ -1,4 +1,14 @@
-import regex from "utils/regex";
+import {
+  countSiblingOffset,
+  markWrapper,
+  recursiveReplace,
+  replaceWords,
+} from './replaceWords';
+import { groupPredictions } from 'services/aymurai';
+import { searchWrapper } from './wrappers';
+
+const virtualDOM = (html: string) =>
+  new DOMParser().parseFromString(html, 'text/html');
 
 /**
  * Removes duplicated words from the predictions array
@@ -21,82 +31,137 @@ function removeDuplicated(words: string[]) {
  * @returns The same HTML but with the given words enclosed in `<mark>` tags
  */
 function predicted(html: string, words: string[]) {
-  let replaced = html;
-
-  const filteredWords = removeDuplicated(words);
-
-  // Enclose predicted words with <mark> tag
-  filteredWords.forEach((word) => {
-    replaced = replaced.replaceAll(
-      word,
-      `<mark class="predicted-word">${word}</mark>`
-    );
+  return replaceWords({
+    html,
+    words: removeDuplicated(words),
+    wrapper: markWrapper('predicted-word'),
   });
-
-  return replaced;
 }
 
 function anonymizer(
   html: string,
-  words: string[],
-  tags: any[],
+  predictions: ReturnType<typeof groupPredictions>,
   anonymize: boolean = false,
   header?: string
 ) {
-  let headerImg = "";
-  let headerBody = "";
+  let headerImg = '';
+  let headerBody = '';
 
   if (header) {
     const splitHeader = header
-      ?.split("<p>")
-      .map((text) => text.replaceAll("</p>", ""));
-    headerImg = splitHeader?.find((text) => text.includes("img")) ?? "";
+      ?.split('<p>')
+      .map((text) => text.replaceAll('</p>', ''));
+    headerImg = splitHeader?.find((text) => text.includes('img')) ?? '';
     if (headerImg) {
       headerImg = `<p>${headerImg}</p>`;
     }
 
     headerBody = splitHeader
       .map((text) => {
-        if (!text.includes("img") && text !== "") return `<p>${text}</p>`;
+        if (!text.includes('img') && text !== '') return `<p>${text}</p>`;
 
-        return "";
+        return '';
       })
-      .join("");
+      .join('');
   }
-  let replaced = headerBody + html;
 
-  const filteredWords = removeDuplicated(words);
+  const dom = virtualDOM(headerBody + headerImg + html);
+  // TODO: agregar funcionalidad para agregar una predicción usando la búsqueda
 
-  filteredWords.forEach((word) => {
-    if (word !== ":" && word !== ";" && word !== "=")
-      replaced = replaced.replaceAll(
-        word,
+  // For each prediction, search the corresponding word within the paragraph and tag it
+  predictions.forEach((predictions, id) => {
+    const paragraphElement = dom.getElementById(id);
+    if (!paragraphElement) return;
 
-        anonymize
-          ? `<strong>&lt;${getTag(tags, word)}&gt;</strong>`
-          : `<mark class="predicted-word"> ${word} <strong>${getTag(
-              tags,
-              word
-            )}</strong> <close id="${word}">X</close></mark>`
-      );
+    predictions.forEach((pred) => {
+      recursiveReplace(paragraphElement, pred, anonymize);
+    });
   });
 
-  return headerImg + replaced;
+  return dom.body.innerHTML;
 }
 
-function getTag(tags: any, word: string) {
-  const tag = tags.find((data: any) => data.text === word);
+const createFragment = (
+  splitted: string[],
+  search: string,
+  tag: string | undefined,
+  offset: number,
+  wholeText: string
+) => {
+  const fragment = document.createDocumentFragment();
+  // TODO: sanitize this regex
+  const regex = new RegExp(search, 'g');
 
-  return tag?.tag;
-}
+  splitted.forEach((el, i) => {
+    fragment.append(el);
 
-function searched(html: string | null, word: string) {
-  if (!html) return "";
-  if (word.length <= 2) return html;
+    if (i !== splitted.length - 1) {
+      // Get the index for the word in the current node
+      const result = regex.exec(wholeText);
+      if (!result) return;
 
-  const regExp = regex.includes(word);
-  //
-  return html.replaceAll(regExp, `<mark class="searched-word">$&</mark>`);
+      const index = offset + result.index;
+      fragment.appendChild(
+        searchWrapper({ text: search, index, tag: tag ?? '' })
+      );
+    }
+  });
+
+  return fragment;
+};
+
+function searched(html: string | null, word: string, tag: string | undefined) {
+  if (!html) return '';
+  if (word.length <= 1) return html;
+
+  const dom = virtualDOM(html);
+  // Use translate to make the XPath case insensitive while searching
+  const xpath = `.//text()[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'${word.toLowerCase()}')]`;
+
+  const result = document.evaluate(
+    xpath,
+    dom.body,
+    null,
+    XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+    null
+  );
+  let textNodes: Text[] = [];
+
+  let element = result.iterateNext();
+
+  while (element) {
+    textNodes.push(element as Text);
+    element = result.iterateNext();
+  }
+
+  textNodes.forEach((node) => {
+    // If the node is inside a mark element, skip it
+    if (node.parentElement?.closest('mark')) return;
+
+    const text = node.textContent ?? '';
+    const regex = new RegExp(word.replace(/[#-.]|[[-^]|[?|{}]/g, '\\$&'), 'gi');
+
+    const index = text.search(regex);
+    if (index === -1) return;
+
+    const first = text.slice(0, index);
+    const casedWord = text.slice(index, index + word.length);
+    const last = text.slice(index + word.length);
+
+    // Get the offset of the node, so it can be added to the button
+    const siblingOffset = countSiblingOffset(node);
+    const fragment = createFragment(
+      [first, last],
+      casedWord,
+      tag,
+      siblingOffset,
+      text
+    );
+
+    node.replaceWith(fragment);
+  });
+
+  return dom.body.innerHTML;
 }
 
 const mark = {
