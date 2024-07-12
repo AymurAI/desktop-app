@@ -1,7 +1,7 @@
 import { Text } from 'components';
 import ErrorText from './ErrorText';
 import { Card, Wrapper } from './FileCheck.styles';
-import Icon from './icon';
+import Icon from './Icon';
 
 interface Props {
   fileName: string;

@@ -1,21 +1,13 @@
 # AymurAI
 
-En este documento se detallan los endpoints que utiliza el frontend para
-comunicarse con la AI.
+La AI está documentada en su swagger accediendo directamente a `{{AYMURAI_URL}}/docs` una vez que el servidor está corriendo.
 
-## Endpoints
+> 💡 Si la AI está corriendo en la red LAN o bajo un ngrok, se debe cambiar la ruta.
 
-### Predictions
+## Uso
 
-- `/anonymizer/predict`: analiza un documento e informa sobre los `strings` que
-deben ser _anonimizados_.
-- `/datapublic/predict`: analiza un documento e informa sobre la información que
-debe ser añadida a la base de datos.
+Para usar la AI en la aplicación se ponen a disposición tres funciones en la carpeta `/src/services/aymurai`:
 
-### Documents
-
-- `/docx-to-odt`: convierte un documento `.docx` a `.odt`.
-- `/document-extract`: convierte un documento `.doc` en HTML plano (en formato
-de `string`).
-- `/document-extract/docx2html`: convierte un documento `.docx` en HTML plano,
-devolviendo `header`, `footer` y `content`.
+- `document-extract.ts`: obtiene cada párrafo del documento en texto plano para poder renderizarlo en la aplicación.
+- `predict.ts`: genera predicciones sobre los párrafos previamente extraídos.
+- `anonymize.ts`: permite generar un archivo `.odt` con las anotaciones hechas por el usuario y la AI.
