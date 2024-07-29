@@ -32,7 +32,7 @@ async function mkdir() {
 }
 
 /**
- * Parses a validation object into a JSON that is writed into a feedback file
+ * Parses a validation object into a JSON that is written into a feedback file
  * @param fileName Name of the file
  * @param content Validation object
  */

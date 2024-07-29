@@ -13,12 +13,17 @@ export const Header = styled('header', {
   justifyContent: 'space-between',
   alignItems: 'center',
 
-  px: 150,
+  zIndex: 2,
+  px: '$xl',
   py: '$l',
   gap: 10,
 
   bg: '$white',
   bb: '1px solid $borderPrimary',
+
+  '@xl': {
+    px: 150,
+  },
 });
 
 export const Section = styled('section', {

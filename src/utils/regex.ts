@@ -1,3 +1,5 @@
+import RegexEscape from 'regex-escape';
+
 /**
  * Given a vowel, returns a 'regex' that matches the vowel with or without accent
  */
@@ -38,32 +40,11 @@ const replaceVowels = (char: string) => {
 };
 
 /**
+ * Using the two replace functions, returns a sanitized word that can be used in a regex
+ */
+const sanitize = (word: string) => replaceVowels(RegexEscape(word));
+
+/**
  * Matches all the text that contains the word
  */
-const includes = (word: string) => new RegExp(replaceVowels(word), 'gi');
-
-/**
- * Matches all the WORDS that matches the given word
- */
-const whole = (word: string) =>
-  new RegExp(`\\b${replaceVowels(word)}\\w*`, 'gi');
-
-/**
- * Matches the given word inside the given HTML tag, including the word next to the tag
- * @param word Word to match
- * @param tag  HTML tag to match
- * @returns A regex that matches the given word inside the given tag and the word next to it
- */
-const htmlTag = (word: string, tag: string) => {
-  const replaced = replaceVowels(word);
-
-  return new RegExp(`<${tag}\\s*.*?>(${replaced})</${tag}>([A-zÀ-ú]*)`, 'i');
-};
-
-const regex = {
-  includes,
-  whole,
-  htmlTag,
-};
-
-export default regex;
+export const includes = (word: string) => new RegExp(sanitize(word), 'gi');

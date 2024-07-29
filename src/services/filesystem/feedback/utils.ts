@@ -14,6 +14,7 @@ function newLabel(
   value: PredictionFeedback['validationText']
 ): PredictionFeedback {
   return {
+    paragraphId: '',
     text: null,
     start_char: null,
     end_char: null,

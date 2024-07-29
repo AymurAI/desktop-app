@@ -1,36 +1,32 @@
-import { ExportDocumentSuccess } from 'types/aymurai';
-import { getExtension } from 'utils/file';
+import { Paragraph } from 'types/file';
 import { fetcher } from './utils';
+import { getParagraphId } from 'utils/file/getParagraphId';
+
+interface ParagraphsResponse {
+  document: string[];
+  header: null;
+  footer: null;
+}
 
 /**
- * Parses a `application/msword` file into plain HTML
- * @param file File to be converted to HTML
- * @returns A `string` representing the contents of the file into a HTML format
+ * Sends a file to the backend to be analyzed and retrieve a list of paragraphs
+ * @param file File to be analyzed
+ * @returns A list of paragraphs with their metadata
  */
-export default async function parseDoc(file: File) {
-  if (getExtension(file) === 'doc') {
-    // Add file to `FormData`
-    const formData = new FormData();
-    formData.append('file', file);
+export async function getParagraphs(file: File): Promise<Paragraph[]> {
+  const formData = new FormData();
+  formData.append('file', file);
 
-    const response = await fetcher.post<ExportDocumentSuccess>(
-      '/document-extract',
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
+  const response = await fetcher.post<ParagraphsResponse>(
+    '/document-extract',
+    formData,
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }
+  );
 
-    // Now we format the document, applying paragraphs to make it look better on the front
-    const { document } = response.data;
-    const lines = document.split('\n');
-    const paragraphs = lines.map((line) => `<p>${line}</p>`);
-    const html = paragraphs.join('');
-
-    return html;
-  } else {
-    return '';
-  }
+  return response.data.document.map((p, i) => ({
+    value: p,
+    id: getParagraphId(p, i),
+  }));
 }

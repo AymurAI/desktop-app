@@ -1,7 +1,14 @@
-import { CanceledError } from "axios";
+import { CanceledError } from 'axios';
 
-import { PredictLabel, PredictSuccess } from "types/aymurai";
-import { fetcher } from "./utils";
+import { PredictLabel, Workflows } from 'types/aymurai';
+import { Paragraph } from 'types/file';
+
+import { fetcher } from './utils';
+
+interface PredictResponse {
+  document: string;
+  labels: Omit<PredictLabel, 'paragraphId'>[];
+}
 
 /**
  * Realiza una petición a la AI para poder obtener predicciones en base a un párrafo
@@ -10,27 +17,34 @@ import { fetcher } from "./utils";
  * @returns Una lista de `PredictLabel` con las predicciones
  */
 export default async function predict(
-  paragraph: string,
+  paragraph: Paragraph,
   controller: AbortController,
-  route: string
+  route: Workflows = 'datapublic'
 ): Promise<PredictLabel[]> {
   try {
-    const response = await fetcher.post<PredictSuccess>(
-      route,
+    const response = await fetcher.post<PredictResponse>(
+      `/${route}/predict`,
       {
-        text: paragraph,
+        text: paragraph.value,
       },
       {
         signal: controller.signal,
       }
     );
-    return response.data.labels;
+
+    const data = response.data.labels.map((l) => ({
+      ...l,
+      paragraphId: paragraph.id,
+    }));
+
+    return data;
   } catch (e) {
     // If the POST is cancelled by the controller, just return an empty prediction
     if (e instanceof CanceledError) {
       return [];
       // Otherwise, throw again the same error
     } else {
+      console.error(e);
       const { message } = e as Error;
       throw new Error(message);
     }

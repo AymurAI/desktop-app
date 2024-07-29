@@ -1,4 +1,5 @@
 import predict from './predict';
-import parseDoc from './document-extract';
+export { getParagraphs } from './document-extract';
+export { anonymize } from './anonymize';
 
-export { predict, parseDoc };
+export { predict };
