@@ -83,7 +83,9 @@ export const Mark = styled('mark', {
         },
       },
       search: {
-        backgroundColor: '$bgSecondaryAlt',
+        borderRadius: 0,
+        fontWeight: 700,
+        backgroundColor: '$bgSearch',
       },
     },
     annotable: {
