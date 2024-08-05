@@ -1,14 +1,17 @@
-import {
-  useState,
-  MouseEvent,
-  KeyboardEvent,
-  forwardRef,
-  useImperativeHandle,
-  ChangeEvent,
-} from "react";
 import { CaretDown } from "phosphor-react";
+import {
+  ChangeEvent,
+  forwardRef,
+  KeyboardEvent,
+  MouseEvent,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
 import { Label, Suggestion as SuggestionComponent, Text } from "components";
+import { Optional } from "types/utils";
+import List from "./List";
 import {
   Container,
   Input,
@@ -21,8 +24,6 @@ import {
   orderByPriority,
   secureSuggestion,
 } from "./utils";
-import { Optional } from "types/utils";
-import List from "./List";
 
 export type SelectOption = { id: string; text: string };
 export type Suggestion = Optional<SelectOption, "text">;
@@ -51,6 +52,7 @@ export default forwardRef<{ value: SelectOption["id"] | undefined }, Props>(
     const [id, setId] = useState<SelectOption["id"]>(
       findById(selected, options)?.id ?? ""
     );
+    const inputRef = useRef<HTMLInputElement>(null);
 
     // Only exposes `selected` object to the parent component
     useImperativeHandle(
@@ -99,6 +101,12 @@ export default forwardRef<{ value: SelectOption["id"] | undefined }, Props>(
       updateValue(e.currentTarget.value);
     };
 
+    const handleClickInput = () => {
+      if (inputRef.current) {
+        inputRef.current.select();
+      }
+    };
+
     return (
       <Container>
         <TextContainer>
@@ -111,7 +119,12 @@ export default forwardRef<{ value: SelectOption["id"] | undefined }, Props>(
 
           {/* INPUT */}
           <InputContainer tabIndex={-1}>
-            <Input value={option?.text} onChange={handleChangeInput} />
+            <Input
+              ref={inputRef}
+              value={option?.text}
+              onChange={handleChangeInput}
+              onClick={handleClickInput}
+            />
             {securedSuggestion && isValueEmpty && (
               <>
                 <Text css={{ lineHeight: "100%" }}>|</Text>
