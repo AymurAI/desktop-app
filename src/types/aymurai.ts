@@ -91,6 +91,7 @@ export const anonymizerLabels: SelectOption[] = [
   { id: 'DNI', text: 'DNI' },
   { id: 'PER', text: 'Persona' },
   { id: 'TEL', text: 'Número de teléfono' },
+  { id: 'USUARIX', text: 'Usuarix' },
   { id: 'CORREO_ELECTRÓNICO', text: 'Correo electrónico' },
   { id: 'BANCO', text: 'Banco' },
   { id: 'CBU', text: 'Clave Bancaria Uniforme ' },

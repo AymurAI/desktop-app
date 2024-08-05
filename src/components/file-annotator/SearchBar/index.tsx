@@ -1,14 +1,14 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from 'react';
 
-import { Grid } from "components";
-import Select, { SelectOption } from "components/select";
-import Container from "pages/validation/dataset/form-group/FormGroup.styles";
-import { anonymizerLabels } from "types/aymurai";
+import { Grid } from 'components';
+import Select, { SelectOption } from 'components/select';
+import Container from 'pages/validation/dataset/form-group/FormGroup.styles';
+import { anonymizerLabels } from 'types/aymurai';
 
-import { MagnifyingGlass } from "phosphor-react";
-import { Counter } from "./Counter";
-import * as S from "./SearchBar.styles";
-import { useScroll } from "./useScroll";
+import { MagnifyingGlass } from 'phosphor-react';
+import { Counter } from './Counter';
+import * as S from './SearchBar.styles';
+import { useScroll } from './useScroll';
 
 interface Props {
   isAnnotable?: boolean;
@@ -21,7 +21,7 @@ export const SearchBar = ({
   onChange,
   onSelectChange,
 }: Props) => {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { next, previous, count, matchesCount } = useScroll(search);
 
