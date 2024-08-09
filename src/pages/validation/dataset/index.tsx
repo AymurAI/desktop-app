@@ -12,7 +12,7 @@ import withFileProtection from 'features/withFileProtection';
 import { useFileDispatch, useFiles } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import { validate } from 'reducers/file/actions';
-import { isValidationCompleted } from 'utils/file';
+import { isFileValidated, isValidationCompleted } from 'utils/file';
 import FormGroup from './form-group';
 import { moveNext, movePrevious } from './utils';
 
@@ -30,6 +30,7 @@ export default withFileProtection(function Validation() {
   const selectedFile = files[selected];
   // Check if the validation was completed on all the files
   const canContinue = isValidationCompleted(files);
+  const canValidate = isFileValidated(selectedFile);
 
   // HANDLERS
   const moveIndex = (newIndex: number | undefined) => {
@@ -94,7 +95,11 @@ export default withFileProtection(function Validation() {
             Continuar
           </Button>
         ) : (
-          <Button size="l" onClick={handleValidate} disabled={!checked}>
+          <Button
+            size="l"
+            onClick={handleValidate}
+            disabled={!checked && !canValidate}
+          >
             Validar documento
           </Button>
         )}
