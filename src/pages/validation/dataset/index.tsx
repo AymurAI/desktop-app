@@ -3,22 +3,23 @@ import { useNavigate } from 'react-router-dom';
 
 import {
   Button,
+  FileAnnotator,
   FileStepper,
   Grid,
   SectionTitle,
-  FileAnnotator,
 } from 'components';
+import withFileProtection from 'features/withFileProtection';
 import { useFileDispatch, useFiles } from 'hooks';
 import { Footer, Section } from 'layout/main';
-import FormGroup from './form-group';
-import withFileProtection from 'features/withFileProtection';
-import { isFileValidated, isValidationCompleted } from 'utils/file';
 import { validate } from 'reducers/file/actions';
+import { isValidationCompleted } from 'utils/file';
+import FormGroup from './form-group';
 import { moveNext, movePrevious } from './utils';
 
 export default withFileProtection(function Validation() {
   // HOOKS
   const files = useFiles();
+  const [checked, setChecked] = useState(false);
   const [selected, setSelected] = useState(0);
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ export default withFileProtection(function Validation() {
   const selectedFile = files[selected];
   // Check if the validation was completed on all the files
   const canContinue = isValidationCompleted(files);
-  const canValidate = isFileValidated(selectedFile);
 
   // HANDLERS
   const moveIndex = (newIndex: number | undefined) => {
@@ -53,6 +53,10 @@ export default withFileProtection(function Validation() {
     }
   };
 
+  const handleCheck = (checked: boolean) => {
+    setChecked(checked);
+  };
+
   return (
     <>
       <Grid
@@ -68,7 +72,11 @@ export default withFileProtection(function Validation() {
         ></FileAnnotator>
         <Section css={{ px: 100, overflowY: 'scroll' }} spacing="xxl">
           <SectionTitle>3. Validación de datos</SectionTitle>
-          <FormGroup key={selectedFile.data.name} file={selectedFile} />
+          <FormGroup
+            key={selectedFile.data.name}
+            file={selectedFile}
+            onCheck={handleCheck}
+          />
         </Section>
       </Grid>
       <Footer
@@ -86,7 +94,7 @@ export default withFileProtection(function Validation() {
             Continuar
           </Button>
         ) : (
-          <Button size="l" onClick={handleValidate} disabled={!canValidate}>
+          <Button size="l" onClick={handleValidate} disabled={!checked}>
             Validar documento
           </Button>
         )}

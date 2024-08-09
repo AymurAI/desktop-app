@@ -13,13 +13,14 @@ import {
   ValidationForm,
 } from 'components';
 import { LabelDecisiones } from 'types/aymurai';
+import nArray from 'utils/nArray';
 import { FormDecisionProps } from '../FormGroup.types';
 import json from './options.json';
-import nArray from 'utils/nArray';
 
 export default function DatosDenunciante({
   decision,
   onSubmit,
+  onCheck,
   register,
   suggester,
   getDecisionValue,
@@ -35,7 +36,11 @@ export default function DatosDenunciante({
   const prop = (label: LabelDecisiones) => register(label, decision);
 
   return (
-    <ValidationForm title="Información del hecho" onSubmit={onSubmit}>
+    <ValidationForm
+      title="Información del hecho"
+      onSubmit={onSubmit}
+      onCheck={onCheck}
+    >
       <Select
         ref={prop(LabelDecisiones.MATERIA)}
         {...suggester.select(LabelDecisiones.MATERIA)}

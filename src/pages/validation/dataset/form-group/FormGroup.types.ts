@@ -8,6 +8,7 @@ export interface FormProps {
   decision?: number;
   register: RegisterFunction;
   onSubmit: FormEventHandler;
+  onCheck: (checked: boolean) => void;
   suggester: Suggester;
 }
 
