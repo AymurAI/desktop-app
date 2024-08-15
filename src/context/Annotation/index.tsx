@@ -1,7 +1,7 @@
 import { useFileDispatch } from 'hooks';
-import { ReactNode, createContext, useCallback, useContext } from 'react';
+import { createContext, ReactNode, useCallback, useContext } from 'react';
 import { appendPrediction, removePrediction } from 'reducers/file/actions';
-import { AllLabels, PredictLabel } from 'types/aymurai';
+import { AllLabels, AllLabelsWithSufix, PredictLabel } from 'types/aymurai';
 import { DocFile } from 'types/file';
 import {
   getBoundaries,
@@ -30,7 +30,7 @@ interface Props {
   children?: ReactNode;
   file: DocFile;
   isAnnotable?: boolean;
-  searchTag: AllLabels | null;
+  searchTag: AllLabels | AllLabelsWithSufix | null;
 }
 export default function AnnotationProvider({
   children,
@@ -73,13 +73,15 @@ export default function AnnotationProvider({
     );
     const [start, end] = getBoundaries(selection);
 
+    const aymurayLabel: AllLabels | AllLabelsWithSufix = searchTag;
+
     add({
       start_char: start + offset,
       end_char: end + offset,
       paragraphId: paragraphIdFromSelection(selection),
       text,
       attrs: {
-        aymurai_label: searchTag,
+        aymurai_label: aymurayLabel,
         aymurai_label_subclass: null,
         aymurai_alt_text: null,
       },

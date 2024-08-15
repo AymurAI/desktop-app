@@ -35,6 +35,7 @@ interface Props {
   suggestion?: Suggestion;
   onChange?: (value: SelectOption | undefined) => void;
   priorityOrder?: SelectOption['id'][];
+  placeholder?: string;
 }
 export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
   function Select(
@@ -46,6 +47,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
       selected,
       onChange,
       priorityOrder = [],
+      placeholder = '',
     },
     ref
   ) {
@@ -124,6 +126,7 @@ export default forwardRef<{ value: SelectOption['id'] | undefined }, Props>(
               value={option?.text}
               onChange={handleChangeInput}
               onClick={handleClickInput}
+              placeholder={placeholder}
             />
             {securedSuggestion && isValueEmpty && (
               <>

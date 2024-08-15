@@ -7,7 +7,7 @@ import { SelectOption } from 'components/select';
 export type Workflows = 'datapublic' | 'anonymizer';
 
 type LabelAttributes = {
-  aymurai_label: AllLabels;
+  aymurai_label: AllLabels | AllLabelsWithSufix;
   aymurai_label_subclass: string[] | null;
   aymurai_alt_text: string | null;
 };
@@ -83,9 +83,11 @@ export enum LabelDecisiones {
 }
 export enum LabelAnonimizer {
   PER = 'PER',
+  USUARIX = 'USUARIX',
 }
 
 export type AllLabels = LabelType | LabelDecisiones | LabelAnonimizer;
+export type AllLabelsWithSufix = `${AllLabels}_${number}`;
 
 export const anonymizerLabels: SelectOption[] = [
   { id: 'DNI', text: 'DNI' },
