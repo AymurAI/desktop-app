@@ -27,4 +27,6 @@ export const REFRESH_INTERVAL = 45 * 60 * 1000;
 /**
  * AymurAI API URL
  */
-export const AYMURAI_API_URL = `http://localhost:${PREDICT_PORT}`;
+export const AYMURAI_API_URL =
+  'https://44a2-186-139-111-199.ngrok-free.app' ??
+  `http://localhost:${PREDICT_PORT}`;

@@ -2,14 +2,14 @@ import { ChangeEventHandler, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
-  Text,
   Button,
   Card,
-  Subtitle,
   FilePreview,
   Grid,
   HiddenInput,
   SectionTitle,
+  Subtitle,
+  Text,
 } from 'components';
 import { useFileDispatch, useFiles, useUser } from 'hooks';
 import { Footer, Section } from 'layout/main';
@@ -86,7 +86,7 @@ export default function Preview() {
       <Footer>
         <HiddenInput
           type="file"
-          accept=".doc,.docx"
+          accept=".docx"
           ref={inputRef}
           onChange={handleAddedFiles}
           multiple
@@ -94,7 +94,7 @@ export default function Preview() {
         />
         {user?.function === FunctionType.DATASET && (
           <>
-            <Text size="s">Formatos válidos: .doc y .docx</Text>
+            <Text size="s">Formatos válidos: .docx</Text>
             <Button onClick={handleSelectFile} size="l" variant="secondary">
               Cargar más documentos
             </Button>
