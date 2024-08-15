@@ -1,11 +1,16 @@
 import { SelectOption } from 'components/select';
-import { AllLabels, LabelDecisiones, PredictLabel } from 'types/aymurai';
 import {
+  AllLabels,
+  AllLabelsWithSufix,
+  LabelDecisiones,
+  PredictLabel,
+} from 'types/aymurai';
+import {
+  BooleanSuggestion,
+  InputSuggestion,
   Prediction,
   PropertyCallback,
-  InputSuggestion,
   SelectSuggestion,
-  BooleanSuggestion,
 } from './types';
 
 export default class Suggester {
@@ -49,7 +54,7 @@ export default class Suggester {
    * @param label Label to check
    * @returns The suggestion in `string | undefined` format
    */
-  public text(label: AllLabels): InputSuggestion {
+  public text(label: AllLabels | AllLabelsWithSufix): InputSuggestion {
     const reduced = this.reducePredictions((pred) => pred.text);
 
     return {
@@ -62,7 +67,7 @@ export default class Suggester {
    * @param label Label to check
    * @returns The suggestion as a `SelectOption` object
    */
-  public select(label: AllLabels): SelectSuggestion {
+  public select(label: AllLabels | AllLabelsWithSufix): SelectSuggestion {
     const reduced = this.reducePredictions((pred) => ({
       subclass: pred.attrs.aymurai_label_subclass ?? [],
       text: pred.text,

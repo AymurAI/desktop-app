@@ -1,7 +1,7 @@
-import { AllLabels, PredictLabel } from 'types/aymurai';
-import { Annotation } from './types';
-import { includes } from 'utils/regex';
+import { AllLabels, AllLabelsWithSufix, PredictLabel } from 'types/aymurai';
 import { Paragraph } from 'types/file';
+import { includes } from 'utils/regex';
+import { Annotation } from './types';
 
 export const SEARCH_MIN_LENGTH = 3;
 
@@ -50,7 +50,7 @@ const findSearchIndexes = (paragraph: string, search: string) => {
 const getSearchAnnotations = (
   search: string,
   paragraph: Paragraph,
-  label: AllLabels | null
+  label: AllLabels | AllLabelsWithSufix | null
 ): Annotation[] => {
   if (!search || search.length < SEARCH_MIN_LENGTH) return [];
 
@@ -103,7 +103,7 @@ export const createAnnotationsWithSearch = (
   predictions: PredictLabel[],
   search: string,
   paragraph: Paragraph,
-  searchLabel: AllLabels | null
+  searchLabel: AllLabels | AllLabelsWithSufix | null
 ): Annotation[] => {
   const matchingLabels = predictionsToMap(predictions).get(paragraph.id) ?? [];
   const matchingAnnotations = labelToAnnotation(matchingLabels);

@@ -37,6 +37,7 @@ export default function FormGroup({ file, onCheck }: Props) {
   const selectDecision = (n: number) => setDecision(n);
 
   const handleSubmit = submit((data) => {
+    console.log({ data });
     dispatch(appendValidation(file.data.name, data));
   });
 
