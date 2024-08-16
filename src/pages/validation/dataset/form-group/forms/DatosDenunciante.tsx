@@ -5,11 +5,16 @@ import json from './options.json';
 
 export default function DatosDenunciante({
   onSubmit,
+  onCheck,
   register,
   suggester,
 }: FormProps) {
   return (
-    <ValidationForm title="Datos del denunciante" onSubmit={onSubmit}>
+    <ValidationForm
+      title="Datos del denunciante"
+      onSubmit={onSubmit}
+      onCheck={onCheck}
+    >
       <Select
         ref={register(LabelType.GENERO_DENUNCIANTE)}
         {...suggester.select(LabelType.GENERO_DENUNCIANTE)}

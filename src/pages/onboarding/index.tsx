@@ -2,11 +2,11 @@ import { ChangeEventHandler, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, HiddenInput, Stack, Text, Title } from 'components';
-import { Section, Footer } from 'layout/main';
 import { useFileDispatch, useUser } from 'hooks';
-import { Card } from './cards';
+import { Footer, Section } from 'layout/main';
 import { addFiles } from 'reducers/file/actions';
 import { FunctionType } from 'types/user';
+import { Card } from './cards';
 import { Grid } from './grid';
 
 export default function Onboarding() {
@@ -96,13 +96,13 @@ export default function Onboarding() {
       <Footer>
         <HiddenInput
           type="file"
-          accept=".doc,.docx"
+          accept=".docx"
           ref={inputRef}
           onChange={handleAddedFiles}
           multiple={user?.function === FunctionType.DATASET ? true : false}
           tabIndex={-1}
         />
-        <Text size="s">Formatos válidos: .doc y .docx</Text>
+        <Text size="s">Formatos válidos: .docx</Text>
         <Button onClick={handleSelectFile} size="l">
           {user?.function === FunctionType.ANONYMIZER
             ? 'Carga el documento'

@@ -21,7 +21,7 @@ function getDate() {
 function formatName(fileName: string) {
   // Remove extension and spaces from the name
   const formattedName = fileName
-    .replace(/\.docx|\.doc/g, '') // Remove extension
+    .replace(/\.docx/g, '') // Remove extension
     .replace(/\s/g, '_'); // Remove whitespace
 
   return `aymurai--${formattedName}`;

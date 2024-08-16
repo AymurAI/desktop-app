@@ -1,4 +1,9 @@
-import { AllLabels, LabelDecisiones, LabelType } from 'types/aymurai';
+import {
+  AllLabels,
+  AllLabelsWithSufix,
+  LabelDecisiones,
+  LabelType,
+} from 'types/aymurai';
 
 /**
  * Any value the form can take
@@ -15,7 +20,9 @@ export type FormData = Partial<
 /**
  * Flat form of the `FormData` structure
  */
-export type FlatFormData = Partial<Record<AllLabels, FormValue>>;
+export type FlatFormData = Partial<
+  Record<AllLabels | AllLabelsWithSufix, FormValue>
+>;
 
 /**
  * Type of the reference for any componente
@@ -23,7 +30,7 @@ export type FlatFormData = Partial<Record<AllLabels, FormValue>>;
 export type ComponentRef = { value: string | boolean | undefined } | null;
 
 export type RegisterFunction = (
-  name: AllLabels,
+  name: AllLabels | AllLabelsWithSufix,
   decision?: number
 ) => (ref: ComponentRef) => void;
 export type SubmitFunction = (data: FormData) => void;

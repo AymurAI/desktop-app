@@ -14,6 +14,7 @@ export default function Decision({
   register,
   decision,
   onSubmit,
+  onCheck,
   suggester,
   getDecisionValue,
 }: FormDecisionProps) {
@@ -22,7 +23,7 @@ export default function Decision({
   const defaultValue = getDecisionValue(decision ?? 0);
 
   return (
-    <ValidationForm title="Decisión/es" onSubmit={onSubmit}>
+    <ValidationForm title="Decisión/es" onSubmit={onSubmit} onCheck={onCheck}>
       <Select
         ref={prop(LabelDecisiones.TIPO_DE_RESOLUCION)}
         {...suggester.select(LabelDecisiones.TIPO_DE_RESOLUCION)}
