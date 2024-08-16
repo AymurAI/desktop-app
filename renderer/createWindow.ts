@@ -2,7 +2,7 @@ import { BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 
 import { EXTERNAL_URLS, isDebug, isProduction } from './env';
-import { resolveHTMLPath, crypto, feedback, excel, taskbar } from './utils';
+import { crypto, excel, feedback, resolveHTMLPath, taskbar } from './utils';
 
 export let mainWindow: BrowserWindow | null;
 
@@ -23,6 +23,8 @@ function configureWindow(window: BrowserWindow | null) {
   }
 
   window.loadURL(resolveHTMLPath());
+
+  // window.webContents.openDevTools();
 
   /**
    * HANDLERS

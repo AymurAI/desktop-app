@@ -1,5 +1,5 @@
-import { PredictLabel } from './aymurai';
 import { FormData } from 'hooks/useForm';
+import { PredictLabel } from './aymurai';
 
 export interface Paragraph {
   value: string;
@@ -11,7 +11,7 @@ export interface Paragraph {
  */
 export type DocFile = {
   /**
-   * .doc or .docx file contents
+   * .docx file contents
    */
   data: File;
   /**

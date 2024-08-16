@@ -2,9 +2,18 @@ import { Input, ValidationForm } from 'components';
 import { LabelType } from 'types/aymurai';
 import { FormProps } from '../FormGroup.types';
 
-export default function InfoGral({ onSubmit, register, suggester }: FormProps) {
+export default function InfoGral({
+  onSubmit,
+  onCheck,
+  register,
+  suggester,
+}: FormProps) {
   return (
-    <ValidationForm title="Información general" onSubmit={onSubmit}>
+    <ValidationForm
+      title="Información general"
+      onSubmit={onSubmit}
+      onCheck={onCheck}
+    >
       <Input
         ref={register(LabelType.N)}
         {...suggester.text(LabelType.N)}

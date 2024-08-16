@@ -7,7 +7,7 @@ import { SelectOption } from 'components/select';
 export type Workflows = 'datapublic' | 'anonymizer';
 
 type LabelAttributes = {
-  aymurai_label: AllLabels;
+  aymurai_label: AllLabels | AllLabelsWithSufix;
   aymurai_label_subclass: string[] | null;
   aymurai_alt_text: string | null;
 };
@@ -83,19 +83,29 @@ export enum LabelDecisiones {
 }
 export enum LabelAnonimizer {
   PER = 'PER',
+  USUARIX = 'USUARIX',
 }
 
 export type AllLabels = LabelType | LabelDecisiones | LabelAnonimizer;
+export type AllLabelsWithSufix = `${AllLabels}_${number}`;
 
 export const anonymizerLabels: SelectOption[] = [
   { id: 'DNI', text: 'DNI' },
   { id: 'PER', text: 'Persona' },
   { id: 'TEL', text: 'Número de teléfono' },
+  { id: 'USUARIX', text: 'Usuarix' },
   { id: 'CORREO_ELECTRÓNICO', text: 'Correo electrónico' },
+  { id: 'DENUNCIANTE', text: 'Denunciante' },
+  { id: 'ACUSADO/A', text: 'Acusado/a' },
+  { id: 'TESTIGO/A', text: 'Testigo/a' },
+  { id: 'NINO/A_ADOLECENTE', text: 'Niño/a adolecente' },
+  { id: 'AFILIADO', text: 'N° de afiliado' },
+  { id: 'CAUSA', text: 'N° de causa' },
+  { id: 'INSTITUCION', text: 'Nombre de institución' },
   { id: 'BANCO', text: 'Banco' },
   { id: 'CBU', text: 'Clave Bancaria Uniforme ' },
   { id: 'CUIJ', text: 'Clave única de identificación judicial' },
-  { id: 'CUIT_CUIL', text: 'Código única de identificación laboral' },
+  { id: 'CUIT_CUIL', text: 'Código único de identificación laboral' },
   { id: 'DIRECCION', text: 'Dirección' },
   { id: 'LOC', text: 'Localidad' },
   { id: 'EDAD', text: 'Edad' },
