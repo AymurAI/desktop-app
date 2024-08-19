@@ -13,7 +13,7 @@ export default forwardRef<HTMLInputElement, Props>(function HiddenInput(
   { multiple = true, ...props },
   ref
 ) {
-  // Convert the array into a '.doc,.dcox' form
+  // Convert the array into a '.dcox' form
   const extensions = WHITELISTED_EXTENSIONS.map((ext) => `.${ext}`).join(',');
 
   return (

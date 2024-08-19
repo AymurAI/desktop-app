@@ -97,6 +97,7 @@ as an `.env` file
 - Luciana Vega (_Project Manager_)
 - Andy Orlandi (_Product Designer_)
 - Luciano Lapenna (_Developer_)
+- Ender Puentes (_Developer_)
 
 ## Special thanks
 

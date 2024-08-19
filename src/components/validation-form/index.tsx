@@ -7,6 +7,7 @@ import {
   isValidElement,
   ReactElement,
   ReactNode,
+  useEffect,
   useState,
 } from 'react';
 
@@ -19,11 +20,13 @@ interface Props extends NativeComponent<'form'> {
   children: ReactNode;
   title: string;
   onSubmit: FormEventHandler;
+  onCheck: (checked: boolean) => void;
 }
 export default function ValidationForm({
   children,
   title,
   onSubmit,
+  onCheck,
   ...props
 }: Props) {
   const [checked, setChecked] = useState(false);
@@ -46,6 +49,10 @@ export default function ValidationForm({
 
     onSubmit(e);
   };
+
+  useEffect(() => {
+    onCheck(checked);
+  }, [checked, onCheck]);
 
   return (
     <Form {...props} onSubmit={handleSubmit}>

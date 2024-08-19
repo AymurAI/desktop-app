@@ -35,6 +35,7 @@ export const colors = {
   borderPrimary: '#BCBAB8',
   borderPrimaryAlt: '#110041',
   borderSecondary: '#9F99A5',
+  bgSearch: '#FDFB00',
 
   // ----------------
   // FEEDBACK

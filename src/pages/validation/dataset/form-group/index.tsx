@@ -1,24 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { DocFile } from 'types/file';
-import {
-  InfoGral,
-  DatosDenunciante,
-  DatosAcusado,
-  InfoHecho,
-  Decision,
-} from './forms';
-import Container from './FormGroup.styles';
 import { DecisionTabs } from 'components';
 import { useFileDispatch, useForm } from 'hooks';
 import { appendValidation } from 'reducers/file/actions';
+import { DocFile } from 'types/file';
 import { countDecisiones, Suggester } from 'utils/predictions';
+import Container from './FormGroup.styles';
+import {
+  DatosAcusado,
+  DatosDenunciante,
+  Decision,
+  InfoGral,
+  InfoHecho,
+} from './forms';
 
 interface Props {
   file: DocFile;
+  onCheck: (checked: boolean) => void;
 }
-export default function FormGroup({ file }: Props) {
+export default function FormGroup({ file, onCheck }: Props) {
   const [decision, setDecision] = useState(0);
+
+  const [checkedInfoGral, setCheckedInfoGral] = useState(false);
+  const [checkedInfoHecho, setCheckedInfoHecho] = useState(false);
+  const [checkedDecision, setCheckedDecision] = useState(false);
+  const [checkedDatosDenunciante, setCheckedDatosDenunciante] = useState(false);
+  const [checkedDatosAcusado, setCheckedDatosAcusado] = useState(false);
+
   const { register, submit, addDecision, decisionAmount, getDecisionValue } =
     useForm(countDecisiones(file.predictions));
   const dispatch = useFileDispatch();
@@ -29,6 +37,7 @@ export default function FormGroup({ file }: Props) {
   const selectDecision = (n: number) => setDecision(n);
 
   const handleSubmit = submit((data) => {
+    console.log({ data });
     dispatch(appendValidation(file.data.name, data));
   });
 
@@ -42,9 +51,26 @@ export default function FormGroup({ file }: Props) {
     getDecisionValue,
   };
 
+  useEffect(() => {
+    onCheck(
+      checkedInfoGral &&
+        checkedInfoHecho &&
+        checkedDecision &&
+        checkedDatosDenunciante &&
+        checkedDatosAcusado
+    );
+  }, [
+    onCheck,
+    checkedInfoGral,
+    checkedInfoHecho,
+    checkedDecision,
+    checkedDatosDenunciante,
+    checkedDatosAcusado,
+  ]);
+
   return (
     <Container>
-      <InfoGral {...props} />
+      <InfoGral {...props} onCheck={setCheckedInfoGral} />
 
       <DecisionTabs
         selected={decision}
@@ -52,12 +78,20 @@ export default function FormGroup({ file }: Props) {
         {...{ decisionAmount, selectDecision }}
       />
       <Container key={decision}>
-        <InfoHecho {...decisionProps} decision={decision} />
-        <Decision {...decisionProps} decision={decision} />
+        <InfoHecho
+          {...decisionProps}
+          decision={decision}
+          onCheck={setCheckedInfoHecho}
+        />
+        <Decision
+          {...decisionProps}
+          decision={decision}
+          onCheck={setCheckedDecision}
+        />
       </Container>
 
-      <DatosDenunciante {...props} />
-      <DatosAcusado {...props} />
+      <DatosDenunciante {...props} onCheck={setCheckedDatosDenunciante} />
+      <DatosAcusado {...props} onCheck={setCheckedDatosAcusado} />
     </Container>
   );
 }

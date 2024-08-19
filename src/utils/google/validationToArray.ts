@@ -1,7 +1,6 @@
-import { AllLabels } from 'types/aymurai';
+import { AllLabels, AllLabelsWithSufix } from 'types/aymurai';
 import { DocFile } from 'types/file';
-import { flatValidation } from 'utils/file';
-import { excelStructure } from 'utils/file';
+import { excelStructure, flatValidation } from 'utils/file';
 import {
   treateV_X,
   treatFRASES_AGRESION,
@@ -41,7 +40,7 @@ export default function validationToArray(object: DocFile['validationObject']) {
           // Generic case, just return the value
           // Treat the case as a defined LabelType | LabelDecisiones. In case its not, just return the undefined
           // as this case won't create a value on the dataset as expected
-          return obj[key as AllLabels];
+          return obj[key as AllLabels | AllLabelsWithSufix];
       }
     });
   });

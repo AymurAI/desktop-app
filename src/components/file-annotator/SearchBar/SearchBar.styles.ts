@@ -1,6 +1,6 @@
 import { styled } from 'styles';
 
-export const Wrapper = styled('div', {
+export const WrapperSearch = styled('div', {
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'row',
@@ -20,6 +20,39 @@ export const Wrapper = styled('div', {
     boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.16)',
   },
 });
+
+export const ContainerLabel = styled('div', {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: '$s',
+  width: '100%',
+});
+
+export const WrapperLabel = styled('div', {
+  width: '100%',
+});
+
+export const WrapperSufixLabel = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'row',
+  gap: '$s',
+
+  p: 12,
+  height: 48,
+
+  bg: '$bgSecondary',
+  border: '1px solid $borderPrimary',
+
+  cursor: 'text',
+
+  '&:focus-within': {
+    border: '1px solid $borderPrimaryAlt',
+    boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.16)',
+  },
+});
+
 export const InputContainer = styled('div', {
   display: 'flex',
   alignItems: 'center',
