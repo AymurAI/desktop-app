@@ -84,6 +84,8 @@ export default function AnnotationProvider({
         aymurai_label: aymurayLabel,
         aymurai_label_subclass: null,
         aymurai_alt_text: null,
+        aymurai_alt_start_char: start + offset,
+        aymurai_alt_end_char: end + offset,
       },
     });
   };
