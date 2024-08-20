@@ -10,6 +10,8 @@ type LabelAttributes = {
   aymurai_label: AllLabels | AllLabelsWithSufix;
   aymurai_label_subclass: string[] | null;
   aymurai_alt_text: string | null;
+  aymurai_alt_start_char: number | null;
+  aymurai_alt_end_char: number | null;
 };
 
 export type PredictLabel = {

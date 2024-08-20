@@ -1,8 +1,8 @@
 import { FC, HTMLAttributes } from 'react';
 
 import { useAnnotation } from 'context/Annotation';
-import { Annotation, LabelAnnotation, Metadata } from './types';
 import * as S from './FileAnnotator.styles';
+import { Annotation, LabelAnnotation, Metadata } from './types';
 
 interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
   annotation: Annotation;
@@ -36,6 +36,8 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
           aymurai_label: tag,
           aymurai_label_subclass: null,
           aymurai_alt_text: null,
+          aymurai_alt_start_char: start,
+          aymurai_alt_end_char: end,
         },
         paragraphId: paragraphId,
         text: children,

@@ -45,7 +45,13 @@ export const generateSplits = (
   tokens: Annotation[]
 ): Split[] => {
   if (!tokens.length)
-    return [{ start: 0, end: paragraph.length, type: 'text' }];
+    return [
+      {
+        start: 0,
+        end: paragraph.length,
+        type: 'text',
+      },
+    ];
 
   const sortedTokens = sortTokens(tokens);
   const splits: Split[] = [];
