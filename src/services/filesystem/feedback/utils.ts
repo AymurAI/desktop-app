@@ -23,6 +23,8 @@ function newLabel(
       aymurai_label: name,
       aymurai_label_subclass: null,
       aymurai_alt_text: null,
+      aymurai_alt_start_char: null,
+      aymurai_alt_end_char: null,
     },
   };
 }
