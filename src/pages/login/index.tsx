@@ -1,18 +1,17 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  GoogleLogo,
-  Monitor,
-  Detective,
-  Database,
   ArrowBendUpLeft,
-} from 'phosphor-react';
+  Database,
+  Detective,
+  HardDrives,
+  Monitor,
+} from "phosphor-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { Background, Container } from 'layout/login';
-import { Button, Subtitle, Title, Stack, Label } from 'components';
-import { useLogin, useUser } from 'hooks';
-import Callout from './Callout';
-import { FunctionType } from 'types/user';
+import { Button, Input, Label, Stack, Subtitle, Title } from "components";
+import { useLogin, useUser } from "hooks";
+import { Background, Container } from "layout/login";
+import { FunctionType } from "types/user";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -20,13 +19,20 @@ export default function Login() {
 
   const { login } = useLogin();
   const [isLocal, setIsLocal] = useState(user ? !user?.online : false);
-
+  const [hasToChooseUrl, setHasToChooseUrl] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [isConnected, setIsConnected] = useState(false);
   /**
    * Ensures the user state has been successfully updated before navigating to the `/home`
    */
   useEffect(() => {
-    if (user && user.function !== '') navigate('/onboarding');
+    if (user && user.function !== "") navigate("/onboarding");
   }, [user, navigate]);
+
+  const handleUrlSubmit = () => {
+    setHasToChooseUrl(false);
+    setIsConnected(true);
+  };
 
   return (
     <Background>
@@ -50,14 +56,14 @@ export default function Login() {
             direction="column"
             spacing="m"
             align="stretch"
-            css={{ width: 300 }}
+            css={{ width: 400, minHeight: "240px" }}
           >
-            {!isLocal && (
+            {!isLocal && !hasToChooseUrl && !isConnected && (
               <>
                 <Subtitle
                   weight="strong"
                   size="s"
-                  css={{ textAlign: 'center' }}
+                  css={{ textAlign: "center" }}
                 >
                   ¿Donde prefieres guardar la información que proceses con
                   AymurAI?
@@ -69,23 +75,24 @@ export default function Login() {
                     Local
                   </Button>
                   <Subtitle size="s">o</Subtitle>
-                  <Button onClick={login.online}>
+                  <Button onClick={() => setHasToChooseUrl(true)}>
+                    <HardDrives weight="bold" />
+                    Servidor
+                  </Button>
+                  {/* <Button onClick={login.withGoogle}>
                     <GoogleLogo weight="bold" />
                     Google
-                  </Button>
+                  </Button> */}
                 </Stack>
-
-                {/* Callout */}
-                <Callout />
               </>
             )}
 
-            {isLocal && (
+            {(isLocal || isConnected) && (
               <>
                 <Subtitle
                   weight="strong"
                   size="s"
-                  css={{ textAlign: 'center' }}
+                  css={{ textAlign: "center" }}
                 >
                   ¿Cual función vas a utilizar?
                 </Subtitle>
@@ -93,18 +100,60 @@ export default function Login() {
                   <Database weight="bold" />
                   Set de datos
                 </Button>
-                <Subtitle size="s" css={{ textAlign: 'center' }}>
+                <Subtitle size="s" css={{ textAlign: "center" }}>
                   o
                 </Subtitle>
                 <Button onClick={() => login.offline(FunctionType.ANONYMIZER)}>
                   <Detective weight="bold" />
                   Anonimizador
                 </Button>
-                <Button variant={'secondary'} onClick={() => setIsLocal(false)}>
+                <Button
+                  variant={"secondary"}
+                  onClick={() => {
+                    setIsConnected(false);
+                    setIsLocal(false);
+                  }}
+                >
                   <ArrowBendUpLeft weight="bold" />
                   Volver al inicio
                 </Button>
               </>
+            )}
+            {hasToChooseUrl && (
+              <Stack spacing="m" align="center" w-full justify="center">
+                <Subtitle
+                  weight="strong"
+                  size="s"
+                  css={{ textAlign: "center" }}
+                >
+                  Ingresa la url del servidor al que deseas conectarte
+                </Subtitle>
+                <Input
+                  label="url"
+                  prefix="https://"
+                  css={{ minWidth: "300px" }}
+                  onChange={(value) => setInputValue(value)}
+                />
+                <Button
+                  disabled={!inputValue}
+                  css={{ width: "100%" }}
+                  onClick={handleUrlSubmit}
+                >
+                  Conectar
+                </Button>
+                <Button
+                  css={{ width: "100%" }}
+                  variant={"secondary"}
+                  onClick={() => {
+                    setHasToChooseUrl(false);
+                    setInputValue("");
+                    setIsConnected(false);
+                  }}
+                >
+                  <ArrowBendUpLeft weight="bold" />
+                  Volver al inicio
+                </Button>
+              </Stack>
             )}
           </Stack>
         </Stack>
