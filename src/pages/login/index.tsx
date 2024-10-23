@@ -65,8 +65,7 @@ export default function Login() {
                   size="s"
                   css={{ textAlign: "center" }}
                 >
-                  ¿Donde prefieres guardar la información que proceses con
-                  AymurAI?
+                  ¿Cómo prefieres conectarte a AymurAI?
                 </Subtitle>
                 {/* Buttons */}
                 <Stack direction="column" align="center" spacing="s">
@@ -126,11 +125,10 @@ export default function Login() {
                   size="s"
                   css={{ textAlign: "center" }}
                 >
-                  Ingresa la url del servidor al que deseas conectarte
+                  Ingresa la dirección del servidor al que deseas conectarte
                 </Subtitle>
                 <Input
-                  label="url"
-                  prefix="https://"
+                  label="Dirección del servidor"
                   css={{ minWidth: "300px" }}
                   onChange={(value) => setInputValue(value)}
                 />
