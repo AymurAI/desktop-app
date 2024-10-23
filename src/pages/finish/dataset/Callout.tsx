@@ -1,24 +1,25 @@
-import { CheckCircle, Info } from 'phosphor-react';
+import { CheckCircle, Info } from "phosphor-react";
 
-import { colors } from 'styles/tokens';
-import { styled } from 'styles';
-import { Button, Stack, Subtitle } from 'components';
-import { useFiles, useLogin, useUser } from 'hooks';
-import { submitValidations } from 'utils/file';
-import { useEffect, useRef, useState } from 'react';
+import { colors } from "styles/tokens";
+import { styled } from "styles";
+import { Button, Stack, Subtitle } from "components";
+import { useFiles, useLogin, useUser } from "hooks";
+import { submitValidations } from "utils/file";
+import { useEffect, useRef, useState } from "react";
+import { FunctionType } from "types/user";
 
-const Component = styled('div', {
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: '$m',
+const Component = styled("div", {
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "$m",
 
-  width: '100%',
-  padding: '$m $l',
+  width: "100%",
+  padding: "$m $l",
 
-  backgroundColor: '$infoSecondary',
+  backgroundColor: "$infoSecondary",
 
-  borderRadius: '$xxs',
+  borderRadius: "$xxs",
 });
 
 export default function Callout() {
@@ -32,9 +33,9 @@ export default function Callout() {
 
   const props = {
     subtitle: isOnline
-      ? 'Tus datos se guardaron en tu cuenta de Google ¿Quieres guardarlo en tu local también?'
-      : 'Tus datos se guardaron en un carpeta en tu local ¿Quieres guardarlo en tu cuenta de Google también?',
-    buttonText: isOnline ? 'Guardar en local' : 'Guardar en Google',
+      ? "Tus datos se guardaron en tu cuenta de Google ¿Quieres guardarlo en tu local también?"
+      : "Tus datos se guardaron en un carpeta en tu local ¿Quieres guardarlo en tu cuenta de Google también?",
+    buttonText: isOnline ? "Guardar en local" : "Guardar en Google",
     // If we switched modes, this means we have POSTed the data to the cloud
     buttonDisabled: submitted,
   };
@@ -46,7 +47,7 @@ export default function Callout() {
         // We are working in online mode, must write to the filesystem
         await submitValidations({
           isOnline: false,
-          token: '',
+          token: "",
           validations: file.validationObject,
         });
       }
@@ -59,7 +60,7 @@ export default function Callout() {
 
       // TODO optimizar esta funcion, añadiendo un callback onLogin. El objetivo de esto es remover
       // el useEffect
-      login.online();
+      login.online(FunctionType.DATASET);
     }
   };
 
