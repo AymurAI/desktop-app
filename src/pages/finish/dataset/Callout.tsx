@@ -6,7 +6,6 @@ import { Button, Stack, Subtitle } from "components";
 import { useFiles, useLogin, useUser } from "hooks";
 import { submitValidations } from "utils/file";
 import { useEffect, useRef, useState } from "react";
-import { FunctionType } from "types/user";
 
 const Component = styled("div", {
   display: "flex",
@@ -60,7 +59,7 @@ export default function Callout() {
 
       // TODO optimizar esta funcion, añadiendo un callback onLogin. El objetivo de esto es remover
       // el useEffect
-      login.online(FunctionType.DATASET);
+      login.withGoogle();
     }
   };
 
