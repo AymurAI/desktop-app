@@ -43,8 +43,9 @@ export default function useLogin({ onLogout }: UseLoginArgs = {}) {
     });
   };
 
-  const loginOnline = () => {
-    console.log("I should set the url once the user prompts it");
+  const loginOnline = (funcType: FunctionType) => {
+    setUser({ online: false, function: funcType, token: "" });
+    onLogout?.();
   };
   const loginOffline = (funcType: FunctionType) => {
     setUser({ online: false, function: funcType, token: "" });

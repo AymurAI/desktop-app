@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button, Input, Label, Stack, Subtitle, Title } from "components";
-import { useLogin, useUser } from "hooks";
+import { useLogin, useUser, useServerUrl } from "hooks";
 import { Background, Container } from "layout/login";
 import { FunctionType } from "types/user";
 
@@ -18,10 +18,14 @@ export default function Login() {
   const user = useUser();
 
   const { login } = useLogin();
+  const { setServerUrl } = useServerUrl();
   const [isLocal, setIsLocal] = useState(user ? !user?.online : false);
   const [hasToChooseUrl, setHasToChooseUrl] = useState(false);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(
+    localStorage.getItem("serverUrl") ?? ""
+  );
   const [isConnected, setIsConnected] = useState(false);
+
   /**
    * Ensures the user state has been successfully updated before navigating to the `/home`
    */
@@ -31,7 +35,14 @@ export default function Login() {
 
   const handleUrlSubmit = () => {
     setHasToChooseUrl(false);
+    localStorage.setItem("serverUrl", inputValue);
+    setServerUrl(inputValue);
     setIsConnected(true);
+  };
+
+  const handleLocalConnection = () => {
+    setIsLocal(true);
+    localStorage.setItem("serverUrl", "");
   };
 
   return (
@@ -69,7 +80,7 @@ export default function Login() {
                 </Subtitle>
                 {/* Buttons */}
                 <Stack direction="column" align="center" spacing="s">
-                  <Button onClick={() => setIsLocal(true)}>
+                  <Button onClick={() => handleLocalConnection()}>
                     <Monitor weight="bold" />
                     Local
                   </Button>
@@ -131,6 +142,7 @@ export default function Login() {
                   label="Dirección del servidor"
                   css={{ minWidth: "300px" }}
                   onChange={(value) => setInputValue(value)}
+                  defaultValue={inputValue}
                 />
                 <Button
                   disabled={!inputValue}
