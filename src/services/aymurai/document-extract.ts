@@ -1,6 +1,7 @@
+import axios from "axios";
 import { Paragraph } from "types/file";
+import { AYMURAI_API_URL } from "utils/config";
 import { getParagraphId } from "utils/file/getParagraphId";
-import { fetcher } from "./utils";
 
 interface ParagraphsResponse {
   document: string[];
@@ -13,17 +14,21 @@ interface ParagraphsResponse {
  * @param file File to be analyzed
  * @returns A list of paragraphs with their metadata
  */
-export async function getParagraphs(file: File): Promise<Paragraph[]> {
+export async function getParagraphs(
+  file: File,
+  serverUrl: string
+): Promise<Paragraph[]> {
   const formData = new FormData();
   formData.append("file", file);
   try {
-    const response = await fetcher.post<ParagraphsResponse>(
-      "/document-extract",
-      formData,
-      {
+    console.log("I arrived!🌸🌸🌸🌸🌸", serverUrl);
+    const response = await axios
+      .create({
+        baseURL: !!serverUrl ? serverUrl : AYMURAI_API_URL,
+      })
+      .post<ParagraphsResponse>("/document-extract", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
+      });
     return response.data.document.map((p, i) => ({
       value: p,
       id: getParagraphId(p, i),

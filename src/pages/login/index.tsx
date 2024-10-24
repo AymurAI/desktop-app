@@ -42,6 +42,7 @@ export default function Login() {
 
   const handleLocalConnection = () => {
     setIsLocal(true);
+    setServerUrl("");
     localStorage.setItem("serverUrl", "");
   };
 
