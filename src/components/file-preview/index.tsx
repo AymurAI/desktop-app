@@ -62,9 +62,9 @@ export default function FilePreview({ file }: Props) {
         <Text
           css={{ color: "$colors$errorPrimary" }}
           title={file.data.name}
-          size="s"
+          size="xs"
         >
-          Error de conexión
+          No se pudo cargar el archivo
         </Text>
       )}
     </S.Wrapper>

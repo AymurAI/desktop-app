@@ -52,6 +52,7 @@ export const FileContainer = styled("div", {
     error: {
       true: {
         borderColor: "$colors$errorPrimary",
+        backgroundColor: "$colors$errorSecondary",
       },
       false: {},
     },
