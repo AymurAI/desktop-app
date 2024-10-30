@@ -8,10 +8,11 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, Input, Label, Stack, Subtitle, Title } from "components";
+import { Button, Input, Label, Stack, Subtitle, Text, Title } from "components";
 import { useLogin, useUser, useServerUrl } from "hooks";
 import { Background, Container } from "layout/login";
 import { FunctionType } from "types/user";
+import { getHealthCheck } from "services/aymurai";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Login() {
     localStorage.getItem("serverUrl") ?? ""
   );
   const [isConnected, setIsConnected] = useState(false);
-
+  const [error, setError] = useState("");
   /**
    * Ensures the user state has been successfully updated before navigating to the `/home`
    */
@@ -33,16 +34,28 @@ export default function Login() {
     if (user && user.function !== "") navigate("/onboarding");
   }, [user, navigate]);
 
-  const handleUrlSubmit = () => {
-    setHasToChooseUrl(false);
-    localStorage.setItem("serverUrl", inputValue);
-    setServerUrl(inputValue);
-    setIsConnected(true);
+  const handleUrlSubmit = async () => {
+    const response = await getHealthCheck(inputValue);
+    if (response === 200) {
+      setHasToChooseUrl(false);
+      localStorage.setItem("serverUrl", inputValue);
+      setError("");
+      setServerUrl(inputValue);
+      setIsConnected(true);
+      return;
+    } else {
+      if (response === "Request failed with status code 404") {
+        setError("La dirección ingresada no es correcta");
+      } else {
+        setError("En este momento no es posible conectarse con el servidor");
+      }
+    }
   };
 
   const handleLocalConnection = () => {
     setIsLocal(true);
     setServerUrl("");
+    setError("");
     localStorage.setItem("serverUrl", "");
   };
 
@@ -123,6 +136,7 @@ export default function Login() {
                   onClick={() => {
                     setIsConnected(false);
                     setIsLocal(false);
+                    setError("");
                   }}
                 >
                   <ArrowBendUpLeft weight="bold" />
@@ -139,12 +153,31 @@ export default function Login() {
                 >
                   Ingresa la dirección del servidor al que deseas conectarte
                 </Subtitle>
-                <Input
-                  label="Dirección del servidor"
-                  css={{ minWidth: "300px" }}
-                  onChange={(value) => setInputValue(value)}
-                  defaultValue={inputValue}
-                />
+                <Stack
+                  direction="column"
+                  spacing={"none"}
+                  css={{ marginBottom: "$space$m" }}
+                >
+                  <Input
+                    label="Dirección del servidor"
+                    css={{
+                      minWidth: "300px",
+                      position: "relative",
+                    }}
+                    onChange={(value) => setInputValue(value)}
+                    defaultValue={inputValue}
+                  />
+                  {error && (
+                    <div>
+                      <Label
+                        css={{ color: "$errorPrimary", position: "absolute" }}
+                        size="s"
+                      >
+                        Error de conexión: {error}{" "}
+                      </Label>
+                    </div>
+                  )}
+                </Stack>
                 <Button
                   disabled={!inputValue}
                   css={{ width: "100%" }}
@@ -159,6 +192,7 @@ export default function Login() {
                     setHasToChooseUrl(false);
                     setInputValue("");
                     setIsConnected(false);
+                    setError("");
                   }}
                 >
                   <ArrowBendUpLeft weight="bold" />
