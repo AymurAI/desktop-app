@@ -1,13 +1,12 @@
-import { CanceledError } from 'axios';
+import axios, { CanceledError } from "axios";
 
-import { PredictLabel, Workflows } from 'types/aymurai';
-import { Paragraph } from 'types/file';
-
-import { fetcher } from './utils';
+import { PredictLabel, Workflows } from "types/aymurai";
+import { Paragraph } from "types/file";
+import { AYMURAI_API_URL } from "utils/config";
 
 interface PredictResponse {
   document: string;
-  labels: Omit<PredictLabel, 'paragraphId'>[];
+  labels: Omit<PredictLabel, "paragraphId">[];
 }
 
 /**
@@ -19,18 +18,22 @@ interface PredictResponse {
 export default async function predict(
   paragraph: Paragraph,
   controller: AbortController,
-  route: Workflows = 'datapublic'
+  route: Workflows = "datapublic"
 ): Promise<PredictLabel[]> {
   try {
-    const response = await fetcher.post<PredictResponse>(
-      `/${route}/predict`,
-      {
-        text: paragraph.value,
-      },
-      {
-        signal: controller.signal,
-      }
-    );
+    const response = await axios
+      .create({
+        baseURL: AYMURAI_API_URL,
+      })
+      .post<PredictResponse>(
+        `/${route}/predict`,
+        {
+          text: paragraph.value,
+        },
+        {
+          signal: controller.signal,
+        }
+      );
 
     const data = response.data.labels.map((l) => ({
       ...l,
