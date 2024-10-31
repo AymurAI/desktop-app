@@ -21,7 +21,6 @@ export async function getParagraphs(
   const formData = new FormData();
   formData.append("file", file);
   try {
-    console.log("I arrived!🌸🌸🌸🌸🌸", serverUrl);
     const response = await axios
       .create({
         baseURL: !!serverUrl ? serverUrl : AYMURAI_API_URL,
