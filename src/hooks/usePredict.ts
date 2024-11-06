@@ -55,7 +55,8 @@ export function usePredict(
         const prediction = await predict(
           p,
           controller.current,
-          isAnonimizing ? "anonymizer" : "datapublic"
+          isAnonimizing ? "anonymizer" : "datapublic",
+          serverUrl
         );
 
         dispatch(addPredictions(file.data.name, prediction));
