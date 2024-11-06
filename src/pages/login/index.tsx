@@ -52,7 +52,28 @@ export default function Login() {
     }
   };
 
-  const handleLocalConnection = () => {
+  const handleLocalConnection = async () => {
+    if (window.electronAPI) {
+      try {
+        await window.electronAPI.runBatch();
+        console.log("Server is running in the background.");
+      } catch (error) {
+        console.error(
+          "Failed to run batch. Please run the server manually.",
+          error
+        );
+        alert(
+          "No se pudo inicializar el servidor automáticamente. Por favor inícialo manualmente."
+        );
+      }
+    } else {
+      console.warn("Electron API not available. Unable to run the batch file.");
+      alert(
+        "No se puede inicializar el servidor automáticamente. Por favor, inícialo manualmente."
+      );
+    }
+
+    // Update state and storage regardless of the batch process result
     setIsLocal(true);
     setServerUrl("");
     setError("");
