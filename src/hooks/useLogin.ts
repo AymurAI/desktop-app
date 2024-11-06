@@ -24,7 +24,7 @@ export default function useLogin({ onLogout }: UseLoginArgs = {}) {
     setUser((cur) => (cur ? ({ ...cur, token: newToken } as OnlineUser) : cur));
   };
 
-  const loginOnline = () => {
+  const loginWithGoogle = () => {
     // Opens the window in the OS default browser
     oauth.openConsentScreen();
 
@@ -42,14 +42,15 @@ export default function useLogin({ onLogout }: UseLoginArgs = {}) {
       }
     });
   };
+
   const loginOffline = (funcType: FunctionType) => {
     setUser({ online: false, function: funcType, token: "" });
     onLogout?.();
   };
 
   const login = {
-    online: loginOnline,
     offline: loginOffline,
+    withGoogle: loginWithGoogle,
   };
   const logout = () => {
     setUser(null);

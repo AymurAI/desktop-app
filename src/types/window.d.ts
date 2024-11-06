@@ -23,6 +23,9 @@ declare global {
     taskbar?: {
       notify: () => Promise<void>;
     };
+    electronAPI?: {
+      runBatch: () => void;
+    };
   }
 }
 
