@@ -5,10 +5,7 @@ import { spawn, ChildProcess } from "node:child_process";
 let batchProcess: ChildProcess | null = null;
 
 const runBatch = async () => {
-  const batFilePath = path.join(
-    app.getAppPath(),
-    "build/app/run_mock_server.bat"
-  );
+  const batFilePath = path.join(app.getAppPath(), "build/app/run_server.bat");
   const quotedBatFilePath = `"${batFilePath}"`;
   // Spawn the batch file as a detached process
   batchProcess = spawn(quotedBatFilePath, {
