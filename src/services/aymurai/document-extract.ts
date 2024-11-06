@@ -12,6 +12,7 @@ interface ParagraphsResponse {
 /**
  * Sends a file to the backend to be analyzed and retrieve a list of paragraphs
  * @param file File to be analyzed
+ * @param serverUrl String with the URL of the AyMurAI api
  * @returns A list of paragraphs with their metadata
  */
 export async function getParagraphs(
@@ -21,7 +22,6 @@ export async function getParagraphs(
   const formData = new FormData();
   formData.append("file", file);
   try {
-    console.log("I arrived!🌸🌸🌸🌸🌸", serverUrl);
     const response = await axios
       .create({
         baseURL: !!serverUrl ? serverUrl : AYMURAI_API_URL,

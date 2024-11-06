@@ -13,17 +13,19 @@ interface PredictResponse {
  * Realiza una petición a la AI para poder obtener predicciones en base a un párrafo
  * @param paragraph Párrafo a analizar
  * @param controller `AbortController` encargado de mandar una señal de cancelación a `axios`
+ * @param serverUrl String with the URL of the AyMurAI api
  * @returns Una lista de `PredictLabel` con las predicciones
  */
 export default async function predict(
   paragraph: Paragraph,
   controller: AbortController,
-  route: Workflows = "datapublic"
+  route: Workflows = "datapublic",
+  serverUrl: string
 ): Promise<PredictLabel[]> {
   try {
     const response = await axios
       .create({
-        baseURL: AYMURAI_API_URL,
+        baseURL: !!serverUrl ? serverUrl : AYMURAI_API_URL,
       })
       .post<PredictResponse>(
         `/${route}/predict`,
