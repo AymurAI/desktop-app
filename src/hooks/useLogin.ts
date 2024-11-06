@@ -43,17 +43,12 @@ export default function useLogin({ onLogout }: UseLoginArgs = {}) {
     });
   };
 
-  const loginOnline = (funcType: FunctionType) => {
-    setUser({ online: false, function: funcType, token: "" });
-    onLogout?.();
-  };
   const loginOffline = (funcType: FunctionType) => {
     setUser({ online: false, function: funcType, token: "" });
     onLogout?.();
   };
 
   const login = {
-    online: loginOnline,
     offline: loginOffline,
     withGoogle: loginWithGoogle,
   };
