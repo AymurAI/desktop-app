@@ -12,6 +12,7 @@ interface ParagraphsResponse {
 /**
  * Sends a file to the backend to be analyzed and retrieve a list of paragraphs
  * @param file File to be analyzed
+ * @param serverUrl String with the URL of the AyMurAI api
  * @returns A list of paragraphs with their metadata
  */
 export async function getParagraphs(

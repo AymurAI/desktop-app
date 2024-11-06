@@ -26,6 +26,7 @@ const body = (file: DocFile): Body => {
 /**
  * Anonymize a document
  * @param file File to be processed
+ * @param serverUrl String with the URL of the AyMurAI api
  * @param body Body containing the plain text and the annotations
  * @returns The anonymized document in a `Blob`
  */

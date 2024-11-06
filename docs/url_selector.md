@@ -9,3 +9,7 @@ En la pantalla de inicio el usuario puede elegir cómo desea conectarse a la API
   Por razones de seguridad, no es conveniente que estas URLs estén en el código de la aplicación, por lo cual el usuario deberá ingrearlas manualmente.
 
   A fin de mejorar la experiencia de uso, la URL se preserva y autocompleta evitando así que el usuario tenga que reingresarla cada vez que inicia la aplicación.
+
+| Pantalla inicial                                 | Selector                                   |
+| ------------------------------------------------ | ------------------------------------------ |
+| ![Pantalla inicial](./images/initial-screen.png) | ![Selector URL](./images/url-selector.png) |
