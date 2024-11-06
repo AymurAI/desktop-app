@@ -168,8 +168,8 @@ export default function DatosDenunciante({
             key={i}
             prefix={frasesArray.length > 1 ? i + 1 : undefined}
             ref={prop(fraseName(i) as LabelDecisiones)} // Treat this dynamic Label the same way as any other
-            {...suggester.text(fraseName(i) as LabelDecisiones)}
             label="Frases de la agresión"
+            {...suggester.text(fraseName(i) as LabelDecisiones)}
           />
         ))}
         <Button
@@ -184,10 +184,10 @@ export default function DatosDenunciante({
       </Stack>
       <Select
         ref={prop(LabelDecisiones.FRECUENCIA_EPISODIOS)}
-        {...suggester.select(LabelDecisiones.FRECUENCIA_EPISODIOS)}
         options={json.FRECUENCIA_EPISODIOS}
         label="Frecuencia del episodio"
         selected={defaultValue(LabelDecisiones.FRECUENCIA_EPISODIOS) as string}
+        {...suggester.select(LabelDecisiones.FRECUENCIA_EPISODIOS)}
       />
       <Select
         ref={prop(
@@ -215,9 +215,6 @@ export default function DatosDenunciante({
         ref={prop(
           LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
         )}
-        {...suggester.select(
-          LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
-        )}
         options={json.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO}
         label="Medidas de protección vigentes al momento del hecho"
         selected={
@@ -225,20 +222,23 @@ export default function DatosDenunciante({
             LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
           ) as string
         }
+        {...suggester.select(
+          LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
+        )}
       />
       <Select
         ref={prop(LabelDecisiones.ZONA_DEL_HECHO)}
-        {...suggester.select(LabelDecisiones.ZONA_DEL_HECHO)}
         options={json.ZONA_DEL_HECHO}
         label="Zona del hecho"
         selected={defaultValue(LabelDecisiones.ZONA_DEL_HECHO) as string}
+        {...suggester.select(LabelDecisiones.ZONA_DEL_HECHO)}
       />
       <Select
         ref={prop(LabelDecisiones.LUGAR_DEL_HECHO)}
-        {...suggester.select(LabelDecisiones.LUGAR_DEL_HECHO)}
         options={json.LUGAR_DEL_HECHO}
         label="Lugar del hecho"
         selected={defaultValue(LabelDecisiones.LUGAR_DEL_HECHO) as string}
+        {...suggester.select(LabelDecisiones.LUGAR_DEL_HECHO)}
       />
     </ValidationForm>
   );
