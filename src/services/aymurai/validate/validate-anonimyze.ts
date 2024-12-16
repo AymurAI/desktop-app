@@ -22,7 +22,7 @@ export async function validateAnonymizer(
         baseURL: !!serverUrl ? serverUrl : AYMURAI_API_URL,
       })
       .post<PredictResponse | null>(
-        `/anonymizer/validate`,
+        `/anonymizer/validation`,
         {
           text: paragraph.value,
         },

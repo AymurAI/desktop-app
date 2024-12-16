@@ -52,32 +52,29 @@ export function usePredict(
       if (!loading || !paragraphs || status !== "processing") return;
 
       const promises = paragraphs.map(async (p) => {
-        let prediction = null;
+        let prediction;
         if (isAnonimizing) {
-          try {
-            prediction = await validateAnonymizer(
+          prediction = await validateAnonymizer(
+            p,
+            controller.current,
+            serverUrl
+          );
+          console.log("🎀 validation returns ", prediction);
+          if (!prediction) {
+            prediction = await predict(
               p,
               controller.current,
+              "anonymizer",
               serverUrl
             );
-
-            if (!prediction) {
-              try {
-                prediction = await predict(
-                  p,
-                  controller.current,
-                  "anonymizer",
-                  serverUrl
-                );
-              } catch (error) {
-                console.error("Validation failed:", error);
-                prediction = null; // Treat errors as null
-              }
-            }
-          } catch (error) {
-            console.error("Validation failed:", error);
-            prediction = null; // Treat errors as null
+            console.log("🍏 passed predict", prediction);
+          } else {
+            console.log("🍉 Passed validation", prediction);
           }
+
+          dispatch(addPredictions(file.data.name, prediction));
+          // Increase progress %
+          setProgress((current) => current + 1 / paragraphs!.length);
         } else {
           prediction = await predict(
             p,
