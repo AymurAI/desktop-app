@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 
 import { useFileDispatch, useFileParser, useUser } from "hooks";
-import { predict } from "services/aymurai";
+import { predict, validateAnonymizer } from "services/aymurai";
 import { addPredictions, removePredictions } from "reducers/file/actions";
 
 import { FunctionType } from "types/user";
@@ -52,16 +52,43 @@ export function usePredict(
       if (!loading || !paragraphs || status !== "processing") return;
 
       const promises = paragraphs.map(async (p) => {
-        const prediction = await predict(
-          p,
-          controller.current,
-          isAnonimizing ? "anonymizer" : "datapublic",
-          serverUrl
-        );
+        let prediction = null;
+        if (isAnonimizing) {
+          try {
+            prediction = await validateAnonymizer(
+              p,
+              controller.current,
+              serverUrl
+            );
 
-        dispatch(addPredictions(file.data.name, prediction));
-        // Increase progress %
-        setProgress((current) => current + 1 / paragraphs!.length);
+            if (!prediction) {
+              try {
+                prediction = await predict(
+                  p,
+                  controller.current,
+                  "anonymizer",
+                  serverUrl
+                );
+              } catch (error) {
+                console.error("Validation failed:", error);
+                prediction = null; // Treat errors as null
+              }
+            }
+          } catch (error) {
+            console.error("Validation failed:", error);
+            prediction = null; // Treat errors as null
+          }
+        } else {
+          prediction = await predict(
+            p,
+            controller.current,
+            isAnonimizing ? "anonymizer" : "datapublic",
+            serverUrl
+          );
+          dispatch(addPredictions(file.data.name, prediction));
+          // Increase progress %
+          setProgress((current) => current + 1 / paragraphs!.length);
+        }
       });
 
       // Once all promises are resolved, set status to completed or error if applicable
