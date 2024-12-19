@@ -2,7 +2,6 @@ import axios, { CanceledError } from "axios";
 import { PredictLabel } from "types/aymurai";
 import { Paragraph } from "types/file";
 import { AYMURAI_API_URL } from "utils/config";
-import { PredictResponse } from "../predict";
 
 /**
  * Realiza una petición a la AI para verificar si existen predicciones del anonimizador guardadas para un párrafo determinado (chequea a partir de un hash generado por el backend basado en el contenido textual del párrafo)
@@ -21,7 +20,7 @@ export async function validateAnonymizer(
       .create({
         baseURL: !!serverUrl ? serverUrl : AYMURAI_API_URL,
       })
-      .post<PredictResponse | null>(
+      .post<PredictLabel[] | null>(
         `/anonymizer/validation`,
         {
           text: paragraph.value,
@@ -32,14 +31,14 @@ export async function validateAnonymizer(
       );
 
     if (response.data) {
-      const data = response.data.labels.map((l) => ({
+      console.log("🍺 Validation brings me: ", response.data);
+      const data = response.data.map((l) => ({
         ...l,
         start_char: l.attrs.aymurai_alt_start_char || l.start_char,
         end_char: l.attrs.aymurai_alt_end_char || l.end_char,
         text: l.attrs.aymurai_alt_text || l.text,
         paragraphId: paragraph.id,
       }));
-
       return data;
     }
     return null;

@@ -59,7 +59,6 @@ export function usePredict(
             controller.current,
             serverUrl
           );
-          console.log("🎀 validation returns ", prediction);
           if (!prediction) {
             prediction = await predict(
               p,
@@ -67,9 +66,6 @@ export function usePredict(
               "anonymizer",
               serverUrl
             );
-            console.log("🍏 passed predict", prediction);
-          } else {
-            console.log("🍉 Passed validation", prediction);
           }
 
           dispatch(addPredictions(file.data.name, prediction));
