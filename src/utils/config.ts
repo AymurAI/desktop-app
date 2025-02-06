@@ -11,7 +11,7 @@ export const PREDICT_PORT = 8899;
 /**
  * Only allow these extensions to be analyzed
  */
-export const WHITELISTED_EXTENSIONS = ["doc", "docx"];
+export const WHITELISTED_EXTENSIONS = ["doc", "docx", "pdf"];
 
 /**
  * Dataset Spreadsheet
@@ -27,4 +27,4 @@ export const REFRESH_INTERVAL = 45 * 60 * 1000;
 /**
  * AymurAI API URL
  */
-export const AYMURAI_API_URL = `http://localhost:8900`;
+export const AYMURAI_API_URL = `http://localhost:${PREDICT_PORT}`;
