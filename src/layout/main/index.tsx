@@ -19,7 +19,9 @@ export default withAuthProtection(function Main({ children, ...props }: Props) {
         {/* Title & Profile picture & Logout */}
         <Title weight="strong" css={{ fontSize: 24 }}>
           AymurAI{" "}
-          {user?.function === FunctionType.ANONYMIZER ? "Anonimizador" : ""}
+          {user?.function === FunctionType.ANONYMIZER
+            ? "Anonimizador"
+            : "Set de datos"}
         </Title>
         <Stepper></Stepper>
         <ProfileInfo></ProfileInfo>
