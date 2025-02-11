@@ -27,4 +27,4 @@ export const REFRESH_INTERVAL = 45 * 60 * 1000;
 /**
  * AymurAI API URL
  */
-export const AYMURAI_API_URL = `http://localhost:8900`;
+export const AYMURAI_API_URL = `http://${PREDICT_PORT}`;
