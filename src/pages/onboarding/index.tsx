@@ -102,7 +102,7 @@ export default function Onboarding() {
           multiple={user?.function === FunctionType.DATASET ? true : false}
           tabIndex={-1}
         />
-        <Text size="s">Formatos válidos: .docx, pdf</Text>
+        <Text size="s">Formatos válidos: .docx, .pdf</Text>
         <Button onClick={handleSelectFile} size="l">
           {user?.function === FunctionType.ANONYMIZER
             ? "Carga el documento"
