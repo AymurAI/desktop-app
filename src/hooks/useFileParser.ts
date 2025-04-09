@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { addParagraphs } from "reducers/file/actions";
+import { useEffect } from 'react';
+import { addParagraphs } from 'reducers/file/actions';
 
-import { getParagraphs } from "services/aymurai";
-import { DocFile } from "types/file";
+import { getParagraphs } from 'services/aymurai';
+import { DocFile } from 'types/file';
 
-import { useFileDispatch } from "./useFiles";
+import { useFileDispatch } from './useFiles';
 
 /**
  * Fetches the paragraphs of a file and adds them to the state. Also, returns the paragraphs

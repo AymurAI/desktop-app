@@ -1,13 +1,13 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from 'react';
 
-import { useFileDispatch, useFileParser, useUser } from "hooks";
-import { predict } from "services/aymurai";
-import { addPredictions, removePredictions } from "reducers/file/actions";
+import { useFileDispatch, useFileParser, useUser } from 'hooks';
+import { predict } from 'services/aymurai';
+import { addPredictions, removePredictions } from 'reducers/file/actions';
 
-import { FunctionType } from "types/user";
-import { DocFile } from "types/file";
+import { FunctionType } from 'types/user';
+import { DocFile } from 'types/file';
 
-export type PredictStatus = "processing" | "error" | "stopped" | "completed";
+export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
 
 interface UsePredictOptions {
   onStatusChange?: (status: PredictStatus) => void;
@@ -18,7 +18,7 @@ export function usePredict(
   serverUrl: string
 ) {
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState<PredictStatus>("processing");
+  const [status, setStatus] = useState<PredictStatus>('processing');
   const dispatch = useFileDispatch();
   const paragraphs = useFileParser(file, serverUrl);
 
@@ -40,7 +40,7 @@ export function usePredict(
     controller.current.abort();
 
     dispatch(removePredictions(file.data.name));
-    updateStatus("stopped");
+    updateStatus('stopped');
     setProgress(0);
   };
 
@@ -49,13 +49,13 @@ export function usePredict(
     let loading = true;
 
     const fetch = async () => {
-      if (!loading || !paragraphs || status !== "processing") return;
+      if (!loading || !paragraphs || status !== 'processing') return;
 
       const promises = paragraphs.map(async (p) => {
         const prediction = await predict(
           p,
           controller.current,
-          isAnonimizing ? "anonymizer" : "datapublic",
+          isAnonimizing ? 'anonymizer' : 'datapublic',
           serverUrl
         );
 
@@ -67,11 +67,11 @@ export function usePredict(
       // Once all promises are resolved, set status to completed or error if applicable
       await Promise.all(promises)
         .then(() => {
-          updateStatus("completed");
+          updateStatus('completed');
         })
         .catch(() => {
           setProgress(0);
-          updateStatus("error");
+          updateStatus('error');
         });
     };
 

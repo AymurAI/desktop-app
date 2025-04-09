@@ -15,7 +15,15 @@ export const Card = styled(StyledCard, {
   px: '$m',
   pt: '$l',
   pb: '$xl',
-  width: 200,
+  maxWidth: 200,
+  '@md': {
+    pt: '$xxl',
+    maxWidth: 160,
+  },
+  '@lg': {
+    pt: '$l',
+    maxWidth: 200,
+  },
 });
 
 /**

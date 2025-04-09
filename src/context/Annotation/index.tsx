@@ -1,6 +1,6 @@
 import { useFileDispatch } from 'hooks';
 import { createContext, ReactNode, useCallback, useContext } from 'react';
-import { appendPrediction, removePrediction } from 'reducers/file/actions';
+import { appendPrediction, removePredictionsByText } from 'reducers/file/actions';
 import { AllLabels, AllLabelsWithSufix, PredictLabel } from 'types/aymurai';
 import { DocFile } from 'types/file';
 import {
@@ -49,7 +49,7 @@ export default function AnnotationProvider({
 
   const remove = useCallback(
     (prediction: PredictLabel) => {
-      dispatch(removePrediction(file.data.name, prediction));
+      dispatch(removePredictionsByText(file.data.name, prediction.text));
     },
     [dispatch, file.data.name]
   );

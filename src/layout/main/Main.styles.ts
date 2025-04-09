@@ -27,7 +27,7 @@ export const Header = styled('header', {
 });
 
 export const Section = styled('section', {
-  px: 150,
+  px: 40,
   py: '$xxl',
   flex: 1,
 
@@ -36,7 +36,9 @@ export const Section = styled('section', {
   gap: '$m',
 
   bg: '$bgPrimary',
-
+  '@xl': {
+    px: 150,
+  },
   variants: {
     spacing: {
       none: { gap: 0 },
