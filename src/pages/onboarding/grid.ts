@@ -1,15 +1,15 @@
-import { styled } from "styles";
+import { styled } from 'styles';
 
-export const Grid = styled("div", {
-  display: "grid",
-  justifyItems: "center",
-  gridTemplateColumns: "repeat(1, minmax(200px, 1fr))",
-  gap: "$xl 0",
+export const Grid = styled('div', {
+  display: 'grid',
+  justifyItems: 'center',
+  gridTemplateColumns: 'repeat(1, minmax(200px, 1fr))',
+  gap: '$xl 0',
 
-  "@md": {
-    gridTemplateColumns: "repeat(4, minmax(160px, 1fr))",
+  '@md': {
+    gridTemplateColumns: 'repeat(2, minmax(200px, 1fr))',
   },
-  "@xl": {
-    gridTemplateColumns: "repeat(4, minmax(200px, 1fr))",
+  '@xl': {
+    gridTemplateColumns: 'repeat(4, minmax(200px, 1fr))',
   },
 });

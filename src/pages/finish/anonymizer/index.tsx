@@ -96,15 +96,16 @@ export default function Anonymizer() {
         >
           <img src="brand/data-genero.png" alt="DataGenero" width={150} />
         </Anchor>
-        <Button variant="secondary" onClick={handleRestart} size="l">
-          Cargar un nuevo documento
-        </Button>
         <Button
           onClick={downloadDocument}
+          variant="secondary"
           size="l"
           disabled={status === "error"}
         >
           Descargar documento
+        </Button>
+        <Button onClick={handleRestart} size="l">
+          Cargar un nuevo documento
         </Button>
       </Footer>
     </>

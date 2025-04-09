@@ -4,7 +4,7 @@ import { PredictLabel, Workflows } from "types/aymurai";
 import { Paragraph } from "types/file";
 import { AYMURAI_API_URL } from "utils/config";
 
-export interface PredictResponse {
+interface PredictResponse {
   document: string;
   labels: Omit<PredictLabel, "paragraphId">[];
 }

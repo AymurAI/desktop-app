@@ -1,5 +1,5 @@
-import { Text } from "components";
-import { Card as StyledCard, Step } from "./Cards.styles";
+import { Text } from 'components';
+import { Card as StyledCard, Step } from './Cards.styles';
 
 interface Props {
   step: number;
@@ -13,11 +13,7 @@ export function Card({ step = 1, text }: Props) {
   return (
     <StyledCard>
       <Step>{step}</Step>
-      <img
-        src={`onboarding-steps/step${step}.png`}
-        width="140"
-        alt={`Step ${step}`}
-      />
+      <img src={`onboarding-steps/step${step}.png`} alt={`Step ${step}`} />
       <Text size="s">{text}</Text>
     </StyledCard>
   );

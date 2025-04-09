@@ -1,13 +1,13 @@
-import { ChangeEventHandler, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { ChangeEventHandler, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Button, HiddenInput, Stack, Text, Title } from "components";
-import { useFileDispatch, useUser } from "hooks";
-import { Footer, Section } from "layout/main";
-import { addFiles } from "reducers/file/actions";
-import { FunctionType } from "types/user";
-import { Card } from "./cards";
-import { Grid } from "./grid";
+import { Button, HiddenInput, Stack, Text, Title } from 'components';
+import { useFileDispatch, useUser } from 'hooks';
+import { Footer, Section } from 'layout/main';
+import { addFiles } from 'reducers/file/actions';
+import { FunctionType } from 'types/user';
+import { Card } from './cards';
+import { Grid } from './grid';
 
 export default function Onboarding() {
   const user = useUser();
@@ -27,7 +27,7 @@ export default function Onboarding() {
       const files = Array.from(rawFiles);
 
       dispatch(addFiles(files));
-      navigate("/preview");
+      navigate('/preview');
     }
   };
 
@@ -61,32 +61,32 @@ export default function Onboarding() {
             step={1}
             text={
               user?.function === FunctionType.ANONYMIZER
-                ? "Selecciona el archivo"
-                : "Selecciona los archivos"
+                ? 'Selecciona el archivo'
+                : 'Selecciona los archivos'
             }
           />
           <Card
             step={2}
             text={
               user?.function === FunctionType.ANONYMIZER
-                ? "La inteligencia artificial procesará el archivo"
-                : "La inteligencia artificial procesará los archivos"
+                ? 'La inteligencia artificial procesará el archivo'
+                : 'La inteligencia artificial procesará los archivos'
             }
           />
           <Card
             step={3}
             text={
               user?.function === FunctionType.ANONYMIZER
-                ? "Valida que la información a anonimizar sea correcta"
-                : "Valida que la información identificada sea correcta"
+                ? 'Valida que la información a anonimizar sea correcta'
+                : 'Valida que la información identificada sea correcta'
             }
           />
           <Card
             step={4}
             text={
               user?.function === FunctionType.ANONYMIZER
-                ? "Proceso terminado. El documento esta listo para ser exportado."
-                : "Proceso terminado. Los archivos ya son parte del set de datos."
+                ? 'Proceso terminado. El documento esta listo para ser exportado.'
+                : 'Proceso terminado. Los archivos ya son parte del set de datos.'
             }
           />
         </Grid>
@@ -96,17 +96,17 @@ export default function Onboarding() {
       <Footer>
         <HiddenInput
           type="file"
-          accept=".docx, .pdf"
+          accept=".docx"
           ref={inputRef}
           onChange={handleAddedFiles}
           multiple={user?.function === FunctionType.DATASET ? true : false}
           tabIndex={-1}
         />
-        <Text size="s">Formatos válidos: .docx, .pdf</Text>
+        <Text size="s">Formatos válidos: .docx</Text>
         <Button onClick={handleSelectFile} size="l">
           {user?.function === FunctionType.ANONYMIZER
-            ? "Carga el documento"
-            : "Cargar documentos"}
+            ? 'Carga el documento'
+            : 'Cargar documentos'}
         </Button>
       </Footer>
     </>

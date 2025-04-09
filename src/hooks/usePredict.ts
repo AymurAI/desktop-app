@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 
 import { useFileDispatch, useFileParser, useUser } from "hooks";
-import { predict, validateAnonymizer } from "services/aymurai";
+import { predict } from "services/aymurai";
 import { addPredictions, removePredictions } from "reducers/file/actions";
 
 import { FunctionType } from "types/user";
@@ -52,36 +52,16 @@ export function usePredict(
       if (!loading || !paragraphs || status !== "processing") return;
 
       const promises = paragraphs.map(async (p) => {
-        let prediction;
-        if (isAnonimizing) {
-          prediction = await validateAnonymizer(
-            p,
-            controller.current,
-            serverUrl
-          );
-          if (!prediction) {
-            prediction = await predict(
-              p,
-              controller.current,
-              "anonymizer",
-              serverUrl
-            );
-          }
+        const prediction = await predict(
+          p,
+          controller.current,
+          isAnonimizing ? "anonymizer" : "datapublic",
+          serverUrl
+        );
 
-          dispatch(addPredictions(file.data.name, prediction));
-          // Increase progress %
-          setProgress((current) => current + 1 / paragraphs!.length);
-        } else {
-          prediction = await predict(
-            p,
-            controller.current,
-            isAnonimizing ? "anonymizer" : "datapublic",
-            serverUrl
-          );
-          dispatch(addPredictions(file.data.name, prediction));
-          // Increase progress %
-          setProgress((current) => current + 1 / paragraphs!.length);
-        }
+        dispatch(addPredictions(file.data.name, prediction));
+        // Increase progress %
+        setProgress((current) => current + 1 / paragraphs!.length);
       });
 
       // Once all promises are resolved, set status to completed or error if applicable
