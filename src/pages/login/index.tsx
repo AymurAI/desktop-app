@@ -4,15 +4,15 @@ import {
   Detective,
   HardDrives,
   Monitor,
-} from "phosphor-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+} from 'phosphor-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Button, Input, Label, Stack, Subtitle, Text, Title } from "components";
-import { useLogin, useUser, useServerUrl } from "hooks";
-import { Background, Container } from "layout/login";
-import { FunctionType } from "types/user";
-import { getHealthCheck } from "services/aymurai";
+import { Button, Input, Label, Stack, Subtitle, Text, Title } from 'components';
+import { useLogin, useUser, useServerUrl } from 'hooks';
+import { Background, Container } from 'layout/login';
+import { FunctionType } from 'types/user';
+import { getHealthCheck } from 'services/aymurai';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -23,31 +23,31 @@ export default function Login() {
   const [isLocal, setIsLocal] = useState(user ? !user?.online : false);
   const [hasToChooseUrl, setHasToChooseUrl] = useState(false);
   const [inputValue, setInputValue] = useState(
-    localStorage.getItem("serverUrl") ?? ""
+    localStorage.getItem('serverUrl') ?? ''
   );
   const [isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   /**
    * Ensures the user state has been successfully updated before navigating to the `/home`
    */
   useEffect(() => {
-    if (user && user.function !== "") navigate("/onboarding");
+    if (user && user.function !== '') navigate('/onboarding');
   }, [user, navigate]);
 
   const handleUrlSubmit = async () => {
     const response = await getHealthCheck(inputValue);
     if (response === 200) {
       setHasToChooseUrl(false);
-      localStorage.setItem("serverUrl", inputValue);
-      setError("");
+      localStorage.setItem('serverUrl', inputValue);
+      setError('');
       setServerUrl(inputValue);
       setIsConnected(true);
       return;
     } else {
-      if (response === "Request failed with status code 404") {
-        setError("La dirección ingresada no es correcta");
+      if (response === 'Request failed with status code 404') {
+        setError('La dirección ingresada no es correcta');
       } else {
-        setError("En este momento no es posible conectarse con el servidor");
+        setError('En este momento no es posible conectarse con el servidor');
       }
     }
   };
@@ -56,28 +56,28 @@ export default function Login() {
     if (window.electronAPI) {
       try {
         await window.electronAPI.runBatch();
-        console.log("Server is running in the background.");
+        console.log('Server is running in the background.');
       } catch (error) {
         console.error(
-          "Failed to run batch. Please run the server manually.",
+          'Failed to run batch. Please run the server manually.',
           error
         );
         alert(
-          "No se pudo inicializar el servidor automáticamente. Por favor inícialo manualmente."
+          'No se pudo inicializar el servidor automáticamente. Por favor inícialo manualmente.'
         );
       }
     } else {
-      console.warn("Electron API not available. Unable to run the batch file.");
+      console.warn('Electron API not available. Unable to run the batch file.');
       alert(
-        "No se puede inicializar el servidor automáticamente. Por favor, inícialo manualmente."
+        'No se puede inicializar el servidor automáticamente. Por favor, inícialo manualmente.'
       );
     }
 
     // Update state and storage regardless of the batch process result
     setIsLocal(true);
-    setServerUrl("");
-    setError("");
-    localStorage.setItem("serverUrl", "");
+    setServerUrl('');
+    setError('');
+    localStorage.setItem('serverUrl', '');
   };
 
   return (
@@ -102,14 +102,14 @@ export default function Login() {
             direction="column"
             spacing="m"
             align="stretch"
-            css={{ width: 400, minHeight: "240px" }}
+            css={{ width: 400, minHeight: '240px' }}
           >
             {!isLocal && !hasToChooseUrl && !isConnected && (
               <>
                 <Subtitle
                   weight="strong"
                   size="s"
-                  css={{ textAlign: "center" }}
+                  css={{ textAlign: 'center' }}
                 >
                   ¿Cómo prefieres conectarte a AymurAI?
                 </Subtitle>
@@ -137,7 +137,7 @@ export default function Login() {
                 <Subtitle
                   weight="strong"
                   size="s"
-                  css={{ textAlign: "center" }}
+                  css={{ textAlign: 'center' }}
                 >
                   ¿Cual función vas a utilizar?
                 </Subtitle>
@@ -145,7 +145,7 @@ export default function Login() {
                   <Database weight="bold" />
                   Set de datos
                 </Button>
-                <Subtitle size="s" css={{ textAlign: "center" }}>
+                <Subtitle size="s" css={{ textAlign: 'center' }}>
                   o
                 </Subtitle>
                 <Button onClick={() => login.offline(FunctionType.ANONYMIZER)}>
@@ -153,11 +153,11 @@ export default function Login() {
                   Anonimizador
                 </Button>
                 <Button
-                  variant={"secondary"}
+                  variant={'secondary'}
                   onClick={() => {
                     setIsConnected(false);
                     setIsLocal(false);
-                    setError("");
+                    setError('');
                   }}
                 >
                   <ArrowBendUpLeft weight="bold" />
@@ -170,20 +170,20 @@ export default function Login() {
                 <Subtitle
                   weight="strong"
                   size="s"
-                  css={{ textAlign: "center" }}
+                  css={{ textAlign: 'center' }}
                 >
                   Ingresa la dirección del servidor al que deseas conectarte
                 </Subtitle>
                 <Stack
                   direction="column"
-                  spacing={"none"}
-                  css={{ marginBottom: "$space$m" }}
+                  spacing={'none'}
+                  css={{ marginBottom: '$space$m' }}
                 >
                   <Input
                     label="Dirección del servidor"
                     css={{
-                      minWidth: "300px",
-                      position: "relative",
+                      minWidth: '300px',
+                      position: 'relative',
                     }}
                     onChange={(value) => setInputValue(value)}
                     defaultValue={inputValue}
@@ -191,29 +191,29 @@ export default function Login() {
                   {error && (
                     <div>
                       <Label
-                        css={{ color: "$errorPrimary", position: "absolute" }}
+                        css={{ color: '$errorPrimary', position: 'absolute' }}
                         size="s"
                       >
-                        Error de conexión: {error}{" "}
+                        Error de conexión: {error}{' '}
                       </Label>
                     </div>
                   )}
                 </Stack>
                 <Button
                   disabled={!inputValue}
-                  css={{ width: "100%" }}
+                  css={{ width: '100%' }}
                   onClick={handleUrlSubmit}
                 >
                   Conectar
                 </Button>
                 <Button
-                  css={{ width: "100%" }}
-                  variant={"secondary"}
+                  css={{ width: '100%' }}
+                  variant={'secondary'}
                   onClick={() => {
                     setHasToChooseUrl(false);
-                    setInputValue("");
+                    setInputValue('');
                     setIsConnected(false);
-                    setError("");
+                    setError('');
                   }}
                 >
                   <ArrowBendUpLeft weight="bold" />

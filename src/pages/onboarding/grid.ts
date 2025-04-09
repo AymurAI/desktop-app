@@ -7,7 +7,7 @@ export const Grid = styled('div', {
   gap: '$xl 0',
 
   '@md': {
-    gridTemplateColumns: 'repeat(2, minmax(200px, 1fr))',
+    gridTemplateColumns: 'repeat(4, minmax(160px, 1fr))',
   },
   '@xl': {
     gridTemplateColumns: 'repeat(4, minmax(200px, 1fr))',

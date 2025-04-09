@@ -1,13 +1,13 @@
-import { createContext, Dispatch, ReactNode, useState } from "react";
+import { createContext, Dispatch, ReactNode, useState } from 'react';
 
 /**
  * Context used to save the URL from which user will connect to Aymurai
  */
 export const ServerUrlContext = createContext<UrlContextType>({
-  serverUrl: "",
+  serverUrl: '',
   setServerUrl: () => {},
 });
-ServerUrlContext.displayName = "UrlContext";
+ServerUrlContext.displayName = 'UrlContext';
 
 interface Props {
   children?: ReactNode;
@@ -20,7 +20,7 @@ interface UrlContextType {
 
 export default function UrlProvider({ children }: Props) {
   const [url, setUrl] = useState<string>(
-    localStorage.getItem("serverUrl") ?? ""
+    localStorage.getItem('serverUrl') ?? ''
   );
 
   return (

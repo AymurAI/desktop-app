@@ -96,13 +96,13 @@ export default function Onboarding() {
       <Footer>
         <HiddenInput
           type="file"
-          accept=".docx"
+          accept=".docx, .pdf"
           ref={inputRef}
           onChange={handleAddedFiles}
           multiple={user?.function === FunctionType.DATASET ? true : false}
           tabIndex={-1}
         />
-        <Text size="s">Formatos válidos: .docx</Text>
+        <Text size="s">Formatos válidos: .docx, .pdf</Text>
         <Button onClick={handleSelectFile} size="l">
           {user?.function === FunctionType.ANONYMIZER
             ? 'Carga el documento'

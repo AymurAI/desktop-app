@@ -106,10 +106,13 @@ export default function Finish() {
         >
           <img src="brand/data-genero.png" alt="DataGenero" width={150} />
         </Anchor>
+
+        <Button variant="secondary" onClick={handleRestart} size="l">
+          Cargar más documentos
+        </Button>
         {user?.online ? (
           <Button
             css={{ textDecoration: 'none' }}
-            variant="secondary"
             as="a"
             href={DATASET_URL}
             target="_blank"
@@ -119,14 +122,10 @@ export default function Finish() {
             Ver set de datos
           </Button>
         ) : (
-          <Button variant="secondary" size="l" onClick={filesystem.excel.open}>
+          <Button size="l" onClick={filesystem.excel.open}>
             Ver set de datos
           </Button>
         )}
-
-        <Button onClick={handleRestart} size="l">
-          Cargar más documentos
-        </Button>
       </Footer>
     </>
   );

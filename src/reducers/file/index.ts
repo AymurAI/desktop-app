@@ -15,6 +15,7 @@ import {
   AddParagraphsAction,
   AppendPrediction,
   RemovePrediction,
+  RemovePredictionsByText,
 } from './actions';
 import {
   addFiles,
@@ -42,7 +43,8 @@ export type Action =
   | FilterUnprocessedAction
   | AddParagraphsAction
   | AppendPrediction
-  | RemovePrediction;
+  | RemovePrediction
+  | RemovePredictionsByText;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -192,6 +194,18 @@ export default function reducer(state: State, action: Action): State {
         predictions: cur.predictions?.filter(
           (p) => !comparePrediction(prediction, p)
         ),
+      }));
+    }
+
+    // ----------------
+    // REMOVE PREDICTIONS BY TEXT
+    // ----------------
+    case ActionTypes.REMOVE_PREDICTIONS_BY_TEXT: {
+      const { fileName, text } = payload;
+
+      return update(fileName, (cur) => ({
+        ...cur,
+        predictions: cur.predictions?.filter((p) => p.text !== text),
       }));
     }
 

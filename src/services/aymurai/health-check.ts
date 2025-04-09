@@ -1,5 +1,5 @@
-import axios from "axios";
-import { AYMURAI_API_URL } from "utils/config";
+import axios from 'axios';
+import { AYMURAI_API_URL } from 'utils/config';
 
 /**
  * Sends a file to the backend to be analyzed and retrieve a list of paragraphs
@@ -14,11 +14,11 @@ export async function getHealthCheck(
       .create({
         baseURL: !!serverUrl ? serverUrl : AYMURAI_API_URL,
       })
-      .get("/server/healthcheck");
+      .get('/server/healthcheck');
     return response.status;
   } catch (e) {
     const { message } = e as Error;
-    console.error("Could not connect to server: ", message);
+    console.error('Could not connect to server: ', message);
     return message;
   }
 }

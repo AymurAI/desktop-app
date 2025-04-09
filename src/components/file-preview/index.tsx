@@ -1,14 +1,14 @@
-import { Checkbox, Spinner, Text } from "components";
-import { ServerUrlContext } from "context/ServerUrl";
-import { useFileDispatch, useFileParser, useUser } from "hooks";
-import { FileX } from "phosphor-react";
-import { useContext } from "react";
-import { toggleSelected } from "reducers/file/actions";
+import { Checkbox, Spinner, Text } from 'components';
+import { ServerUrlContext } from 'context/ServerUrl';
+import { useFileDispatch, useFileParser, useUser } from 'hooks';
+import { FileX } from 'phosphor-react';
+import { useContext } from 'react';
+import { toggleSelected } from 'reducers/file/actions';
 
-import { DocFile } from "types/file";
-import { FunctionType } from "types/user";
+import { DocFile } from 'types/file';
+import { FunctionType } from 'types/user';
 
-import * as S from "./FilePreview.styles";
+import * as S from './FilePreview.styles';
 
 interface Props {
   file: DocFile;
@@ -26,7 +26,7 @@ export default function FilePreview({ file }: Props) {
     <S.Wrapper>
       {!isAnonymizer && !!paragraphs?.length && (
         <Checkbox
-          css={{ position: "absolute", top: "$s", right: "$s" }}
+          css={{ position: 'absolute', top: '$s', right: '$s' }}
           checked={file.selected}
           onChange={() => dispatch(toggleSelected(file.data.name))}
         ></Checkbox>
@@ -36,11 +36,11 @@ export default function FilePreview({ file }: Props) {
         <FileX
           size={48}
           style={{
-            position: "absolute",
-            top: "30%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            color: "#DC582E",
+            position: 'absolute',
+            top: '30%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            color: '#DC582E',
           }}
         />
       )}
@@ -60,7 +60,7 @@ export default function FilePreview({ file }: Props) {
         </Text>
       ) : (
         <Text
-          css={{ color: "$colors$errorPrimary" }}
+          css={{ color: '$colors$errorPrimary' }}
           title={file.data.name}
           size="xs"
         >
