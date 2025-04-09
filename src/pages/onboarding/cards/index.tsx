@@ -1,5 +1,5 @@
-import { Text } from "components";
-import { Card as StyledCard, Step } from "./Cards.styles";
+import { Text } from 'components';
+import { Card as StyledCard, Step } from './Cards.styles';
 
 interface Props {
   step: number;

@@ -1,5 +1,5 @@
-import { GoogleUser, GoogleToken } from "./google";
-import { XOR } from "./utils";
+import { GoogleUser, GoogleToken } from './google';
+import { XOR } from './utils';
 
 export type OfflineUser = {
   online: false;
@@ -14,9 +14,9 @@ export type OnlineUser = {
 } & GoogleUser;
 
 export enum FunctionType {
-  DATASET = "DATA_SET",
-  ANONYMIZER = "ANONYMIZER",
-  NULL = "",
+  DATASET = 'DATA_SET',
+  ANONYMIZER = 'ANONYMIZER',
+  NULL = '',
 }
 /**
  * Type referring to the info retrieved by Google API and the acess token from OAuth2
