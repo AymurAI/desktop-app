@@ -5,7 +5,7 @@
   "main": "build/main.js",
   "scripts": {
     "dev:web": "react-scripts start",
-    "dev": "nodemon --exec \"npm start\" -e ts,tsx,js,json --watch src --watch renderer",
+    "dev": "nodemon --exec npm start -e ts,tsx,js,json --watch src --watch renderer",
     "start": "npm run build && electron-forge start",
     "build:renderer": "tsc --build tsconfig.renderer.json",
     "build:app": "cross-env BUILD_PATH=./build/app PUBLIC_URL=. react-scripts build",
@@ -17,7 +17,7 @@
     "check-types:renderer": "tsc -p tsconfig.renderer.json --noEmit",
     "validate": "npm run lint && npm run check-types:react && npm run check-types:renderer",
     "pre-commit": "lint-staged",
-    "package": "npm run build && electron-forge package",
+    "package": "rm -rf build && npm run build && electron-forge package",
     "make": "rm -rf build && npm run build && electron-forge make"
   },
   "dependencies": {
