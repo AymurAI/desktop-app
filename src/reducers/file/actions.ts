@@ -21,6 +21,7 @@ export enum ActionTypes {
   APPEND_VALIDATION = 'APPEND_VALIDATION',
   APPEND_PREDICTION = 'APPEND_PREDICTION',
   REMOVE_PREDICTION = 'REMOVE_PREDICTION',
+  REMOVE_PREDICTIONS_BY_TEXT = 'REMOVE_PREDICTIONS_BY_TEXT',
 }
 
 /**
@@ -260,5 +261,27 @@ export function removePrediction(
   return {
     type: ActionTypes.REMOVE_PREDICTION,
     payload: { prediction, fileName },
+  };
+}
+
+export type RemovePredictionsByText = Action<
+  ActionTypes.REMOVE_PREDICTIONS_BY_TEXT,
+  {
+    text: string;
+    fileName: string;
+  }
+>;
+/**
+ * Removes all predictions with the same text from the file
+ * @param text Text of the predictions to be removed
+ * @param fileName Name of the file to be modified
+ */
+export function removePredictionsByText(
+  fileName: string,
+  text: string
+): RemovePredictionsByText {
+  return {
+    type: ActionTypes.REMOVE_PREDICTIONS_BY_TEXT,
+    payload: { text, fileName },
   };
 }
