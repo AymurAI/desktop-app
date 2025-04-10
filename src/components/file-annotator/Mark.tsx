@@ -2,7 +2,8 @@ import { FC, HTMLAttributes, useState } from 'react';
 import { useAnnotation } from 'context/Annotation';
 import * as S from './FileAnnotator.styles';
 import { Annotation, LabelAnnotation, Metadata } from './types';
-import Dialog from '../dialog';
+import Dialog, { DialogMessage, DialogButtons } from '../dialog';
+import Button from '../button';
 
 interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
   annotation: Annotation;
@@ -123,10 +124,24 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
           <Dialog
             isOpen={isDialogOpen}
             title="Elige una opción"
-            message="Por favor, elige la opción que quieres realizar."
-            options={dialogOptions}
             onClose={() => setIsDialogOpen(false)}
-          />
+          >
+            <DialogMessage>Por favor, elige la opción que quieres realizar.</DialogMessage>
+            <DialogButtons>
+              {dialogOptions.map(({ id, label, action }, index) => (
+                <Button
+                  key={id}
+                  variant={index === dialogOptions.length - 1 ? 'primary' : 'secondary'}
+                  onClick={() => {
+                    action();
+                    setIsDialogOpen(false);
+                  }}
+                >
+                  {label}
+                </Button>
+              ))}
+            </DialogButtons>
+          </Dialog>
         </>
       );
     case 'text':
