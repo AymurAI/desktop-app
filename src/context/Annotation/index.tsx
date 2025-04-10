@@ -1,6 +1,6 @@
 import { useFileDispatch } from 'hooks';
 import { createContext, ReactNode, useCallback, useContext } from 'react';
-import { appendPrediction, removePredictionsByText } from 'reducers/file/actions';
+import { appendPrediction, removePrediction, removePredictionsByText } from 'reducers/file/actions';
 import { AllLabels, AllLabelsWithSufix, PredictLabel } from 'types/aymurai';
 import { DocFile } from 'types/file';
 import {
@@ -14,6 +14,7 @@ interface AnnotationContextValues {
   isAnnotable: boolean;
   add: (prediction: PredictLabel) => void;
   remove: (prediction: PredictLabel) => void;
+  removeByText: (prediction: PredictLabel) => void;
 }
 
 /**
@@ -21,8 +22,9 @@ interface AnnotationContextValues {
  */
 export const AnnotationContext = createContext<AnnotationContextValues>({
   isAnnotable: false,
-  add: () => {},
-  remove: () => {},
+  add: () => { },
+  remove: () => { },
+  removeByText: () => { },
 });
 AnnotationContext.displayName = 'AnnotationContext';
 
@@ -48,6 +50,13 @@ export default function AnnotationProvider({
   );
 
   const remove = useCallback(
+    (prediction: PredictLabel) => {
+      dispatch(removePrediction(file.data.name, prediction));
+    },
+    [dispatch, file.data.name]
+  );
+
+  const removeByText = useCallback(
     (prediction: PredictLabel) => {
       dispatch(removePredictionsByText(file.data.name, prediction.text));
     },
@@ -91,14 +100,14 @@ export default function AnnotationProvider({
   };
 
   return (
-    <AnnotationContext.Provider value={{ isAnnotable, add, remove }}>
+    <AnnotationContext.Provider value={{ isAnnotable, add, remove, removeByText }}>
       <div onClick={selectHandler}>{children}</div>
     </AnnotationContext.Provider>
   );
 }
 
 export const useAnnotation = () => {
-  const { add, remove, isAnnotable } = useContext(AnnotationContext);
+  const { add, remove, removeByText, isAnnotable } = useContext(AnnotationContext);
 
-  return { add, remove, isAnnotable };
+  return { add, remove, removeByText, isAnnotable };
 };
