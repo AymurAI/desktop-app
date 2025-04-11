@@ -2,12 +2,13 @@ import { useFileDispatch } from 'hooks';
 import { createContext, ReactNode, useCallback, useContext } from 'react';
 import { appendPrediction, removePrediction, removePredictionsByText, updatePredictionLabel, updatePredictionsByText } from 'reducers/file/actions';
 import { AllLabels, AllLabelsWithSufix, PredictLabel } from 'types/aymurai';
-import { DocFile } from 'types/file';
+import { DocFile, Paragraph } from 'types/file';
 import {
   getBoundaries,
   isValidNode,
   paragraphIdFromSelection,
   selectionHasNodes,
+  findSearchIndexes,
 } from './utils';
 
 interface AnnotationContextValues {
@@ -17,6 +18,7 @@ interface AnnotationContextValues {
   removeByText: (prediction: PredictLabel) => void;
   updateLabel: (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => void;
   updateByText: (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => void;
+  addBySearch: (search: string, label: AllLabels | AllLabelsWithSufix) => void;
 }
 
 /**
@@ -29,6 +31,7 @@ export const AnnotationContext = createContext<AnnotationContextValues>({
   removeByText: () => { },
   updateLabel: () => { },
   updateByText: () => { },
+  addBySearch: () => { },
 });
 AnnotationContext.displayName = 'AnnotationContext';
 
@@ -81,6 +84,33 @@ export default function AnnotationProvider({
     [dispatch, file.data.name]
   );
 
+  const addBySearch = useCallback(
+    (search: string, label: AllLabels | AllLabelsWithSufix) => {
+      if (!search || search.length < 3) return;
+
+      file.paragraphs?.forEach((paragraph: Paragraph) => {
+        const indexes = findSearchIndexes(paragraph.value, search);
+        indexes.forEach((start: number) => {
+          const prediction: PredictLabel = {
+            start_char: start,
+            end_char: start + search.length,
+            paragraphId: paragraph.id,
+            text: search,
+            attrs: {
+              aymurai_label: label,
+              aymurai_label_subclass: null,
+              aymurai_alt_text: null,
+              aymurai_alt_start_char: start,
+              aymurai_alt_end_char: start + search.length,
+            },
+          };
+          dispatch(appendPrediction(file.data.name, prediction));
+        });
+      });
+    },
+    [dispatch, file.data.name, file.paragraphs]
+  );
+
   const selectHandler = () => {
     // If the user hasn't selected any tag to search, do nothing
     if (!searchTag) return;
@@ -118,14 +148,14 @@ export default function AnnotationProvider({
   };
 
   return (
-    <AnnotationContext.Provider value={{ isAnnotable, add, remove, removeByText, updateLabel, updateByText }}>
+    <AnnotationContext.Provider value={{ isAnnotable, add, remove, removeByText, updateLabel, updateByText, addBySearch }}>
       <div onClick={selectHandler}>{children}</div>
     </AnnotationContext.Provider>
   );
 }
 
 export const useAnnotation = () => {
-  const { add, remove, removeByText, isAnnotable, updateLabel, updateByText } = useContext(AnnotationContext);
+  const { add, remove, removeByText, isAnnotable, updateLabel, updateByText, addBySearch } = useContext(AnnotationContext);
 
-  return { add, remove, removeByText, isAnnotable, updateLabel, updateByText };
+  return { add, remove, removeByText, isAnnotable, updateLabel, updateByText, addBySearch };
 };

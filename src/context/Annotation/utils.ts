@@ -48,3 +48,21 @@ export const paragraphIdFromSelection = (selection: Selection) => {
 
   return paragraph.id;
 };
+
+/**
+ * Find all indexes where a search string appears in a text.
+ * @param text The text to search in
+ * @param search The string to search for
+ * @returns An array of indexes where the search string appears
+ */
+export const findSearchIndexes = (text: string, search: string): number[] => {
+  const indexes: number[] = [];
+  let index = text.indexOf(search);
+
+  while (index !== -1) {
+    indexes.push(index);
+    index = text.indexOf(search, index + 1);
+  }
+
+  return indexes;
+};

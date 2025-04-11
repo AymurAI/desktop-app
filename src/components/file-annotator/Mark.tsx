@@ -21,11 +21,11 @@ type DialogOption = {
 
 type DialogState = {
   open: boolean;
-  step: 'replace' | 'replaceAll' | 'options';
+  step: 'replace' | 'replaceAll' | 'options' | 'add';
 }
 
 export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
-  const { add, remove, removeByText, isAnnotable, updateLabel, updateByText } = useAnnotation();
+  const { add, remove, removeByText, isAnnotable, updateLabel, updateByText, addBySearch } = useAnnotation();
   const [dialogState, setDialogState] = useState<DialogState>({
     open: false,
     step: 'options',
@@ -78,7 +78,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     });
   };
 
-  const dialogOptions: DialogOption[] = [
+  const optionsButtons: DialogOption[] = [
     {
       id: 'remove-tag',
       label: 'Remover esta etiqueta',
@@ -107,9 +107,22 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     },
   ];
 
+  const handleAddBySearch = (annotation: LabelAnnotation) => {
+    if (!annotation?.tag) return;
+
+    addBySearch(children, annotation.tag);
+    setDialogState({
+      open: false,
+      step: 'options',
+    });
+  };
+
   const clickHandler = () => {
     if (annotation.type === 'search') {
-      handleAnnotationOperation('add');
+      setDialogState({
+        open: true,
+        step: 'add',
+      });
     } else {
       setDialogState({
         open: true,
@@ -167,10 +180,10 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
               <>
                 <DialogMessage>Por favor, elige la opción que quieres realizar.</DialogMessage>
                 <DialogButtons>
-                  {dialogOptions.map(({ id, label, action }, index) => (
+                  {optionsButtons.map(({ id, label, action }, index) => (
                     <Button
                       key={id}
-                      variant={index === dialogOptions.length - 1 ? 'primary' : 'secondary'}
+                      variant={index === optionsButtons.length - 1 ? 'primary' : 'secondary'}
                       onClick={() => {
                         action();
                       }}
@@ -178,6 +191,28 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                       {label}
                     </Button>
                   ))}
+                </DialogButtons>
+              </>
+            ) : dialogState.step === 'add' ? (
+              <>
+                <DialogMessage>¿Qué quieres hacer?</DialogMessage>
+                <DialogButtons>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      handleAnnotationOperation('add');
+                    }}
+                  >
+                    Agregar etiqueta a esta ocurrencia
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      handleAddBySearch(annotation);
+                    }}
+                  >
+                    Agregar etiqueta a todas las ocurrencias
+                  </Button>
                 </DialogButtons>
               </>
             ) : (
@@ -211,4 +246,4 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
         </span>
       );
   }
-};
+}
