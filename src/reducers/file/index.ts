@@ -17,6 +17,7 @@ import {
   RemovePrediction,
   RemovePredictionsByText,
   UpdatePredictionLabel,
+  UpdatePredictionsByText,
 } from "./actions";
 import {
   addFiles,
@@ -47,7 +48,8 @@ export type Action =
   | AppendPrediction
   | RemovePrediction
   | RemovePredictionsByText
-  | UpdatePredictionLabel;
+  | UpdatePredictionLabel
+  | UpdatePredictionsByText;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -233,6 +235,32 @@ export default function reducer(state: State, action: Action): State {
                 attrs: {
                   ...p.attrs,
                   aymurai_label: newLabel as AllLabels | AllLabelsWithSufix,
+                },
+              };
+            }
+            return p;
+          }),
+        };
+      });
+    }
+
+    // ----------------
+    // UPDATE PREDICTIONS BY TEXT
+    // ----------------
+    case ActionTypes.UPDATE_PREDICTIONS_BY_TEXT: {
+      const { fileName, text, newLabel } = action.payload;
+      return state.map((file) => {
+        if (file.data.name !== fileName) return file;
+
+        return {
+          ...file,
+          predictions: file.predictions?.map((p) => {
+            if (p.text === text) {
+              return {
+                ...p,
+                attrs: {
+                  ...p.attrs,
+                  aymurai_label: newLabel,
                 },
               };
             }

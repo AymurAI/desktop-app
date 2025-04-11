@@ -1,6 +1,6 @@
 import { useFileDispatch } from 'hooks';
 import { createContext, ReactNode, useCallback, useContext } from 'react';
-import { appendPrediction, removePrediction, removePredictionsByText, updatePredictionLabel } from 'reducers/file/actions';
+import { appendPrediction, removePrediction, removePredictionsByText, updatePredictionLabel, updatePredictionsByText } from 'reducers/file/actions';
 import { AllLabels, AllLabelsWithSufix, PredictLabel } from 'types/aymurai';
 import { DocFile } from 'types/file';
 import {
@@ -16,6 +16,7 @@ interface AnnotationContextValues {
   remove: (prediction: PredictLabel) => void;
   removeByText: (prediction: PredictLabel) => void;
   updateLabel: (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => void;
+  updateByText: (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => void;
 }
 
 /**
@@ -27,6 +28,7 @@ export const AnnotationContext = createContext<AnnotationContextValues>({
   remove: () => { },
   removeByText: () => { },
   updateLabel: () => { },
+  updateByText: () => { },
 });
 AnnotationContext.displayName = 'AnnotationContext';
 
@@ -72,6 +74,13 @@ export default function AnnotationProvider({
     [dispatch, file.data.name]
   );
 
+  const updateByText = useCallback(
+    (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => {
+      dispatch(updatePredictionsByText(file.data.name, prediction.text, newLabel));
+    },
+    [dispatch, file.data.name]
+  );
+
   const selectHandler = () => {
     // If the user hasn't selected any tag to search, do nothing
     if (!searchTag) return;
@@ -109,14 +118,14 @@ export default function AnnotationProvider({
   };
 
   return (
-    <AnnotationContext.Provider value={{ isAnnotable, add, remove, removeByText, updateLabel }}>
+    <AnnotationContext.Provider value={{ isAnnotable, add, remove, removeByText, updateLabel, updateByText }}>
       <div onClick={selectHandler}>{children}</div>
     </AnnotationContext.Provider>
   );
 }
 
 export const useAnnotation = () => {
-  const { add, remove, removeByText, isAnnotable, updateLabel } = useContext(AnnotationContext);
+  const { add, remove, removeByText, isAnnotable, updateLabel, updateByText } = useContext(AnnotationContext);
 
-  return { add, remove, removeByText, isAnnotable, updateLabel };
+  return { add, remove, removeByText, isAnnotable, updateLabel, updateByText };
 };

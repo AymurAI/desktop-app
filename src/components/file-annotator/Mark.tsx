@@ -19,12 +19,14 @@ type DialogOption = {
   action: () => void;
 };
 
+type DialogState = {
+  open: boolean;
+  step: 'replace' | 'replaceAll' | 'options';
+}
+
 export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
-  const { add, remove, removeByText, isAnnotable, updateLabel } = useAnnotation();
-  const [dialogState, setDialogState] = useState<{
-    open: boolean;
-    step: 'replace' | 'options';
-  }>({
+  const { add, remove, removeByText, isAnnotable, updateLabel, updateByText } = useAnnotation();
+  const [dialogState, setDialogState] = useState<DialogState>({
     open: false,
     step: 'options',
   });
@@ -76,20 +78,6 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     });
   };
 
-  const handleReplaceTag = () => {
-    setDialogState({
-      open: false,
-      step: 'options',
-    });
-  };
-
-  const handleReplaceAllTags = () => {
-    setDialogState({
-      open: false,
-      step: 'options',
-    });
-  };
-
   const dialogOptions: DialogOption[] = [
     {
       id: 'remove-tag',
@@ -114,7 +102,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
       label: 'Reemplazar todas las etiquetas',
       action: () => setDialogState({
         open: true,
-        step: 'replace',
+        step: 'replaceAll',
       }),
     },
   ];
@@ -130,27 +118,18 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     }
   };
 
-  const changeLabelSelectHandler = (option: SelectOption | undefined) => {
+  const changeLabelSelectHandler = (option: SelectOption | undefined, step: DialogState['step']) => {
     if (!option) return;
 
     const annotationData = createAnnotationData(annotation as LabelAnnotation);
     if (!annotationData) return;
 
-    const prediction = {
-      text: children,
-      start_char: annotation.start,
-      end_char: annotation.end,
-      paragraphId: (annotation as LabelAnnotation).paragraphId,
-      attrs: {
-        aymurai_label: option.id as AllLabels | AllLabelsWithSufix,
-        aymurai_label_subclass: null,
-        aymurai_alt_text: null,
-        aymurai_alt_start_char: annotation.start,
-        aymurai_alt_end_char: annotation.end,
-      },
-    };
+    if (step === 'replace') {
+      updateLabel(annotationData, option.id as AllLabels | AllLabelsWithSufix);
+    } else if (step === 'replaceAll') {
+      updateByText(annotationData, option.id as AllLabels | AllLabelsWithSufix);
+    }
 
-    updateLabel(prediction, option.id as AllLabels | AllLabelsWithSufix);
     setDialogState({
       open: false,
       step: 'options',
@@ -208,7 +187,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                   <Select
                     placeholder="Seleccione una opción"
                     options={anonymizerLabels}
-                    onChange={changeLabelSelectHandler}
+                    onChange={(option) => changeLabelSelectHandler(option, dialogState.step)}
                   />
                   <Button variant="secondary" onClick={() => setDialogState({
                     open: true,

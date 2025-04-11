@@ -1,5 +1,5 @@
 import { FormData } from "hooks/useForm";
-import { PredictLabel } from "types/aymurai";
+import { PredictLabel, AllLabels, AllLabelsWithSufix } from "types/aymurai";
 import { Paragraph } from "types/file";
 
 /**
@@ -23,6 +23,7 @@ export enum ActionTypes {
   REMOVE_PREDICTION = "REMOVE_PREDICTION",
   REMOVE_PREDICTIONS_BY_TEXT = "REMOVE_PREDICTIONS_BY_TEXT",
   UPDATE_PREDICTION_LABEL = "UPDATE_PREDICTION_LABEL",
+  UPDATE_PREDICTIONS_BY_TEXT = "UPDATE_PREDICTIONS_BY_TEXT",
 }
 
 /**
@@ -310,5 +311,31 @@ export function updatePredictionLabel(
   return {
     type: ActionTypes.UPDATE_PREDICTION_LABEL,
     payload: { fileName, prediction, newLabel },
+  };
+}
+
+export type UpdatePredictionsByText = Action<
+  ActionTypes.UPDATE_PREDICTIONS_BY_TEXT,
+  {
+    text: string;
+    fileName: string;
+    newLabel: AllLabels | AllLabelsWithSufix;
+  }
+>;
+
+/**
+ * Updates all predictions with the same text to a new label
+ * @param fileName Name of the file containing the predictions
+ * @param text Text of the predictions to update
+ * @param newLabel The new label to set
+ */
+export function updatePredictionsByText(
+  fileName: string,
+  text: string,
+  newLabel: AllLabels | AllLabelsWithSufix
+): UpdatePredictionsByText {
+  return {
+    type: ActionTypes.UPDATE_PREDICTIONS_BY_TEXT,
+    payload: { fileName, text, newLabel },
   };
 }
