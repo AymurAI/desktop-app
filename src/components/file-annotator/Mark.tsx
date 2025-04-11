@@ -6,7 +6,7 @@ import Dialog, { DialogMessage, DialogButtons } from '../dialog';
 import Button from '../button';
 import Input from 'components/input';
 import Select, { SelectOption } from 'components/select';
-import { anonymizerLabels } from 'types/aymurai';
+import { anonymizerLabels, AllLabels, AllLabelsWithSufix } from 'types/aymurai';
 
 interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
   annotation: Annotation;
@@ -20,7 +20,7 @@ type DialogOption = {
 };
 
 export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
-  const { add, remove, removeByText, isAnnotable } = useAnnotation();
+  const { add, remove, removeByText, isAnnotable, updateLabel } = useAnnotation();
   const [dialogState, setDialogState] = useState<{
     open: boolean;
     step: 'replace' | 'options';
@@ -131,7 +131,30 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   };
 
   const changeLabelSelectHandler = (option: SelectOption | undefined) => {
-    console.log(option);
+    if (!option) return;
+
+    const annotationData = createAnnotationData(annotation as LabelAnnotation);
+    if (!annotationData) return;
+
+    const prediction = {
+      text: children,
+      start_char: annotation.start,
+      end_char: annotation.end,
+      paragraphId: (annotation as LabelAnnotation).paragraphId,
+      attrs: {
+        aymurai_label: option.id as AllLabels | AllLabelsWithSufix,
+        aymurai_label_subclass: null,
+        aymurai_alt_text: null,
+        aymurai_alt_start_char: annotation.start,
+        aymurai_alt_end_char: annotation.end,
+      },
+    };
+
+    updateLabel(prediction, option.id as AllLabels | AllLabelsWithSufix);
+    setDialogState({
+      open: false,
+      step: 'options',
+    });
   };
 
   switch (annotation.type) {

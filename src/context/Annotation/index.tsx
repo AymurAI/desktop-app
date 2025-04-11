@@ -1,6 +1,6 @@
 import { useFileDispatch } from 'hooks';
 import { createContext, ReactNode, useCallback, useContext } from 'react';
-import { appendPrediction, removePrediction, removePredictionsByText } from 'reducers/file/actions';
+import { appendPrediction, removePrediction, removePredictionsByText, updatePredictionLabel } from 'reducers/file/actions';
 import { AllLabels, AllLabelsWithSufix, PredictLabel } from 'types/aymurai';
 import { DocFile } from 'types/file';
 import {
@@ -15,6 +15,7 @@ interface AnnotationContextValues {
   add: (prediction: PredictLabel) => void;
   remove: (prediction: PredictLabel) => void;
   removeByText: (prediction: PredictLabel) => void;
+  updateLabel: (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => void;
 }
 
 /**
@@ -25,6 +26,7 @@ export const AnnotationContext = createContext<AnnotationContextValues>({
   add: () => { },
   remove: () => { },
   removeByText: () => { },
+  updateLabel: () => { },
 });
 AnnotationContext.displayName = 'AnnotationContext';
 
@@ -59,6 +61,13 @@ export default function AnnotationProvider({
   const removeByText = useCallback(
     (prediction: PredictLabel) => {
       dispatch(removePredictionsByText(file.data.name, prediction.text));
+    },
+    [dispatch, file.data.name]
+  );
+
+  const updateLabel = useCallback(
+    (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => {
+      dispatch(updatePredictionLabel(file.data.name, prediction, newLabel));
     },
     [dispatch, file.data.name]
   );
@@ -100,14 +109,14 @@ export default function AnnotationProvider({
   };
 
   return (
-    <AnnotationContext.Provider value={{ isAnnotable, add, remove, removeByText }}>
+    <AnnotationContext.Provider value={{ isAnnotable, add, remove, removeByText, updateLabel }}>
       <div onClick={selectHandler}>{children}</div>
     </AnnotationContext.Provider>
   );
 }
 
 export const useAnnotation = () => {
-  const { add, remove, removeByText, isAnnotable } = useContext(AnnotationContext);
+  const { add, remove, removeByText, isAnnotable, updateLabel } = useContext(AnnotationContext);
 
-  return { add, remove, removeByText, isAnnotable };
+  return { add, remove, removeByText, isAnnotable, updateLabel };
 };
