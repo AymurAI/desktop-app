@@ -4,6 +4,9 @@ import * as S from './FileAnnotator.styles';
 import { Annotation, LabelAnnotation, Metadata } from './types';
 import Dialog, { DialogMessage, DialogButtons } from '../dialog';
 import Button from '../button';
+import Input from 'components/input';
+import Select, { SelectOption } from 'components/select';
+import { anonymizerLabels } from 'types/aymurai';
 
 interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
   annotation: Annotation;
@@ -18,7 +21,13 @@ type DialogOption = {
 
 export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   const { add, remove, removeByText, isAnnotable } = useAnnotation();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogState, setDialogState] = useState<{
+    open: boolean;
+    step: 'replace' | 'options';
+  }>({
+    open: false,
+    step: 'options',
+  });
 
   const annotationOperations = {
     add,
@@ -61,14 +70,24 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     if (!annotationData) return;
 
     annotationOperations[operation](annotationData);
+    setDialogState({
+      open: false,
+      step: 'options',
+    });
   };
 
   const handleReplaceTag = () => {
-    setIsDialogOpen(false);
+    setDialogState({
+      open: false,
+      step: 'options',
+    });
   };
 
   const handleReplaceAllTags = () => {
-    setIsDialogOpen(false);
+    setDialogState({
+      open: false,
+      step: 'options',
+    });
   };
 
   const dialogOptions: DialogOption[] = [
@@ -85,12 +104,18 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     {
       id: 'replace-tag',
       label: 'Reemplazar esta etiqueta',
-      action: handleReplaceTag,
+      action: () => setDialogState({
+        open: true,
+        step: 'replace',
+      }),
     },
     {
       id: 'replace-all-tags',
       label: 'Reemplazar todas las etiquetas',
-      action: handleReplaceAllTags,
+      action: () => setDialogState({
+        open: true,
+        step: 'replace',
+      }),
     },
   ];
 
@@ -98,8 +123,15 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     if (annotation.type === 'search') {
       handleAnnotationOperation('add');
     } else {
-      setIsDialogOpen(true);
+      setDialogState({
+        open: true,
+        step: 'options',
+      });
     }
+  };
+
+  const changeLabelSelectHandler = (option: SelectOption | undefined) => {
+    console.log(option);
   };
 
   switch (annotation.type) {
@@ -122,25 +154,50 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
             )}
           </S.Mark>
           <Dialog
-            isOpen={isDialogOpen}
+            isOpen={dialogState.open}
             title="Elige una opción"
-            onClose={() => setIsDialogOpen(false)}
+            onClose={() => setDialogState({
+              open: false,
+              step: 'options',
+            })}
           >
-            <DialogMessage>Por favor, elige la opción que quieres realizar.</DialogMessage>
-            <DialogButtons>
-              {dialogOptions.map(({ id, label, action }, index) => (
-                <Button
-                  key={id}
-                  variant={index === dialogOptions.length - 1 ? 'primary' : 'secondary'}
-                  onClick={() => {
-                    action();
-                    setIsDialogOpen(false);
-                  }}
-                >
-                  {label}
-                </Button>
-              ))}
-            </DialogButtons>
+            {dialogState.step === 'options' ? (
+              <>
+                <DialogMessage>Por favor, elige la opción que quieres realizar.</DialogMessage>
+                <DialogButtons>
+                  {dialogOptions.map(({ id, label, action }, index) => (
+                    <Button
+                      key={id}
+                      variant={index === dialogOptions.length - 1 ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        action();
+                      }}
+                    >
+                      {label}
+                    </Button>
+                  ))}
+                </DialogButtons>
+              </>
+            ) : (
+              <>
+                <DialogMessage>Por favor, introduce el nuevo texto para reemplazar la etiqueta.</DialogMessage>
+                <DialogButtons>
+                  <Select
+                    placeholder="Seleccione una opción"
+                    options={anonymizerLabels}
+                    onChange={changeLabelSelectHandler}
+                  />
+                  <Button variant="secondary" onClick={() => setDialogState({
+                    open: true,
+                    step: 'options',
+                  })}>Volver</Button>
+                  <Button variant="primary" onClick={() => setDialogState({
+                    open: true,
+                    step: 'options',
+                  })}>Reemplazar</Button>
+                </DialogButtons>
+              </>
+            )}
           </Dialog>
         </>
       );
