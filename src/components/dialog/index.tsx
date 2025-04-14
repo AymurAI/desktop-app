@@ -36,7 +36,7 @@ export const DialogContainer = styled('div', {
   borderRadius: '$xs',
   padding: '$l',
   minWidth: 300,
-  maxWidth: 500,
+  maxWidth: 700,
   boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
 });
 
@@ -63,6 +63,8 @@ export const DialogButtons = styled('div', {
   display: 'flex',
   gap: '$s',
   justifyContent: 'flex-end',
+  alignItems: 'center',
+  marginTop: '$xl',
 });
 
 const Dialog: FC<DialogProps> = ({
