@@ -16,15 +16,18 @@ import {
   AppendPrediction,
   RemovePrediction,
   RemovePredictionsByText,
-} from './actions';
+  UpdatePredictionLabel,
+  UpdatePredictionsByText,
+} from "./actions";
 import {
   addFiles,
   comparePrediction,
   replaceFile,
   updateFromState,
-} from './utils';
+} from "./utils";
 
-import { DocFile } from 'types/file';
+import { DocFile } from "types/file";
+import { AllLabels, AllLabelsWithSufix } from "types/aymurai";
 
 type State = DocFile[];
 
@@ -44,7 +47,9 @@ export type Action =
   | AddParagraphsAction
   | AppendPrediction
   | RemovePrediction
-  | RemovePredictionsByText;
+  | RemovePredictionsByText
+  | UpdatePredictionLabel
+  | UpdatePredictionsByText;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -207,6 +212,62 @@ export default function reducer(state: State, action: Action): State {
         ...cur,
         predictions: cur.predictions?.filter((p) => p.text !== text),
       }));
+    }
+
+    // ----------------
+    // UPDATE PREDICTION LABEL
+    // ----------------
+    case ActionTypes.UPDATE_PREDICTION_LABEL: {
+      const { fileName, prediction, newLabel } = action.payload;
+      return state.map((file) => {
+        if (file.data.name !== fileName) return file;
+
+        return {
+          ...file,
+          predictions: file.predictions?.map((p) => {
+            if (
+              p.text === prediction.text &&
+              p.start_char === prediction.start_char &&
+              p.end_char === prediction.end_char
+            ) {
+              return {
+                ...p,
+                attrs: {
+                  ...p.attrs,
+                  aymurai_label: newLabel as AllLabels | AllLabelsWithSufix,
+                },
+              };
+            }
+            return p;
+          }),
+        };
+      });
+    }
+
+    // ----------------
+    // UPDATE PREDICTIONS BY TEXT
+    // ----------------
+    case ActionTypes.UPDATE_PREDICTIONS_BY_TEXT: {
+      const { fileName, text, newLabel } = action.payload;
+      return state.map((file) => {
+        if (file.data.name !== fileName) return file;
+
+        return {
+          ...file,
+          predictions: file.predictions?.map((p) => {
+            if (p.text === text) {
+              return {
+                ...p,
+                attrs: {
+                  ...p.attrs,
+                  aymurai_label: newLabel,
+                },
+              };
+            }
+            return p;
+          }),
+        };
+      });
     }
 
     // ----------------

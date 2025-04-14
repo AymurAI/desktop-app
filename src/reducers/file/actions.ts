@@ -1,27 +1,29 @@
-import { FormData } from 'hooks/useForm';
-import { PredictLabel } from 'types/aymurai';
-import { Paragraph } from 'types/file';
+import { FormData } from "hooks/useForm";
+import { PredictLabel, AllLabels, AllLabelsWithSufix } from "types/aymurai";
+import { Paragraph } from "types/file";
 
 /**
  * List of action types.
  */
 export enum ActionTypes {
-  ADD = 'ADD',
-  ADD_PREDICTIONS = 'ADD_PREDICTIONS',
-  ADD_PARAGRAPHS = 'ADD_PARAGRAPHS',
-  FILTER_UNSELECTED = 'FILTER_UNSELECTED',
-  FILTER_UNPROCESSED = 'FILTER_UNPROCESSED',
-  TOGGLE_SELECTED = 'TOGGLE_SELECTED',
-  REMOVE_ALL_PREDICTIONS = 'REMOVE_ALL_PREDICTIONS',
-  REMOVE_PREDICTIONS = 'REMOVE_PREDICTIONS',
-  REMOVE_ALL_FILES = 'REMOVE_ALL_FILES',
-  REMOVE_FILE = 'REMOVE_FILE',
-  REPLACE_FILE = 'REPLACE_FILE',
-  VALIDATE = 'VALIDATE',
-  APPEND_VALIDATION = 'APPEND_VALIDATION',
-  APPEND_PREDICTION = 'APPEND_PREDICTION',
-  REMOVE_PREDICTION = 'REMOVE_PREDICTION',
-  REMOVE_PREDICTIONS_BY_TEXT = 'REMOVE_PREDICTIONS_BY_TEXT',
+  ADD = "ADD",
+  ADD_PREDICTIONS = "ADD_PREDICTIONS",
+  ADD_PARAGRAPHS = "ADD_PARAGRAPHS",
+  FILTER_UNSELECTED = "FILTER_UNSELECTED",
+  FILTER_UNPROCESSED = "FILTER_UNPROCESSED",
+  TOGGLE_SELECTED = "TOGGLE_SELECTED",
+  REMOVE_ALL_PREDICTIONS = "REMOVE_ALL_PREDICTIONS",
+  REMOVE_PREDICTIONS = "REMOVE_PREDICTIONS",
+  REMOVE_ALL_FILES = "REMOVE_ALL_FILES",
+  REMOVE_FILE = "REMOVE_FILE",
+  REPLACE_FILE = "REPLACE_FILE",
+  VALIDATE = "VALIDATE",
+  APPEND_VALIDATION = "APPEND_VALIDATION",
+  APPEND_PREDICTION = "APPEND_PREDICTION",
+  REMOVE_PREDICTION = "REMOVE_PREDICTION",
+  REMOVE_PREDICTIONS_BY_TEXT = "REMOVE_PREDICTIONS_BY_TEXT",
+  UPDATE_PREDICTION_LABEL = "UPDATE_PREDICTION_LABEL",
+  UPDATE_PREDICTIONS_BY_TEXT = "UPDATE_PREDICTIONS_BY_TEXT",
 }
 
 /**
@@ -283,5 +285,57 @@ export function removePredictionsByText(
   return {
     type: ActionTypes.REMOVE_PREDICTIONS_BY_TEXT,
     payload: { text, fileName },
+  };
+}
+
+export type UpdatePredictionLabel = Action<
+  ActionTypes.UPDATE_PREDICTION_LABEL,
+  {
+    fileName: string;
+    prediction: PredictLabel;
+    newLabel: string;
+  }
+>;
+
+/**
+ * Updates the label of a prediction in a file
+ * @param fileName Name of the file containing the prediction
+ * @param prediction The prediction to update
+ * @param newLabel The new label to set
+ */
+export function updatePredictionLabel(
+  fileName: string,
+  prediction: PredictLabel,
+  newLabel: string
+): UpdatePredictionLabel {
+  return {
+    type: ActionTypes.UPDATE_PREDICTION_LABEL,
+    payload: { fileName, prediction, newLabel },
+  };
+}
+
+export type UpdatePredictionsByText = Action<
+  ActionTypes.UPDATE_PREDICTIONS_BY_TEXT,
+  {
+    text: string;
+    fileName: string;
+    newLabel: AllLabels | AllLabelsWithSufix;
+  }
+>;
+
+/**
+ * Updates all predictions with the same text to a new label
+ * @param fileName Name of the file containing the predictions
+ * @param text Text of the predictions to update
+ * @param newLabel The new label to set
+ */
+export function updatePredictionsByText(
+  fileName: string,
+  text: string,
+  newLabel: AllLabels | AllLabelsWithSufix
+): UpdatePredictionsByText {
+  return {
+    type: ActionTypes.UPDATE_PREDICTIONS_BY_TEXT,
+    payload: { fileName, text, newLabel },
   };
 }
