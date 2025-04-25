@@ -1,4 +1,4 @@
-import { FC, HTMLAttributes, useState, useRef, ChangeEvent } from 'react';
+import { FC, HTMLAttributes, useState, useRef } from 'react';
 import { useAnnotation } from 'context/Annotation';
 import * as S from './FileAnnotator.styles';
 import { Annotation, LabelAnnotation, Metadata } from './types';
@@ -145,7 +145,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
 
             {annotation.type === 'tag' && <strong>{annotation.tag}</strong>}
 
-            {isAnnotable && annotation.type === 'search' ? (
+            {isAnnotable && annotation.type === 'search' && annotation.tag ? (
               <S.ButtonContainer>
                 <S.Button
                   type="search"
