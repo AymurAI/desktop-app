@@ -21,7 +21,8 @@ type DialogOption = {
 
 type DialogState = {
   open: boolean;
-  step: 'replace' | 'replaceAll' | 'options' | 'add';
+  title: string
+  action: 'replace' | 'replaceAll'
 };
 
 export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
@@ -36,7 +37,8 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   } = useAnnotation();
   const [dialogState, setDialogState] = useState<DialogState>({
     open: false,
-    step: 'options',
+    title: 'Reemplazar',
+    action: 'replace',
   });
 
   const annotationOperations = {
@@ -82,86 +84,28 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     if (!annotationData) return;
 
     annotationOperations[operation](annotationData);
-    setDialogState({
-      open: false,
-      step: 'options',
-    });
   };
-
-  const optionsButtons: DialogOption[] = [
-    {
-      id: 'remove-tag',
-      label: 'Remover esta etiqueta',
-      action: () => handleAnnotationOperation('remove'),
-    },
-    {
-      id: 'remove-all-tags',
-      label: 'Remover todas las etiquetas',
-      action: () => handleAnnotationOperation('removeByText'),
-    },
-    {
-      id: 'replace-tag',
-      label: 'Reemplazar esta etiqueta',
-      action: () =>
-        setDialogState({
-          open: true,
-          step: 'replace',
-        }),
-    },
-    {
-      id: 'replace-all-tags',
-      label: 'Reemplazar todas las etiquetas',
-      action: () =>
-        setDialogState({
-          open: true,
-          step: 'replaceAll',
-        }),
-    },
-  ];
 
   const handleAddBySearch = (annotation: LabelAnnotation) => {
     if (!annotation?.tag) return;
 
     addBySearch(children, annotation.tag);
-    setDialogState({
-      open: false,
-      step: 'options',
-    });
-  };
-
-  const clickHandler = () => {
-    if (annotation.type === 'search') {
-      setDialogState({
-        open: true,
-        step: 'add',
-      });
-    } else {
-      setDialogState({
-        open: true,
-        step: 'options',
-      });
-    }
   };
 
   const changeLabelSelectHandler = (
     option: SelectOption | undefined,
-    step: DialogState['step']
+    action: 'replace' | 'replaceAll'
   ) => {
     if (!option) return;
 
     const annotationData = createAnnotationData(annotation as LabelAnnotation);
     if (!annotationData) return;
 
-    if (step === 'replace') {
+    if (action === 'replace') {
       updateLabel(annotationData, option.id as AllLabels | AllLabelsWithSufix);
-    } else if (step === 'replaceAll') {
+    } else if (action === 'replaceAll') {
       updateByText(annotationData, option.id as AllLabels | AllLabelsWithSufix);
     }
-
-    setDialogState({
-      open: false,
-      step: 'options',
-    });
   };
 
   switch (annotation.type) {
@@ -179,91 +123,72 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
             <span>{children}</span>
 
             {annotation.type === 'tag' && <strong>{annotation.tag}</strong>}
-            {isAnnotable && annotation.tag && (
-              <S.Button type={annotation.type} onClick={clickHandler} />
-            )}
+
+            {isAnnotable && annotation.type === 'search' ? (
+              <S.ButtonContainer>
+                <S.Button
+                  type="search"
+                  onClick={() => handleAddBySearch(annotation)}
+                />
+                <S.Button
+                  type="searchSingle"
+                  onClick={() => handleAnnotationOperation('add')}
+                />
+              </S.ButtonContainer>
+            ) : annotation.tag ? (
+              <S.ButtonContainer>
+                <S.Button
+                  type="replaceAll"
+                  onClick={() => {
+                    setDialogState({
+                      open: true,
+                      title: 'Reemplazar todas las ocurrencias',
+                      action: 'replaceAll',
+                    });
+                  }}
+                />
+                <S.Button
+                  type="replace"
+                  onClick={() => {
+                    setDialogState({
+                      open: true,
+                      title: 'Reemplazar esta ocurrencia',
+                      action: 'replace',
+                    });
+                  }}
+                />
+                <S.Button
+                  type="tagAll"
+                  onClick={() => handleAnnotationOperation('removeByText')}
+                />
+                <S.Button
+                  type="tag"
+                  onClick={() => handleAnnotationOperation('remove')}
+                />
+              </S.ButtonContainer>
+            ) : null}
           </S.Mark>
           <Dialog
             isOpen={dialogState.open}
-            title="Elige una opción"
+            title={dialogState.title}
             onClose={() =>
-              setDialogState({
+              setDialogState(state => ({
+                ...state,
                 open: false,
-                step: 'options',
-              })
+              }))
             }
           >
-            {dialogState.step === 'options' ? (
+            {(
               <>
                 <DialogMessage>
-                  Por favor, elige la opción que quieres realizar.
+                  Por favor, introduce la nueva etiqueta para reemplazar {dialogState.action === 'replace' ? 'esta ocurrencia' : 'todas las ocurrencias'} de {annotation.tag}.
                 </DialogMessage>
                 <DialogButtons>
-                  {optionsButtons.map(({ id, label, action }, index) => (
-                    <Button
-                      key={id}
-                      variant={
-                        index === optionsButtons.length - 1
-                          ? 'primary'
-                          : 'secondary'
-                      }
-                      onClick={() => {
-                        action();
-                      }}
-                    >
-                      {label}
-                    </Button>
-                  ))}
-                </DialogButtons>
-              </>
-            ) : dialogState.step === 'add' ? (
-              <>
-                <DialogMessage>¿Qué quieres hacer?</DialogMessage>
-                <DialogButtons>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      handleAnnotationOperation('add');
-                    }}
-                  >
-                    Agregar etiqueta a esta ocurrencia
-                  </Button>
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      handleAddBySearch(annotation);
-                    }}
-                  >
-                    Agregar etiqueta a todas las ocurrencias
-                  </Button>
-                </DialogButtons>
-              </>
-            ) : (
-              <>
-                <DialogMessage>
-                  Por favor, introduce el nuevo texto para reemplazar la
-                  etiqueta.
-                </DialogMessage>
-                <DialogButtons>
-                  <Button
-                    variant="secondary"
-                    onClick={() =>
-                      setDialogState({
-                        open: true,
-                        step: 'options',
-                      })
-                    }
-                    style={{
-                      marginRight: 'auto',
-                    }}
-                  >
-                    Volver
-                  </Button>
                   <Select
                     placeholder="Seleccione una opción"
                     options={anonymizerLabels}
                     onChange={(option) =>
-                      changeLabelSelectHandler(option, dialogState.step)
+                      changeLabelSelectHandler(option, dialogState.action)
                     }
                   />
                 </DialogButtons>

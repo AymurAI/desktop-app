@@ -1,113 +1,144 @@
-import { styled } from 'styles';
+import { styled } from "styles";
 
-export const Container = styled('div', {
-  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+export const Container = styled("div", {
+  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
 
   zIndex: 1,
-  overflowY: 'scroll',
+  overflowY: "scroll",
 });
 
-export const File = styled('div', {
-  px: '$xl',
-  pb: '$xl',
+export const File = styled("div", {
+  px: "$xl",
+  pb: "$xl",
 
-  '& p, & span, & em': {
-    fontFamily: '$file',
+  "& p, & span, & em": {
+    fontFamily: "$file",
     fontSize: 16,
-    lineHeight: '100%',
-    my: '1em',
+    lineHeight: "100%",
+    my: "1em",
   },
 });
 
-export const Paragraph = styled('p', {
-  margin: '8px 0px',
+export const Paragraph = styled("p", {
+  margin: "8px 0px",
 });
 
-export const Button = styled('button', {
-  visibility: 'hidden',
-  position: 'absolute',
-  top: '-10px',
-  right: '-5px',
+export const ButtonContainer = styled("div", {
+  visibility: "hidden",
+  position: "absolute",
+  top: "-10px",
+  right: "-5px",
+  display: "flex",
+  gap: "3px",
+});
 
-  height: '$m',
-  width: '$m',
+export const Button = styled("button", {
+  height: "20px",
+  width: "20px",
   padding: 0,
-  borderRadius: '50%',
-  border: 'none',
+  borderRadius: "50%",
+  border: "none",
 
-  fontSize: '14px',
-  fontWeight: 'heavy',
-  cursor: 'pointer',
-  color: '$white',
-  textAlign: 'center',
+  fontSize: "14px",
+  fontWeight: "heavy",
+  cursor: "pointer",
+  color: "$white",
+  textAlign: "center",
 
   variants: {
     type: {
       tag: {
-        backgroundColor: '$errorPrimary',
-        '&::after': {
-          content: '-',
+        backgroundColor: "$errorPrimary",
+        "&::after": {
+          content: "-¹",
+        },
+      },
+      tagAll: {
+        backgroundColor: "$errorPrimary",
+        "&::after": {
+          content: "-",
         },
       },
       search: {
-        backgroundColor: '$successPrimary',
-        '&::after': {
-          content: '+',
+        backgroundColor: "$successPrimary",
+        "&::after": {
+          content: "+",
+        },
+      },
+      searchSingle: {
+        backgroundColor: "$successPrimary",
+        "&::after": {
+          content: "+¹",
+        },
+      },
+      replace: {
+        backgroundColor: "$warningPrimary",
+        color: "$black",
+        "&::after": {
+          content: "↔¹",
+        },
+      },
+      replaceAll: {
+        backgroundColor: "$warningPrimary",
+        color: "$black",
+        "&::after": {
+          content: "↔",
         },
       },
     },
   },
   defaultVariants: {
-    type: 'tag',
+    type: "tag",
   },
 });
-export const Mark = styled('mark', {
-  position: 'relative',
-  overflowWrap: 'break-word',
-  padding: '0px  2px',
+
+export const Mark = styled("mark", {
+  position: "relative",
+  overflowWrap: "break-word",
+  padding: "0px  2px",
   borderRadius: 8,
 
-  [`&:hover ${Button}`]: {
-    visibility: 'visible',
+  [`&:hover ${ButtonContainer}`]: {
+    visibility: "visible",
   },
 
   variants: {
     type: {
       tag: {
-        backgroundColor: '$primaryAlt',
+        backgroundColor: "$primaryAlt",
 
-        '& strong': {
-          fontSize: '12px',
-          padding: '0px',
-          ml: '6px',
+        "& strong": {
+          fontSize: "12px",
+          padding: "0px",
+          ml: "6px",
         },
       },
       search: {
         borderRadius: 0,
         fontWeight: 700,
-        backgroundColor: '$bgSearch',
+        backgroundColor: "$bgSearch",
       },
     },
     annotable: {
       true: {
-        cursor: 'pointer',
+        cursor: "pointer",
       },
       false: {
-        cursor: 'default',
+        cursor: "default",
       },
     },
   },
   defaultVariants: {
-    type: 'tag',
+    type: "tag",
     annotable: false,
   },
 });
 
-export const SearchContainer = styled('div', {
-  p: '$l',
+export const SearchContainer = styled("div", {
+  p: "$l",
 
   zIndex: 1,
   top: 0,
-  position: 'sticky',
-  background: 'white',
+  position: "sticky",
+  background: "white",
 });
