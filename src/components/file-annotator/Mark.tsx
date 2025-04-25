@@ -1,4 +1,4 @@
-import { FC, HTMLAttributes, useState } from 'react';
+import { FC, HTMLAttributes, useState, useRef, ChangeEvent } from 'react';
 import { useAnnotation } from 'context/Annotation';
 import * as S from './FileAnnotator.styles';
 import { Annotation, LabelAnnotation, Metadata } from './types';
@@ -13,16 +13,12 @@ interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
   children: string;
 }
 
-type DialogOption = {
-  id: string;
-  label: string;
-  action: () => void;
-};
-
 type DialogState = {
   open: boolean;
-  title: string
-  action: 'replace' | 'replaceAll'
+  title: string;
+  action: 'replace' | 'replaceAll';
+  suffix: number | null;
+  selectedOption: SelectOption | undefined;
 };
 
 export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
@@ -39,7 +35,10 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     open: false,
     title: 'Reemplazar',
     action: 'replace',
+    suffix: null,
+    selectedOption: undefined,
   });
+  const inputLabelSufixRef = useRef<HTMLInputElement>(null);
 
   const annotationOperations = {
     add,
@@ -92,20 +91,42 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     addBySearch(children, annotation.tag);
   };
 
-  const changeLabelSelectHandler = (
-    option: SelectOption | undefined,
-    action: 'replace' | 'replaceAll'
-  ) => {
-    if (!option) return;
+  const changeLabelSelectHandler = (option: SelectOption | undefined) => {
+    setDialogState(state => ({
+      ...state,
+      selectedOption: option,
+    }));
+  };
+
+  const applyChanges = () => {
+    if (!dialogState.selectedOption) return;
 
     const annotationData = createAnnotationData(annotation as LabelAnnotation);
     if (!annotationData) return;
 
-    if (action === 'replace') {
-      updateLabel(annotationData, option.id as AllLabels | AllLabelsWithSufix);
-    } else if (action === 'replaceAll') {
-      updateByText(annotationData, option.id as AllLabels | AllLabelsWithSufix);
+    const labelWithSuffix = dialogState.suffix
+      ? `${dialogState.selectedOption.id}_${dialogState.suffix}` as AllLabelsWithSufix
+      : dialogState.selectedOption.id as AllLabels | AllLabelsWithSufix;
+
+    if (dialogState.action === 'replace') {
+      updateLabel(annotationData, labelWithSuffix);
+    } else if (dialogState.action === 'replaceAll') {
+      updateByText(annotationData, labelWithSuffix);
     }
+
+    setDialogState(state => ({
+      ...state,
+      open: false,
+      suffix: null,
+      selectedOption: undefined,
+    }));
+  };
+
+  const changeLabelSufixHandler = (value: string) => {
+    setDialogState(state => ({
+      ...state,
+      suffix: value ? Number(value) : null,
+    }));
   };
 
   switch (annotation.type) {
@@ -144,6 +165,8 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                       open: true,
                       title: 'Reemplazar todas las ocurrencias',
                       action: 'replaceAll',
+                      suffix: null,
+                      selectedOption: undefined,
                     });
                   }}
                 />
@@ -154,6 +177,8 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                       open: true,
                       title: 'Reemplazar esta ocurrencia',
                       action: 'replace',
+                      suffix: null,
+                      selectedOption: undefined,
                     });
                   }}
                 />
@@ -175,6 +200,8 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
               setDialogState(state => ({
                 ...state,
                 open: false,
+                suffix: null,
+                selectedOption: undefined,
               }))
             }
           >
@@ -187,10 +214,25 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                   <Select
                     placeholder="Seleccione una opción"
                     options={anonymizerLabels}
-                    onChange={(option) =>
-                      changeLabelSelectHandler(option, dialogState.action)
-                    }
+                    onChange={changeLabelSelectHandler}
                   />
+
+                  <Input
+                    ref={inputLabelSufixRef}
+                    placeholder="Sufijo"
+                    onChange={changeLabelSufixHandler}
+                    type="number"
+                    min="1"
+                  />
+
+
+                  <Button
+                    onClick={applyChanges}
+                    disabled={!dialogState.selectedOption}
+                  >
+                    Aplicar
+                  </Button>
+
                 </DialogButtons>
               </>
             )}
