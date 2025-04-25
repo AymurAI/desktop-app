@@ -210,7 +210,9 @@ export default function reducer(state: State, action: Action): State {
 
       return update(fileName, (cur) => ({
         ...cur,
-        predictions: cur.predictions?.filter((p) => p.text !== text),
+        predictions: cur.predictions?.filter(
+          (p) => p.text.toLowerCase() !== text.toLowerCase()
+        ),
       }));
     }
 
@@ -255,7 +257,7 @@ export default function reducer(state: State, action: Action): State {
         return {
           ...file,
           predictions: file.predictions?.map((p) => {
-            if (p.text === text) {
+            if (p.text.toLowerCase() === text.toLowerCase()) {
               return {
                 ...p,
                 attrs: {
