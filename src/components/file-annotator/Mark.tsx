@@ -229,7 +229,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
             {dialogState.action === 'remove' || dialogState.action === 'removeAll' ? (
               <>
                 <DialogMessage>
-                  ¿Estás seguro que deseas {dialogState.action === 'remove' ? 'eliminar esta anotación' : 'eliminar todas las ocurrencias'}?
+                  ¿Deseas {dialogState.action === 'remove' ? 'eliminar esta etiqueta' : 'eliminar todas las etiquetas'} de <b>{children}</b>?
                 </DialogMessage>
                 <DialogButtons>
                   <Button onClick={applyChanges}>
@@ -243,7 +243,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
             ) : (
               <>
                 <DialogMessage>
-                  Por favor, introduce la nueva etiqueta para reemplazar {dialogState.action === 'replace' ? 'esta ocurrencia' : 'todas las ocurrencias'} de {annotation.tag}.
+                  Por favor, introduce la nueva etiqueta para reemplazar {dialogState.action === 'replace' ? 'esta ocurrencia' : 'todas las ocurrencias'} de <b>{children}</b>.
                 </DialogMessage>
                 <DialogButtons>
                   <Select
