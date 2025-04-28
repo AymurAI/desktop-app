@@ -16,7 +16,7 @@ interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
 type DialogState = {
   open: boolean;
   title: string;
-  action: 'replace' | 'replaceAll';
+  action: 'replace' | 'replaceAll' | 'remove' | 'removeAll';
   suffix: number | null;
   selectedOption: SelectOption | undefined;
 };
@@ -82,7 +82,17 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     const annotationData = createAnnotationData(annotation as LabelAnnotation);
     if (!annotationData) return;
 
-    annotationOperations[operation](annotationData);
+    if (operation === 'remove' || operation === 'removeByText') {
+      setDialogState({
+        open: true,
+        title: '¿Estás seguro?',
+        action: operation === 'remove' ? 'remove' : 'removeAll',
+        suffix: null,
+        selectedOption: undefined,
+      });
+    } else {
+      annotationOperations[operation](annotationData);
+    }
   };
 
   const handleAddBySearch = (annotation: LabelAnnotation) => {
@@ -99,19 +109,30 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   };
 
   const applyChanges = () => {
-    if (!dialogState.selectedOption) return;
+    if (!dialogState.selectedOption) {
+      if (dialogState.action === 'remove' || dialogState.action === 'removeAll') {
+        const annotationData = createAnnotationData(annotation as LabelAnnotation);
+        if (!annotationData) return;
 
-    const annotationData = createAnnotationData(annotation as LabelAnnotation);
-    if (!annotationData) return;
+        if (dialogState.action === 'remove') {
+          remove(annotationData);
+        } else {
+          removeByText(annotationData);
+        }
+      }
+    } else {
+      const annotationData = createAnnotationData(annotation as LabelAnnotation);
+      if (!annotationData) return;
 
-    const labelWithSuffix = dialogState.suffix
-      ? `${dialogState.selectedOption.id}_${dialogState.suffix}` as AllLabelsWithSufix
-      : dialogState.selectedOption.id as AllLabels | AllLabelsWithSufix;
+      const labelWithSuffix = dialogState.suffix
+        ? `${dialogState.selectedOption.id}_${dialogState.suffix}` as AllLabelsWithSufix
+        : dialogState.selectedOption.id as AllLabels | AllLabelsWithSufix;
 
-    if (dialogState.action === 'replace') {
-      updateLabel(annotationData, labelWithSuffix);
-    } else if (dialogState.action === 'replaceAll') {
-      updateByText(annotationData, labelWithSuffix);
+      if (dialogState.action === 'replace') {
+        updateLabel(annotationData, labelWithSuffix);
+      } else if (dialogState.action === 'replaceAll') {
+        updateByText(annotationData, labelWithSuffix);
+      }
     }
 
     setDialogState(state => ({
@@ -205,7 +226,21 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
               }))
             }
           >
-            {(
+            {dialogState.action === 'remove' || dialogState.action === 'removeAll' ? (
+              <>
+                <DialogMessage>
+                  ¿Estás seguro que deseas {dialogState.action === 'remove' ? 'eliminar esta anotación' : 'eliminar todas las ocurrencias'}?
+                </DialogMessage>
+                <DialogButtons>
+                  <Button onClick={applyChanges}>
+                    Sí, eliminar
+                  </Button>
+                  <Button onClick={() => setDialogState(state => ({ ...state, open: false }))}>
+                    Cancelar
+                  </Button>
+                </DialogButtons>
+              </>
+            ) : (
               <>
                 <DialogMessage>
                   Por favor, introduce la nueva etiqueta para reemplazar {dialogState.action === 'replace' ? 'esta ocurrencia' : 'todas las ocurrencias'} de {annotation.tag}.
@@ -225,14 +260,12 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                     min="1"
                   />
 
-
                   <Button
                     onClick={applyChanges}
                     disabled={!dialogState.selectedOption}
                   >
                     Aplicar
                   </Button>
-
                 </DialogButtons>
               </>
             )}
