@@ -1,4 +1,4 @@
-import { styled } from "styles";
+import { styled } from "@stitches/react";
 
 export const Container = styled("div", {
   boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
@@ -24,71 +24,46 @@ export const Paragraph = styled("p", {
 });
 
 export const ButtonContainer = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  background: "#3f479d",
+  borderRadius: "4px",
+  padding: "2px",
+  gap: "1px",
   visibility: "hidden",
   position: "absolute",
-  top: "-10px",
+  top: "-20px",
   right: "-5px",
-  display: "flex",
-  gap: "3px",
 });
 
 export const Button = styled("button", {
-  height: "20px",
-  width: "20px",
-  padding: 0,
-  borderRadius: "50%",
+  background: "transparent",
   border: "none",
-
-  fontSize: "14px",
-  fontWeight: "heavy",
+  padding: "4px",
   cursor: "pointer",
-  color: "$white",
-  textAlign: "center",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  transition: "background-color 0.2s",
+
+  "&:hover": {
+    background: "rgba(255, 255, 255, 0.1)",
+  },
+
+  img: {
+    width: "20px",
+    height: "20px",
+  },
 
   variants: {
-    type: {
-      tag: {
-        backgroundColor: "$errorPrimary",
-        "&::after": {
-          content: "-¹",
-        },
-      },
-      tagAll: {
-        backgroundColor: "$errorPrimary",
-        "&::after": {
-          content: "-",
-        },
-      },
-      search: {
-        backgroundColor: "$successPrimary",
-        "&::after": {
-          content: "+",
-        },
-      },
-      searchSingle: {
-        backgroundColor: "$successPrimary",
-        "&::after": {
-          content: "+¹",
-        },
-      },
-      replace: {
-        backgroundColor: "$warningPrimary",
-        color: "$black",
-        "&::after": {
-          content: "↔¹",
-        },
-      },
-      replaceAll: {
-        backgroundColor: "$warningPrimary",
-        color: "$black",
-        "&::after": {
-          content: "↔",
-        },
-      },
+    variant: {
+      search: {},
+      searchSingle: {},
+      replaceAll: {},
+      replace: {},
+      tagAll: {},
+      tag: {},
     },
-  },
-  defaultVariants: {
-    type: "tag",
   },
 });
 

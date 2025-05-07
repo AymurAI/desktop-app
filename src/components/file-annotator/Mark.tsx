@@ -169,30 +169,25 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
             {isAnnotable && annotation.type === 'search' && annotation.tag ? (
               <S.ButtonContainer>
                 <S.Button
-                  type="search"
-                  onClick={() => handleAddBySearch(annotation)}
-                />
-                <S.Button
-                  type="searchSingle"
+                  type="button"
+                  css={{ variant: 'searchSingle' }}
                   onClick={() => handleAnnotationOperation('add')}
-                />
+                >
+                  +
+                </S.Button>
+                <S.Button
+                  type="button"
+                  css={{ variant: 'search' }}
+                  onClick={() => handleAddBySearch(annotation)}
+                >
+                  + ALL
+                </S.Button>
               </S.ButtonContainer>
             ) : annotation.tag ? (
               <S.ButtonContainer>
                 <S.Button
-                  type="replaceAll"
-                  onClick={() => {
-                    setDialogState({
-                      open: true,
-                      title: 'Reemplazar todas las ocurrencias',
-                      action: 'replaceAll',
-                      suffix: null,
-                      selectedOption: undefined,
-                    });
-                  }}
-                />
-                <S.Button
-                  type="replace"
+                  type="button"
+                  css={{ variant: 'replace' }}
                   onClick={() => {
                     setDialogState({
                       open: true,
@@ -202,15 +197,38 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                       selectedOption: undefined,
                     });
                   }}
-                />
+                >
+                  <img src="/button-icons/replace-one.svg" alt="Replace One" />
+                </S.Button>
                 <S.Button
-                  type="tagAll"
-                  onClick={() => handleAnnotationOperation('removeByText')}
-                />
+                  type="button"
+                  css={{ variant: 'replaceAll' }}
+                  onClick={() => {
+                    setDialogState({
+                      open: true,
+                      title: 'Reemplazar todas las ocurrencias',
+                      action: 'replaceAll',
+                      suffix: null,
+                      selectedOption: undefined,
+                    });
+                  }}
+                >
+                  <img src="/button-icons/replace-all.svg" alt="Replace All" />
+                </S.Button>
                 <S.Button
-                  type="tag"
+                  type="button"
+                  css={{ variant: 'tag' }}
                   onClick={() => handleAnnotationOperation('remove')}
-                />
+                >
+                  <img src="/button-icons/delete-one.svg" alt="Delete One" />
+                </S.Button>
+                <S.Button
+                  type="button"
+                  css={{ variant: 'tagAll' }}
+                  onClick={() => handleAnnotationOperation('removeByText')}
+                >
+                  <img src="/button-icons/delete-all.svg" alt="Delete All" />
+                </S.Button>
               </S.ButtonContainer>
             ) : null}
           </S.Mark>
