@@ -170,17 +170,19 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
               <S.ButtonContainer>
                 <S.Button
                   type="button"
-                  css={{ variant: 'searchSingle' }}
+                  css={{ variant: 'searchSingle', color: 'white' }}
                   onClick={() => handleAnnotationOperation('add')}
+                  title="Agregar esta ocurrencia"
                 >
-                  +
+                  +¹
                 </S.Button>
                 <S.Button
                   type="button"
-                  css={{ variant: 'search' }}
+                  css={{ variant: 'search', color: 'white' }}
                   onClick={() => handleAddBySearch(annotation)}
+                  title="Agregar todas las ocurrencias"
                 >
-                  + ALL
+                  +
                 </S.Button>
               </S.ButtonContainer>
             ) : annotation.tag ? (
@@ -197,6 +199,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                       selectedOption: undefined,
                     });
                   }}
+                  title="Reemplazar esta ocurrencia"
                 >
                   <img src="/button-icons/replace-one.svg" alt="Replace One" />
                 </S.Button>
@@ -212,6 +215,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                       selectedOption: undefined,
                     });
                   }}
+                  title="Reemplazar todas las ocurrencias"
                 >
                   <img src="/button-icons/replace-all.svg" alt="Replace All" />
                 </S.Button>
@@ -219,6 +223,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                   type="button"
                   css={{ variant: 'tag' }}
                   onClick={() => handleAnnotationOperation('remove')}
+                  title="Eliminar esta ocurrencia"
                 >
                   <img src="/button-icons/delete-one.svg" alt="Delete One" />
                 </S.Button>
@@ -226,6 +231,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                   type="button"
                   css={{ variant: 'tagAll' }}
                   onClick={() => handleAnnotationOperation('removeByText')}
+                  title="Eliminar todas las ocurrencias"
                 >
                   <img src="/button-icons/delete-all.svg" alt="Delete All" />
                 </S.Button>
