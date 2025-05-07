@@ -78,8 +78,8 @@ const Dialog: FC<DialogProps> = ({
   if (!isOpen) return null;
 
   return (
-    <Overlay>
-      <DialogContainer>
+    <Overlay onClick={onClose}>
+      <DialogContainer onClick={e => e.stopPropagation()}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <Button variant="none" onClick={onClose}>
