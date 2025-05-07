@@ -6,7 +6,7 @@
 export const selectionHasNodes = (selection: Selection | null): boolean => {
   if (!selection) return false;
 
-  const container = document.createElement('div');
+  const container = document.createElement("div");
 
   for (let i = 0; i < selection.rangeCount; ++i) {
     container.appendChild(selection.getRangeAt(i).cloneContents());
@@ -57,11 +57,13 @@ export const paragraphIdFromSelection = (selection: Selection) => {
  */
 export const findSearchIndexes = (text: string, search: string): number[] => {
   const indexes: number[] = [];
-  let index = text.indexOf(search);
+  const lowerText = text.toLowerCase();
+  const lowerSearch = search.toLowerCase();
+  let index = lowerText.indexOf(lowerSearch);
 
   while (index !== -1) {
     indexes.push(index);
-    index = text.indexOf(search, index + 1);
+    index = lowerText.indexOf(lowerSearch, index + 1);
   }
 
   return indexes;

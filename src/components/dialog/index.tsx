@@ -54,7 +54,7 @@ export const DialogTitle = styled('h3', {
   margin: 0,
 });
 
-export const DialogMessage = styled('p', {
+export const DialogMessage = styled('label', {
   color: '$textDefault',
   marginBottom: '$l',
 });
@@ -78,8 +78,8 @@ const Dialog: FC<DialogProps> = ({
   if (!isOpen) return null;
 
   return (
-    <Overlay>
-      <DialogContainer>
+    <Overlay onClick={onClose}>
+      <DialogContainer onClick={e => e.stopPropagation()}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <Button variant="none" onClick={onClose}>

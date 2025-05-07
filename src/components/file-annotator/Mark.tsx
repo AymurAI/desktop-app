@@ -1,4 +1,4 @@
-import { FC, HTMLAttributes, useState } from 'react';
+import { FC, HTMLAttributes, useState, useRef } from 'react';
 import { useAnnotation } from 'context/Annotation';
 import * as S from './FileAnnotator.styles';
 import { Annotation, LabelAnnotation, Metadata } from './types';
@@ -13,15 +13,12 @@ interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
   children: string;
 }
 
-type DialogOption = {
-  id: string;
-  label: string;
-  action: () => void;
-};
-
 type DialogState = {
   open: boolean;
-  step: 'replace' | 'replaceAll' | 'options' | 'add';
+  title: string;
+  action: 'replace' | 'replaceAll' | 'remove' | 'removeAll';
+  suffix: number | null;
+  selectedOption: SelectOption | undefined;
 };
 
 export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
@@ -36,8 +33,12 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   } = useAnnotation();
   const [dialogState, setDialogState] = useState<DialogState>({
     open: false,
-    step: 'options',
+    title: 'Reemplazar',
+    action: 'replace',
+    suffix: null,
+    selectedOption: undefined,
   });
+  const inputLabelSufixRef = useRef<HTMLInputElement>(null);
 
   const annotationOperations = {
     add,
@@ -81,87 +82,72 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     const annotationData = createAnnotationData(annotation as LabelAnnotation);
     if (!annotationData) return;
 
-    annotationOperations[operation](annotationData);
-    setDialogState({
-      open: false,
-      step: 'options',
-    });
+    if (operation === 'remove' || operation === 'removeByText') {
+      setDialogState({
+        open: true,
+        title: '¿Estás seguro?',
+        action: operation === 'remove' ? 'remove' : 'removeAll',
+        suffix: null,
+        selectedOption: undefined,
+      });
+    } else {
+      annotationOperations[operation](annotationData);
+    }
   };
-
-  const optionsButtons: DialogOption[] = [
-    {
-      id: 'remove-tag',
-      label: 'Remover esta etiqueta',
-      action: () => handleAnnotationOperation('remove'),
-    },
-    {
-      id: 'remove-all-tags',
-      label: 'Remover todas las etiquetas',
-      action: () => handleAnnotationOperation('removeByText'),
-    },
-    {
-      id: 'replace-tag',
-      label: 'Reemplazar esta etiqueta',
-      action: () =>
-        setDialogState({
-          open: true,
-          step: 'replace',
-        }),
-    },
-    {
-      id: 'replace-all-tags',
-      label: 'Reemplazar todas las etiquetas',
-      action: () =>
-        setDialogState({
-          open: true,
-          step: 'replaceAll',
-        }),
-    },
-  ];
 
   const handleAddBySearch = (annotation: LabelAnnotation) => {
     if (!annotation?.tag) return;
 
     addBySearch(children, annotation.tag);
-    setDialogState({
-      open: false,
-      step: 'options',
-    });
   };
 
-  const clickHandler = () => {
-    if (annotation.type === 'search') {
-      setDialogState({
-        open: true,
-        step: 'add',
-      });
+  const changeLabelSelectHandler = (option: SelectOption | undefined) => {
+    setDialogState(state => ({
+      ...state,
+      selectedOption: option,
+    }));
+  };
+
+  const applyChanges = () => {
+    if (!dialogState.selectedOption) {
+      if (dialogState.action === 'remove' || dialogState.action === 'removeAll') {
+        const annotationData = createAnnotationData(annotation as LabelAnnotation);
+        if (!annotationData) return;
+
+        if (dialogState.action === 'remove') {
+          remove(annotationData);
+        } else {
+          removeByText(annotationData);
+        }
+      }
     } else {
-      setDialogState({
-        open: true,
-        step: 'options',
-      });
+      const annotationData = createAnnotationData(annotation as LabelAnnotation);
+      if (!annotationData) return;
+
+      const labelWithSuffix = dialogState.suffix
+        ? `${dialogState.selectedOption.id}_${dialogState.suffix}` as AllLabelsWithSufix
+        : dialogState.selectedOption.id as AllLabels | AllLabelsWithSufix;
+
+      if (dialogState.action === 'replace') {
+        updateLabel(annotationData, labelWithSuffix);
+      } else if (dialogState.action === 'replaceAll') {
+        updateByText(annotationData, labelWithSuffix);
+      }
     }
+
+    setDialogState(state => ({
+      ...state,
+      open: false,
+      suffix: null,
+      selectedOption: undefined,
+    }));
   };
 
-  const changeLabelSelectHandler = (
-    option: SelectOption | undefined,
-    step: DialogState['step']
-  ) => {
-    if (!option) return;
-
-    const annotationData = createAnnotationData(annotation as LabelAnnotation);
-    if (!annotationData) return;
-
-    if (step === 'replace') {
-      updateLabel(annotationData, option.id as AllLabels | AllLabelsWithSufix);
-    } else if (step === 'replaceAll') {
-      updateByText(annotationData, option.id as AllLabels | AllLabelsWithSufix);
-    }
-
-    setDialogState({
-      open: false,
-      step: 'options',
-    });
+  const changeLabelSufixHandler = (value: string) => {
+    setDialogState(state => ({
+      ...state,
+      suffix: value ? Number(value) : null,
+    }));
   };
 
   switch (annotation.type) {
@@ -179,93 +165,131 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
             <span>{children}</span>
 
             {annotation.type === 'tag' && <strong>{annotation.tag}</strong>}
-            {isAnnotable && annotation.tag && (
-              <S.Button type={annotation.type} onClick={clickHandler} />
-            )}
+
+            {isAnnotable && annotation.type === 'search' && annotation.tag ? (
+              <S.ButtonContainer>
+                <S.Button
+                  type="button"
+                  css={{ variant: 'searchSingle', color: 'white' }}
+                  onClick={() => handleAnnotationOperation('add')}
+                  title="Agregar esta ocurrencia"
+                >
+                  +¹
+                </S.Button>
+                <S.Button
+                  type="button"
+                  css={{ variant: 'search', color: 'white' }}
+                  onClick={() => handleAddBySearch(annotation)}
+                  title="Agregar todas las ocurrencias"
+                >
+                  +
+                </S.Button>
+              </S.ButtonContainer>
+            ) : annotation.tag ? (
+              <S.ButtonContainer>
+                <S.Button
+                  type="button"
+                  css={{ variant: 'replace' }}
+                  onClick={() => {
+                    setDialogState({
+                      open: true,
+                      title: 'Reemplazar esta ocurrencia',
+                      action: 'replace',
+                      suffix: null,
+                      selectedOption: undefined,
+                    });
+                  }}
+                  title="Reemplazar esta ocurrencia"
+                >
+                  <img src="/button-icons/replace-one.svg" alt="Replace One" />
+                </S.Button>
+                <S.Button
+                  type="button"
+                  css={{ variant: 'replaceAll' }}
+                  onClick={() => {
+                    setDialogState({
+                      open: true,
+                      title: 'Reemplazar todas las ocurrencias',
+                      action: 'replaceAll',
+                      suffix: null,
+                      selectedOption: undefined,
+                    });
+                  }}
+                  title="Reemplazar todas las ocurrencias"
+                >
+                  <img src="/button-icons/replace-all.svg" alt="Replace All" />
+                </S.Button>
+                <S.Button
+                  type="button"
+                  css={{ variant: 'tag' }}
+                  onClick={() => handleAnnotationOperation('remove')}
+                  title="Eliminar esta ocurrencia"
+                >
+                  <img src="/button-icons/delete-one.svg" alt="Delete One" />
+                </S.Button>
+                <S.Button
+                  type="button"
+                  css={{ variant: 'tagAll' }}
+                  onClick={() => handleAnnotationOperation('removeByText')}
+                  title="Eliminar todas las ocurrencias"
+                >
+                  <img src="/button-icons/delete-all.svg" alt="Delete All" />
+                </S.Button>
+              </S.ButtonContainer>
+            ) : null}
           </S.Mark>
           <Dialog
             isOpen={dialogState.open}
-            title="Elige una opción"
+            title={dialogState.title}
             onClose={() =>
-              setDialogState({
+              setDialogState(state => ({
+                ...state,
                 open: false,
-                step: 'options',
-              })
+                suffix: null,
+                selectedOption: undefined,
+              }))
             }
           >
-            {dialogState.step === 'options' ? (
+            {dialogState.action === 'remove' || dialogState.action === 'removeAll' ? (
               <>
                 <DialogMessage>
-                  Por favor, elige la opción que quieres realizar.
+                  ¿Deseas {dialogState.action === 'remove' ? 'eliminar esta etiqueta' : 'eliminar todas las etiquetas'} de <b>{children}</b>?
                 </DialogMessage>
                 <DialogButtons>
-                  {optionsButtons.map(({ id, label, action }, index) => (
-                    <Button
-                      key={id}
-                      variant={
-                        index === optionsButtons.length - 1
-                          ? 'primary'
-                          : 'secondary'
-                      }
-                      onClick={() => {
-                        action();
-                      }}
-                    >
-                      {label}
-                    </Button>
-                  ))}
-                </DialogButtons>
-              </>
-            ) : dialogState.step === 'add' ? (
-              <>
-                <DialogMessage>¿Qué quieres hacer?</DialogMessage>
-                <DialogButtons>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      handleAnnotationOperation('add');
-                    }}
-                  >
-                    Agregar etiqueta a esta ocurrencia
+                  <Button onClick={applyChanges}>
+                    Sí, eliminar
                   </Button>
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      handleAddBySearch(annotation);
-                    }}
-                  >
-                    Agregar etiqueta a todas las ocurrencias
+                  <Button onClick={() => setDialogState(state => ({ ...state, open: false }))}>
+                    Cancelar
                   </Button>
                 </DialogButtons>
               </>
             ) : (
               <>
                 <DialogMessage>
-                  Por favor, introduce el nuevo texto para reemplazar la
-                  etiqueta.
+                  Por favor, introduce la nueva etiqueta para reemplazar {dialogState.action === 'replace' ? 'esta ocurrencia' : 'todas las ocurrencias'} de <b>{children}</b>.
                 </DialogMessage>
                 <DialogButtons>
-                  <Button
-                    variant="secondary"
-                    onClick={() =>
-                      setDialogState({
-                        open: true,
-                        step: 'options',
-                      })
-                    }
-                    style={{
-                      marginRight: 'auto',
-                    }}
-                  >
-                    Volver
-                  </Button>
                   <Select
                     placeholder="Seleccione una opción"
                     options={anonymizerLabels}
-                    onChange={(option) =>
-                      changeLabelSelectHandler(option, dialogState.step)
-                    }
+                    onChange={changeLabelSelectHandler}
                   />
+
+                  <Input
+                    ref={inputLabelSufixRef}
+                    placeholder="Sufijo"
+                    onChange={changeLabelSufixHandler}
+                    type="number"
+                    min="1"
+                  />
+
+                  <Button
+                    onClick={applyChanges}
+                    disabled={!dialogState.selectedOption}
+                  >
+                    Aplicar
+                  </Button>
                 </DialogButtons>
               </>
             )}
