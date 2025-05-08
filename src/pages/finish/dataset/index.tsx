@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Card,
@@ -9,17 +9,17 @@ import {
   Subtitle,
   Text,
   Button,
-} from "components";
-import { useFileDispatch, useFiles, useUser } from "hooks";
-import { Footer, Section } from "layout/main";
-import { removeAllFiles } from "reducers/file/actions";
-import { DATASET_URL } from "utils/config";
-import filesystem from "services/filesystem";
-import { submitValidations } from "utils/file";
-import { DocFile } from "types/file";
-import Anchor from "../Anchor";
-import Callout from "./Callout";
-import { FunctionType } from "types/user";
+} from 'components';
+import { useFileDispatch, useFiles, useUser } from 'hooks';
+import { Footer, Section } from 'layout/main';
+import { removeAllFiles } from 'reducers/file/actions';
+import { DATASET_URL } from 'utils/config';
+import filesystem from 'services/filesystem';
+import { submitValidations } from 'utils/file';
+import { DocFile } from 'types/file';
+import Anchor from '../Anchor';
+import Callout from './Callout';
+import { FunctionType } from 'types/user';
 
 export default function Finish() {
   const files = useFiles();
@@ -31,7 +31,7 @@ export default function Finish() {
 
   const handleRestart = () => {
     dispatch(removeAllFiles());
-    navigate("/onboarding");
+    navigate('/onboarding');
   };
 
   const checkForErrors = (fileName: string) =>
@@ -73,7 +73,7 @@ export default function Finish() {
     <>
       <Section>
         <SectionTitle>4. Finalización</SectionTitle>
-        <Text css={{ maxWidth: "60%" }}>
+        <Text css={{ maxWidth: '60%' }}>
           Los datos encontrados por AymurAI y posteriormente validados ya son
           parte del set de datos abiertos con perspectiva de género.
         </Text>
@@ -84,7 +84,7 @@ export default function Finish() {
             columns={4}
             spacing="xl"
             justify="center"
-            css={{ width: "100%" }}
+            css={{ width: '100%' }}
           >
             {files.map(({ data }) => (
               <FileCheck
@@ -112,7 +112,7 @@ export default function Finish() {
         </Button>
         {user?.online ? (
           <Button
-            css={{ textDecoration: "none" }}
+            css={{ textDecoration: 'none' }}
             as="a"
             href={DATASET_URL}
             target="_blank"

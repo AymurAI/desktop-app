@@ -1,10 +1,10 @@
-import { House, SignOut, Info } from "phosphor-react";
-import { useNavigate } from "react-router-dom";
+import { House, SignOut, Info } from 'phosphor-react';
+import { useNavigate } from 'react-router-dom';
 
-import { Button, Stack, Tooltip } from "components";
-import { useLogin, useUser } from "hooks";
-import ProfilePicture from "./ProfilePicture";
-import { FunctionType } from "types/user";
+import { Button, Stack, Tooltip } from 'components';
+import { useLogin, useUser } from 'hooks';
+import ProfilePicture from './ProfilePicture';
+import { FunctionType } from 'types/user';
 
 export default function ProfileInfo() {
   const user = useUser();
@@ -15,7 +15,7 @@ export default function ProfileInfo() {
 
   const { logout, login } = useLogin({
     onLogout: () => {
-      navigate("/login");
+      navigate('/login');
     },
   });
 

@@ -15,15 +15,19 @@ import {
   AddParagraphsAction,
   AppendPrediction,
   RemovePrediction,
-} from './actions';
+  RemovePredictionsByText,
+  UpdatePredictionLabel,
+  UpdatePredictionsByText,
+} from "./actions";
 import {
   addFiles,
   comparePrediction,
   replaceFile,
   updateFromState,
-} from './utils';
+} from "./utils";
 
-import { DocFile } from 'types/file';
+import { DocFile } from "types/file";
+import { AllLabels, AllLabelsWithSufix } from "types/aymurai";
 
 type State = DocFile[];
 
@@ -42,7 +46,10 @@ export type Action =
   | FilterUnprocessedAction
   | AddParagraphsAction
   | AppendPrediction
-  | RemovePrediction;
+  | RemovePrediction
+  | RemovePredictionsByText
+  | UpdatePredictionLabel
+  | UpdatePredictionsByText;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -193,6 +200,76 @@ export default function reducer(state: State, action: Action): State {
           (p) => !comparePrediction(prediction, p)
         ),
       }));
+    }
+
+    // ----------------
+    // REMOVE PREDICTIONS BY TEXT
+    // ----------------
+    case ActionTypes.REMOVE_PREDICTIONS_BY_TEXT: {
+      const { fileName, text } = payload;
+
+      return update(fileName, (cur) => ({
+        ...cur,
+        predictions: cur.predictions?.filter(
+          (p) => p.text.toLowerCase() !== text.toLowerCase()
+        ),
+      }));
+    }
+
+    // ----------------
+    // UPDATE PREDICTION LABEL
+    // ----------------
+    case ActionTypes.UPDATE_PREDICTION_LABEL: {
+      const { fileName, prediction, newLabel } = action.payload;
+      return state.map((file) => {
+        if (file.data.name !== fileName) return file;
+
+        return {
+          ...file,
+          predictions: file.predictions?.map((p) => {
+            if (
+              p.text === prediction.text &&
+              p.start_char === prediction.start_char &&
+              p.end_char === prediction.end_char
+            ) {
+              return {
+                ...p,
+                attrs: {
+                  ...p.attrs,
+                  aymurai_label: newLabel as AllLabels | AllLabelsWithSufix,
+                },
+              };
+            }
+            return p;
+          }),
+        };
+      });
+    }
+
+    // ----------------
+    // UPDATE PREDICTIONS BY TEXT
+    // ----------------
+    case ActionTypes.UPDATE_PREDICTIONS_BY_TEXT: {
+      const { fileName, text, newLabel } = action.payload;
+      return state.map((file) => {
+        if (file.data.name !== fileName) return file;
+
+        return {
+          ...file,
+          predictions: file.predictions?.map((p) => {
+            if (p.text.toLowerCase() === text.toLowerCase()) {
+              return {
+                ...p,
+                attrs: {
+                  ...p.attrs,
+                  aymurai_label: newLabel,
+                },
+              };
+            }
+            return p;
+          }),
+        };
+      });
     }
 
     // ----------------
