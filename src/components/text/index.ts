@@ -1,39 +1,39 @@
-import { styled } from "styles";
+import { styled } from 'styles';
 
-const Text = styled("p", {
+const Text = styled('p', {
   variants: {
     size: {
       m: {
-        fontSize: "$paragraphsMd",
-        lineHeight: "$paragraphsMd",
+        fontSize: '$paragraphsMd',
+        lineHeight: '$paragraphsMd',
       },
       s: {
-        fontSize: "$paragraphsSm",
-        lineHeight: "$paragraphsSm",
+        fontSize: '$paragraphsSm',
+        lineHeight: '$paragraphsSm',
       },
       xs: {
-        fontSize: "$paragraphsXsm",
-        lineHeight: "$paragraphsXsm",
+        fontSize: '$paragraphsXsm',
+        lineHeight: '$paragraphsXsm',
       },
     },
     weight: {
       default: {
-        fontWeight: "$default",
+        fontWeight: '$default',
       },
       strong: {
-        fontWeight: "$strong",
+        fontWeight: '$strong',
       },
     },
     textColor: {
       default: {
-        color: "$textDefault",
+        color: '$textDefault',
       },
     },
   },
   defaultVariants: {
-    size: "m",
-    weight: "default",
-    textColor: "default",
+    size: 'm',
+    weight: 'default',
+    textColor: 'default',
   },
 });
 

@@ -1,6 +1,6 @@
 {
   "name": "data-genero",
-  "version": "1.13.0",
+  "version": "1.19.0",
   "private": true,
   "main": "build/main.js",
   "scripts": {
@@ -67,7 +67,16 @@
       "react-app",
       "react-app/jest",
       "prettier"
-    ]
+    ],
+    "rules": {
+      "quotes": [
+        "warn",
+        "single",
+        {
+          "avoidEscape": true
+        }
+      ]
+    }
   },
   "husky": {
     "hooks": {

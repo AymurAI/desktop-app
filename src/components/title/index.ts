@@ -1,38 +1,38 @@
-import { styled } from "styles";
+import { styled } from 'styles';
 
-const Title = styled("h1", {
+const Title = styled('h1', {
   variants: {
     size: {
       default: {
-        fontSize: "$titleMd",
-        lineHeight: "$titleMd",
+        fontSize: '$titleMd',
+        lineHeight: '$titleMd',
       },
       main: {
-        fontSize: "$titleMain",
-        lineHeight: "$titleMain",
+        fontSize: '$titleMain',
+        lineHeight: '$titleMain',
       },
     },
     weight: {
       default: {
-        fontWeight: "$default",
+        fontWeight: '$default',
       },
       strong: {
-        fontWeight: "$strong",
+        fontWeight: '$strong',
       },
       heavy: {
-        fontWeight: "$heavy",
+        fontWeight: '$heavy',
       },
     },
     textColor: {
       default: {
-        color: "$textDefault",
+        color: '$textDefault',
       },
     },
   },
   defaultVariants: {
-    weight: "default",
-    size: "default",
-    textColor: "default",
+    weight: 'default',
+    size: 'default',
+    textColor: 'default',
   },
 });
 
