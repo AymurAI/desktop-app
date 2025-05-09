@@ -6,6 +6,7 @@ import { addPredictions, removePredictions } from "reducers/file/actions";
 
 import { FunctionType } from "types/user";
 import { DocFile } from "types/file";
+import { getDocumentValidation } from "services/aymurai/validate/validate-datapublic";
 
 export type PredictStatus = "processing" | "error" | "stopped" | "completed";
 
@@ -73,16 +74,25 @@ export function usePredict(
           // Increase progress %
           setProgress((current) => current + 1 / paragraphs!.length);
         } else {
-          prediction = await predict({
-            paragraph: p,
-            controller: controller.current,
-            route: "datapublic",
-            documentId: file.documentId || "",
-            serverUrl,
-          });
-          dispatch(addPredictions(file.data.name, prediction));
-          // Increase progress %
-          setProgress((current) => current + 1 / paragraphs!.length);
+          const validated = await getDocumentValidation(
+            file.documentId || "",
+            controller.current,
+            serverUrl
+          );
+          if (validated) {
+            prediction = validated;
+          } else {
+            prediction = await predict({
+              paragraph: p,
+              controller: controller.current,
+              route: "datapublic",
+              documentId: file.documentId || "",
+              serverUrl,
+            });
+            dispatch(addPredictions(file.data.name, prediction));
+            // Increase progress %
+            setProgress((current) => current + 1 / paragraphs!.length);
+          }
         }
       });
 
