@@ -6,7 +6,10 @@ import { addPredictions, removePredictions } from "reducers/file/actions";
 
 import { FunctionType } from "types/user";
 import { DocFile } from "types/file";
-import { getDocumentValidation } from "services/aymurai/validate/validate-datapublic";
+import {
+  getDocumentValidation,
+  saveDocumentValidation,
+} from "services/aymurai/validate/validate-datapublic";
 
 export type PredictStatus = "processing" | "error" | "stopped" | "completed";
 
@@ -98,7 +101,22 @@ export function usePredict(
 
       // Once all promises are resolved, set status to completed or error if applicable
       await Promise.all(promises)
-        .then(() => {
+        .then(async () => {
+          if (!isAnonimizing && file.documentId) {
+            try {
+              const allPredictions = file.predictions || [];
+              if (allPredictions.length > 0) {
+                await saveDocumentValidation(
+                  file.documentId,
+                  allPredictions,
+                  controller.current,
+                  serverUrl
+                );
+              }
+            } catch (error) {
+              console.error("Failed to save document validation:", error);
+            }
+          }
           updateStatus("completed");
         })
         .catch(() => {
