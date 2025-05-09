@@ -1,5 +1,5 @@
-import { FormData } from 'hooks/useForm';
-import { PredictLabel } from './aymurai';
+import { FormData } from "hooks/useForm";
+import { PredictLabel } from "./aymurai";
 
 export interface Paragraph {
   value: string;
@@ -18,6 +18,10 @@ export type DocFile = {
    * File paragraph data and their metadate
    */
   paragraphs?: Paragraph[];
+  /**
+   * Document ID from the endpoint `/document-extract`
+   */
+  documentId?: string;
   /**
    * Used on the 'preview' page to detect which files have to be processed
    */

@@ -60,24 +60,26 @@ export function usePredict(
             serverUrl
           );
           if (!prediction) {
-            prediction = await predict(
-              p,
-              controller.current,
-              "anonymizer",
-              serverUrl
-            );
+            prediction = await predict({
+              paragraph: p,
+              controller: controller.current,
+              route: "anonymizer",
+              documentId: file.documentId || "",
+              serverUrl,
+            });
           }
 
           dispatch(addPredictions(file.data.name, prediction));
           // Increase progress %
           setProgress((current) => current + 1 / paragraphs!.length);
         } else {
-          prediction = await predict(
-            p,
-            controller.current,
-            isAnonimizing ? "anonymizer" : "datapublic",
-            serverUrl
-          );
+          prediction = await predict({
+            paragraph: p,
+            controller: controller.current,
+            route: "datapublic",
+            documentId: file.documentId || "",
+            serverUrl,
+          });
           dispatch(addPredictions(file.data.name, prediction));
           // Increase progress %
           setProgress((current) => current + 1 / paragraphs!.length);
