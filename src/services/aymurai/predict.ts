@@ -1,12 +1,12 @@
-import axios, { CanceledError } from 'axios';
+import axios, { CanceledError } from "axios";
 
-import { PredictLabel, Workflows } from 'types/aymurai';
-import { Paragraph } from 'types/file';
-import { AYMURAI_API_URL } from 'utils/config';
+import { PredictLabel, Workflows } from "types/aymurai";
+import { Paragraph } from "types/file";
+import { AYMURAI_API_URL } from "utils/config";
 
-interface PredictResponse {
+export interface PredictResponse {
   document: string;
-  labels: Omit<PredictLabel, 'paragraphId'>[];
+  labels: Omit<PredictLabel, "paragraphId">[];
 }
 
 /**
@@ -16,19 +16,26 @@ interface PredictResponse {
  * @param serverUrl String with the URL of the AyMurAI api
  * @returns Una lista de `PredictLabel` con las predicciones
  */
-export default async function predict(
-  paragraph: Paragraph,
-  controller: AbortController,
-  route: Workflows = 'datapublic',
-  serverUrl: string
-): Promise<PredictLabel[]> {
+export default async function predict({
+  paragraph,
+  controller,
+  route = "datapublic",
+  documentId,
+  serverUrl,
+}: {
+  paragraph: Paragraph;
+  controller: AbortController;
+  route?: Workflows;
+  documentId: string;
+  serverUrl: string;
+}): Promise<PredictLabel[]> {
   try {
     const response = await axios
       .create({
         baseURL: !!serverUrl ? serverUrl : AYMURAI_API_URL,
       })
       .post<PredictResponse>(
-        `/${route}/predict`,
+        `/${route}/predict/${route === "datapublic" ? documentId : ""}`,
         {
           text: paragraph.value,
         },
@@ -37,6 +44,7 @@ export default async function predict(
         }
       );
 
+    console.log({ data: response.data, route });
     const data = response.data.labels.map((l) => ({
       ...l,
       start_char: l.attrs.aymurai_alt_start_char || l.start_char,

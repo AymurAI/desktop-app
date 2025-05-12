@@ -168,11 +168,12 @@ export default function reducer(state: State, action: Action): State {
     // ADD PARAGRAPHS
     // ----------------
     case ActionTypes.ADD_PARAGRAPHS: {
-      const { fileName, paragraphs } = payload;
+      const { fileName, documentId, paragraphs } = payload;
 
       return update(fileName, (cur) => ({
         ...cur,
         paragraphs: paragraphs,
+        documentId: documentId,
       }));
     }
 
