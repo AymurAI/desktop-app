@@ -1,3 +1,6 @@
+const path = require('path');
+const fs = require('fs');
+
 module.exports = {
   packagerConfig: {
     // This forces forge to only package already builded files
@@ -32,4 +35,22 @@ module.exports = {
       config: {},
     },
   ],
+  hooks: {
+    packageAfterCopy: async (
+      _config,
+      buildPath,
+      _electronVersion,
+      _platform,
+      _arch
+    ) => {
+      // Create logs in the root directory
+      const twoAbove = path.join(buildPath, '../../');
+      // const logMessage = `Build Path: ${twoAbove}\nDirname: ${__dirname}\n---\n`;
+      // fs.appendFileSync(path.join(__dirname, "logs.txt"), logMessage);
+
+      var src = path.join(__dirname, 'build/app/run_server.bat');
+      var dst = `${twoAbove}/run_server.bat`;
+      fs.cpSync(src, dst, { recursive: true });
+    },
+  },
 };
