@@ -56,13 +56,13 @@ export const colors = {
   // OTHERS
   // ----------------
   white: '#FFFFFF',
-};
+}
 
 export const fonts = {
   primary:
     '"Archivo", -apple-system, Helvetica Neue, Helvetica, Roboto, sans-serif',
   file: '"Times New Roman", Times, serif',
-};
+}
 
 export const fontSizes = {
   titleMain: '64px',
@@ -80,13 +80,13 @@ export const fontSizes = {
 
   labelMd: '16px',
   labelSm: '12px',
-};
+}
 
 export const fontWeights = {
   default: 400,
   strong: 600,
   heavy: 800,
-};
+}
 
 export const lineHeights = {
   titleMain: '70px',
@@ -104,7 +104,7 @@ export const lineHeights = {
 
   labelMd: '19px',
   labelSm: '14px',
-};
+}
 
 export const radii = {
   xxl: '64px',
@@ -114,7 +114,7 @@ export const radii = {
   s: '8px',
   xs: '4px',
   xxs: '2px',
-};
+}
 
 export const sizes = {
   xxl: '64px',
@@ -124,7 +124,7 @@ export const sizes = {
   s: '8px',
   xs: '4px',
   xxs: '2px',
-};
+}
 
 export const spaces = {
   xxl: '64px',
@@ -134,8 +134,8 @@ export const spaces = {
   s: '8px',
   xs: '4px',
   xxs: '2px',
-};
+}
 
 export const transitions = {
   s: '250ms',
-};
+}
