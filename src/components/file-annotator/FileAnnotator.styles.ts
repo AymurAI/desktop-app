@@ -24,16 +24,31 @@ export const Paragraph = styled('p', {
 })
 
 export const ButtonContainer = styled('div', {
+  position: 'absolute',
+  top: '-36px',
+  right: '50%',
+  transform: 'translateX(50%)',
+
   display: 'flex',
   alignItems: 'center',
+  gap: '1px',
+
+  visibility: 'hidden',
+
   background: '#3f479d',
   borderRadius: '4px',
   padding: '2px',
-  gap: '1px',
-  visibility: 'hidden',
-  position: 'absolute',
-  top: '-20px',
-  right: '-5px',
+
+  '&::before': {
+    content: '',
+    position: 'absolute',
+    width: '110%',
+    height: '125%',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex: -1,
+  },
 })
 
 export const Button = styled('button', {
