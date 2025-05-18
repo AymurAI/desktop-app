@@ -11,7 +11,7 @@ export interface DialogOption {
 
 interface DialogProps {
   isOpen: boolean;
-  title: string;
+  title?: string;
   message?: string;
   options?: DialogOption[];
   onClose: () => void;
@@ -69,7 +69,7 @@ export const DialogButtons = styled('div', {
 
 const Dialog: FC<DialogProps> = ({
   isOpen,
-  title,
+  title = '',
   message,
   options,
   onClose,
@@ -79,7 +79,7 @@ const Dialog: FC<DialogProps> = ({
 
   return (
     <Overlay onClick={onClose}>
-      <DialogContainer onClick={e => e.stopPropagation()}>
+      <DialogContainer onClick={(e) => e.stopPropagation()}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <Button variant="none" onClick={onClose}>
@@ -106,4 +106,4 @@ const Dialog: FC<DialogProps> = ({
   );
 };
 
-export default Dialog; 
+export default Dialog;
