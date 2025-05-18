@@ -35,18 +35,18 @@ export const ButtonContainer = styled('div', {
 
   visibility: 'hidden',
 
-  background: '#3f479d',
+  background: '#787fc9',
   borderRadius: '4px',
   padding: '2px',
 
   '&::before': {
     content: '',
     position: 'absolute',
-    width: '110%',
-    height: '125%',
+    width: 'calc(16px + 100%)',
+    height: 'calc(16px + 100%)',
     left: '50%',
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
+    top: '0',
+    transform: 'translateX(-50%)',
     zIndex: -1,
   },
 })
