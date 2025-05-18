@@ -15,7 +15,7 @@ interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
 
 type DialogState = {
   open: boolean;
-  title: string;
+  title?: string;
   action: 'replace' | 'replaceAll' | 'remove' | 'removeAll';
   suffix: number | null;
   selectedOption: SelectOption | undefined;
@@ -85,7 +85,6 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     if (operation === 'remove' || operation === 'removeByText') {
       setDialogState({
         open: true,
-        title: '¿Estás seguro?',
         action: operation === 'remove' ? 'remove' : 'removeAll',
         suffix: null,
         selectedOption: undefined,
@@ -102,7 +101,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   };
 
   const changeLabelSelectHandler = (option: SelectOption | undefined) => {
-    setDialogState(state => ({
+    setDialogState((state) => ({
       ...state,
       selectedOption: option,
     }));
@@ -110,8 +109,13 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
 
   const applyChanges = () => {
     if (!dialogState.selectedOption) {
-      if (dialogState.action === 'remove' || dialogState.action === 'removeAll') {
-        const annotationData = createAnnotationData(annotation as LabelAnnotation);
+      if (
+        dialogState.action === 'remove' ||
+        dialogState.action === 'removeAll'
+      ) {
+        const annotationData = createAnnotationData(
+          annotation as LabelAnnotation
+        );
         if (!annotationData) return;
 
         if (dialogState.action === 'remove') {
@@ -121,12 +125,14 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
         }
       }
     } else {
-      const annotationData = createAnnotationData(annotation as LabelAnnotation);
+      const annotationData = createAnnotationData(
+        annotation as LabelAnnotation
+      );
       if (!annotationData) return;
 
       const labelWithSuffix = dialogState.suffix
-        ? `${dialogState.selectedOption.id}_${dialogState.suffix}` as AllLabelsWithSufix
-        : dialogState.selectedOption.id as AllLabels | AllLabelsWithSufix;
+        ? (`${dialogState.selectedOption.id}_${dialogState.suffix}` as AllLabelsWithSufix)
+        : (dialogState.selectedOption.id as AllLabels | AllLabelsWithSufix);
 
       if (dialogState.action === 'replace') {
         updateLabel(annotationData, labelWithSuffix);
@@ -135,7 +141,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
       }
     }
 
-    setDialogState(state => ({
+    setDialogState((state) => ({
       ...state,
       open: false,
       suffix: null,
@@ -144,7 +150,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   };
 
   const changeLabelSufixHandler = (value: string) => {
-    setDialogState(state => ({
+    setDialogState((state) => ({
       ...state,
       suffix: value ? Number(value) : null,
     }));
@@ -242,7 +248,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
             isOpen={dialogState.open}
             title={dialogState.title}
             onClose={() =>
-              setDialogState(state => ({
+              setDialogState((state) => ({
                 ...state,
                 open: false,
                 suffix: null,
@@ -250,16 +256,23 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
               }))
             }
           >
-            {dialogState.action === 'remove' || dialogState.action === 'removeAll' ? (
+            {dialogState.action === 'remove' ||
+            dialogState.action === 'removeAll' ? (
               <>
                 <DialogMessage>
-                  ¿Deseas {dialogState.action === 'remove' ? 'eliminar esta etiqueta' : 'eliminar todas las etiquetas'} de <b>{children}</b>?
+                  ¿Deseas{' '}
+                  {dialogState.action === 'remove'
+                    ? 'eliminar esta etiqueta'
+                    : 'eliminar todas las etiquetas'}{' '}
+                  de <b>{children}</b>?
                 </DialogMessage>
                 <DialogButtons>
-                  <Button onClick={applyChanges}>
-                    Sí, eliminar
-                  </Button>
-                  <Button onClick={() => setDialogState(state => ({ ...state, open: false }))}>
+                  <Button onClick={applyChanges}>Sí, eliminar</Button>
+                  <Button
+                    onClick={() =>
+                      setDialogState((state) => ({ ...state, open: false }))
+                    }
+                  >
                     Cancelar
                   </Button>
                 </DialogButtons>
@@ -267,7 +280,11 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
             ) : (
               <>
                 <DialogMessage>
-                  Por favor, introduce la nueva etiqueta para reemplazar {dialogState.action === 'replace' ? 'esta ocurrencia' : 'todas las ocurrencias'} de <b>{children}</b>.
+                  Por favor, introduce la nueva etiqueta para reemplazar{' '}
+                  {dialogState.action === 'replace'
+                    ? 'esta ocurrencia'
+                    : 'todas las ocurrencias'}{' '}
+                  de <b>{children}</b>.
                 </DialogMessage>
                 <DialogButtons>
                   <Select
