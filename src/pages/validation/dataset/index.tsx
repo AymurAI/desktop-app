@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -15,6 +15,8 @@ import { validate } from 'reducers/file/actions';
 import { isFileValidated, isValidationCompleted } from 'utils/file';
 import FormGroup from './form-group';
 import { moveNext, movePrevious } from './utils';
+import { saveDocumentValidation } from 'services/aymurai/validate/validate-datapublic';
+import { ServerUrlContext } from 'context/ServerUrl';
 
 export default withFileProtection(function Validation() {
   // HOOKS
@@ -23,6 +25,7 @@ export default withFileProtection(function Validation() {
   const [selected, setSelected] = useState(0);
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
+  const { serverUrl } = useContext(ServerUrlContext);
 
   // FIELDS
   const hasStepper = files.length > 1;
@@ -44,13 +47,38 @@ export default withFileProtection(function Validation() {
   };
 
   const handleValidate = async () => {
-    // Set validated = true so the file is no longer accesible through the FileStepper component
-    dispatch(validate(selectedFile.data.name));
+    try {
+      // Save document validation before marking as validated
+      if (selectedFile.documentId) {
+        const allPredictions = selectedFile.predictions || [];
+        if (allPredictions.length > 0) {
+          await saveDocumentValidation(
+            selectedFile.documentId,
+            allPredictions,
+            new AbortController(),
+            serverUrl
+          );
+        }
+      }
 
-    if (canContinue || !hasStepper) {
-      handleContinue();
-    } else {
-      nextFile();
+      // Set validated = true so the file is no longer accesible through the FileStepper component
+      dispatch(validate(selectedFile.data.name));
+
+      if (canContinue || !hasStepper) {
+        handleContinue();
+      } else {
+        nextFile();
+      }
+    } catch (error) {
+      console.error('Failed to save document validation:', error);
+      // Still proceed with validation even if saving fails
+      dispatch(validate(selectedFile.data.name));
+
+      if (canContinue || !hasStepper) {
+        handleContinue();
+      } else {
+        nextFile();
+      }
     }
   };
 

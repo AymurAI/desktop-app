@@ -1,9 +1,10 @@
-import axios from 'axios';
-import { Paragraph } from 'types/file';
-import { AYMURAI_API_URL } from 'utils/config';
-import { getParagraphId } from 'utils/file/getParagraphId';
+import axios from "axios";
+import { Paragraph } from "types/file";
+import { AYMURAI_API_URL } from "utils/config";
+import { getParagraphId } from "utils/file/getParagraphId";
 
 interface ParagraphsResponse {
+  document_id: string;
   document: string[];
   header: null;
   footer: null;
@@ -18,24 +19,28 @@ interface ParagraphsResponse {
 export async function getParagraphs(
   file: File,
   serverUrl: string
-): Promise<Paragraph[]> {
+): Promise<{ documentId: string; paragraphs: Paragraph[] }> {
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append("file", file);
   try {
     const response = await axios
       .create({
         baseURL: !!serverUrl ? serverUrl : AYMURAI_API_URL,
       })
-      .post<ParagraphsResponse>('/document-extract', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      .post<ParagraphsResponse>("/document-extract", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-    return response.data.document.map((p, i) => ({
-      value: p,
-      id: getParagraphId(p, i),
-    }));
+
+    return {
+      documentId: response.data.document_id,
+      paragraphs: response.data.document.map((p, i) => ({
+        value: p,
+        id: getParagraphId(p, i),
+      })),
+    };
   } catch (e) {
     const { message } = e as Error;
-    console.error('Could not connect to server: ', message);
-    return [];
+    console.error("Could not connect to server: ", message);
+    return { documentId: "", paragraphs: [] };
   }
 }

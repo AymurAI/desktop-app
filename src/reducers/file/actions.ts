@@ -203,6 +203,7 @@ export function filterUnprocessed(): FilterUnprocessedAction {
 export type AddParagraphsAction = Action<
   ActionTypes.ADD_PARAGRAPHS,
   {
+    documentId: string;
     paragraphs: Paragraph[];
     fileName: string;
   }
@@ -213,12 +214,13 @@ export type AddParagraphsAction = Action<
  * @param fileName Name of the file to be modified
  */
 export function addParagraphs(
+  documentId: string,
   paragraphs: Paragraph[],
   fileName: string
 ): AddParagraphsAction {
   return {
     type: ActionTypes.ADD_PARAGRAPHS,
-    payload: { paragraphs, fileName },
+    payload: { documentId, paragraphs, fileName },
   };
 }
 
