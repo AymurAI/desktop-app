@@ -262,9 +262,9 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                 <DialogMessage>
                   ¿Deseas{' '}
                   {dialogState.action === 'remove'
-                    ? 'eliminar esta etiqueta'
+                    ? 'eliminar la etiqueta'
                     : 'eliminar todas las etiquetas'}{' '}
-                  de <b>{children}</b>?
+                  <b>{children}</b>?
                 </DialogMessage>
                 <DialogButtons>
                   <Button onClick={applyChanges}>Sí, eliminar</Button>
