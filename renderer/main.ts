@@ -1,10 +1,8 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow } from 'electron';
 
 import createWindow from './createWindow';
-import { URI_SCHEME } from './env';
 import { debug, installExtensions } from './extensions';
 import { lockHandler, setDefaultProtocol } from './protocol';
-import { sendCodeToApp } from './utils/oauth';
 import electronAPI from './utils/batch';
 /**
  * Configures the app with handlers and other features
@@ -25,13 +23,7 @@ export function configureApp() {
 
   // Handle the protocol. In this case, we choose to show an Error Box.
   app.on('open-url', (_, url) => {
-    const parsed = new URL(url);
-
-    if (parsed.protocol === `${URI_SCHEME}:`) {
-      sendCodeToApp(parsed);
-    } else {
-      dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`);
-    }
+    console.log('open-url handler', url);
   });
   app.on('before-quit', () => {
     electronAPI.stopBatch();
