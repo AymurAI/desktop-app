@@ -8,7 +8,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Input, Label, Stack, Subtitle, Text, Title } from 'components';
+import { Button, Input, Label, Stack, Subtitle, Title } from 'components';
 import { useLogin, useUser, useServerUrl } from 'hooks';
 import { Background, Container } from 'layout/login';
 import { FunctionType } from 'types/user';
@@ -124,10 +124,6 @@ export default function Login() {
                     <HardDrives weight="bold" />
                     Servidor
                   </Button>
-                  {/* <Button onClick={login.withGoogle}>
-                    <GoogleLogo weight="bold" />
-                    Google
-                  </Button> */}
                 </Stack>
               </>
             )}

@@ -18,8 +18,6 @@ import filesystem from 'services/filesystem';
 import { submitValidations } from 'utils/file';
 import { DocFile } from 'types/file';
 import Anchor from '../Anchor';
-import Callout from './Callout';
-import { FunctionType } from 'types/user';
 
 export default function Finish() {
   const files = useFiles();
@@ -42,7 +40,6 @@ export default function Finish() {
       // POST the validated data to the dataset
       await submitValidations({
         isOnline: user!.online,
-        token: user!.token,
         validations: file.validationObject,
       });
     } catch {
@@ -95,7 +92,6 @@ export default function Finish() {
               ></FileCheck>
             ))}
           </Grid>
-          <Callout />
         </Card>
       </Section>
       <Footer>

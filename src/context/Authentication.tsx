@@ -3,18 +3,14 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
-  useRef,
   useState,
 } from 'react';
 
 import { User } from 'types/user';
-import { REFRESH_INTERVAL } from 'utils/config';
 
 type AuthContextType = {
   user: User | null;
   setUser: Dispatch<SetStateAction<User | null>>;
-  startTimer: (callback: () => void) => void;
-  resetTimer: () => void;
 };
 /**
  * Provides the token received through OAuth2 login to the whole app
@@ -22,8 +18,6 @@ type AuthContextType = {
 export const AuthenticationContext = createContext<AuthContextType>({
   user: null,
   setUser: () => {},
-  startTimer: () => {},
-  resetTimer: () => {},
 });
 AuthenticationContext.displayName = 'AuthenticationContext';
 
@@ -35,22 +29,9 @@ interface Props {
  */
 export default function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
-  const timerRef = useRef<number>();
-
-  const startTimer = (callback: () => void) => {
-    const timer = window.setInterval(callback, REFRESH_INTERVAL);
-    timerRef.current = timer;
-  };
-
-  const resetTimer = () => {
-    window.clearInterval(timerRef.current);
-    timerRef.current = undefined;
-  };
 
   return (
-    <AuthenticationContext.Provider
-      value={{ user, setUser, startTimer, resetTimer }}
-    >
+    <AuthenticationContext.Provider value={{ user, setUser }}>
       {children}
     </AuthenticationContext.Provider>
   );
