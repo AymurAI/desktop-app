@@ -5,6 +5,9 @@ import filesystem from './filesystem';
 
 const FEEDBACK_FOLDER = `${EXPORTS_FOLDER}/feedback`;
 
+/**
+ * Gets the current date and time in the format `YYYY-MM-DD-HH_MM_SS`
+ */
 function getDate() {
   const now = new Date(Date.now());
   const [date, time] = now.toISOString().split('T');

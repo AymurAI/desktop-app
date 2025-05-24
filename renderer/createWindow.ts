@@ -2,7 +2,7 @@ import { BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 
 import { EXTERNAL_URLS, isDebug, isProduction } from './env';
-import { crypto, excel, feedback, resolveHTMLPath, taskbar } from './utils';
+import { excel, feedback, resolveHTMLPath, taskbar } from './utils';
 import electronAPI from './utils/batch';
 
 export let mainWindow: BrowserWindow | null;
@@ -70,10 +70,6 @@ export default function createWindow() {
   ipcMain.handle('EXCEL_READ', excel.read);
   ipcMain.handle('EXCEL_WRITE', (_, buffer: Buffer) => excel.write(buffer));
   ipcMain.handle('EXCEL_OPEN', excel.open);
-
-  // OAUTH
-  ipcMain.handle('GET_CHALLENGE_CODE', crypto.getChallengeCode);
-  ipcMain.handle('GET_VERIFIER_CODE', crypto.getVerifierCode);
 
   // TASKBAR
   ipcMain.handle('TASKBAR_NOTIFY', taskbar.notify);
