@@ -38,7 +38,7 @@ const router = createRouter([
   },
   {
     path: '/login',
-    element: <Login></Login>,
+    element: <Login />,
   },
 ]);
 

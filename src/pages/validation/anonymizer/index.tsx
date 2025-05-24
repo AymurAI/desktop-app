@@ -1,11 +1,10 @@
 import { Button, Grid } from 'components';
 import FileAnnotator from 'components/file-annotator';
-import withFileProtection from 'features/withFileProtection';
 import { useFiles } from 'hooks';
 import { Footer } from 'layout/main';
 import { useNavigate } from 'react-router-dom';
 
-export default withFileProtection(function Validation() {
+export default function Validation() {
   const file = useFiles()[0]!;
   const navigate = useNavigate();
 
@@ -35,4 +34,4 @@ export default withFileProtection(function Validation() {
       </Footer>
     </>
   );
-});
+}

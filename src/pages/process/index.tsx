@@ -14,7 +14,6 @@ import {
   FileProcessing,
   Toast,
 } from 'components';
-import withFileProtection from 'features/withFileProtection';
 import { filterUnprocessed, removeAllPredictions } from 'reducers/file/actions';
 import { initProcessState, canContinue, replace } from './utils';
 import { PredictStatus } from 'hooks/usePredict';
@@ -22,7 +21,7 @@ import useNotify from './useNotify';
 
 import { FunctionType } from 'types/user';
 
-export default withFileProtection(function Process() {
+export default function Process() {
   const user = useUser();
   const navigate = useNavigate();
   const dispatch = useFileDispatch();
@@ -98,4 +97,4 @@ export default withFileProtection(function Process() {
       </Footer>
     </>
   );
-});
+}

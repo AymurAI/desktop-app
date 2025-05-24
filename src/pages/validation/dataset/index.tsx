@@ -8,7 +8,6 @@ import {
   Grid,
   SectionTitle,
 } from 'components';
-import withFileProtection from 'features/withFileProtection';
 import { useFileDispatch, useFiles } from 'hooks';
 import { Footer, Section } from 'layout/main';
 import { validate } from 'reducers/file/actions';
@@ -16,7 +15,7 @@ import { isFileValidated, isValidationCompleted } from 'utils/file';
 import FormGroup from './form-group';
 import { moveNext, movePrevious } from './utils';
 
-export default withFileProtection(function Validation() {
+export default function Validation() {
   // HOOKS
   const files = useFiles();
   const [checked, setChecked] = useState(false);
@@ -106,4 +105,4 @@ export default withFileProtection(function Validation() {
       </Footer>
     </>
   );
-});
+}
