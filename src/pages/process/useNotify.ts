@@ -16,7 +16,6 @@ export default function useNotify(
 			taskbar.notify();
 			setIsToastVisible(true);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isPredictionCompleted(process)]);
 
 	return { isToastVisible, hideToast };

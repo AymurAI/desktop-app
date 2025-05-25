@@ -33,7 +33,6 @@ export function usePredict(
 		setStatus(newValue);
 		onStatusChange?.(newValue);
 		// This next line is disabled because the function should only be created once
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const abort = () => {

@@ -63,7 +63,6 @@ export default function Finish() {
 		submitAll().then(() => setIsLoading(false));
 
 		// We strictly need to run this effect once
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
