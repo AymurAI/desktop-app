@@ -4,12 +4,12 @@
  * @param base Value to store on each element of the array
  * @returns A `number[]` of `n` length
  */
-export default function nArray<T extends any = undefined>(n = 1, value: T) {
-  const array = Array.from(Array(n).keys()).map(() => {
-    if (typeof value === 'object') {
-      return Object.create(value);
-    } else return value;
-  });
 
-  return array;
+export default function nArray<T = undefined>(n: number, value: T) {
+	const array = Array.from(Array(n).keys()).map(() => {
+		if (typeof value === "object") return Object.create(value);
+		return value;
+	});
+
+	return array;
 }

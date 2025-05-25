@@ -1,17 +1,17 @@
-import RegexEscape from 'regex-escape';
+import RegexEscape from "regex-escape";
 /**
  * Hashes a word using _base64_ encoding.
  * @param word The word to be hashed.
  * @returns A `string` representing the hashed word.
  */
 const hash = (word: string) => {
-  try {
-    return window.btoa(RegexEscape(word));
-  } catch (e) {
-    console.error('Error parsing word:', word);
-    console.error(e);
-    return 'err';
-  }
+	try {
+		return window.btoa(RegexEscape(word));
+	} catch (e) {
+		console.error("Error parsing word:", word);
+		console.error(e);
+		return "err";
+	}
 };
 
 /**
@@ -21,7 +21,7 @@ const hash = (word: string) => {
  * @returns A `string` representing the hashed paragraph.
  */
 export const getParagraphId = (paragraph: string, index: number) => {
-  const start = paragraph.slice(0, 15);
-  const end = paragraph.slice(-15);
-  return `${index}-${hash(start + end).slice(0, 30)}`;
+	const start = paragraph.slice(0, 15);
+	const end = paragraph.slice(-15);
+	return `${index}-${hash(start + end).slice(0, 30)}`;
 };

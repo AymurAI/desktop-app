@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, ElementType } from 'react';
+import type { ComponentPropsWithoutRef, ElementType } from "react";
 
 /**
  * Props for any 'native' component. 'style' prop is removed by default to enforce the use of Stitches
@@ -6,7 +6,6 @@ import { ComponentPropsWithoutRef, ElementType } from 'react';
  * @param K Any prop that should be omitted from the base tag
  */
 export type NativeComponent<
-  T extends ElementType = 'div',
-  K extends string = ''
-> = Omit<ComponentPropsWithoutRef<T>, 'style' | K>;
-
+	T extends ElementType = "div",
+	K extends string = "",
+> = Omit<ComponentPropsWithoutRef<T>, "style" | K>;

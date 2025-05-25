@@ -1,5 +1,5 @@
-import { PredictStatus } from 'hooks/usePredict';
-import { DocFile } from 'types/file';
+import type { PredictStatus } from "hooks/usePredict";
+import type { DocFile } from "types/file";
 
 type ProcessState = { name: string; status: PredictStatus };
 /**
@@ -8,7 +8,7 @@ type ProcessState = { name: string; status: PredictStatus };
  * @returns An `ProcessState[]` array containing the name of each file and its processing state
  */
 export function initProcessState(files: DocFile[]): ProcessState[] {
-  return files.map(({ data }) => ({ name: data.name, status: 'processing' }));
+	return files.map(({ data }) => ({ name: data.name, status: "processing" }));
 }
 
 /**
@@ -17,18 +17,18 @@ export function initProcessState(files: DocFile[]): ProcessState[] {
  * @returns `true` if the prediction process is completed, `false` otherwise
  */
 export function isPredictionCompleted(state: ProcessState[]) {
-  return !state.some(({ status }) => status === 'processing');
+	return !state.some(({ status }) => status === "processing");
 }
 
 export function canContinue(state: ProcessState[]) {
-  const atLeastOneCompleted = state.some(
-    ({ status }) => status === 'completed'
-  );
-  const hasFinishedProcessing = !state.some(
-    ({ status }) => status === 'processing'
-  );
+	const atLeastOneCompleted = state.some(
+		({ status }) => status === "completed",
+	);
+	const hasFinishedProcessing = !state.some(
+		({ status }) => status === "processing",
+	);
 
-  return hasFinishedProcessing && atLeastOneCompleted;
+	return hasFinishedProcessing && atLeastOneCompleted;
 }
 
 /**
@@ -39,12 +39,12 @@ export function canContinue(state: ProcessState[]) {
  * @returns A new array with the status of the given file changed
  */
 export function replace(
-  name: string,
-  value: Partial<ProcessState>,
-  state: ProcessState[]
+	name: string,
+	value: Partial<ProcessState>,
+	state: ProcessState[],
 ) {
-  return state.map((process) => {
-    if (process.name === name) return { ...process, ...value };
-    else return process;
-  });
+	return state.map((process) => {
+		if (process.name === name) return { ...process, ...value };
+		return process;
+	});
 }

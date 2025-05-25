@@ -1,6 +1,6 @@
-import exportFeedback from './export';
+import exportFeedback from "./export";
 
 const feedback = {
-  export: exportFeedback,
+	export: exportFeedback,
 };
 export default feedback;

@@ -1,43 +1,43 @@
-import { Workbook, Worksheet } from 'exceljs';
-import { excelStructure } from 'utils/file';
+import { Workbook, type Worksheet } from "exceljs";
+import { excelStructure } from "utils/file";
 
 function setMetadata(workbook: Workbook) {
-  workbook.creator = 'AymurAI';
-  workbook.company = 'DataGenero';
-  workbook.description = 'Set de datos con perspectiva de genero';
+	workbook.creator = "AymurAI";
+	workbook.company = "DataGenero";
+	workbook.description = "Set de datos con perspectiva de genero";
 
-  workbook.created = new Date();
-  workbook.modified = new Date();
+	workbook.created = new Date();
+	workbook.modified = new Date();
 }
 
 function addWorksheet(workbook: Workbook) {
-  const worksheet = workbook.addWorksheet('set_de_datos', {
-    properties: {
-      tabColor: { argb: 'B7E1CD' },
-    },
-  });
+	const worksheet = workbook.addWorksheet("set_de_datos", {
+		properties: {
+			tabColor: { argb: "B7E1CD" },
+		},
+	});
 
-  return worksheet;
+	return worksheet;
 }
 
 function addHeader(worksheet: Worksheet) {
-  worksheet.columns = excelStructure.map((label) => ({
-    header: label,
-    key: label,
-  }));
+	worksheet.columns = excelStructure.map((label) => ({
+		header: label,
+		key: label,
+	}));
 
-  // Paint first row
-  const row = worksheet.getRow(1);
-  row.eachCell((cell) => {
-    cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'B7E1CD' },
-    };
-  });
+	// Paint first row
+	const row = worksheet.getRow(1);
+	row.eachCell((cell) => {
+		cell.fill = {
+			type: "pattern",
+			pattern: "solid",
+			fgColor: { argb: "B7E1CD" },
+		};
+	});
 
-  // Freeze first row
-  worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+	// Freeze first row
+	worksheet.views = [{ state: "frozen", ySplit: 1 }];
 }
 
 /**
@@ -45,12 +45,12 @@ function addHeader(worksheet: Worksheet) {
  * @returns A formatted Workbook
  */
 export default function create() {
-  const workbook = new Workbook();
+	const workbook = new Workbook();
 
-  setMetadata(workbook);
-  const worksheet = addWorksheet(workbook);
+	setMetadata(workbook);
+	const worksheet = addWorksheet(workbook);
 
-  addHeader(worksheet);
+	addHeader(worksheet);
 
-  return workbook;
+	return workbook;
 }

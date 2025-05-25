@@ -1,4 +1,4 @@
-import { DocFile } from 'types/file';
+import type { DocFile } from "types/file";
 
 /**
  * Looks in the file state if an specific file is already loaded
@@ -7,5 +7,5 @@ import { DocFile } from 'types/file';
  * @returns `true` if the file is already in the state, `false` otherwise
  */
 export default function isAlreadyLoaded(fileName: string, state: DocFile[]) {
-  return !!state.find((file) => file.data.name === fileName);
+	return !!state.find((file) => file.data.name === fileName);
 }

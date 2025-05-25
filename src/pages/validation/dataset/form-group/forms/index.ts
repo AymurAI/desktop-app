@@ -1,7 +1,7 @@
-import InfoGral from './InfoGral';
-import DatosDenunciante from './DatosDenunciante';
-import DatosAcusado from './DatosAcusado';
-import InfoHecho from './InfoHecho';
-import Decision from './Decision';
+import DatosAcusado from "./DatosAcusado";
+import DatosDenunciante from "./DatosDenunciante";
+import Decision from "./Decision";
+import InfoGral from "./InfoGral";
+import InfoHecho from "./InfoHecho";
 
 export { InfoGral, DatosDenunciante, DatosAcusado, InfoHecho, Decision };

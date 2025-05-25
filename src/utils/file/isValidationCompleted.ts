@@ -1,4 +1,4 @@
-import { DocFile } from 'types/file';
+import type { DocFile } from "types/file";
 
 /**
  * Checks if the file validation process is completed
@@ -6,8 +6,8 @@ import { DocFile } from 'types/file';
  * @returns `true` if the validation process is completed, `false` otherwise
  */
 export default function isValidationCompleted(state: DocFile[]) {
-  // If we find any file with no predictions, return false
-  const uncompleted = state.find((file) => !file.validated);
+	// If we find any file with no predictions, return false
+	const uncompleted = state.find((file) => !file.validated);
 
-  return !uncompleted;
+	return !uncompleted;
 }

@@ -1,4 +1,4 @@
-import { DocFile } from 'types/file';
+import type { DocFile } from "types/file";
 
 /**
  * Checks if a file has been at least partially validated
@@ -6,5 +6,5 @@ import { DocFile } from 'types/file';
  * @returns `true` if the file has any validation made, `false` otherwise
  */
 export default function isFileValidated(selectedFile: DocFile) {
-  return Object.keys(selectedFile.validationObject).length > 0;
+	return Object.keys(selectedFile.validationObject).length > 0;
 }
