@@ -6,8 +6,8 @@ declare global {
 				export: (fileName: string, data: object) => Promise<void>;
 			};
 			excel: {
-				read: () => Promise<Buffer>;
-				write: (buffer: Buffer) => Promise<void>;
+				read: () => Promise<ArrayBuffer>;
+				write: (arrBuffer: ArrayBuffer) => Promise<void>;
 				open: () => Promise<string>;
 			};
 		};

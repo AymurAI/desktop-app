@@ -6,7 +6,7 @@ import filesystemAPI from "../utils";
  * @param buffer Data buffer representing the `.xlsx` file
  */
 export default async function write(workbook: Workbook) {
-	const buffer = (await workbook.xlsx.writeBuffer()) as Buffer;
+	const buffer = await workbook.xlsx.writeBuffer();
 
 	return filesystemAPI().excel.write(buffer);
 }
