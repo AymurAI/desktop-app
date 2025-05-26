@@ -65,7 +65,9 @@ export default function createWindow() {
 		feedback.export(fileName, data),
 	);
 	ipcMain.handle("EXCEL_READ", excel.read);
-	ipcMain.handle("EXCEL_WRITE", (_, buffer: Buffer) => excel.write(buffer));
+	ipcMain.handle("EXCEL_WRITE", (_, buffer: ArrayBuffer) =>
+		excel.write(buffer),
+	);
 	ipcMain.handle("EXCEL_OPEN", excel.open);
 
 	// TASKBAR

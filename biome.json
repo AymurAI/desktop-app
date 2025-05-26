@@ -34,7 +34,11 @@
 				"noBannedTypes": "warn"
 			},
 			"style": {
-				"noNonNullAssertion": "warn"
+				"noNonNullAssertion": "warn",
+				"useSelfClosingElements": {
+					"fix": "safe",
+					"level": "error"
+				}
 			},
 			"a11y": {
 				"noSvgWithoutTitle": "off",
