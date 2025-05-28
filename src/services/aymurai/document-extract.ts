@@ -7,6 +7,7 @@ interface ParagraphsResponse {
   document: string[];
   header: null;
   footer: null;
+  document_id: string;
 }
 
 /**
@@ -31,6 +32,7 @@ export async function getParagraphs(
       });
     return response.data.document.map((p, i) => ({
       value: p,
+      document_id: response.data.document_id,
       id: getParagraphId(p, i),
     }));
   } catch (e) {
