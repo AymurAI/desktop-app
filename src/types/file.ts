@@ -1,5 +1,5 @@
-import { FormData } from 'hooks/useForm';
-import { PredictLabel } from './aymurai';
+import type { FormData } from "hooks/useForm";
+import type { PredictLabel } from "./aymurai";
 
 export interface Paragraph {
   value: string;

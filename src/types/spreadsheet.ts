@@ -1,4 +1,4 @@
-import { FormValue } from 'hooks/useForm';
+import type { FormValue } from "hooks/useForm";
 
 /**
  * Spreadsheet's unique identifier

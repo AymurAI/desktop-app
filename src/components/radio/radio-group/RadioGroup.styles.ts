@@ -1,30 +1,30 @@
-import { styled } from 'styles';
+import { styled } from "styles";
 
-export const Legend = styled('legend', {
-  fontWeight: '$default',
-  fontSize: '$subtitleSm',
-  lineHeight: '$subtitleSm',
-  color: '$textLighter',
+export const Legend = styled("legend", {
+  fontWeight: "$default",
+  fontSize: "$subtitleSm",
+  lineHeight: "$subtitleSm",
+  color: "$textLighter",
 
-  mb: '$xs',
+  mb: "$xs",
 });
 
-export const Group = styled('fieldset', {
-  display: 'flex',
-  gap: '$m',
-  flexWrap: 'wrap',
+export const Group = styled("fieldset", {
+  display: "flex",
+  gap: "$m",
+  flexWrap: "wrap",
 
   variants: {
     direction: {
       horizontal: {
-        flexDirection: 'row',
+        flexDirection: "row",
       },
       vertical: {
-        flexDirection: 'column',
+        flexDirection: "column",
       },
     },
   },
   defaultVariants: {
-    direction: 'horizontal',
+    direction: "horizontal",
   },
 });

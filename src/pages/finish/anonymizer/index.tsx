@@ -1,30 +1,30 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from "react";
 
-import { Footer, Section } from 'layout/main';
 import {
+  Button,
   Card,
   FileCheck,
   Grid,
   SectionTitle,
   Subtitle,
   Text,
-  Button,
-} from 'components';
-import { useFileDispatch, useFiles } from 'hooks';
-import { removeAllFiles } from 'reducers/file/actions';
-import { useNavigate } from 'react-router-dom';
-import { anonymize } from 'services/aymurai';
+} from "components";
+import { useFileDispatch, useFiles } from "hooks";
+import { Footer, Section } from "layout/main";
+import { useNavigate } from "react-router-dom";
+import { removeAllFiles } from "reducers/file/actions";
+import { anonymize } from "services/aymurai";
 
-import Anchor from '../Anchor';
-import { ServerUrlContext } from 'context/ServerUrl';
+import { ServerUrlContext } from "context/ServerUrl";
+import Anchor from "../Anchor";
 
 const changeExtension = (name: string) => {
-  const parts = name.split('.');
+  const parts = name.split(".");
   parts.pop();
-  return [...parts].join('.') + '_anonimizado.odt';
+  return `${[...parts].join(".")}_anonimizado.odt`;
 };
 
-type AnonymizeStatus = 'loading' | 'success' | 'error';
+type AnonymizeStatus = "loading" | "success" | "error";
 export default function Anonymizer() {
   // We are sure that there is only one file, because we came from
   // anonimization workflow
@@ -36,31 +36,31 @@ export default function Anonymizer() {
   const { serverUrl } = useContext(ServerUrlContext);
   const downloadDocument = async () => {
     if (!fileURI) {
-      console.error('Tried to download a file that is not ready.');
+      console.error("Tried to download a file that is not ready.");
       return;
     }
-    const link = document.createElement('a');
-    link.setAttribute('href', fileURI);
-    link.setAttribute('download', changeExtension(file.data.name));
+    const link = document.createElement("a");
+    link.setAttribute("href", fileURI);
+    link.setAttribute("download", changeExtension(file.data.name));
 
     link.click();
   };
 
   const handleRestart = () => {
     dispatch(removeAllFiles());
-    navigate('/onboarding');
+    navigate("/onboarding");
   };
 
   useEffect(() => {
-    setStatus('loading');
+    setStatus("loading");
 
     anonymize(file, serverUrl)
       .then((blob) => {
         setFileURI(URL.createObjectURL(blob));
-        setStatus('success');
+        setStatus("success");
       })
       .catch(() => {
-        setStatus('error');
+        setStatus("error");
       });
   }, []);
 
@@ -68,7 +68,7 @@ export default function Anonymizer() {
     <>
       <Section>
         <SectionTitle>4. Finalización</SectionTitle>
-        <Text css={{ maxWidth: '60%' }}>
+        <Text css={{ maxWidth: "60%" }}>
           Los datos encontrados por AymurAI y posteriormente validados ya han
           sido anonimizados correctamente.
         </Text>
@@ -78,13 +78,13 @@ export default function Anonymizer() {
             columns={4}
             spacing="xl"
             justify="center"
-            css={{ width: '100%' }}
+            css={{ width: "100%" }}
           >
             <FileCheck
               fileName={file.data.name}
-              hasError={status === 'error'}
-              isLoading={status === 'loading'}
-            ></FileCheck>
+              hasError={status === "error"}
+              isLoading={status === "loading"}
+            />
           </Grid>
         </Card>
       </Section>
@@ -102,7 +102,7 @@ export default function Anonymizer() {
         <Button
           onClick={downloadDocument}
           size="l"
-          disabled={status === 'error'}
+          disabled={status === "error"}
         >
           Descargar documento
         </Button>

@@ -1,38 +1,38 @@
-import { styled } from 'styles';
+import { styled } from "styles";
 
-const Label = styled('label', {
+const Label = styled("label", {
   variants: {
     size: {
       m: {
-        fontSize: '$labelMd',
-        lineHeight: '$labelMd',
+        fontSize: "$labelMd",
+        lineHeight: "$labelMd",
       },
       s: {
-        fontSize: '$labelSm',
-        lineHeight: '$labelSm',
+        fontSize: "$labelSm",
+        lineHeight: "$labelSm",
       },
     },
     weight: {
       default: {
-        fontWeight: '$default',
+        fontWeight: "$default",
       },
       strong: {
-        fontWeight: '$strong',
+        fontWeight: "$strong",
       },
     },
     status: {
       default: {
-        color: '$textLighter',
+        color: "$textLighter",
       },
       error: {
-        color: '$errorPrimary',
+        color: "$errorPrimary",
       },
     },
   },
   defaultVariants: {
-    size: 'm',
-    weight: 'default',
-    status: 'default',
+    size: "m",
+    weight: "default",
+    status: "default",
   },
 });
 

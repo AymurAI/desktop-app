@@ -1,5 +1,5 @@
-import { PredictLabel } from './aymurai';
-import { Nullable } from './utils';
+import type { PredictLabel } from "./aymurai";
+import type { Nullable } from "./utils";
 
 /**
  * Type for the object stored into the exported JSON file

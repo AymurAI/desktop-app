@@ -1,11 +1,11 @@
-import { Annotation, Split } from './types';
+import type { Annotation, Split } from "./types";
 
 const addTrailingText = (splits: Split[], i: number, { start }: Annotation) => {
   if (start > i) {
     splits.push({
       end: start,
       start: i,
-      type: 'text',
+      type: "text",
     });
   }
 };
@@ -14,7 +14,7 @@ const addLeadingText = (splits: Split[], i: number, { length }: string) => {
     splits.push({
       end: length,
       start: i,
-      type: 'text',
+      type: "text",
     });
   }
 };
@@ -30,7 +30,7 @@ const isLeftConflicting = (token: Annotation, next: Annotation | undefined) => {
   if (!next) return false;
 
   return (
-    token.type === 'search' && next.type === 'tag' && token.end > next.start
+    token.type === "search" && next.type === "tag" && token.end > next.start
   );
 };
 
@@ -42,14 +42,14 @@ const isLeftConflicting = (token: Annotation, next: Annotation | undefined) => {
  */
 export const generateSplits = (
   paragraph: string,
-  tokens: Annotation[]
+  tokens: Annotation[],
 ): Split[] => {
   if (!tokens.length)
     return [
       {
         start: 0,
         end: paragraph.length,
-        type: 'text',
+        type: "text",
       },
     ];
 

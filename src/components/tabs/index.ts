@@ -1,54 +1,54 @@
-import { styled } from 'styles';
+import { styled } from "styles";
 
-export const Tab = styled('div', {
-  borderRadius: '$xxs',
-  boxSizing: 'border-box',
+export const Tab = styled("div", {
+  borderRadius: "$xxs",
+  boxSizing: "border-box",
 
-  display: 'flex',
-  flexDirection: 'row',
-  gap: '$s',
-  alignItems: 'center',
+  display: "flex",
+  flexDirection: "row",
+  gap: "$s",
+  alignItems: "center",
 
-  p: '$m',
+  p: "$m",
 
   variants: {
     status: {
       completed: {
-        '& label': {
-          color: '$textOnButtonAlternative',
+        "& label": {
+          color: "$textOnButtonAlternative",
         },
-        bg: '$actionPressed',
-        b: 'none',
+        bg: "$actionPressed",
+        b: "none",
       },
       focus: {
-        '& label': {
-          color: '$textOnButtonDefault',
+        "& label": {
+          color: "$textOnButtonDefault",
         },
-        bg: '$actionFocus',
-        boxShadow: '2px 2px 10px rgba(17, 0, 65, 0.25)',
-        b: '1px solid $borderPrimaryAlt',
+        bg: "$actionFocus",
+        boxShadow: "2px 2px 10px rgba(17, 0, 65, 0.25)",
+        b: "1px solid $borderPrimaryAlt",
       },
       default: {
-        '& label': {
-          color: '$textOnButtonDefault',
+        "& label": {
+          color: "$textOnButtonDefault",
         },
-        bg: '$primaryAlt',
-        b: 'none',
+        bg: "$primaryAlt",
+        b: "none",
       },
     },
   },
   defaultVariants: {
-    status: 'default',
+    status: "default",
   },
 });
 
-export const TabName = styled('label', {
-  textOverflow: 'ellipsis',
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
+export const TabName = styled("label", {
+  textOverflow: "ellipsis",
+  overflow: "hidden",
+  whiteSpace: "nowrap",
 
   // width: 200,
 
-  fontSize: '$labelMd',
-  lineHeight: '$labelMd',
+  fontSize: "$labelMd",
+  lineHeight: "$labelMd",
 });

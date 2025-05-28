@@ -1,9 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { SEARCH_MIN_LENGTH } from '../annotations';
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { SEARCH_MIN_LENGTH } from "../annotations";
 
 const SCROLL_DEBOUNCE = 300;
 
-const find = () => document.querySelectorAll('mark.search');
+const find = () => document.querySelectorAll("mark.search");
 
 const scrollToComponent = (n: number) => {
   const index = n - 1;
@@ -11,9 +11,9 @@ const scrollToComponent = (n: number) => {
   if (components.length === 0 || components.length < n) return;
 
   components[index].scrollIntoView({
-    behavior: 'smooth',
-    block: 'center',
-    inline: 'nearest',
+    behavior: "smooth",
+    block: "center",
+    inline: "nearest",
   });
 };
 

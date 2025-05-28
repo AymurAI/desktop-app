@@ -1,10 +1,10 @@
-import { DocFile } from 'types/file';
-import { validationToArray } from 'utils/google';
-import offline from './offline';
+import type { DocFile } from "types/file";
+import { validationToArray } from "utils/google";
+import offline from "./offline";
 
 interface Props {
   isOnline: boolean | undefined;
-  validations: DocFile['validationObject'];
+  validations: DocFile["validationObject"];
 }
 /**
  * Submits the data through the appropiate way. Saves into the filesystem when
@@ -20,7 +20,7 @@ export default async function submitValidations({
 
   // This validation was left here for future use if we support online submissions
   if (isOnline) {
-    console.warn('Online submissions were disabled.');
+    console.warn("Online submissions were disabled.");
   } else {
     await offline(validationArray);
   }

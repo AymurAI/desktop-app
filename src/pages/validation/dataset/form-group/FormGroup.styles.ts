@@ -1,8 +1,8 @@
-import { styled } from 'styles';
+import { styled } from "styles";
 
-const Container = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
+const Container = styled("div", {
+  display: "flex",
+  flexDirection: "column",
   gap: 64,
 });
 

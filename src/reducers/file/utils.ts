@@ -1,6 +1,6 @@
-import { PredictLabel } from 'types/aymurai';
-import { DocFile } from 'types/file';
-import { isAllowed, isAlreadyLoaded } from 'utils/file';
+import type { PredictLabel } from "types/aymurai";
+import type { DocFile } from "types/file";
+import { isAllowed, isAlreadyLoaded } from "utils/file";
 
 /**
  * Util function used along with `filter()` array function to mantain the types
@@ -21,11 +21,11 @@ type ModifyFunction = (file: DocFile) => DocFile | undefined;
  * @returns A new function which accepts as parameters `fileName` and `modify`
  */
 export function updateFromState(state: DocFile[]) {
-  return function (fileName: string, modify: ModifyFunction) {
+  return (fileName: string, modify: ModifyFunction) => {
     // Modify/update the desired file
     const newState = state.map((file) => {
       if (file.data.name === fileName) return modify(file);
-      else return file;
+      return file;
     });
 
     // Remove any `undefined` value inserted into the array
@@ -45,7 +45,7 @@ export function updateFromState(state: DocFile[]) {
 export function addFiles(files: File[], state: DocFile[]) {
   // Check for whitelisted extensions and already loaded files
   const filtered = files.filter(
-    (file) => isAllowed(file) && !isAlreadyLoaded(file.name, state)
+    (file) => isAllowed(file) && !isAlreadyLoaded(file.name, state),
   );
 
   // Add necessary fields to the object
@@ -75,10 +75,11 @@ export function replaceFile(fileName: string, newFile: File, state: DocFile[]) {
             predictions: undefined,
             validationObject: {},
           }
-        : file
+        : file,
     );
     return replaced;
-  } else return state;
+  }
+  return state;
 }
 
 /**

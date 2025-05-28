@@ -1,22 +1,22 @@
-import { styled } from 'styles';
+import { styled } from "styles";
 
-export const BarContainer = styled('div', {
-  height: '$m',
-  width: '100%',
+export const BarContainer = styled("div", {
+  height: "$m",
+  width: "100%",
 
-  bg: '$bgPrimary',
-  borderRadius: '$xxs',
+  bg: "$bgPrimary",
+  borderRadius: "$xxs",
 
-  overflow: 'hidden',
+  overflow: "hidden",
 });
 
-export const Bar = styled('div', {
-  width: '100%',
-  height: '100%',
+export const Bar = styled("div", {
+  width: "100%",
+  height: "100%",
 
-  backgroundSize: '$sizes$xl $sizes$xl',
+  backgroundSize: "$sizes$xl $sizes$xl",
 
-  transition: 'width $s ease',
+  transition: "width $s ease",
 
   variants: {
     isCompleted: {

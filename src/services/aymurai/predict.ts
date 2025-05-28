@@ -1,12 +1,12 @@
-import axios, { CanceledError } from 'axios';
+import axios, { CanceledError } from "axios";
 
-import { PredictLabel, Workflows } from 'types/aymurai';
-import { Paragraph } from 'types/file';
-import { AYMURAI_API_URL } from 'utils/config';
+import type { PredictLabel, Workflows } from "types/aymurai";
+import type { Paragraph } from "types/file";
+import { AYMURAI_API_URL } from "utils/config";
 
 interface PredictResponse {
   document: string;
-  labels: Omit<PredictLabel, 'paragraphId'>[];
+  labels: Omit<PredictLabel, "paragraphId">[];
 }
 
 /**
@@ -19,13 +19,14 @@ interface PredictResponse {
 export default async function predict(
   paragraph: Paragraph,
   controller: AbortController,
-  route: Workflows = 'datapublic',
-  serverUrl: string
+  // biome-ignore lint/style/useDefaultParameterLast: Not imprtant right now
+  route: Workflows = "datapublic",
+  serverUrl: string,
 ): Promise<PredictLabel[]> {
   try {
     const response = await axios
       .create({
-        baseURL: !!serverUrl ? serverUrl : AYMURAI_API_URL,
+        baseURL: serverUrl ? serverUrl : AYMURAI_API_URL,
       })
       .post<PredictResponse>(
         `/${route}/predict`,
@@ -34,7 +35,7 @@ export default async function predict(
         },
         {
           signal: controller.signal,
-        }
+        },
       );
 
     const data = response.data.labels.map((l) => ({
@@ -51,10 +52,10 @@ export default async function predict(
     if (e instanceof CanceledError) {
       return [];
       // Otherwise, throw again the same error
-    } else {
-      console.error(e);
-      const { message } = e as Error;
-      throw new Error(message);
     }
+
+    console.error(e);
+    const { message } = e as Error;
+    throw new Error(message);
   }
 }

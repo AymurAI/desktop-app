@@ -1,19 +1,19 @@
-import { Workbook, Worksheet } from 'exceljs';
-import { excelStructure } from 'utils/file';
+import { Workbook, type Worksheet } from "exceljs";
+import { excelStructure } from "utils/file";
 
 function setMetadata(workbook: Workbook) {
-  workbook.creator = 'AymurAI';
-  workbook.company = 'DataGenero';
-  workbook.description = 'Set de datos con perspectiva de genero';
+  workbook.creator = "AymurAI";
+  workbook.company = "DataGenero";
+  workbook.description = "Set de datos con perspectiva de genero";
 
   workbook.created = new Date();
   workbook.modified = new Date();
 }
 
 function addWorksheet(workbook: Workbook) {
-  const worksheet = workbook.addWorksheet('set_de_datos', {
+  const worksheet = workbook.addWorksheet("set_de_datos", {
     properties: {
-      tabColor: { argb: 'B7E1CD' },
+      tabColor: { argb: "B7E1CD" },
     },
   });
 
@@ -30,14 +30,14 @@ function addHeader(worksheet: Worksheet) {
   const row = worksheet.getRow(1);
   row.eachCell((cell) => {
     cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'B7E1CD' },
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "B7E1CD" },
     };
   });
 
   // Freeze first row
-  worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+  worksheet.views = [{ state: "frozen", ySplit: 1 }];
 }
 
 /**

@@ -1,7 +1,7 @@
-import { useContext } from 'react';
+import { useContext } from "react";
 
-import { AuthenticationContext as Context } from 'context/Authentication';
-import { FunctionType } from 'types/user';
+import { AuthenticationContext as Context } from "context/Authentication";
+import type { FunctionType } from "types/user";
 
 interface UseLoginArgs {
   onLogout?: () => void;
@@ -16,7 +16,7 @@ export default function useLogin({ onLogout }: UseLoginArgs = {}) {
   const { setUser } = useContext(Context);
 
   const loginOffline = (funcType: FunctionType) => {
-    setUser({ online: false, function: funcType, token: '' });
+    setUser({ online: false, function: funcType, token: "" });
     onLogout?.();
   };
 

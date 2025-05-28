@@ -1,13 +1,11 @@
-import { BrowserWindow, ipcMain, shell } from 'electron';
-import path from 'path';
+import path from "node:path";
+import { BrowserWindow, ipcMain, shell } from "electron";
 
-import { EXTERNAL_URLS, isDebug, isProduction } from './env';
-import { excel, feedback, resolveHTMLPath, taskbar } from './utils';
-import electronAPI from './utils/batch';
+import { EXTERNAL_URLS, isDebug, isProduction } from "./env";
+import { excel, feedback, resolveHTMLPath, taskbar } from "./utils";
+import electronAPI from "./utils/batch";
 
 export let mainWindow: BrowserWindow | null;
-
-const { exec } = require('child_process');
 
 /**
  * Configures the main `BrowserWindow` with features and handlers
@@ -16,7 +14,6 @@ const { exec } = require('child_process');
 function configureWindow(window: BrowserWindow | null) {
   if (!window) {
     throw new Error('"mainWindow" is not defined');
-  } else {
   }
   if (isDebug) {
     window.webContents.openDevTools();
@@ -32,13 +29,13 @@ function configureWindow(window: BrowserWindow | null) {
   /**
    * HANDLERS
    */
-  window.on('ready-to-show', () => {
+  window.on("ready-to-show", () => {
     window.show();
   });
 
-  window.webContents.on('new-window', (e, url) => {
+  window.webContents.on("new-window", (e, url) => {
     // Check if the url is in the 'whitelist'
-    if (!!EXTERNAL_URLS.find((val) => url.includes(val))) {
+    if (EXTERNAL_URLS.find((val) => url.includes(val))) {
       e.preventDefault();
       shell.openExternal(url);
     }
@@ -51,7 +48,7 @@ export default function createWindow() {
     width: 1366,
     height: 768,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
@@ -59,20 +56,22 @@ export default function createWindow() {
   configureWindow(mainWindow);
 
   // and handlers
-  mainWindow.on('closed', () => {
+  mainWindow.on("closed", () => {
     mainWindow = null;
   });
 
   // FILESYSTEM
-  ipcMain.handle('EXPORT_FEEDBACK', (_, fileName: string, data: object) =>
-    feedback.export(fileName, data)
+  ipcMain.handle("EXPORT_FEEDBACK", (_, fileName: string, data: object) =>
+    feedback.export(fileName, data),
   );
-  ipcMain.handle('EXCEL_READ', excel.read);
-  ipcMain.handle('EXCEL_WRITE', (_, buffer: Buffer) => excel.write(buffer));
-  ipcMain.handle('EXCEL_OPEN', excel.open);
+  ipcMain.handle("EXCEL_READ", excel.read);
+  ipcMain.handle("EXCEL_WRITE", (_, buffer: ArrayBuffer) =>
+    excel.write(buffer),
+  );
+  ipcMain.handle("EXCEL_OPEN", excel.open);
 
   // TASKBAR
-  ipcMain.handle('TASKBAR_NOTIFY', taskbar.notify);
+  ipcMain.handle("TASKBAR_NOTIFY", taskbar.notify);
 
-  ipcMain.handle('RUN_BATCH', electronAPI.runBatch);
+  ipcMain.handle("RUN_BATCH", electronAPI.runBatch);
 }

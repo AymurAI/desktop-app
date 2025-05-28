@@ -1,4 +1,4 @@
-import RegexEscape from 'regex-escape';
+import RegexEscape from "regex-escape";
 /**
  * Hashes a word using _base64_ encoding.
  * @param word The word to be hashed.
@@ -8,9 +8,9 @@ const hash = (word: string) => {
   try {
     return window.btoa(RegexEscape(word));
   } catch (e) {
-    console.error('Error parsing word:', word);
+    console.error("Error parsing word:", word);
     console.error(e);
-    return 'err';
+    return "err";
   }
 };
 

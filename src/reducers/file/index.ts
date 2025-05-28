@@ -1,23 +1,23 @@
 import {
   ActionTypes,
-  AddFilesAction,
-  AddPredictionsAction,
-  AppendValidationAction,
-  FilterUnselectedAction,
-  RemoveAllFilesAction,
-  RemoveAllPredictionsAction,
-  RemovePredictionsAction,
-  ReplaceFileAction,
-  ToggleSelectedAction,
-  ValidateAction,
-  FilterUnprocessedAction,
-  RemoveFileAction,
-  AddParagraphsAction,
-  AppendPrediction,
-  RemovePrediction,
-  RemovePredictionsByText,
-  UpdatePredictionLabel,
-  UpdatePredictionsByText,
+  type AddFilesAction,
+  type AddParagraphsAction,
+  type AddPredictionsAction,
+  type AppendPrediction,
+  type AppendValidationAction,
+  type FilterUnprocessedAction,
+  type FilterUnselectedAction,
+  type RemoveAllFilesAction,
+  type RemoveAllPredictionsAction,
+  type RemoveFileAction,
+  type RemovePrediction,
+  type RemovePredictionsAction,
+  type RemovePredictionsByText,
+  type ReplaceFileAction,
+  type ToggleSelectedAction,
+  type UpdatePredictionLabel,
+  type UpdatePredictionsByText,
+  type ValidateAction,
 } from "./actions";
 import {
   addFiles,
@@ -26,8 +26,8 @@ import {
   updateFromState,
 } from "./utils";
 
-import { DocFile } from "types/file";
-import { AllLabels, AllLabelsWithSufix } from "types/aymurai";
+import type { AllLabels, AllLabelsWithSufix } from "types/aymurai";
+import type { DocFile } from "types/file";
 
 type State = DocFile[];
 
@@ -197,7 +197,7 @@ export default function reducer(state: State, action: Action): State {
       return update(fileName, (cur) => ({
         ...cur,
         predictions: cur.predictions?.filter(
-          (p) => !comparePrediction(prediction, p)
+          (p) => !comparePrediction(prediction, p),
         ),
       }));
     }
@@ -211,7 +211,7 @@ export default function reducer(state: State, action: Action): State {
       return update(fileName, (cur) => ({
         ...cur,
         predictions: cur.predictions?.filter(
-          (p) => p.text.toLowerCase() !== text.toLowerCase()
+          (p) => p.text.toLowerCase() !== text.toLowerCase(),
         ),
       }));
     }

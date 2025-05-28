@@ -1,6 +1,6 @@
-import { FlatFormData } from 'hooks/useForm';
-import { DocFile } from 'types/file';
-import filterEmptyDecisions from './filterEmptyDecisions';
+import type { FlatFormData } from "hooks/useForm";
+import type { DocFile } from "types/file";
+import filterEmptyDecisions from "./filterEmptyDecisions";
 
 /**
  * This method flattens the `DECISIONES` array inside the `validationObject` so we have as result an array of `FormData`
@@ -21,7 +21,7 @@ import filterEmptyDecisions from './filterEmptyDecisions';
  * @returns An array of flat formatted `FormData`
  */
 export default function flatValidation(
-  validation: DocFile['validationObject']
+  validation: DocFile["validationObject"],
 ): FlatFormData[] {
   // Set a default value for the `DECISIONES` array
   const decisiones = filterEmptyDecisions(validation.DECISIONES);
@@ -36,8 +36,8 @@ export default function flatValidation(
       ...dec,
       ...copy,
     }));
-  } else {
-    // We have no decision, just return the copy (without the `DECISIONES` array)
-    return [copy];
   }
+
+  // We have no decision, just return the copy (without the `DECISIONES` array)
+  return [copy];
 }

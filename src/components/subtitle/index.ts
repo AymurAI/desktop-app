@@ -1,35 +1,35 @@
-import { styled } from 'styles';
+import { styled } from "styles";
 
-const Subtitle = styled('p', {
+const Subtitle = styled("p", {
   variants: {
     size: {
       m: {
-        fontSize: '$subtitleMd',
-        lineHeight: '$subtitleMd',
+        fontSize: "$subtitleMd",
+        lineHeight: "$subtitleMd",
       },
       s: {
-        fontSize: '$subtitleSm',
-        lineHeight: '$subtitleSm',
+        fontSize: "$subtitleSm",
+        lineHeight: "$subtitleSm",
       },
     },
     weight: {
       default: {
-        fontWeight: '$default',
+        fontWeight: "$default",
       },
       strong: {
-        fontWeight: '$strong',
+        fontWeight: "$strong",
       },
     },
     textColor: {
       default: {
-        color: '$textDefault',
+        color: "$textDefault",
       },
     },
   },
   defaultVariants: {
-    size: 'm',
-    weight: 'default',
-    textColor: 'default',
+    size: "m",
+    weight: "default",
+    textColor: "default",
   },
 });
 

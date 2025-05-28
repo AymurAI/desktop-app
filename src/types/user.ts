@@ -5,7 +5,7 @@ export type User = {
 };
 
 export enum FunctionType {
-  DATASET = 'DATA_SET',
-  ANONYMIZER = 'ANONYMIZER',
-  NULL = '',
+  DATASET = "DATA_SET",
+  ANONYMIZER = "ANONYMIZER",
+  NULL = "",
 }

@@ -1,4 +1,4 @@
-import RadioGroup from './radio-group';
-import Radio from './radio';
+import Radio from "./radio";
+import RadioGroup from "./radio-group";
 
 export { RadioGroup, Radio };

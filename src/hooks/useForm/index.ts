@@ -1,7 +1,7 @@
-import { FormEvent, useRef, useState } from 'react';
-import { LabelDecisiones, LabelType } from 'types/aymurai';
-import nArray from 'utils/nArray';
-import { FormData, RegisterFunction, SubmitFunction } from './types';
+import { type FormEvent, useRef, useState } from "react";
+import { LabelDecisiones, type LabelType } from "types/aymurai";
+import nArray from "utils/nArray";
+import type { FormData, RegisterFunction, SubmitFunction } from "./types";
 
 /**
  * Creates a group of component references and a function to handle
@@ -68,7 +68,7 @@ export default function useForm(initialDecisiones = 1) {
     if (arr && n in arr && field in arr[n]) {
       return arr[n][field];
     }
-    return '';
+    return "";
   };
 
   return {
@@ -80,4 +80,4 @@ export default function useForm(initialDecisiones = 1) {
   };
 }
 
-export * from './types';
+export * from "./types";

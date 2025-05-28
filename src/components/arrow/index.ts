@@ -1,5 +1,5 @@
-import RightArrow from './RightArrow';
-import LeftArrow from './LeftArrow';
+import LeftArrow from "./LeftArrow";
+import RightArrow from "./RightArrow";
 
 const Arrow = {
   Right: RightArrow,

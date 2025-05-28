@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-import Arrow from './Arrow';
-import { Wrapper, Message, Tooltip as StyledTooltip } from './Tooltip.styles';
+import Arrow from "./Arrow";
+import { Message, Tooltip as StyledTooltip, Wrapper } from "./Tooltip.styles";
 
 export interface Props {
   children: ReactNode;
@@ -13,7 +13,7 @@ export default function Tooltip({ children, text }: Props) {
     <Wrapper tabIndex={-1}>
       {children}
       <StyledTooltip role="tooltip">
-        <Arrow></Arrow>
+        <Arrow />
         <Message>{text}</Message>
       </StyledTooltip>
     </Wrapper>

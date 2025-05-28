@@ -1,6 +1,6 @@
-import { FormData } from 'hooks/useForm';
+import type { FormData } from "hooks/useForm";
 
-type Decision = Exclude<FormData['DECISIONES'], undefined>[number];
+type Decision = Exclude<FormData["DECISIONES"], undefined>[number];
 
 /**
  * Checks for the contents of a `Decision`
@@ -11,7 +11,7 @@ function isDecisionEmpty(decision: Decision) {
   const copy = { ...decision };
 
   // Loop through the object, deleting undefined entries
-  for (let key in copy) {
+  for (const key in copy) {
     if (!copy[key as keyof typeof copy]) delete copy[key as keyof typeof copy];
   }
 
@@ -24,9 +24,8 @@ function isDecisionEmpty(decision: Decision) {
  * @returns A filtered array of the original `Decision[]`
  */
 export default function filterEmptyDecisions(
-  decisions: Decision[] | undefined
+  decisions: Decision[] | undefined,
 ) {
-  if (decisions) {
-    return decisions.filter((dec) => !isDecisionEmpty(dec));
-  } else return [];
+  if (decisions) return decisions.filter((dec) => !isDecisionEmpty(dec));
+  return [];
 }

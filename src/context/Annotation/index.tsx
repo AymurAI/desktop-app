@@ -1,23 +1,39 @@
-import { useFileDispatch } from 'hooks';
-import { createContext, ReactNode, useCallback, useContext } from 'react';
-import { appendPrediction, removePrediction, removePredictionsByText, updatePredictionLabel, updatePredictionsByText } from 'reducers/file/actions';
-import { AllLabels, AllLabelsWithSufix, PredictLabel } from 'types/aymurai';
-import { DocFile, Paragraph } from 'types/file';
+import { useFileDispatch } from "hooks";
+import { type ReactNode, createContext, useCallback, useContext } from "react";
 import {
+  appendPrediction,
+  removePrediction,
+  removePredictionsByText,
+  updatePredictionLabel,
+  updatePredictionsByText,
+} from "reducers/file/actions";
+import type {
+  AllLabels,
+  AllLabelsWithSufix,
+  PredictLabel,
+} from "types/aymurai";
+import type { DocFile, Paragraph } from "types/file";
+import {
+  findSearchIndexes,
   getBoundaries,
   isValidNode,
   paragraphIdFromSelection,
   selectionHasNodes,
-  findSearchIndexes,
-} from './utils';
+} from "./utils";
 
 interface AnnotationContextValues {
   isAnnotable: boolean;
   add: (prediction: PredictLabel) => void;
   remove: (prediction: PredictLabel) => void;
   removeByText: (prediction: PredictLabel) => void;
-  updateLabel: (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => void;
-  updateByText: (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => void;
+  updateLabel: (
+    prediction: PredictLabel,
+    newLabel: AllLabels | AllLabelsWithSufix,
+  ) => void;
+  updateByText: (
+    prediction: PredictLabel,
+    newLabel: AllLabels | AllLabelsWithSufix,
+  ) => void;
   addBySearch: (search: string, label: AllLabels | AllLabelsWithSufix) => void;
 }
 
@@ -26,14 +42,14 @@ interface AnnotationContextValues {
  */
 export const AnnotationContext = createContext<AnnotationContextValues>({
   isAnnotable: false,
-  add: () => { },
-  remove: () => { },
-  removeByText: () => { },
-  updateLabel: () => { },
-  updateByText: () => { },
-  addBySearch: () => { },
+  add: () => {},
+  remove: () => {},
+  removeByText: () => {},
+  updateLabel: () => {},
+  updateByText: () => {},
+  addBySearch: () => {},
 });
-AnnotationContext.displayName = 'AnnotationContext';
+AnnotationContext.displayName = "AnnotationContext";
 
 interface Props {
   children?: ReactNode;
@@ -53,35 +69,37 @@ export default function AnnotationProvider({
     (prediction: PredictLabel) => {
       dispatch(appendPrediction(file.data.name, prediction));
     },
-    [dispatch, file.data.name]
+    [dispatch, file.data.name],
   );
 
   const remove = useCallback(
     (prediction: PredictLabel) => {
       dispatch(removePrediction(file.data.name, prediction));
     },
-    [dispatch, file.data.name]
+    [dispatch, file.data.name],
   );
 
   const removeByText = useCallback(
     (prediction: PredictLabel) => {
       dispatch(removePredictionsByText(file.data.name, prediction.text));
     },
-    [dispatch, file.data.name]
+    [dispatch, file.data.name],
   );
 
   const updateLabel = useCallback(
     (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => {
       dispatch(updatePredictionLabel(file.data.name, prediction, newLabel));
     },
-    [dispatch, file.data.name]
+    [dispatch, file.data.name],
   );
 
   const updateByText = useCallback(
     (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => {
-      dispatch(updatePredictionsByText(file.data.name, prediction.text, newLabel));
+      dispatch(
+        updatePredictionsByText(file.data.name, prediction.text, newLabel),
+      );
     },
-    [dispatch, file.data.name]
+    [dispatch, file.data.name],
   );
 
   const addBySearch = useCallback(
@@ -108,7 +126,7 @@ export default function AnnotationProvider({
         });
       });
     },
-    [dispatch, file.data.name, file.paragraphs]
+    [dispatch, file.data.name, file.paragraphs],
   );
 
   const selectHandler = () => {
@@ -116,7 +134,7 @@ export default function AnnotationProvider({
     if (!searchTag) return;
 
     const selection = window.getSelection();
-    if (!selection || selection.type !== 'Range') return;
+    if (!selection || selection.type !== "Range") return;
     const text = selection.getRangeAt(0).toString();
 
     if (selectionHasNodes(selection)) return;
@@ -126,7 +144,7 @@ export default function AnnotationProvider({
     const span = node.parentElement as HTMLSpanElement;
 
     const offset = Number(
-      span.attributes.getNamedItem('data-start')?.value ?? 0
+      span.attributes.getNamedItem("data-start")?.value ?? 0,
     );
     const [start, end] = getBoundaries(selection);
 
@@ -148,14 +166,40 @@ export default function AnnotationProvider({
   };
 
   return (
-    <AnnotationContext.Provider value={{ isAnnotable, add, remove, removeByText, updateLabel, updateByText, addBySearch }}>
+    <AnnotationContext.Provider
+      value={{
+        isAnnotable,
+        add,
+        remove,
+        removeByText,
+        updateLabel,
+        updateByText,
+        addBySearch,
+      }}
+    >
       <div onClick={selectHandler}>{children}</div>
     </AnnotationContext.Provider>
   );
 }
 
 export const useAnnotation = () => {
-  const { add, remove, removeByText, isAnnotable, updateLabel, updateByText, addBySearch } = useContext(AnnotationContext);
+  const {
+    add,
+    remove,
+    removeByText,
+    isAnnotable,
+    updateLabel,
+    updateByText,
+    addBySearch,
+  } = useContext(AnnotationContext);
 
-  return { add, remove, removeByText, isAnnotable, updateLabel, updateByText, addBySearch };
+  return {
+    add,
+    remove,
+    removeByText,
+    isAnnotable,
+    updateLabel,
+    updateByText,
+    addBySearch,
+  };
 };

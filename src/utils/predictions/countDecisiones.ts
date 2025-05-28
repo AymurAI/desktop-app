@@ -1,7 +1,7 @@
-import { PredictLabel } from 'types/aymurai';
+import type { PredictLabel } from "types/aymurai";
 
 export default function countDecisiones(
-  predictions: PredictLabel[] | undefined
+  predictions: PredictLabel[] | undefined,
 ) {
   if (!predictions) return 0;
 
@@ -9,8 +9,8 @@ export default function countDecisiones(
     const subclass = label.attrs.aymurai_label_subclass ?? [];
 
     // If we found this subclass, it means we are facing a decision
-    if (subclass.some((text) => text === 'hace_lugar')) return prev + 1;
-    else return prev;
+    if (subclass.some((text) => text === "hace_lugar")) return prev + 1;
+    return prev;
   }, 0);
 
   // Default the decisions to 1 if no decision was found

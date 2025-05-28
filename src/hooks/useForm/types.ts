@@ -1,9 +1,9 @@
-import {
+import type {
   AllLabels,
   AllLabelsWithSufix,
   LabelDecisiones,
   LabelType,
-} from 'types/aymurai';
+} from "types/aymurai";
 
 /**
  * Any value the form can take
@@ -31,6 +31,6 @@ export type ComponentRef = { value: string | boolean | undefined } | null;
 
 export type RegisterFunction = (
   name: AllLabels | AllLabelsWithSufix,
-  decision?: number
+  decision?: number,
 ) => (ref: ComponentRef) => void;
 export type SubmitFunction = (data: FormData) => void;

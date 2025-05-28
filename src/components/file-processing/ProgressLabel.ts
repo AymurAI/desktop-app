@@ -1,29 +1,29 @@
-import Label from 'components/label';
-import { styled } from 'styles';
+import Label from "components/label";
+import { styled } from "styles";
 
 export const ProgressLabel = styled(Label, {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$xs',
+  display: "flex",
+  alignItems: "center",
+  gap: "$xs",
 
   variants: {
     progress: {
       processing: {
-        color: '$textDefault',
+        color: "$textDefault",
       },
       error: {
-        color: '$errorPrimary',
+        color: "$errorPrimary",
       },
       stopped: {
-        color: '$textLighter',
-        fontStyle: 'italic',
+        color: "$textLighter",
+        fontStyle: "italic",
       },
       completed: {
-        color: '$actionPressed',
+        color: "$actionPressed",
       },
     },
   },
   defaultVariants: {
-    progress: 'processing',
+    progress: "processing",
   },
 });

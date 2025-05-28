@@ -1,6 +1,6 @@
-import { CaretRight, CaretLeft, CheckCircle } from 'phosphor-react';
+import { CaretLeft, CaretRight, CheckCircle } from "phosphor-react";
 
-import { colors } from 'styles/tokens';
+import { colors } from "styles/tokens";
 
 function ArrowRight() {
   return <CaretRight size={32} weight="light" />;
@@ -10,10 +10,10 @@ function ArrowLeft() {
 }
 
 interface Props {
-  status: 'completed' | 'focus' | 'default';
+  status: "completed" | "focus" | "default";
 }
 function Check({ status }: Props) {
-  return status === 'completed' ? (
+  return status === "completed" ? (
     <CheckCircle weight="fill" color={colors.white} size={24} />
   ) : null;
 }

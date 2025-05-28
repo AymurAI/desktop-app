@@ -1,8 +1,8 @@
-import { App } from 'electron';
-import path from 'path';
-import { mainWindow } from './createWindow';
+import path from "node:path";
+import type { App } from "electron";
+import { mainWindow } from "./createWindow";
 
-import { URI_SCHEME } from './env';
+import { URI_SCHEME } from "./env";
 
 /**
  * Sets the uri scheme to handle default protocol. This allows the app to be opened
@@ -33,7 +33,7 @@ export function lockHandler(app: App) {
   if (!gotTheLock) {
     app.quit();
   } else {
-    app.on('second-instance', (_, argv) => {
+    app.on("second-instance", (_, argv) => {
       // Someone tried to run a second instance, we should focus our window.
       if (mainWindow) {
         if (mainWindow.isMinimized()) mainWindow.restore();

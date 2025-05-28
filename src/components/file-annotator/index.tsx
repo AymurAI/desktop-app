@@ -1,16 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-import { SearchBar } from './SearchBar';
+import { SearchBar } from "./SearchBar";
 
-import { SelectOption } from 'components/select';
-import AnnotationProvider from 'context/Annotation';
-import { AllLabels, AllLabelsWithSufix } from 'types/aymurai';
-import { DocFile } from 'types/file';
-import { createAnnotationsWithSearch } from './annotations';
-import * as S from './FileAnnotator.styles';
-import { generateSplits } from './generateSplits';
-import { Mark } from './Mark';
-import { Annotation } from './types';
+import type { SelectOption } from "components/select";
+import AnnotationProvider from "context/Annotation";
+import type { AllLabels, AllLabelsWithSufix } from "types/aymurai";
+import type { DocFile } from "types/file";
+import * as S from "./FileAnnotator.styles";
+import { Mark } from "./Mark";
+import { createAnnotationsWithSearch } from "./annotations";
+import { generateSplits } from "./generateSplits";
+import type { Annotation } from "./types";
 
 interface ParagraphProps {
   children: string;
@@ -26,7 +26,11 @@ const Paragraph = ({ children, annotations = [], id }: ParagraphProps) => {
         const content = children.slice(s.start, s.end);
         const key = `${s.start}-${s.end}`;
 
-        return <Mark {...{ annotation: s, key }}>{content}</Mark>;
+        return (
+          <Mark key={key} annotation={s}>
+            {content}
+          </Mark>
+        );
       })}
     </S.Paragraph>
   );
@@ -37,7 +41,7 @@ interface Props {
   isAnnotable?: boolean;
 }
 export default function FileAnnotator({ file, isAnnotable = false }: Props) {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   const [labelSearch, setLabelSearch] = useState<AllLabels | null>(null);
   const [sufixlabelSearch, setSufixLabelSearch] = useState<number | null>(0);
@@ -66,7 +70,7 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
           onLabelChange={selectChangeHandler}
           onLabelSufixChange={setSufixLabelSearch}
           isAnnotable={isAnnotable}
-        ></SearchBar>
+        />
       </S.SearchContainer>
       <S.File>
         <AnnotationProvider
@@ -81,10 +85,10 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
               file.predictions ?? [],
               search,
               p,
-              searchTag
+              searchTag,
             );
             return (
-              <Paragraph {...{ key: p.id, id: p.id, annotations }}>
+              <Paragraph key={p.id} id={p.id} annotations={annotations}>
                 {p.value}
               </Paragraph>
             );

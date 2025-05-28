@@ -1,9 +1,9 @@
-import { Stack, Tab as FileStep, TabName as FileName } from 'components';
-import { useFiles } from 'hooks';
-import { CaretButton, Carousel } from './FileStepper.styles';
-import { DocFile } from 'types/file';
-import Icons from './Icons';
-import { canMoveLeft as checkLeft, canMoveRight as checkRight } from './utils';
+import { TabName as FileName, Tab as FileStep, Stack } from "components";
+import { useFiles } from "hooks";
+import type { DocFile } from "types/file";
+import { CaretButton, Carousel } from "./FileStepper.styles";
+import Icons from "./Icons";
+import { canMoveLeft as checkLeft, canMoveRight as checkRight } from "./utils";
 
 interface Props {
   selected: number;
@@ -24,14 +24,13 @@ export default function FileStepper({
 
   const getStatus = (current: number, file: DocFile) => {
     if (file.validated) {
-      return 'completed';
-    } else {
-      return selected === current ? 'focus' : 'default';
+      return "completed";
     }
+    return selected === current ? "focus" : "default";
   };
 
   return (
-    <Stack css={{ overflow: 'scroll', p: '$s' }}>
+    <Stack css={{ overflow: "scroll", p: "$s" }}>
       {/* <- */}
       <CaretButton
         variant="tertiary"

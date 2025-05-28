@@ -1,4 +1,4 @@
-import { isDebug } from './env';
+import { isDebug } from "./env";
 
 /**
  * Enables debug features. More info on https://www.npmjs.com/package/electron-debug
@@ -6,11 +6,11 @@ import { isDebug } from './env';
 export async function debug() {
   if (isDebug) {
     try {
-      const debugTools = await import('electron-debug');
-      console.log('Imported `electron-debug`');
+      const debugTools = await import("electron-debug");
+      console.log("Imported `electron-debug`");
 
       debugTools.default();
-      console.log('Successfully added debug features');
+      console.log("Successfully added debug features");
     } catch (e) {
       console.error(e);
     }
@@ -22,8 +22,8 @@ export async function debug() {
  */
 export async function installExtensions() {
   if (isDebug) {
-    const devtools = await import('electron-devtools-installer');
-    console.log('Imported `electron-debug`');
+    const devtools = await import("electron-devtools-installer");
+    console.log("Imported `electron-debug`");
 
     const install = devtools.default;
 
@@ -36,7 +36,7 @@ export async function installExtensions() {
         const name = await install(ext);
         console.log(`Added Extension:  ${name}`);
       } catch (e) {
-        console.error('An error occurred while installing extension: ', e);
+        console.error("An error occurred while installing extension: ", e);
       }
     });
   }

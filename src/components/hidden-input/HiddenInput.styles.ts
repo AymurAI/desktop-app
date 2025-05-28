@@ -1,8 +1,8 @@
-import { styled } from 'styles';
+import { styled } from "styles";
 
-const Input = styled('input', {
+const Input = styled("input", {
   opacity: 0,
-  pointerEvents: 'none',
+  pointerEvents: "none",
 });
 
 export default Input;

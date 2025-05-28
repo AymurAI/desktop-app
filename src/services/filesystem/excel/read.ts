@@ -1,7 +1,7 @@
-import { Workbook } from 'exceljs';
+import { Workbook } from "exceljs";
 
-import logger from 'utils/logger';
-import filesystemAPI from '../utils';
+import logger from "utils/logger";
+import filesystemAPI from "../utils";
 
 /**
  * Read the `.xlsx` and loads its data into a Workbook instance
@@ -16,7 +16,7 @@ export default async function read() {
 
     return loaded;
   } catch (e) {
-    logger.error('An error ocurred while trying to read the XLSX file: ', e);
+    logger.error("An error ocurred while trying to read the XLSX file: ", e);
     return null;
   }
 }

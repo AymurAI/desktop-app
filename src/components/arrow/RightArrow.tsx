@@ -1,7 +1,7 @@
 export default function RightArrow() {
   return (
     <svg
-      style={{ alignSelf: 'center' }}
+      style={{ alignSelf: "center" }}
       width={37}
       height={16}
       fill="none"

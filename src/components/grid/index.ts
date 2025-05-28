@@ -1,4 +1,4 @@
-import { styled } from 'styles';
+import { styled } from "styles";
 
 function columnRepeat(cols: number) {
   return {
@@ -12,8 +12,8 @@ function rowRepeat(rows: number) {
   };
 }
 
-const Grid = styled('div', {
-  display: 'grid',
+const Grid = styled("div", {
+  display: "grid",
 
   variants: {
     columns: {
@@ -50,35 +50,35 @@ const Grid = styled('div', {
 
     spacing: {
       none: { gap: 0 },
-      xxs: { gap: '$xxs' },
-      xs: { gap: '$xs' },
-      s: { gap: '$s' },
-      m: { gap: '$m' },
-      l: { gap: '$l' },
-      xl: { gap: '$xl' },
+      xxs: { gap: "$xxs" },
+      xs: { gap: "$xs" },
+      s: { gap: "$s" },
+      m: { gap: "$m" },
+      l: { gap: "$l" },
+      xl: { gap: "$xl" },
     },
 
     align: {
-      start: { alignItems: 'start' },
-      end: { alignItems: 'end' },
-      center: { alignItems: 'center' },
-      stretch: { alignItems: 'stretch' },
-      baseline: { alignItems: 'baseline' },
+      start: { alignItems: "start" },
+      end: { alignItems: "end" },
+      center: { alignItems: "center" },
+      stretch: { alignItems: "stretch" },
+      baseline: { alignItems: "baseline" },
     },
 
     justify: {
-      start: { justifyItems: 'start' },
-      end: { justifyItems: 'end' },
-      center: { justifyItems: 'center' },
-      stretch: { justifyItems: 'stretch' },
+      start: { justifyItems: "start" },
+      end: { justifyItems: "end" },
+      center: { justifyItems: "center" },
+      stretch: { justifyItems: "stretch" },
     },
   },
   defaultVariants: {
-    columns: 'none',
-    rows: 'none',
-    spacing: 's',
-    align: 'start',
-    justify: 'start',
+    columns: "none",
+    rows: "none",
+    spacing: "s",
+    align: "start",
+    justify: "start",
   },
 });
 

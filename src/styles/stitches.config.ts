@@ -1,6 +1,6 @@
-import { createStitches, CSS as CSSProp } from '@stitches/react';
+import { type CSS as CSSProp, createStitches } from "@stitches/react";
 
-import * as tokens from './tokens';
+import * as tokens from "./tokens";
 
 export const defaultTheme = createStitches({
   theme: {
@@ -108,10 +108,10 @@ export const defaultTheme = createStitches({
     }),
   },
   media: {
-    sm: '(min-width: 640px)',
-    md: '(min-width: 768px)',
-    lg: '(min-width: 1024px)',
-    xl: '(min-width: 1280px)',
+    sm: "(min-width: 640px)",
+    md: "(min-width: 768px)",
+    lg: "(min-width: 1024px)",
+    xl: "(min-width: 1280px)",
   },
 });
 

@@ -1,12 +1,12 @@
 import {
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
   createContext,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
   useState,
-} from 'react';
+} from "react";
 
-import { User } from 'types/user';
+import type { User } from "types/user";
 
 type AuthContextType = {
   user: User | null;
@@ -19,7 +19,7 @@ export const AuthenticationContext = createContext<AuthContextType>({
   user: null,
   setUser: () => {},
 });
-AuthenticationContext.displayName = 'AuthenticationContext';
+AuthenticationContext.displayName = "AuthenticationContext";
 
 interface Props {
   children?: ReactNode;

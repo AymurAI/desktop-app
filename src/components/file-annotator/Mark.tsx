@@ -1,12 +1,16 @@
-import { FC, HTMLAttributes, useState, useRef } from 'react';
-import { useAnnotation } from 'context/Annotation';
-import * as S from './FileAnnotator.styles';
-import { Annotation, LabelAnnotation, Metadata } from './types';
-import Dialog, { DialogMessage, DialogButtons } from '../dialog';
-import Button from '../button';
-import Input from 'components/input';
-import Select, { SelectOption } from 'components/select';
-import { anonymizerLabels, AllLabels, AllLabelsWithSufix } from 'types/aymurai';
+import Input from "components/input";
+import Select, { type SelectOption } from "components/select";
+import { useAnnotation } from "context/Annotation";
+import { type FC, type HTMLAttributes, useRef, useState } from "react";
+import {
+  type AllLabels,
+  type AllLabelsWithSufix,
+  anonymizerLabels,
+} from "types/aymurai";
+import Button from "../button";
+import Dialog, { DialogMessage, DialogButtons } from "../dialog";
+import * as S from "./FileAnnotator.styles";
+import type { Annotation, LabelAnnotation, Metadata } from "./types";
 
 interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
   annotation: Annotation;
@@ -16,7 +20,7 @@ interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
 type DialogState = {
   open: boolean;
   title?: string;
-  action: 'replace' | 'replaceAll' | 'remove' | 'removeAll';
+  action: "replace" | "replaceAll" | "remove" | "removeAll";
   suffix: number | null;
   selectedOption: SelectOption | undefined;
 };
@@ -33,8 +37,8 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   } = useAnnotation();
   const [dialogState, setDialogState] = useState<DialogState>({
     open: false,
-    title: 'Reemplazar',
-    action: 'replace',
+    title: "Reemplazar",
+    action: "replace",
     suffix: null,
     selectedOption: undefined,
   });
@@ -47,14 +51,14 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   };
 
   let metadata: Metadata = {
-    'data-start': annotation.start,
-    'data-end': annotation.end,
+    "data-start": annotation.start,
+    "data-end": annotation.end,
   };
 
-  if (annotation.type !== 'text') {
+  if (annotation.type !== "text") {
     metadata = {
       ...metadata,
-      'data-tag': annotation.tag,
+      "data-tag": annotation.tag,
     };
   }
 
@@ -77,15 +81,15 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   };
 
   const handleAnnotationOperation = (
-    operation: keyof typeof annotationOperations
+    operation: keyof typeof annotationOperations,
   ) => {
     const annotationData = createAnnotationData(annotation as LabelAnnotation);
     if (!annotationData) return;
 
-    if (operation === 'remove' || operation === 'removeByText') {
+    if (operation === "remove" || operation === "removeByText") {
       setDialogState({
         open: true,
-        action: operation === 'remove' ? 'remove' : 'removeAll',
+        action: operation === "remove" ? "remove" : "removeAll",
         suffix: null,
         selectedOption: undefined,
       });
@@ -110,15 +114,15 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   const applyChanges = () => {
     if (!dialogState.selectedOption) {
       if (
-        dialogState.action === 'remove' ||
-        dialogState.action === 'removeAll'
+        dialogState.action === "remove" ||
+        dialogState.action === "removeAll"
       ) {
         const annotationData = createAnnotationData(
-          annotation as LabelAnnotation
+          annotation as LabelAnnotation,
         );
         if (!annotationData) return;
 
-        if (dialogState.action === 'remove') {
+        if (dialogState.action === "remove") {
           remove(annotationData);
         } else {
           removeByText(annotationData);
@@ -126,7 +130,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
       }
     } else {
       const annotationData = createAnnotationData(
-        annotation as LabelAnnotation
+        annotation as LabelAnnotation,
       );
       if (!annotationData) return;
 
@@ -134,9 +138,9 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
         ? (`${dialogState.selectedOption.id}_${dialogState.suffix}` as AllLabelsWithSufix)
         : (dialogState.selectedOption.id as AllLabels | AllLabelsWithSufix);
 
-      if (dialogState.action === 'replace') {
+      if (dialogState.action === "replace") {
         updateLabel(annotationData, labelWithSuffix);
-      } else if (dialogState.action === 'replaceAll') {
+      } else if (dialogState.action === "replaceAll") {
         updateByText(annotationData, labelWithSuffix);
       }
     }
@@ -157,8 +161,8 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
   };
 
   switch (annotation.type) {
-    case 'tag':
-    case 'search':
+    case "tag":
+    case "search":
       return (
         <>
           <S.Mark
@@ -170,21 +174,21 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
           >
             <span>{children}</span>
 
-            {annotation.type === 'tag' && <strong>{annotation.tag}</strong>}
+            {annotation.type === "tag" && <strong>{annotation.tag}</strong>}
 
-            {isAnnotable && annotation.type === 'search' && annotation.tag ? (
+            {isAnnotable && annotation.type === "search" && annotation.tag ? (
               <S.ButtonContainer>
                 <S.Button
                   type="button"
-                  css={{ variant: 'searchSingle', color: 'white' }}
-                  onClick={() => handleAnnotationOperation('add')}
+                  css={{ variant: "searchSingle", color: "white" }}
+                  onClick={() => handleAnnotationOperation("add")}
                   title="Agregar esta ocurrencia"
                 >
                   +¹
                 </S.Button>
                 <S.Button
                   type="button"
-                  css={{ variant: 'search', color: 'white' }}
+                  css={{ variant: "search", color: "white" }}
                   onClick={() => handleAddBySearch(annotation)}
                   title="Agregar todas las ocurrencias"
                 >
@@ -195,12 +199,12 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
               <S.ButtonContainer>
                 <S.Button
                   type="button"
-                  css={{ variant: 'replace' }}
+                  css={{ variant: "replace" }}
                   onClick={() => {
                     setDialogState({
                       open: true,
-                      title: 'Reemplazar esta ocurrencia',
-                      action: 'replace',
+                      title: "Reemplazar esta ocurrencia",
+                      action: "replace",
                       suffix: null,
                       selectedOption: undefined,
                     });
@@ -211,12 +215,12 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                 </S.Button>
                 <S.Button
                   type="button"
-                  css={{ variant: 'replaceAll' }}
+                  css={{ variant: "replaceAll" }}
                   onClick={() => {
                     setDialogState({
                       open: true,
-                      title: 'Reemplazar todas las ocurrencias',
-                      action: 'replaceAll',
+                      title: "Reemplazar todas las ocurrencias",
+                      action: "replaceAll",
                       suffix: null,
                       selectedOption: undefined,
                     });
@@ -227,16 +231,16 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                 </S.Button>
                 <S.Button
                   type="button"
-                  css={{ variant: 'tag' }}
-                  onClick={() => handleAnnotationOperation('remove')}
+                  css={{ variant: "tag" }}
+                  onClick={() => handleAnnotationOperation("remove")}
                   title="Eliminar esta ocurrencia"
                 >
                   <img src="button-icons/delete-one.svg" alt="Delete One" />
                 </S.Button>
                 <S.Button
                   type="button"
-                  css={{ variant: 'tagAll' }}
-                  onClick={() => handleAnnotationOperation('removeByText')}
+                  css={{ variant: "tagAll" }}
+                  onClick={() => handleAnnotationOperation("removeByText")}
                   title="Eliminar todas las ocurrencias"
                 >
                   <img src="button-icons/delete-all.svg" alt="Delete All" />
@@ -256,14 +260,14 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
               }))
             }
           >
-            {dialogState.action === 'remove' ||
-            dialogState.action === 'removeAll' ? (
+            {dialogState.action === "remove" ||
+            dialogState.action === "removeAll" ? (
               <>
                 <DialogMessage>
-                  ¿Deseas{' '}
-                  {dialogState.action === 'remove'
-                    ? 'eliminar la etiqueta'
-                    : 'eliminar todas las etiquetas'}{' '}
+                  ¿Deseas{" "}
+                  {dialogState.action === "remove"
+                    ? "eliminar la etiqueta"
+                    : "eliminar todas las etiquetas"}{" "}
                   <b>{children}</b>?
                 </DialogMessage>
                 <DialogButtons>
@@ -280,10 +284,10 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
             ) : (
               <>
                 <DialogMessage>
-                  Por favor, introduce la nueva etiqueta para reemplazar{' '}
-                  {dialogState.action === 'replace'
-                    ? 'esta ocurrencia'
-                    : 'todas las ocurrencias'}{' '}
+                  Por favor, introduce la nueva etiqueta para reemplazar{" "}
+                  {dialogState.action === "replace"
+                    ? "esta ocurrencia"
+                    : "todas las ocurrencias"}{" "}
                   de <b>{children}</b>.
                 </DialogMessage>
                 <DialogButtons>
@@ -313,7 +317,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
           </Dialog>
         </>
       );
-    case 'text':
+    case "text":
     default:
       return (
         <span {...props} {...metadata}>

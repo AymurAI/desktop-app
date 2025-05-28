@@ -1,17 +1,17 @@
-import { SelectOption } from 'components/select';
+import type { SelectOption } from "components/select";
 import {
-  AllLabels,
-  AllLabelsWithSufix,
+  type AllLabels,
+  type AllLabelsWithSufix,
   LabelDecisiones,
-  PredictLabel,
-} from 'types/aymurai';
-import {
+  type PredictLabel,
+} from "types/aymurai";
+import type {
   BooleanSuggestion,
   InputSuggestion,
   Prediction,
   PropertyCallback,
   SelectSuggestion,
-} from './types';
+} from "./types";
 
 export default class Suggester {
   constructor(predictions: PredictLabel[] | undefined) {
@@ -31,8 +31,8 @@ export default class Suggester {
    * @param propertyCallback This function is used to define which property is added when reducing
    * @returns A predictions array transformed into { [label]: T }
    */
-  private reducePredictions<T extends any>(
-    propertyCallback: PropertyCallback<T>
+  private reducePredictions<T>(
+    propertyCallback: PropertyCallback<T>,
   ): Prediction<T> {
     const reduced = this.predictions.reduce(
       (prev, pred) => ({
@@ -40,7 +40,7 @@ export default class Suggester {
         // Append the next value
         [pred.attrs.aymurai_label]: propertyCallback(pred),
       }),
-      {}
+      {},
     );
 
     return reduced;
@@ -97,17 +97,16 @@ export default class Suggester {
     }
   }]
  */
-  violencia_genero(type: 'si' | 'no'): BooleanSuggestion {
+  violencia_genero(type: "si" | "no"): BooleanSuggestion {
     const reduced = this.reducePredictions((pred) => pred.text);
 
     const value = reduced[LabelDecisiones.VIOLENCIA_DE_GENERO];
 
     if (value !== undefined) {
       // Return true or false
-      return {
-        checked: type === 'si' ? !!value : !value,
-      };
-    } else return { checked: undefined };
+      return { checked: type === "si" ? !!value : !value };
+    }
+    return { checked: undefined };
   }
 
   /**
@@ -132,18 +131,19 @@ export default class Suggester {
 
       if (label === LabelDecisiones.VIOLENCIA_DE_GENERO && subclass) {
         return [...prev, ...subclass];
-      } else return prev;
+      }
+      return prev;
     }, []);
 
     const values: Partial<Record<LabelDecisiones, string>> = {
-      [LabelDecisiones.V_AMB]: 'ambiental',
-      [LabelDecisiones.V_ECON]: 'economica',
-      [LabelDecisiones.V_SIMB]: 'simbolica',
-      [LabelDecisiones.V_SEX]: 'sexual',
-      [LabelDecisiones.V_PSIC]: 'psicologica',
-      [LabelDecisiones.V_POLIT]: 'politica',
-      [LabelDecisiones.V_FISICA]: 'fisica',
-      [LabelDecisiones.V_SOC]: 'social',
+      [LabelDecisiones.V_AMB]: "ambiental",
+      [LabelDecisiones.V_ECON]: "economica",
+      [LabelDecisiones.V_SIMB]: "simbolica",
+      [LabelDecisiones.V_SEX]: "sexual",
+      [LabelDecisiones.V_PSIC]: "psicologica",
+      [LabelDecisiones.V_POLIT]: "politica",
+      [LabelDecisiones.V_FISICA]: "fisica",
+      [LabelDecisiones.V_SOC]: "social",
     };
 
     // Type of VIOLENCIA_TIPO
@@ -165,16 +165,16 @@ export default class Suggester {
         priorityOrder: [suggestion.id],
         suggestion,
       };
-    } else {
-      return {
-        suggestion: undefined,
-        priorityOrder: undefined,
-      };
     }
+
+    return {
+      suggestion: undefined,
+      priorityOrder: undefined,
+    };
   }
   codigo_o_ley(): SelectSuggestion {
     const reduced = this.reducePredictions(
-      (pred) => pred.attrs.aymurai_label_subclass
+      (pred) => pred.attrs.aymurai_label_subclass,
     );
 
     const suggestion = reduced[LabelDecisiones.ART_INFRINGIDO];
@@ -184,16 +184,17 @@ export default class Suggester {
         suggestion: { id: suggestion[0] },
         priorityOrder: [suggestion[0]],
       };
-    } else
-      return {
-        suggestion: undefined,
-        priorityOrder: undefined,
-      };
+    }
+
+    return {
+      suggestion: undefined,
+      priorityOrder: undefined,
+    };
   }
 
   decision(): SelectSuggestion {
     const reduced = this.reducePredictions(
-      ({ attrs }) => attrs.aymurai_label_subclass ?? []
+      ({ attrs }) => attrs.aymurai_label_subclass ?? [],
     );
 
     const suggestion = reduced[LabelDecisiones.DECISION];

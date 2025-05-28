@@ -1,4 +1,4 @@
-import { DocFile } from 'types/file';
+import type { DocFile } from "types/file";
 
 /**
  * Looks in the file state if an specific file is already loaded
