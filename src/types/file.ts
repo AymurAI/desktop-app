@@ -4,6 +4,7 @@ import type { PredictLabel } from "./aymurai";
 export interface Paragraph {
   value: string;
   id: string;
+  document_id: string;
 }
 
 /**

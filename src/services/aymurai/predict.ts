@@ -29,7 +29,7 @@ export default async function predict(
         baseURL: serverUrl ? serverUrl : AYMURAI_API_URL,
       })
       .post<PredictResponse>(
-        `/${route}/predict`,
+        `/${route}/predict/${paragraph.document_id}`,
         {
           text: paragraph.value,
         },
