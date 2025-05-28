@@ -9,12 +9,12 @@ import { DEV_PORT, isDebug } from "../env";
  * @returns An HTML path to the file, wether on the file system or the web
  */
 export default function resolveHTMLPath(fileName = "index.html") {
-	if (isDebug) {
-		const url = new URL(`http://localhost:${DEV_PORT}`);
+  if (isDebug) {
+    const url = new URL(`http://localhost:${DEV_PORT}`);
 
-		return url.href;
-	}
+    return url.href;
+  }
 
-	const pathToFile = path.resolve(__dirname, "../app", fileName);
-	return `file://${pathToFile}`;
+  const pathToFile = path.resolve(__dirname, "../app", fileName);
+  return `file://${pathToFile}`;
 }

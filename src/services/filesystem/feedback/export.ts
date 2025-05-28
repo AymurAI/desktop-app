@@ -7,11 +7,11 @@ import { joinValidation } from "./utils";
  * @param file File to be exported
  */
 export default async function exportFeedback(files: DocFile[]) {
-	for (const file of files) {
-		const { name } = file.data;
+  for (const file of files) {
+    const { name } = file.data;
 
-		const feedback = joinValidation(file);
+    const feedback = joinValidation(file);
 
-		await filesystemAPI().feedback.export(name, feedback);
-	}
+    await filesystemAPI().feedback.export(name, feedback);
+  }
 }

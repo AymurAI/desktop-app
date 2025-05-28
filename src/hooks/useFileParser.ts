@@ -12,24 +12,24 @@ import { useFileDispatch } from "./useFiles";
  * @returns List of paragraphs with their metadata
  */
 export function useFileParser(file: DocFile, serverUrl: string) {
-	const dispatch = useFileDispatch();
+  const dispatch = useFileDispatch();
 
-	useEffect(() => {
-		let loaded = false;
-		const fetchParagraphs = async () => {
-			// Prevents the function from running multiple times or if the paragraphs've already been loaded
-			if (!loaded && !file.paragraphs) {
-				const response = await getParagraphs(file.data, serverUrl);
-				dispatch(addParagraphs(response, file.data.name));
-			}
-		};
+  useEffect(() => {
+    let loaded = false;
+    const fetchParagraphs = async () => {
+      // Prevents the function from running multiple times or if the paragraphs've already been loaded
+      if (!loaded && !file.paragraphs) {
+        const response = await getParagraphs(file.data, serverUrl);
+        dispatch(addParagraphs(response, file.data.name));
+      }
+    };
 
-		fetchParagraphs();
+    fetchParagraphs();
 
-		return () => {
-			loaded = true;
-		};
-	}, [file]);
+    return () => {
+      loaded = true;
+    };
+  }, [file]);
 
-	return file.paragraphs;
+  return file.paragraphs;
 }

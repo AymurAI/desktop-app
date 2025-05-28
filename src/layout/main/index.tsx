@@ -11,26 +11,26 @@ import type { Props } from "./Main.types";
 export { Section, Footer };
 
 export default withAuthProtection(function Main({ children, ...props }: Props) {
-	const user = useUser();
+  const user = useUser();
 
-	return (
-		<Layout {...props}>
-			<Header>
-				{/* Title & Profile picture & Logout */}
-				<Title weight="strong" css={{ fontSize: 24 }}>
-					AymurAI{" "}
-					{user?.function === FunctionType.ANONYMIZER
-						? "Anonimizador"
-						: "Set de datos"}
-				</Title>
-				<Stepper />
-				<ProfileInfo />
-			</Header>
+  return (
+    <Layout {...props}>
+      <Header>
+        {/* Title & Profile picture & Logout */}
+        <Title weight="strong" css={{ fontSize: 24 }}>
+          AymurAI{" "}
+          {user?.function === FunctionType.ANONYMIZER
+            ? "Anonimizador"
+            : "Set de datos"}
+        </Title>
+        <Stepper />
+        <ProfileInfo />
+      </Header>
 
-			<FileProvider>
-				{/* Content as Outlet, managed by React-Router */}
-				<Outlet />
-			</FileProvider>
-		</Layout>
-	);
+      <FileProvider>
+        {/* Content as Outlet, managed by React-Router */}
+        <Outlet />
+      </FileProvider>
+    </Layout>
+  );
 });

@@ -6,10 +6,10 @@
  */
 
 export default function nArray<T = undefined>(n: number, value: T) {
-	const array = Array.from(Array(n).keys()).map(() => {
-		if (typeof value === "object") return Object.create(value);
-		return value;
-	});
+  const array = Array.from(Array(n).keys()).map(() => {
+    if (typeof value === "object") return Object.create(value);
+    return value;
+  });
 
-	return array;
+  return array;
 }

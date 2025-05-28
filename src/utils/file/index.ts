@@ -9,13 +9,13 @@ import isValidationCompleted from "./isValidationCompleted";
 import submitValidations from "./submitValidations";
 
 export {
-	excelStructure,
-	flatValidation,
-	getByName,
-	getExtension,
-	isAllowed,
-	isAlreadyLoaded,
-	isFileValidated,
-	isValidationCompleted,
-	submitValidations,
+  excelStructure,
+  flatValidation,
+  getByName,
+  getExtension,
+  isAllowed,
+  isAlreadyLoaded,
+  isFileValidated,
+  isValidationCompleted,
+  submitValidations,
 };

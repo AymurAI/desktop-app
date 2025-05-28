@@ -5,8 +5,8 @@ import type { Paragraph } from "types/file";
 import { AYMURAI_API_URL } from "utils/config";
 
 interface PredictResponse {
-	document: string;
-	labels: Omit<PredictLabel, "paragraphId">[];
+  document: string;
+  labels: Omit<PredictLabel, "paragraphId">[];
 }
 
 /**
@@ -17,45 +17,45 @@ interface PredictResponse {
  * @returns Una lista de `PredictLabel` con las predicciones
  */
 export default async function predict(
-	paragraph: Paragraph,
-	controller: AbortController,
-	// biome-ignore lint/style/useDefaultParameterLast: Not imprtant right now
-	route: Workflows = "datapublic",
-	serverUrl: string,
+  paragraph: Paragraph,
+  controller: AbortController,
+  // biome-ignore lint/style/useDefaultParameterLast: Not imprtant right now
+  route: Workflows = "datapublic",
+  serverUrl: string,
 ): Promise<PredictLabel[]> {
-	try {
-		const response = await axios
-			.create({
-				baseURL: serverUrl ? serverUrl : AYMURAI_API_URL,
-			})
-			.post<PredictResponse>(
-				`/${route}/predict`,
-				{
-					text: paragraph.value,
-				},
-				{
-					signal: controller.signal,
-				},
-			);
+  try {
+    const response = await axios
+      .create({
+        baseURL: serverUrl ? serverUrl : AYMURAI_API_URL,
+      })
+      .post<PredictResponse>(
+        `/${route}/predict`,
+        {
+          text: paragraph.value,
+        },
+        {
+          signal: controller.signal,
+        },
+      );
 
-		const data = response.data.labels.map((l) => ({
-			...l,
-			start_char: l.attrs.aymurai_alt_start_char || l.start_char,
-			end_char: l.attrs.aymurai_alt_end_char || l.end_char,
-			text: l.attrs.aymurai_alt_text || l.text,
-			paragraphId: paragraph.id,
-		}));
+    const data = response.data.labels.map((l) => ({
+      ...l,
+      start_char: l.attrs.aymurai_alt_start_char || l.start_char,
+      end_char: l.attrs.aymurai_alt_end_char || l.end_char,
+      text: l.attrs.aymurai_alt_text || l.text,
+      paragraphId: paragraph.id,
+    }));
 
-		return data;
-	} catch (e) {
-		// If the POST is cancelled by the controller, just return an empty prediction
-		if (e instanceof CanceledError) {
-			return [];
-			// Otherwise, throw again the same error
-		}
+    return data;
+  } catch (e) {
+    // If the POST is cancelled by the controller, just return an empty prediction
+    if (e instanceof CanceledError) {
+      return [];
+      // Otherwise, throw again the same error
+    }
 
-		console.error(e);
-		const { message } = e as Error;
-		throw new Error(message);
-	}
+    console.error(e);
+    const { message } = e as Error;
+    throw new Error(message);
+  }
 }

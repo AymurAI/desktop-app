@@ -1,126 +1,126 @@
 import { styled } from "styles";
 
 const Button = styled("button", {
-	display: "flex",
-	flexDirection: "row",
-	gap: "$xxs",
-	justifyContent: "center",
-	alignSelf: "stretch",
-	alignItems: "center",
+  display: "flex",
+  flexDirection: "row",
+  gap: "$xxs",
+  justifyContent: "center",
+  alignSelf: "stretch",
+  alignItems: "center",
 
-	transitionProperty: "background-color, color, box-shadow",
-	transitionDuration: "0.3s",
-	transitionTimingFunction: "ease",
+  transitionProperty: "background-color, color, box-shadow",
+  transitionDuration: "0.3s",
+  transitionTimingFunction: "ease",
 
-	borderRadius: "$xs",
-	b: "none",
+  borderRadius: "$xs",
+  b: "none",
 
-	fontWeight: 600,
-	fontSize: "$ctaMd",
-	lineHeight: "$ctaMd",
+  fontWeight: 600,
+  fontSize: "$ctaMd",
+  lineHeight: "$ctaMd",
 
-	cursor: "pointer",
-	"&:disabled": {
-		cursor: "not-allowed",
-	},
+  cursor: "pointer",
+  "&:disabled": {
+    cursor: "not-allowed",
+  },
 
-	variants: {
-		variant: {
-			primary: {
-				color: "$textOnButtonDefault",
-				bg: "$actionDefault",
+  variants: {
+    variant: {
+      primary: {
+        color: "$textOnButtonDefault",
+        bg: "$actionDefault",
 
-				"&:hover": {
-					color: "$textOnButtonAlternative",
-					bg: "$actionHover",
-				},
+        "&:hover": {
+          color: "$textOnButtonAlternative",
+          bg: "$actionHover",
+        },
 
-				"&:active": {
-					color: "$textOnButtonAlternative",
-					bg: "$actionPressed",
-				},
+        "&:active": {
+          color: "$textOnButtonAlternative",
+          bg: "$actionPressed",
+        },
 
-				"&:focus": {
-					boxShadow: "0px 0px 10px rgba(17, 0, 65, 0.2)",
-					outline: "2px solid $borderPrimaryAlt",
-				},
+        "&:focus": {
+          boxShadow: "0px 0px 10px rgba(17, 0, 65, 0.2)",
+          outline: "2px solid $borderPrimaryAlt",
+        },
 
-				"&:disabled": {
-					color: "$textOnButtonDefault",
-					bg: "$actionDisabled",
-				},
-			},
-			secondary: {
-				color: "$textOnButtonDefault",
-				bg: "$bgSecondary",
+        "&:disabled": {
+          color: "$textOnButtonDefault",
+          bg: "$actionDisabled",
+        },
+      },
+      secondary: {
+        color: "$textOnButtonDefault",
+        bg: "$bgSecondary",
 
-				borderWidth: "$sizes$xxs",
-				borderStyle: "solid",
-				borderColor: "$actionDefaultAlt",
+        borderWidth: "$sizes$xxs",
+        borderStyle: "solid",
+        borderColor: "$actionDefaultAlt",
 
-				"&:hover": {
-					color: "$textOnButtonDefault",
-					bg: "$white",
-					borderColor: "$actionHover",
-				},
+        "&:hover": {
+          color: "$textOnButtonDefault",
+          bg: "$white",
+          borderColor: "$actionHover",
+        },
 
-				"&:active": {
-					color: "$textOnButtonAlternative",
-					bg: "$actionPressed",
-					borderColor: "$actionPressed",
-				},
+        "&:active": {
+          color: "$textOnButtonAlternative",
+          bg: "$actionPressed",
+          borderColor: "$actionPressed",
+        },
 
-				"&:focus": {
-					boxShadow: "0px 0px 10px rgba(17, 0, 65, 0.2)",
-					outline: "2px solid $borderPrimaryAlt",
-					bg: "$bgSecondary",
-				},
+        "&:focus": {
+          boxShadow: "0px 0px 10px rgba(17, 0, 65, 0.2)",
+          outline: "2px solid $borderPrimaryAlt",
+          bg: "$bgSecondary",
+        },
 
-				"&:disabled": {
-					color: "$textOnButtonDisabled",
-					bg: "$bgSecondary",
-					borderColor: "$actionDisabled",
-				},
-			},
-			tertiary: {
-				color: "$textOnButtonDefault",
-				bg: "$white",
+        "&:disabled": {
+          color: "$textOnButtonDisabled",
+          bg: "$bgSecondary",
+          borderColor: "$actionDisabled",
+        },
+      },
+      tertiary: {
+        color: "$textOnButtonDefault",
+        bg: "$white",
 
-				// Doesnt have a :hover state
+        // Doesnt have a :hover state
 
-				"&:active": {
-					color: "$actionPressed",
-				},
+        "&:active": {
+          color: "$actionPressed",
+        },
 
-				"&:focus": {
-					outline: "2px solid $primaryAlt",
-				},
+        "&:focus": {
+          outline: "2px solid $primaryAlt",
+        },
 
-				// Doesnt have a :disabled state
-			},
-			none: {
-				p: 0,
-				bg: "inherit",
-			},
-		},
-		size: {
-			s: { p: "$s $m" },
-			m: { p: "$m" },
-			l: { py: "$m", width: 300 },
-		},
-		checked: {
-			true: {
-				bg: "$actionPressed",
-				color: "$textOnButtonAlternative",
-			},
-			false: {},
-		},
-	},
-	defaultVariants: {
-		size: "m",
-		variant: "primary",
-		checked: false,
-	},
+        // Doesnt have a :disabled state
+      },
+      none: {
+        p: 0,
+        bg: "inherit",
+      },
+    },
+    size: {
+      s: { p: "$s $m" },
+      m: { p: "$m" },
+      l: { py: "$m", width: 300 },
+    },
+    checked: {
+      true: {
+        bg: "$actionPressed",
+        color: "$textOnButtonAlternative",
+      },
+      false: {},
+    },
+  },
+  defaultVariants: {
+    size: "m",
+    variant: "primary",
+    checked: false,
+  },
 });
 
 export default Button;

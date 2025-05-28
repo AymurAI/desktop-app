@@ -8,14 +8,14 @@ type Decision = Exclude<FormData["DECISIONES"], undefined>[number];
  * @returns `true` if the decision is empty, `false otherwise`
  */
 function isDecisionEmpty(decision: Decision) {
-	const copy = { ...decision };
+  const copy = { ...decision };
 
-	// Loop through the object, deleting undefined entries
-	for (const key in copy) {
-		if (!copy[key as keyof typeof copy]) delete copy[key as keyof typeof copy];
-	}
+  // Loop through the object, deleting undefined entries
+  for (const key in copy) {
+    if (!copy[key as keyof typeof copy]) delete copy[key as keyof typeof copy];
+  }
 
-	return !Object.keys(copy).length;
+  return !Object.keys(copy).length;
 }
 
 /**
@@ -24,8 +24,8 @@ function isDecisionEmpty(decision: Decision) {
  * @returns A filtered array of the original `Decision[]`
  */
 export default function filterEmptyDecisions(
-	decisions: Decision[] | undefined,
+  decisions: Decision[] | undefined,
 ) {
-	if (decisions) return decisions.filter((dec) => !isDecisionEmpty(dec));
-	return [];
+  if (decisions) return decisions.filter((dec) => !isDecisionEmpty(dec));
+  return [];
 }

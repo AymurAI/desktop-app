@@ -12,7 +12,7 @@ const PATH = `${EXPORTS_FOLDER}/${FILENAME}`;
  * @returns The `Promise<Buffer>` read from the file
  */
 function read() {
-	return fs.readFile(PATH).then(({ buffer }) => buffer);
+  return fs.readFile(PATH).then(({ buffer }) => buffer);
 }
 
 /**
@@ -20,12 +20,12 @@ function read() {
  * @param buffer Data buffer to write. This is the .xlsx file
  */
 async function write(arrBuffer: ArrayBuffer) {
-	// Create directory if necessary
-	if (!(await filesystem.exists(EXPORTS_FOLDER))) {
-		await fs.mkdir(EXPORTS_FOLDER, { recursive: true });
-	}
+  // Create directory if necessary
+  if (!(await filesystem.exists(EXPORTS_FOLDER))) {
+    await fs.mkdir(EXPORTS_FOLDER, { recursive: true });
+  }
 
-	await fs.writeFile(PATH, Buffer.from(arrBuffer));
+  await fs.writeFile(PATH, Buffer.from(arrBuffer));
 }
 
 /**
@@ -33,12 +33,12 @@ async function write(arrBuffer: ArrayBuffer) {
  * @returns Message if the opening was succesfull or not
  */
 function open() {
-	return shell.openPath(PATH);
+  return shell.openPath(PATH);
 }
 
 const excel = {
-	read,
-	write,
-	open,
+  read,
+  write,
+  open,
 };
 export default excel;

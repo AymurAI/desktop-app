@@ -7,5 +7,5 @@ import getExtension from "./getExtension";
  * @returns `true` if the file is allowed, `false` otherwise
  */
 export default function isAllowed(file: File) {
-	return !!WHITELISTED_EXTENSIONS.find((ext) => ext === getExtension(file));
+  return !!WHITELISTED_EXTENSIONS.find((ext) => ext === getExtension(file));
 }

@@ -8,15 +8,15 @@ import filesystemAPI from "../utils";
  * @returns A ExcelJS `Workbook` instance if the `.xlsx` file can be opened, `null` otherwise
  */
 export default async function read() {
-	try {
-		const buffer = await filesystemAPI().excel.read();
+  try {
+    const buffer = await filesystemAPI().excel.read();
 
-		const workbook = new Workbook();
-		const loaded = await workbook.xlsx.load(buffer);
+    const workbook = new Workbook();
+    const loaded = await workbook.xlsx.load(buffer);
 
-		return loaded;
-	} catch (e) {
-		logger.error("An error ocurred while trying to read the XLSX file: ", e);
-		return null;
-	}
+    return loaded;
+  } catch (e) {
+    logger.error("An error ocurred while trying to read the XLSX file: ", e);
+    return null;
+  }
 }

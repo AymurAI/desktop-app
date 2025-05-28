@@ -5,5 +5,5 @@
  * @returns `true` if the object is not undefined, `false` otherwise
  */
 export function removeUndefined<T>(obj: T | undefined): obj is T {
-	return obj !== undefined;
+  return obj !== undefined;
 }

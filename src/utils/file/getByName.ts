@@ -7,5 +7,5 @@ import type { DocFile } from "types/file";
  * @returns The `DocFile` with the given name
  */
 export default function getByName(fileName: string, files: DocFile[]) {
-	return files.find(({ data }) => data.name === fileName);
+  return files.find(({ data }) => data.name === fileName);
 }

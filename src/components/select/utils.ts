@@ -10,10 +10,10 @@ import type { SelectOption, Suggestion } from ".";
  * @returns Returns the already existent option in the array or `undefined` if it doesn't exist on the array
  */
 export function findById(
-	id: SelectOption["id"] | undefined,
-	options: SelectOption[],
+  id: SelectOption["id"] | undefined,
+  options: SelectOption[],
 ) {
-	return options.find((op) => op.id === id);
+  return options.find((op) => op.id === id);
 }
 
 /**
@@ -23,18 +23,18 @@ export function findById(
  * @returns Same `Suggestion` format
  */
 export function secureSuggestion(
-	suggestion: Suggestion | undefined,
-	options: SelectOption[],
+  suggestion: Suggestion | undefined,
+  options: SelectOption[],
 ): Necessary<Suggestion, "text"> | undefined {
-	if (suggestion) {
-		const { text, id } = suggestion;
+  if (suggestion) {
+    const { text, id } = suggestion;
 
-		if (text) return { id, text };
+    if (text) return { id, text };
 
-		const option = findById(id, options);
-		return option;
-	}
-	return undefined;
+    const option = findById(id, options);
+    return option;
+  }
+  return undefined;
 }
 
 /**
@@ -44,19 +44,19 @@ export function secureSuggestion(
  * @returns A reordered array with the priority options placed on first place
  */
 export function orderByPriority(
-	options: SelectOption[],
-	priority: SelectOption["id"][] = [],
+  options: SelectOption[],
+  priority: SelectOption["id"][] = [],
 ) {
-	// Remove priority options from the array
-	const filtered = options.filter(({ id }) => !priority.find((p) => p === id));
+  // Remove priority options from the array
+  const filtered = options.filter(({ id }) => !priority.find((p) => p === id));
 
-	// Find preferred { id, text } on the original options array
-	const preferred = priority
-		.map((p) => options.find(({ id }) => p === id))
-		.filter(removeUndefined);
+  // Find preferred { id, text } on the original options array
+  const preferred = priority
+    .map((p) => options.find(({ id }) => p === id))
+    .filter(removeUndefined);
 
-	// Add the preferred options
-	return [...preferred, ...filtered];
+  // Add the preferred options
+  return [...preferred, ...filtered];
 }
 
 /**
@@ -66,5 +66,5 @@ export function orderByPriority(
  * @returns Returns the options that match the given word
  */
 export function filterOptions(options: SelectOption[], word: string) {
-	return options.filter(({ text }) => text.match(includes(word)));
+  return options.filter(({ text }) => text.match(includes(word)));
 }

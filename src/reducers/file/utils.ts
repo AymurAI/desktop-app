@@ -8,7 +8,7 @@ import { isAllowed, isAlreadyLoaded } from "utils/file";
  * @returns `true` if the file is defined, `false` otherwise
  */
 function removeUndefined(file: DocFile | undefined): file is DocFile {
-	return !!file;
+  return !!file;
 }
 
 type ModifyFunction = (file: DocFile) => DocFile | undefined;
@@ -21,19 +21,19 @@ type ModifyFunction = (file: DocFile) => DocFile | undefined;
  * @returns A new function which accepts as parameters `fileName` and `modify`
  */
 export function updateFromState(state: DocFile[]) {
-	return (fileName: string, modify: ModifyFunction) => {
-		// Modify/update the desired file
-		const newState = state.map((file) => {
-			if (file.data.name === fileName) return modify(file);
-			return file;
-		});
+  return (fileName: string, modify: ModifyFunction) => {
+    // Modify/update the desired file
+    const newState = state.map((file) => {
+      if (file.data.name === fileName) return modify(file);
+      return file;
+    });
 
-		// Remove any `undefined` value inserted into the array
-		// This way we can remove a file from the array more easely
-		const filtered: DocFile[] = newState.filter(removeUndefined);
+    // Remove any `undefined` value inserted into the array
+    // This way we can remove a file from the array more easely
+    const filtered: DocFile[] = newState.filter(removeUndefined);
 
-		return filtered;
-	};
+    return filtered;
+  };
 }
 
 /**
@@ -43,19 +43,19 @@ export function updateFromState(state: DocFile[]) {
  * @returns A new state with the files added
  */
 export function addFiles(files: File[], state: DocFile[]) {
-	// Check for whitelisted extensions and already loaded files
-	const filtered = files.filter(
-		(file) => isAllowed(file) && !isAlreadyLoaded(file.name, state),
-	);
+  // Check for whitelisted extensions and already loaded files
+  const filtered = files.filter(
+    (file) => isAllowed(file) && !isAlreadyLoaded(file.name, state),
+  );
 
-	// Add necessary fields to the object
-	const newFiles: DocFile[] = filtered.map((file) => ({
-		data: file,
-		selected: true,
-		validationObject: {},
-	}));
+  // Add necessary fields to the object
+  const newFiles: DocFile[] = filtered.map((file) => ({
+    data: file,
+    selected: true,
+    validationObject: {},
+  }));
 
-	return [...state, ...newFiles];
+  return [...state, ...newFiles];
 }
 
 /**
@@ -66,20 +66,20 @@ export function addFiles(files: File[], state: DocFile[]) {
  * @returns A new array containing the file replaced
  */
 export function replaceFile(fileName: string, newFile: File, state: DocFile[]) {
-	if (isAllowed(newFile) && !isAlreadyLoaded(newFile.name, state)) {
-		const replaced = state.map((file) =>
-			file.data.name === fileName
-				? {
-						data: newFile,
-						selected: true,
-						predictions: undefined,
-						validationObject: {},
-					}
-				: file,
-		);
-		return replaced;
-	}
-	return state;
+  if (isAllowed(newFile) && !isAlreadyLoaded(newFile.name, state)) {
+    const replaced = state.map((file) =>
+      file.data.name === fileName
+        ? {
+            data: newFile,
+            selected: true,
+            predictions: undefined,
+            validationObject: {},
+          }
+        : file,
+    );
+    return replaced;
+  }
+  return state;
 }
 
 /**
@@ -89,10 +89,10 @@ export function replaceFile(fileName: string, newFile: File, state: DocFile[]) {
  * @returns `true` if the predictions are equal, `false` otherwise.
  */
 export function comparePrediction(a: PredictLabel, b: PredictLabel) {
-	return (
-		a.start_char === b.start_char &&
-		a.end_char === b.end_char &&
-		a.text === b.text &&
-		a.attrs.aymurai_label === b.attrs.aymurai_label
-	);
+  return (
+    a.start_char === b.start_char &&
+    a.end_char === b.end_char &&
+    a.text === b.text &&
+    a.attrs.aymurai_label === b.attrs.aymurai_label
+  );
 }

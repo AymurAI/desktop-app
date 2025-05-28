@@ -9,45 +9,45 @@ import electronAPI from "./utils/batch";
  * @param app App instance, after the `whenReady()`
  */
 export function configureApp() {
-	// Set the name to the app
-	setDefaultProtocol(app);
+  // Set the name to the app
+  setDefaultProtocol(app);
 
-	/**
-	 * EVENT HANDLERS
-	 */
-	app.on("activate", () => {
-		// On macOS it's common to re-create a window in the app when the
-		// dock icon is clicked and there are no other windows open.
-		if (BrowserWindow.getAllWindows().length === 0) createWindow();
-	});
+  /**
+   * EVENT HANDLERS
+   */
+  app.on("activate", () => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
 
-	// Handle the protocol. In this case, we choose to show an Error Box.
-	app.on("open-url", (_, url) => {
-		console.log("open-url handler", url);
-	});
-	app.on("before-quit", () => {
-		electronAPI.stopBatch();
-	});
+  // Handle the protocol. In this case, we choose to show an Error Box.
+  app.on("open-url", (_, url) => {
+    console.log("open-url handler", url);
+  });
+  app.on("before-quit", () => {
+    electronAPI.stopBatch();
+  });
 }
 
 (async () => {
-	try {
-		// Add debug features
-		await debug();
+  try {
+    // Add debug features
+    await debug();
 
-		lockHandler(app);
+    lockHandler(app);
 
-		await app.whenReady();
+    await app.whenReady();
 
-		// Installs REACT DEVELOPER TOOLS
-		await installExtensions();
+    // Installs REACT DEVELOPER TOOLS
+    await installExtensions();
 
-		// Creates the main window
-		createWindow();
+    // Creates the main window
+    createWindow();
 
-		// Configures the app
-		configureApp();
-	} catch (e) {
-		console.error("An error occurred while starting the app", e);
-	}
+    // Configures the app
+    configureApp();
+  } catch (e) {
+    console.error("An error occurred while starting the app", e);
+  }
 })();

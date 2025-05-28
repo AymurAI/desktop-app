@@ -8,14 +8,14 @@ import { Navigate } from "react-router-dom";
  * @returns
  */
 export default function withAuthProtection<T extends JSX.IntrinsicAttributes>(
-	Component: ComponentType<T>,
+  Component: ComponentType<T>,
 ) {
-	return (props: T) => {
-		const user = useUser();
+  return (props: T) => {
+    const user = useUser();
 
-		// Check if the user is authenticated
-		if (!user) return <Navigate to="/login" />;
+    // Check if the user is authenticated
+    if (!user) return <Navigate to="/login" />;
 
-		return <Component {...props} />;
-	};
+    return <Component {...props} />;
+  };
 }

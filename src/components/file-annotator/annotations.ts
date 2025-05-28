@@ -1,7 +1,7 @@
 import type {
-	AllLabels,
-	AllLabelsWithSufix,
-	PredictLabel,
+  AllLabels,
+  AllLabelsWithSufix,
+  PredictLabel,
 } from "types/aymurai";
 import type { Paragraph } from "types/file";
 import { includes } from "utils/regex";
@@ -15,13 +15,13 @@ export const SEARCH_MIN_LENGTH = 3;
  * @returns List of annotations
  */
 const labelToAnnotation = (labels: PredictLabel[]): Annotation[] => {
-	return labels.map(({ start_char, end_char, attrs, paragraphId }) => ({
-		start: start_char,
-		end: end_char,
-		type: "tag",
-		tag: attrs.aymurai_label!,
-		paragraphId,
-	}));
+  return labels.map(({ start_char, end_char, attrs, paragraphId }) => ({
+    start: start_char,
+    end: end_char,
+    type: "tag",
+    tag: attrs.aymurai_label!,
+    paragraphId,
+  }));
 };
 
 /**
@@ -31,17 +31,17 @@ const labelToAnnotation = (labels: PredictLabel[]): Annotation[] => {
  * @returns List of indexes where the search string is found
  */
 const findSearchIndexes = (paragraph: string, search: string) => {
-	const regex = includes(search);
+  const regex = includes(search);
 
-	const indexes = [];
-	let match = regex.exec(paragraph);
+  const indexes = [];
+  let match = regex.exec(paragraph);
 
-	while (match) {
-		indexes.push(match.index);
-		match = regex.exec(paragraph);
-	}
+  while (match) {
+    indexes.push(match.index);
+    match = regex.exec(paragraph);
+  }
 
-	return indexes;
+  return indexes;
 };
 
 /**
@@ -52,23 +52,23 @@ const findSearchIndexes = (paragraph: string, search: string) => {
  * @returns List of annotations with search annotations appended
  */
 const getSearchAnnotations = (
-	search: string,
-	paragraph: Paragraph,
-	label: AllLabels | AllLabelsWithSufix | null,
+  search: string,
+  paragraph: Paragraph,
+  label: AllLabels | AllLabelsWithSufix | null,
 ): Annotation[] => {
-	if (!search || search.length < SEARCH_MIN_LENGTH) return [];
+  if (!search || search.length < SEARCH_MIN_LENGTH) return [];
 
-	const indexes = findSearchIndexes(paragraph.value, search);
-	return indexes.map(
-		(el) =>
-			({
-				start: el,
-				end: el + search.length,
-				type: "search",
-				tag: label,
-				paragraphId: paragraph.id,
-			}) as Annotation,
-	);
+  const indexes = findSearchIndexes(paragraph.value, search);
+  return indexes.map(
+    (el) =>
+      ({
+        start: el,
+        end: el + search.length,
+        type: "search",
+        tag: label,
+        paragraphId: paragraph.id,
+      }) as Annotation,
+  );
 };
 
 /**
@@ -77,22 +77,22 @@ const getSearchAnnotations = (
  * @returns A map with the paragraph id as key and an array of predictions as value
  */
 const predictionsToMap = (
-	predictions: PredictLabel[],
+  predictions: PredictLabel[],
 ): Map<string, PredictLabel[]> => {
-	const map = new Map<string, PredictLabel[]>();
+  const map = new Map<string, PredictLabel[]>();
 
-	for (const token of predictions) {
-		// Ignore characters
-		if ([":", ",", ".", ")", "(", "-", "_"].includes(token.text)) continue;
+  for (const token of predictions) {
+    // Ignore characters
+    if ([":", ",", ".", ")", "(", "-", "_"].includes(token.text)) continue;
 
-		if (map.has(token.paragraphId)) {
-			map.get(token.paragraphId)!.push(token);
-		} else {
-			map.set(token.paragraphId, [token]);
-		}
-	}
+    if (map.has(token.paragraphId)) {
+      map.get(token.paragraphId)!.push(token);
+    } else {
+      map.set(token.paragraphId, [token]);
+    }
+  }
 
-	return map;
+  return map;
 };
 
 /**
@@ -104,18 +104,18 @@ const predictionsToMap = (
  * @returns List of annotations ready to be displayed
  */
 export const createAnnotationsWithSearch = (
-	predictions: PredictLabel[],
-	search: string,
-	paragraph: Paragraph,
-	searchLabel: AllLabels | AllLabelsWithSufix | null,
+  predictions: PredictLabel[],
+  search: string,
+  paragraph: Paragraph,
+  searchLabel: AllLabels | AllLabelsWithSufix | null,
 ): Annotation[] => {
-	const matchingLabels = predictionsToMap(predictions).get(paragraph.id) ?? [];
-	const matchingAnnotations = labelToAnnotation(matchingLabels);
-	const searchAnnotations = getSearchAnnotations(
-		search,
-		paragraph,
-		searchLabel,
-	);
+  const matchingLabels = predictionsToMap(predictions).get(paragraph.id) ?? [];
+  const matchingAnnotations = labelToAnnotation(matchingLabels);
+  const searchAnnotations = getSearchAnnotations(
+    search,
+    paragraph,
+    searchLabel,
+  );
 
-	return [...matchingAnnotations, ...searchAnnotations];
+  return [...matchingAnnotations, ...searchAnnotations];
 };

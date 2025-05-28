@@ -5,7 +5,7 @@ import type { Nullable } from "./utils";
  * Type for the object stored into the exported JSON file
  */
 export type PredictionFeedback = Nullable<
-	PredictLabel & {
-		validationText: string | boolean;
-	}
+  PredictLabel & {
+    validationText: string | boolean;
+  }
 >;

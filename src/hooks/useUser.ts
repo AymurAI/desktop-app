@@ -8,7 +8,7 @@ import type { User } from "types/user";
  * @returns The user retrieved by the UserInfo Google API
  */
 export default function useUser(): User | null {
-	const { user } = useContext(Context);
+  const { user } = useContext(Context);
 
-	return user;
+  return user;
 }

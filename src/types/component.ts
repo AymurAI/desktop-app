@@ -6,6 +6,6 @@ import type { ComponentPropsWithoutRef, ElementType } from "react";
  * @param K Any prop that should be omitted from the base tag
  */
 export type NativeComponent<
-	T extends ElementType = "div",
-	K extends string = "",
+  T extends ElementType = "div",
+  K extends string = "",
 > = Omit<ComponentPropsWithoutRef<T>, "style" | K>;

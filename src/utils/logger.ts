@@ -4,9 +4,9 @@
  */
 // biome-ignore lint/suspicious/noExplicitAny: No need to specify the type
 function info(...args: any[]) {
-	if (process.env.NODE_ENV !== "production") {
-		console.log(...args);
-	}
+  if (process.env.NODE_ENV !== "production") {
+    console.log(...args);
+  }
 }
 
 /**
@@ -15,9 +15,9 @@ function info(...args: any[]) {
  */
 // biome-ignore lint/suspicious/noExplicitAny: No need to specify the type
 function error(...args: any[]) {
-	if (process.env.NODE_ENV !== "test") {
-		console.error(...args);
-	}
+  if (process.env.NODE_ENV !== "test") {
+    console.error(...args);
+  }
 }
 
 /**
@@ -26,13 +26,13 @@ function error(...args: any[]) {
  */
 // biome-ignore lint/suspicious/noExplicitAny: No need to specify the type
 function warn(...args: any[]) {
-	console.warn(...args);
+  console.warn(...args);
 }
 
 const logger = {
-	info,
-	error,
-	warn,
+  info,
+  error,
+  warn,
 };
 
 export default logger;

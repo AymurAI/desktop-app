@@ -1,8 +1,8 @@
 import {
-	type Dispatch,
-	type ReactNode,
-	createContext,
-	useReducer,
+  type Dispatch,
+  type ReactNode,
+  createContext,
+  useReducer,
 } from "react";
 
 import reducer, { type Action } from "reducers/file";
@@ -21,16 +21,16 @@ export const FileDispatchContext = createContext<Dispatch<Action>>(() => {});
 FileDispatchContext.displayName = "FileDispatchContext";
 
 interface Props {
-	children: ReactNode;
+  children: ReactNode;
 }
 export default function FileProvider({ children }: Props) {
-	const [state, dispatch] = useReducer(reducer, []);
+  const [state, dispatch] = useReducer(reducer, []);
 
-	return (
-		<FileContext.Provider value={state}>
-			<FileDispatchContext.Provider value={dispatch}>
-				{children}
-			</FileDispatchContext.Provider>
-		</FileContext.Provider>
-	);
+  return (
+    <FileContext.Provider value={state}>
+      <FileDispatchContext.Provider value={dispatch}>
+        {children}
+      </FileDispatchContext.Provider>
+    </FileContext.Provider>
+  );
 }

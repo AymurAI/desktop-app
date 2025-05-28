@@ -2,20 +2,20 @@
  * ORs every type to a `null` recursively
  */
 export type Nullable<T> = T extends object
-	? {
-			[K in keyof T]: Nullable<T[K] | null>;
-		}
-	: T;
+  ? {
+      [K in keyof T]: Nullable<T[K] | null>;
+    }
+  : T;
 
 type Without<T, U> = {
-	[P in Exclude<keyof T, keyof U>]?: never;
+  [P in Exclude<keyof T, keyof U>]?: never;
 };
 /**
  * XOR
  */
 export type XOR<T, U> = T | U extends object
-	? (Without<T, U> & U) | (Without<U, T> & T)
-	: T | U;
+  ? (Without<T, U> & U) | (Without<U, T> & T)
+  : T | U;
 
 /**
  * Makes a single property of T optional
