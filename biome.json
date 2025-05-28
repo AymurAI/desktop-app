@@ -11,7 +11,7 @@
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space"
+    "indentStyle": "tab"
   },
   "organizeImports": {
     "enabled": true
@@ -25,7 +25,10 @@
         "noDelete": "warn"
       },
       "correctness": {
-        "useExhaustiveDependencies": "warn"
+        "useExhaustiveDependencies": "warn",
+        "noUnusedImports": "error",
+        "noUnusedFunctionParameters": "error",
+        "noUnusedVariables": "error"
       },
       "complexity": {
         "noUselessSwitchCase": "off",
