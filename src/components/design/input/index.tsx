@@ -38,14 +38,25 @@ export default function Input({
 	prefix,
 	suffix,
 	value,
+	type = "text",
 	onChange,
 	...props
 }: InputProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const isValueEmpty = !value || value === "";
 
+	const isValid = (value: string): boolean =>
+		Boolean(type === "number" ? !value || value.match(/^\d*$/) : true);
+
 	const applySuggestion = (suggestion: InputProps["suggestion"]) => {
 		if (!suggestion || !inputRef.current) return;
+
+		if (!isValid(suggestion.value)) {
+			console.error(
+				"Invalid suggestion. Tried to apply a 'string' to a 'number' input",
+			);
+			return;
+		}
 
 		inputRef.current.value = suggestion.value;
 		onChange?.(suggestion.value);
@@ -63,7 +74,10 @@ export default function Input({
 	};
 
 	const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-		onChange?.(e.target.value);
+		const value = e.target.value;
+		if (!isValid(value)) return;
+
+		onChange?.(value);
 	};
 
 	return (
@@ -89,7 +103,7 @@ export default function Input({
 
 				{suggestion && isValueEmpty && (
 					<>
-						<Text css={{ lineHeight: "100%" }}>|</Text>
+						<Text css={{ lineHeight: "100%", color: "$secondary" }}>|</Text>
 						<Suggestion
 							onClick={handleSuggestionClick}
 							onKeyDown={handleSuggestionKeyDown}
