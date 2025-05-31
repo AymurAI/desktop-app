@@ -1,7 +1,7 @@
 import path from "node:path";
 import type { App } from "electron";
-import { mainWindow } from "./createWindow";
 
+import { mainWindow } from "./createWindow";
 import { URI_SCHEME } from "./env";
 
 /**

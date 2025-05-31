@@ -2,25 +2,30 @@
   "name": "aymurai",
   "version": "1.20.0",
   "private": true,
-  "main": "build/main.js",
+  "main": "./out/main/index.js",
   "scripts": {
-    "dev:web": "react-scripts start",
-    "dev": "nodemon --exec 'npm start' -e ts,tsx,js,json --watch src --watch renderer",
-    "start": "npm run build && electron-forge start",
-    "build:renderer": "tsc --build tsconfig.renderer.json",
-    "build:app": "cross-env BUILD_PATH=./build/app PUBLIC_URL=. react-scripts build",
-    "build": "npm run build:app && npm run build:renderer",
+    "dev:web": "vite",
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "build": "npm run typecheck && electron-vite build",
     "lint": "biome check",
-    "lint:markdown": "markdownlint '**/*.md' --ignore node_modules --ignore CHANGELOG.md",
     "lint:fix": "biome check --write",
-    "check-types:react": "tsc -p tsconfig.json --skipLibCheck",
-    "check-types:renderer": "tsc -p tsconfig.renderer.json --noEmit",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "validate": "npm run lint && npm run check-types:react && npm run check-types:renderer",
     "pre-commit": "lint-staged",
     "package": "rm -rf build && npm run build && electron-forge package",
-    "make": "rm -rf build && npm run build && electron-forge make"
+    "make": "rm -rf build && npm run build && electron-forge make",
+    "postinstall": "electron-builder install-app-deps",
+    "build:unpack": "npm run build && electron-builder --dir",
+    "build:win": "npm run build && electron-builder --win",
+    "build:mac": "electron-vite build && electron-builder --mac",
+    "build:linux": "electron-vite build && electron-builder --linux"
   },
   "dependencies": {
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/utils": "^4.0.0",
     "@stitches/react": "^1.2.8",
     "@tanstack/react-form": "1.11.0",
     "@testing-library/jest-dom": "^5.16.5",
@@ -38,7 +43,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.3",
-    "react-scripts": "5.0.1",
     "regex-escape": "^3.4.10",
     "typescript": "^5.8.3"
   },
@@ -49,36 +53,26 @@
     "@electron-forge/maker-rpm": "^6.0.4",
     "@electron-forge/maker-squirrel": "^6.0.4",
     "@electron-forge/maker-zip": "^6.0.4",
+    "@electron-toolkit/tsconfig": "^1.0.1",
     "@types/findandreplacedomtext": "^0.4.4",
     "@types/regex-escape": "^3.4.1",
+    "@vitejs/plugin-react": "^4.5.0",
     "concurrently": "^7.5.0",
     "cross-env": "^7.0.3",
     "electron": "^21.2.0",
+    "electron-builder": "^26.0.12",
     "electron-debug": "^3.2.0",
-    "electron-devtools-installer": "^3.2.0",
+    "electron-devtools-installer": "^3.2.1",
+    "electron-vite": "^3.1.0",
     "husky": "^8.0.0",
     "lint-staged": "^13.0.3",
     "markdownlint-cli": "^0.32.2",
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
+    "vite": "^6.3.5",
     "wait-on": "^6.0.1"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run pre-commit"
-    }
-  },
-  "lint-staged": {
-    "*.md": ["npm run lint:markdown --"],
-    "src/**/*.{ts,tsx}": ["npm run lint"],
-    "renderer/**/*.ts": ["npm run lint"]
-  },
-  "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "pnpm": {
+    "onlyBuiltDependencies": ["electron", "esbuild"]
   }
 }
