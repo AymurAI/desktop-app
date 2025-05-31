@@ -1,4 +1,4 @@
-import { styled } from "styles";
+import { styled } from "@/styles";
 
 const Subtitle = styled("p", {
   variants: {

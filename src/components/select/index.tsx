@@ -9,8 +9,8 @@ import {
   useState,
 } from "react";
 
-import { Label, Suggestion as SuggestionComponent, Text } from "components";
-import type { Optional } from "types/utils";
+import { Label, Suggestion as SuggestionComponent, Text } from "@/components";
+import type { Optional } from "@/types/utils";
 import List from "./List";
 import {
   Container,

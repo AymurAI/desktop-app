@@ -2,10 +2,10 @@ import { useMemo, useState } from "react";
 
 import { SearchBar } from "./SearchBar";
 
-import type { SelectOption } from "components/select";
-import AnnotationProvider from "context/Annotation";
-import type { AllLabels, AllLabelsWithSufix } from "types/aymurai";
-import type { DocFile } from "types/file";
+import type { SelectOption } from "@/components/select";
+import AnnotationProvider from "@/context/Annotation";
+import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
+import type { DocFile } from "@/types/file";
 import * as S from "./FileAnnotator.styles";
 import { Mark } from "./Mark";
 import { createAnnotationsWithSearch } from "./annotations";

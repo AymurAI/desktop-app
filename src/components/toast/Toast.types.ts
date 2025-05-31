@@ -1,4 +1,4 @@
-import type { CSS } from "styles";
+import type { CSS } from "@/styles";
 
 export interface Props {
   children: React.ReactNode;

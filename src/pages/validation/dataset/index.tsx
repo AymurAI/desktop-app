@@ -7,11 +7,11 @@ import {
   FileStepper,
   Grid,
   SectionTitle,
-} from "components";
-import { useFileDispatch, useFiles } from "hooks";
-import { Footer, Section } from "layout/main";
-import { validate } from "reducers/file/actions";
-import { isFileValidated, isValidationCompleted } from "utils/file";
+} from "@/components";
+import { useFileDispatch, useFiles } from "@/hooks";
+import { Footer, Section } from "@/layout/main";
+import { validate } from "@/reducers/file/actions";
+import { isFileValidated, isValidationCompleted } from "@/utils/file";
 import FormGroup from "./form-group";
 import { moveNext, movePrevious } from "./utils";
 

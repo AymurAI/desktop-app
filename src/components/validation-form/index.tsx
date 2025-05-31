@@ -11,8 +11,8 @@ import {
   useState,
 } from "react";
 
-import { Button, Subtitle } from "components";
-import type { NativeComponent } from "types/component";
+import { Button, Subtitle } from "@/components";
+import type { NativeComponent } from "@/types/component";
 
 import { Form } from "./ValidationForm.styles";
 

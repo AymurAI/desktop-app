@@ -7,8 +7,8 @@ import {
   useRef,
 } from "react";
 
-import type { CSS } from "styles";
-import { colors } from "styles/tokens";
+import type { CSS } from "@/styles";
+import { colors } from "@/styles/tokens";
 import { Input, Radio as StyledRadio, Wrapper } from "./Radio.styles";
 
 export interface Props {

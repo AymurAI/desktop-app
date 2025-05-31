@@ -1,4 +1,4 @@
-import { styled } from "styles";
+import { styled } from "@/styles";
 
 function columnRepeat(cols: number) {
   return {

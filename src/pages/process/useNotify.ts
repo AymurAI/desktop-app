@@ -1,5 +1,5 @@
+import taskbar from "@/services/taskbar";
 import { useEffect, useState } from "react";
-import taskbar from "services/taskbar";
 import { type initProcessState, isPredictionCompleted } from "./utils";
 
 export default function useNotify(

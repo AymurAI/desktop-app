@@ -1,4 +1,4 @@
-import { keyframes, styled } from "styles";
+import { keyframes, styled } from "@/styles";
 
 const spin = keyframes({
   "0%": { transform: "rotate(0deg)" },

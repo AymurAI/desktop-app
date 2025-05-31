@@ -1,10 +1,10 @@
-import type { FormData } from "hooks/useForm";
+import type { FormData } from "@/hooks/useForm";
 import type {
   AllLabels,
   AllLabelsWithSufix,
   PredictLabel,
-} from "types/aymurai";
-import type { Paragraph } from "types/file";
+} from "@/types/aymurai";
+import type { Paragraph } from "@/types/file";
 
 /**
  * List of action types.

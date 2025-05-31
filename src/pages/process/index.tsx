@@ -11,15 +11,18 @@ import {
   Subtitle,
   Text,
   Toast,
-} from "components";
-import { useFileDispatch, useFiles, useUser } from "hooks";
-import type { PredictStatus } from "hooks/usePredict";
-import { Footer, Section } from "layout/main";
-import { filterUnprocessed, removeAllPredictions } from "reducers/file/actions";
+} from "@/components";
+import { useFileDispatch, useFiles, useUser } from "@/hooks";
+import type { PredictStatus } from "@/hooks/usePredict";
+import { Footer, Section } from "@/layout/main";
+import {
+  filterUnprocessed,
+  removeAllPredictions,
+} from "@/reducers/file/actions";
 import useNotify from "./useNotify";
 import { canContinue, initProcessState, replace } from "./utils";
 
-import { FunctionType } from "types/user";
+import { FunctionType } from "@/types/user";
 
 export default function Process() {
   const user = useUser();

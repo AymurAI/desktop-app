@@ -1,4 +1,4 @@
-import type { DocFile } from "types/file";
+import type { DocFile } from "@/types/file";
 
 /**
  * Checks if a file has been at least partially validated

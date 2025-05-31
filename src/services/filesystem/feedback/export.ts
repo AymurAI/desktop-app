@@ -1,4 +1,4 @@
-import type { DocFile } from "types/file";
+import type { DocFile } from "@/types/file";
 import filesystemAPI from "../utils";
 import { joinValidation } from "./utils";
 

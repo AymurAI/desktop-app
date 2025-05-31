@@ -9,14 +9,14 @@ import {
   SectionTitle,
   Subtitle,
   Text,
-} from "components";
-import { useFileDispatch, useFiles, useUser } from "hooks";
-import { Footer, Section } from "layout/main";
-import { removeAllFiles } from "reducers/file/actions";
-import filesystem from "services/filesystem";
-import type { DocFile } from "types/file";
-import { DATASET_URL } from "utils/config";
-import { submitValidations } from "utils/file";
+} from "@/components";
+import { useFileDispatch, useFiles, useUser } from "@/hooks";
+import { Footer, Section } from "@/layout/main";
+import { removeAllFiles } from "@/reducers/file/actions";
+import filesystem from "@/services/filesystem";
+import type { DocFile } from "@/types/file";
+import { DATASET_URL } from "@/utils/config";
+import { submitValidations } from "@/utils/file";
 import Anchor from "../Anchor";
 
 export default function Finish() {

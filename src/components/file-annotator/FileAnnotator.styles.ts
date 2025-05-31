@@ -1,4 +1,4 @@
-import { styled } from "styles";
+import { styled } from "@/styles";
 
 export const Container = styled("div", {
   boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",

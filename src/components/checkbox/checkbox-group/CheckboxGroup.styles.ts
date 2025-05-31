@@ -1,4 +1,4 @@
-import { styled } from "styles";
+import { styled } from "@/styles";
 
 export const Legend = styled("legend", {
   fontWeight: "$default",

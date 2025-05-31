@@ -3,7 +3,7 @@ import type {
   AllLabelsWithSufix,
   LabelDecisiones,
   LabelType,
-} from "types/aymurai";
+} from "@/types/aymurai";
 
 /**
  * Any value the form can take

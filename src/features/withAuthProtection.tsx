@@ -1,4 +1,4 @@
-import { useUser } from "hooks";
+import { useUser } from "@/hooks";
 import type { ComponentType } from "react";
 import { Navigate } from "react-router-dom";
 

@@ -1,11 +1,11 @@
 import { type ChangeEventHandler, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, HiddenInput, Stack, Text, Title } from "components";
-import { useFileDispatch, useUser } from "hooks";
-import { Footer, Section } from "layout/main";
-import { addFiles } from "reducers/file/actions";
-import { FunctionType } from "types/user";
+import { Button, HiddenInput, Stack, Text, Title } from "@/components";
+import { useFileDispatch, useUser } from "@/hooks";
+import { Footer, Section } from "@/layout/main";
+import { addFiles } from "@/reducers/file/actions";
+import { FunctionType } from "@/types/user";
 import { Card } from "./cards";
 import { Grid } from "./grid";
 

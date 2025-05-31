@@ -4,7 +4,7 @@
  */
 // biome-ignore lint/suspicious/noExplicitAny: No need to specify the type
 function info(...args: any[]) {
-  if (process.env.NODE_ENV !== "production") {
+  if (!import.meta.env.PROD) {
     console.log(...args);
   }
 }
@@ -15,7 +15,7 @@ function info(...args: any[]) {
  */
 // biome-ignore lint/suspicious/noExplicitAny: No need to specify the type
 function error(...args: any[]) {
-  if (process.env.NODE_ENV !== "test") {
+  if (!import.meta.env.PROD) {
     console.error(...args);
   }
 }

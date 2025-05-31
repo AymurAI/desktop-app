@@ -1,6 +1,6 @@
 import type { MouseEventHandler, ReactNode } from "react";
 
-import { Arrow, Button, Stack, Title } from "components";
+import { Arrow, Button, Stack, Title } from "@/components";
 
 interface Props {
   children: ReactNode;

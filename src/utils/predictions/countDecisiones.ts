@@ -1,4 +1,4 @@
-import type { PredictLabel } from "types/aymurai";
+import type { PredictLabel } from "@/types/aymurai";
 
 export default function countDecisiones(
   predictions: PredictLabel[] | undefined,

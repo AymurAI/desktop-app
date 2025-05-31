@@ -1,5 +1,5 @@
-import type { FlatFormData } from "hooks/useForm";
-import { LabelDecisiones } from "types/aymurai";
+import type { FlatFormData } from "@/hooks/useForm";
+import { LabelDecisiones } from "@/types/aymurai";
 
 /**
  * Treats the special case to return the correct value

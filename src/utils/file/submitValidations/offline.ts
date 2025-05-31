@@ -1,5 +1,5 @@
-import type { FormValue } from "hooks/useForm";
-import filesystem from "services/filesystem";
+import type { FormValue } from "@/hooks/useForm";
+import filesystem from "@/services/filesystem";
 
 /**
  * Writes the validated data to the filesystem, creating new rows on the already existent dataset

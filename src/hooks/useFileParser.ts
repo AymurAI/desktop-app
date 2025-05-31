@@ -1,8 +1,8 @@
+import { addParagraphs } from "@/reducers/file/actions";
 import { useEffect } from "react";
-import { addParagraphs } from "reducers/file/actions";
 
-import { getParagraphs } from "services/aymurai";
-import type { DocFile } from "types/file";
+import { getParagraphs } from "@/services/aymurai";
+import type { DocFile } from "@/types/file";
 
 import { useFileDispatch } from "./useFiles";
 

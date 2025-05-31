@@ -1,8 +1,8 @@
 import { forwardRef } from "react";
 
-import type { CSS } from "styles";
-import type { NativeComponent } from "types/component";
-import { WHITELISTED_EXTENSIONS } from "utils/config";
+import type { CSS } from "@/styles";
+import type { NativeComponent } from "@/types/component";
+import { WHITELISTED_EXTENSIONS } from "@/utils/config";
 import Input from "./HiddenInput.styles";
 
 interface Props extends NativeComponent<"input"> {

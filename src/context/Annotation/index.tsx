@@ -1,18 +1,18 @@
-import { useFileDispatch } from "hooks";
-import { type ReactNode, createContext, useCallback, useContext } from "react";
+import { useFileDispatch } from "@/hooks";
 import {
   appendPrediction,
   removePrediction,
   removePredictionsByText,
   updatePredictionLabel,
   updatePredictionsByText,
-} from "reducers/file/actions";
+} from "@/reducers/file/actions";
 import type {
   AllLabels,
   AllLabelsWithSufix,
   PredictLabel,
-} from "types/aymurai";
-import type { DocFile, Paragraph } from "types/file";
+} from "@/types/aymurai";
+import type { DocFile, Paragraph } from "@/types/file";
+import { type ReactNode, createContext, useCallback, useContext } from "react";
 import {
   findSearchIndexes,
   getBoundaries,

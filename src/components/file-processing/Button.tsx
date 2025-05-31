@@ -1,7 +1,7 @@
 import { ArrowsLeftRight as Restart, Stop } from "phosphor-react";
 
-import { Button as BaseButton } from "components";
-import type { PredictStatus } from "hooks/usePredict";
+import { Button as BaseButton } from "@/components";
+import type { PredictStatus } from "@/hooks/usePredict";
 
 interface Props {
   status: PredictStatus;

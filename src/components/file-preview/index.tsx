@@ -1,12 +1,12 @@
-import { Checkbox, Spinner, Text } from "components";
-import { ServerUrlContext } from "context/ServerUrl";
-import { useFileDispatch, useFileParser, useUser } from "hooks";
+import { Checkbox, Spinner, Text } from "@/components";
+import { ServerUrlContext } from "@/context/ServerUrl";
+import { useFileDispatch, useFileParser, useUser } from "@/hooks";
+import { toggleSelected } from "@/reducers/file/actions";
 import { FileX } from "phosphor-react";
 import { useContext } from "react";
-import { toggleSelected } from "reducers/file/actions";
 
-import type { DocFile } from "types/file";
-import { FunctionType } from "types/user";
+import type { DocFile } from "@/types/file";
+import { FunctionType } from "@/types/user";
 
 import * as S from "./FilePreview.styles";
 

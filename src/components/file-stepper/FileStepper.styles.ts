@@ -1,5 +1,5 @@
-import { Button as BaseButton } from "components";
-import { styled } from "styles";
+import { Button as BaseButton } from "@/components";
+import { styled } from "@/styles";
 
 export const CaretButton = styled(BaseButton, {
   boxShadow: "4px 0px 4px rgba(0, 0, 0, 0.05)",

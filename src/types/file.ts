@@ -1,4 +1,4 @@
-import type { FormData } from "hooks/useForm";
+import type { FormData } from "@/hooks/useForm";
 import type { PredictLabel } from "./aymurai";
 
 export interface Paragraph {

@@ -10,16 +10,16 @@ import {
   SectionTitle,
   Subtitle,
   Text,
-} from "components";
-import { useFileDispatch, useFiles, useUser } from "hooks";
-import { Footer, Section } from "layout/main";
+} from "@/components";
+import { useFileDispatch, useFiles, useUser } from "@/hooks";
+import { Footer, Section } from "@/layout/main";
 import {
   addFiles,
   filterUnselected,
   removeAllFiles,
-} from "reducers/file/actions";
+} from "@/reducers/file/actions";
 
-import { FunctionType } from "types/user";
+import { FunctionType } from "@/types/user";
 
 export default function Preview() {
   const user = useUser();

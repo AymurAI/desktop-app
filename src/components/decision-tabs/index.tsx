@@ -1,7 +1,7 @@
 import { Plus as Icon } from "phosphor-react";
 
-import { Stack, Tab, TabName } from "components";
-import nArray from "utils/nArray";
+import { Stack, Tab, TabName } from "@/components";
+import nArray from "@/utils/nArray";
 import { PlusButton } from "./DecisionTabs.styles";
 
 interface Props {

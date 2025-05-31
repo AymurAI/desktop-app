@@ -1,4 +1,4 @@
-import type { DocFile } from "types/file";
+import type { DocFile } from "@/types/file";
 
 /**
  * Checks if the file validation process is completed

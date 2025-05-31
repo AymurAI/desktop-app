@@ -5,8 +5,8 @@ import {
   Select,
   Stack,
   ValidationForm,
-} from "components";
-import { LabelDecisiones } from "types/aymurai";
+} from "@/components";
+import { LabelDecisiones } from "@/types/aymurai";
 import type { FormDecisionProps } from "../FormGroup.types";
 import json from "./options.json";
 

@@ -1,12 +1,12 @@
 import { X } from "phosphor-react";
 import { type ChangeEventHandler, useContext, useRef } from "react";
 
-import { Button as BaseButton, HiddenInput, Stack } from "components";
-import { ServerUrlContext } from "context/ServerUrl";
-import { useFileDispatch } from "hooks";
-import { type PredictStatus, usePredict } from "hooks/usePredict";
-import { removeFile, replaceFile } from "reducers/file/actions";
-import type { DocFile } from "types/file";
+import { Button as BaseButton, HiddenInput, Stack } from "@/components";
+import { ServerUrlContext } from "@/context/ServerUrl";
+import { useFileDispatch } from "@/hooks";
+import { type PredictStatus, usePredict } from "@/hooks/usePredict";
+import { removeFile, replaceFile } from "@/reducers/file/actions";
+import type { DocFile } from "@/types/file";
 import Button from "./Button";
 import ProgressBar from "./ProgressBar";
 

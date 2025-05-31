@@ -1,6 +1,6 @@
 import { CaretLeft, CaretRight, CheckCircle } from "phosphor-react";
 
-import { colors } from "styles/tokens";
+import { colors } from "@/styles/tokens";
 
 function ArrowRight() {
   return <CaretRight size={32} weight="light" />;

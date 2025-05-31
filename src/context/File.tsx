@@ -5,8 +5,8 @@ import {
   useReducer,
 } from "react";
 
-import reducer, { type Action } from "reducers/file";
-import type { DocFile } from "types/file";
+import reducer, { type Action } from "@/reducers/file";
+import type { DocFile } from "@/types/file";
 
 /**
  * Context used to provide files that have to be processed

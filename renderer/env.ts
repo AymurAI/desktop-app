@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 import { homedir } from "node:os";
 import path from "node:path";
 
@@ -8,7 +10,7 @@ import path from "node:path";
 /**
  * Port for the development app
  */
-export const DEV_PORT = 3000;
+export const DEV_PORT = 5173;
 
 /**
  * Custom URI scheme name
@@ -33,12 +35,12 @@ export const EXTERNAL_URLS = [
 /**
  * Is the app in development mode?
  */
-export const isDebug = process.env.NODE_ENV === "development";
+export const isDebug = import.meta.env.DEV;
 
 /**
  * Is the app in production mode?
  */
-export const isProduction = process.env.NODE_ENV === "production";
+export const isProduction = import.meta.env.PROD;
 
 /**
  * Is the app running on Windows?

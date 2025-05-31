@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useFileDispatch, useFileParser, useUser } from "hooks";
-import { addPredictions, removePredictions } from "reducers/file/actions";
-import { predict } from "services/aymurai";
+import { useFileDispatch, useFileParser, useUser } from "@/hooks";
+import { addPredictions, removePredictions } from "@/reducers/file/actions";
+import { predict } from "@/services/aymurai";
 
-import type { DocFile } from "types/file";
-import { FunctionType } from "types/user";
+import type { DocFile } from "@/types/file";
+import { FunctionType } from "@/types/user";
 
 export type PredictStatus = "processing" | "error" | "stopped" | "completed";
 

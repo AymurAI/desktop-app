@@ -8,11 +8,11 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, Input, Label, Stack, Subtitle, Title } from "components";
-import { useLogin, useServerUrl, useUser } from "hooks";
-import { Background, Container } from "layout/login";
-import { getHealthCheck } from "services/aymurai";
-import { FunctionType } from "types/user";
+import { Button, Input, Label, Stack, Subtitle, Title } from "@/components";
+import { useLogin, useServerUrl, useUser } from "@/hooks";
+import { Background, Container } from "@/layout/login";
+import { getHealthCheck } from "@/services/aymurai";
+import { FunctionType } from "@/types/user";
 
 export default function Login() {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import { Info } from "phosphor-react";
 
-import { Stack, Text } from "components";
-import { colors } from "styles/tokens";
+import { Stack, Text } from "@/components";
+import { colors } from "@/styles/tokens";
 
 export default function Callout() {
   return (

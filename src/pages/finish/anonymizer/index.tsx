@@ -8,14 +8,14 @@ import {
   SectionTitle,
   Subtitle,
   Text,
-} from "components";
-import { useFileDispatch, useFiles } from "hooks";
-import { Footer, Section } from "layout/main";
+} from "@/components";
+import { useFileDispatch, useFiles } from "@/hooks";
+import { Footer, Section } from "@/layout/main";
+import { removeAllFiles } from "@/reducers/file/actions";
+import { anonymize } from "@/services/aymurai";
 import { useNavigate } from "react-router-dom";
-import { removeAllFiles } from "reducers/file/actions";
-import { anonymize } from "services/aymurai";
 
-import { ServerUrlContext } from "context/ServerUrl";
+import { ServerUrlContext } from "@/context/ServerUrl";
 import Anchor from "../Anchor";
 
 const changeExtension = (name: string) => {

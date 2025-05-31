@@ -7,10 +7,10 @@ import {
   useState,
 } from "react";
 
-import { Label, Suggestion, Text } from "components";
+import { Label, Suggestion, Text } from "@/components";
+import type { CSS } from "@/styles";
+import type { NativeComponent } from "@/types/component";
 import { forwardRef } from "react";
-import type { CSS } from "styles";
-import type { NativeComponent } from "types/component";
 import {
   Container,
   InputContainer,

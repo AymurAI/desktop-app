@@ -1,5 +1,5 @@
-import Label from "components/label";
-import { styled } from "styles";
+import Label from "@/components/label";
+import { styled } from "@/styles";
 
 export const ProgressLabel = styled(Label, {
   display: "flex",

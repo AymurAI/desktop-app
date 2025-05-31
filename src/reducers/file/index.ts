@@ -26,8 +26,8 @@ import {
   updateFromState,
 } from "./utils";
 
-import type { AllLabels, AllLabelsWithSufix } from "types/aymurai";
-import type { DocFile } from "types/file";
+import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
+import type { DocFile } from "@/types/file";
 
 type State = DocFile[];
 

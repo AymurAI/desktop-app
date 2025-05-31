@@ -7,8 +7,8 @@ import {
   useState,
 } from "react";
 
-import type { CSS } from "styles";
-import { colors } from "styles/tokens";
+import type { CSS } from "@/styles";
+import { colors } from "@/styles/tokens";
 import { Input, Checkbox as StyledCheckbox, Wrapper } from "./Checkbox.styles";
 
 export interface Props {

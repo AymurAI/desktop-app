@@ -1,4 +1,4 @@
-import type { FormData } from "hooks/useForm";
+import type { FormData } from "@/hooks/useForm";
 
 type Decision = Exclude<FormData["DECISIONES"], undefined>[number];
 

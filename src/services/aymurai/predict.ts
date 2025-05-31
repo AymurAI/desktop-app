@@ -1,8 +1,8 @@
 import axios, { CanceledError } from "axios";
 
-import type { PredictLabel, Workflows } from "types/aymurai";
-import type { Paragraph } from "types/file";
-import { AYMURAI_API_URL } from "utils/config";
+import type { PredictLabel, Workflows } from "@/types/aymurai";
+import type { Paragraph } from "@/types/file";
+import { AYMURAI_API_URL } from "@/utils/config";
 
 interface PredictResponse {
   document: string;

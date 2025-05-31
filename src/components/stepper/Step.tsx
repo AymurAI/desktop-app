@@ -1,5 +1,5 @@
-import { Label, Stack } from "components";
-import { styled } from "styles";
+import { Label, Stack } from "@/components";
+import { styled } from "@/styles";
 
 const StepNumber = styled("div", {
   display: "flex",

@@ -1,6 +1,6 @@
-import { TabName as FileName, Tab as FileStep, Stack } from "components";
-import { useFiles } from "hooks";
-import type { DocFile } from "types/file";
+import { TabName as FileName, Tab as FileStep, Stack } from "@/components";
+import { useFiles } from "@/hooks";
+import type { DocFile } from "@/types/file";
 import { CaretButton, Carousel } from "./FileStepper.styles";
 import Icons from "./Icons";
 import { canMoveLeft as checkLeft, canMoveRight as checkRight } from "./utils";

@@ -1,4 +1,4 @@
-import { Text } from "components";
+import { Text } from "@/components";
 import { Step, Card as StyledCard } from "./Cards.styles";
 
 interface Props {

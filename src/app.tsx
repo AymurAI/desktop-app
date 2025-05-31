@@ -5,10 +5,10 @@ import {
   createMemoryRouter as createRouter,
 } from "react-router-dom";
 
-import { ThemeProvider } from "components";
-import AuthProvider from "context/Authentication";
-import UrlProvider from "context/ServerUrl";
-import MainLayout from "layout/main";
+import { ThemeProvider } from "@/components";
+import AuthProvider from "@/context/Authentication";
+import UrlProvider from "@/context/ServerUrl";
+import MainLayout from "@/layout/main";
 import {
   FinishAnonymizer,
   FinishDataset,
@@ -18,7 +18,7 @@ import {
   Process,
   ValidateAnonymization,
   ValidateDataset,
-} from "pages";
+} from "@/pages";
 const router = createRouter([
   {
     // Main as a layout element
@@ -42,20 +42,19 @@ const router = createRouter([
   },
 ]);
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement,
-);
-root.render(
-  <React.StrictMode>
-    {/* Provides the Google OAuth2 token */}
-    <AuthProvider>
-      {/* Provides the server URL into which the user will connect */}
-      <UrlProvider>
-        {/* Stitches global styles */}
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </UrlProvider>
-    </AuthProvider>
-  </React.StrictMode>,
-);
+export default function App() {
+  return (
+    <React.StrictMode>
+      {/* Provides the Google OAuth2 token */}
+      <AuthProvider>
+        {/* Provides the server URL into which the user will connect */}
+        <UrlProvider>
+          {/* Stitches global styles */}
+          <ThemeProvider>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </UrlProvider>
+      </AuthProvider>
+    </React.StrictMode>
+  );
+}

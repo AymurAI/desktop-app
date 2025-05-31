@@ -1,7 +1,7 @@
 import { CaretDown as NextIcon, CaretUp as PreviousIcon } from "phosphor-react";
 import * as S from "./SearchBar.styles";
 
-import { Button, Label, Stack } from "components";
+import { Button, Label, Stack } from "@/components";
 
 interface Props {
   matchesCount: number;

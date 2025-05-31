@@ -1,5 +1,5 @@
-import type { DocFile } from "types/file";
-import { validationToArray } from "utils/google";
+import type { DocFile } from "@/types/file";
+import { validationToArray } from "@/utils/google";
 import offline from "./offline";
 
 interface Props {

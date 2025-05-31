@@ -1,5 +1,5 @@
+import { AYMURAI_API_URL } from "@/utils/config";
 import axios from "axios";
-import { AYMURAI_API_URL } from "utils/config";
 
 /**
  * Sends a file to the backend to be analyzed and retrieve a list of paragraphs

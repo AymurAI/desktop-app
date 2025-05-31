@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { DecisionTabs } from "components";
-import { useFileDispatch, useForm } from "hooks";
-import { appendValidation } from "reducers/file/actions";
-import type { DocFile } from "types/file";
-import { Suggester, countDecisiones } from "utils/predictions";
+import { DecisionTabs } from "@/components";
+import { useFileDispatch, useForm } from "@/hooks";
+import { appendValidation } from "@/reducers/file/actions";
+import type { DocFile } from "@/types/file";
+import { Suggester, countDecisiones } from "@/utils/predictions";
 import Container from "./FormGroup.styles";
 import {
   DatosAcusado,

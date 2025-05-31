@@ -1,6 +1,6 @@
-import type { AllLabels, AllLabelsWithSufix } from "types/aymurai";
-import type { DocFile } from "types/file";
-import { excelStructure, flatValidation } from "utils/file";
+import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
+import type { DocFile } from "@/types/file";
+import { excelStructure, flatValidation } from "@/utils/file";
 import {
   treatFRASES_AGRESION,
   treatORAL_ESCRITA,

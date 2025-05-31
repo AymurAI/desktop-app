@@ -1,4 +1,4 @@
-import { styled } from "styles";
+import { styled } from "@/styles";
 
 export const BarContainer = styled("div", {
   height: "$m",

@@ -1,4 +1,4 @@
-import type { SpreadsheetId } from "types/spreadsheet";
+import type { SpreadsheetId } from "@/types/spreadsheet";
 
 /**
  * Converts an spreadsheet URL into an `SpreadsheetId`

@@ -1,10 +1,10 @@
 import { House, Info } from "phosphor-react";
 
-import { Button, Stack } from "components";
-import { useLogin } from "hooks";
+import { Button, Stack } from "@/components";
+import { useLogin } from "@/hooks";
+import { styled } from "@/styles";
+import { FunctionType } from "@/types/user";
 import { useNavigate } from "react-router-dom";
-import { styled } from "styles";
-import { FunctionType } from "types/user";
 const Anchor = styled("a", {
   display: "flex",
   alignItems: "center",

@@ -1,6 +1,6 @@
+import { styled } from "@/styles";
 import { X } from "phosphor-react";
 import type { FC, ReactNode } from "react";
-import { styled } from "styles";
 import Button from "../button";
 
 export interface DialogOption {

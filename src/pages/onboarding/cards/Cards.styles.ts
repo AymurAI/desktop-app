@@ -1,5 +1,5 @@
-import { Card as StyledCard } from "components";
-import { styled } from "styles";
+import { Card as StyledCard } from "@/components";
+import { styled } from "@/styles";
 
 /**
  * Styled card, containing step, image and description

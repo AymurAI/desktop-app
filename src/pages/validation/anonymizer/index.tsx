@@ -1,7 +1,7 @@
-import { Button, Grid } from "components";
-import FileAnnotator from "components/file-annotator";
-import { useFiles } from "hooks";
-import { Footer } from "layout/main";
+import { Button, Grid } from "@/components";
+import FileAnnotator from "@/components/file-annotator";
+import { useFiles } from "@/hooks";
+import { Footer } from "@/layout/main";
 import { useNavigate } from "react-router-dom";
 
 export default function Validation() {

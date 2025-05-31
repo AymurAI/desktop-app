@@ -1,9 +1,9 @@
-import type { Suggestion } from "components/select";
+import type { Suggestion } from "@/components/select";
 import type {
   AllLabels,
   AllLabelsWithSufix,
   PredictLabel,
-} from "types/aymurai";
+} from "@/types/aymurai";
 
 export type Prediction<T> = Partial<Record<AllLabels | AllLabelsWithSufix, T>>;
 export type PropertyCallback<T> = (prediction: PredictLabel) => T;

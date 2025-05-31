@@ -1,7 +1,7 @@
+import type { Paragraph } from "@/types/file";
+import { AYMURAI_API_URL } from "@/utils/config";
+import { getParagraphId } from "@/utils/file/getParagraphId";
 import axios from "axios";
-import type { Paragraph } from "types/file";
-import { AYMURAI_API_URL } from "utils/config";
-import { getParagraphId } from "utils/file/getParagraphId";
 
 interface ParagraphsResponse {
   document: string[];

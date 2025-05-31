@@ -1,8 +1,8 @@
 import { type ChangeEvent, useRef, useState } from "react";
 
-import { Grid } from "components";
-import Select, { type SelectOption } from "components/select";
-import { anonymizerLabels } from "types/aymurai";
+import { Grid } from "@/components";
+import Select, { type SelectOption } from "@/components/select";
+import { anonymizerLabels } from "@/types/aymurai";
 
 import { MagnifyingGlass } from "phosphor-react";
 import { Counter } from "./Counter";

@@ -1,6 +1,6 @@
-import type { PredictLabel } from "types/aymurai";
-import type { DocFile } from "types/file";
-import { isAllowed, isAlreadyLoaded } from "utils/file";
+import type { PredictLabel } from "@/types/aymurai";
+import type { DocFile } from "@/types/file";
+import { isAllowed, isAlreadyLoaded } from "@/utils/file";
 
 /**
  * Util function used along with `filter()` array function to mantain the types

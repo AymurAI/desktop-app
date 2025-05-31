@@ -1,4 +1,4 @@
-import type { AllLabels, AllLabelsWithSufix } from "types/aymurai";
+import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 
 export interface BaseAnnotation {
   start: number;

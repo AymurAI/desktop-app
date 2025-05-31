@@ -1,7 +1,7 @@
-import type { AllLabels } from "types/aymurai";
-import type { PredictionFeedback } from "types/feedback";
-import type { DocFile } from "types/file";
-import { flatValidation } from "utils/file";
+import type { AllLabels } from "@/types/aymurai";
+import type { PredictionFeedback } from "@/types/feedback";
+import type { DocFile } from "@/types/file";
+import { flatValidation } from "@/utils/file";
 
 /**
  * Creates a new Feedback object with a specific name and value

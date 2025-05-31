@@ -1,5 +1,5 @@
-import type { FlatFormData } from "hooks/useForm";
-import type { DocFile } from "types/file";
+import type { FlatFormData } from "@/hooks/useForm";
+import type { DocFile } from "@/types/file";
 import filterEmptyDecisions from "./filterEmptyDecisions";
 
 /**

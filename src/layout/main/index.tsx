@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 
-import { ProfileInfo, Stepper, Title } from "components";
-import FileProvider from "context/File";
-import withAuthProtection from "features/withAuthProtection";
-import { useUser } from "hooks";
-import { FunctionType } from "types/user";
+import { ProfileInfo, Stepper, Title } from "@/components";
+import FileProvider from "@/context/File";
+import withAuthProtection from "@/features/withAuthProtection";
+import { useUser } from "@/hooks";
+import { FunctionType } from "@/types/user";
 import { Footer, Header, Layout, Section } from "./Main.styles";
 import type { Props } from "./Main.types";
 

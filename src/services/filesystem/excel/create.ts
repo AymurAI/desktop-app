@@ -1,5 +1,5 @@
+import { excelStructure } from "@/utils/file";
 import { Workbook, type Worksheet } from "exceljs";
-import { excelStructure } from "utils/file";
 
 function setMetadata(workbook: Workbook) {
   workbook.creator = "AymurAI";

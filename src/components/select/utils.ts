@@ -1,6 +1,6 @@
-import type { Necessary } from "types/utils";
-import { removeUndefined } from "utils/filtering";
-import { includes } from "utils/regex";
+import type { Necessary } from "@/types/utils";
+import { removeUndefined } from "@/utils/filtering";
+import { includes } from "@/utils/regex";
 import type { SelectOption, Suggestion } from ".";
 
 /**

@@ -11,9 +11,9 @@ import {
   Select,
   Stack,
   ValidationForm,
-} from "components";
-import { LabelDecisiones } from "types/aymurai";
-import nArray from "utils/nArray";
+} from "@/components";
+import { LabelDecisiones } from "@/types/aymurai";
+import nArray from "@/utils/nArray";
 import type { FormDecisionProps } from "../FormGroup.types";
 import json from "./options.json";
 

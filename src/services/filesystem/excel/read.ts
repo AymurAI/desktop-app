@@ -1,6 +1,6 @@
 import { Workbook } from "exceljs";
 
-import logger from "utils/logger";
+import logger from "@/utils/logger";
 import filesystemAPI from "../utils";
 
 /**

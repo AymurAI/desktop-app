@@ -1,4 +1,4 @@
-import type { DocFile } from "types/file";
+import type { DocFile } from "@/types/file";
 
 /**
  * Finds the next available index and returns it

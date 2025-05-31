@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 
-import { Stack } from "components";
+import { Stack } from "@/components";
 import Step from "./Step";
 import { getStep } from "./utils";
 

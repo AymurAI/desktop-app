@@ -2,9 +2,9 @@ import type {
   AllLabels,
   AllLabelsWithSufix,
   PredictLabel,
-} from "types/aymurai";
-import type { Paragraph } from "types/file";
-import { includes } from "utils/regex";
+} from "@/types/aymurai";
+import type { Paragraph } from "@/types/file";
+import { includes } from "@/utils/regex";
 import type { Annotation } from "./types";
 
 export const SEARCH_MIN_LENGTH = 3;

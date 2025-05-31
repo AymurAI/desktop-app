@@ -1,7 +1,7 @@
+import type { PredictLabel } from "@/types/aymurai";
+import type { DocFile } from "@/types/file";
+import { AYMURAI_API_URL } from "@/utils/config";
 import axios from "axios";
-import type { PredictLabel } from "types/aymurai";
-import type { DocFile } from "types/file";
-import { AYMURAI_API_URL } from "utils/config";
 
 interface Body {
   data: {
