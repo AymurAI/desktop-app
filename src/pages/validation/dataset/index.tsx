@@ -12,7 +12,7 @@ import { useFileDispatch, useFiles } from "hooks";
 import { Footer, Section } from "layout/main";
 import { validate } from "reducers/file/actions";
 import { isFileValidated, isValidationCompleted } from "utils/file";
-import FormGroup from "./form-group";
+import Form from "./Form";
 import { moveNext, movePrevious } from "./utils";
 
 export default function Validation() {
@@ -73,11 +73,7 @@ export default function Validation() {
         />
         <Section css={{ px: 100, overflowY: "scroll" }} spacing="xxl">
           <SectionTitle>3. Validación de datos</SectionTitle>
-          <FormGroup
-            key={selectedFile.data.name}
-            file={selectedFile}
-            onCheck={handleCheck}
-          />
+          <Form />
         </Section>
       </Grid>
       <Footer
