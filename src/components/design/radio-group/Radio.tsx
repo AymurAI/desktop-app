@@ -2,9 +2,9 @@ import { Circle } from "phosphor-react";
 
 import { colors } from "styles/tokens";
 import * as S from "./RadioGroup.styles";
-import type { Radio as SingelRadio } from "./index";
+import type { Radio as SingleRadio } from "./index";
 
-interface RadioProps extends SingelRadio {
+interface RadioProps extends SingleRadio {
 	checked: boolean;
 	groupName: string;
 	onChange: (value: string) => void;
