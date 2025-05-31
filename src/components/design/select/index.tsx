@@ -19,6 +19,7 @@ interface SelectProps
   options: SelectOption[];
   value: string;
   suggestion?: SelectSuggestion;
+  name?: string;
 
   label?: string;
   placeholder?: string;
@@ -35,6 +36,7 @@ export default function Select({
   suggestion,
   onChange,
   helper,
+  name,
   ...props
 }: SelectProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -74,6 +76,7 @@ export default function Select({
         <S.InputContainer tabIndex={-1}>
           <S.Input
             id={id}
+            name={name}
             value={value}
             ref={inputRef}
             onChange={handleChange}
