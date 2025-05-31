@@ -34,7 +34,7 @@ export function Checkbox({
 			<S.Checkbox>
 				<Check color={iconColor} weight="bold" />
 			</S.Checkbox>
-			{label}
+			{label ?? id}
 		</S.CheckboxWrapper>
 	);
 }
