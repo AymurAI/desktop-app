@@ -25,7 +25,10 @@
         "noDelete": "warn"
       },
       "correctness": {
-        "useExhaustiveDependencies": "warn"
+        "useExhaustiveDependencies": "warn",
+        "noUnusedImports": "error",
+        "noUnusedFunctionParameters": "error",
+        "noUnusedVariables": "error"
       },
       "complexity": {
         "noUselessSwitchCase": "off",
@@ -44,11 +47,6 @@
         "noSvgWithoutTitle": "off",
         "useKeyWithClickEvents": "off"
       }
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double"
     }
   }
 }
