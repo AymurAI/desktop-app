@@ -1,6 +1,6 @@
 {
   "name": "aymurai",
-  "version": "1.20.0",
+  "version": "1.20.1",
   "private": true,
   "main": "build/main.js",
   "scripts": {
@@ -69,12 +69,22 @@
     }
   },
   "lint-staged": {
-    "*.md": ["npm run lint:markdown --"],
-    "src/**/*.{ts,tsx}": ["npm run lint"],
-    "renderer/**/*.ts": ["npm run lint"]
+    "*.md": [
+      "npm run lint:markdown --"
+    ],
+    "src/**/*.{ts,tsx}": [
+      "npm run lint"
+    ],
+    "renderer/**/*.ts": [
+      "npm run lint"
+    ]
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
