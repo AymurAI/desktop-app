@@ -23,13 +23,18 @@ export default async function predict(
   route: Workflows = "datapublic",
   serverUrl: string,
 ): Promise<PredictLabel[]> {
+  const path =
+    route === "datapublic"
+      ? `/datapublic/predict/${paragraph.document_id}`
+      : "/anonymizer/predict";
+
   try {
     const response = await axios
       .create({
         baseURL: serverUrl ? serverUrl : AYMURAI_API_URL,
       })
       .post<PredictResponse>(
-        `/${route}/predict/${paragraph.document_id}`,
+        path,
         {
           text: paragraph.value,
         },
