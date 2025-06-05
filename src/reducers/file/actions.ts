@@ -1,6 +1,10 @@
-import { FormData } from "hooks/useForm";
-import { PredictLabel, AllLabels, AllLabelsWithSufix } from "types/aymurai";
-import { Paragraph } from "types/file";
+import type { FormData } from "hooks/useForm";
+import type {
+  AllLabels,
+  AllLabelsWithSufix,
+  PredictLabel,
+} from "types/aymurai";
+import type { Paragraph } from "types/file";
 
 /**
  * List of action types.
@@ -120,7 +124,7 @@ export type AddPredictionsAction = Action<
  */
 export function addPredictions(
   fileName: string,
-  predictions: PredictLabel[]
+  predictions: PredictLabel[],
 ): AddPredictionsAction {
   return {
     type: ActionTypes.ADD_PREDICTIONS,
@@ -181,7 +185,7 @@ export type AppendValidationAction = Action<
  */
 export function appendValidation(
   fileName: string,
-  validation: FormData
+  validation: FormData,
 ): AppendValidationAction {
   return {
     type: ActionTypes.APPEND_VALIDATION,
@@ -214,7 +218,7 @@ export type AddParagraphsAction = Action<
  */
 export function addParagraphs(
   paragraphs: Paragraph[],
-  fileName: string
+  fileName: string,
 ): AddParagraphsAction {
   return {
     type: ActionTypes.ADD_PARAGRAPHS,
@@ -236,7 +240,7 @@ export type AppendPrediction = Action<
  */
 export function appendPrediction(
   fileName: string,
-  prediction: PredictLabel
+  prediction: PredictLabel,
 ): AppendPrediction {
   return {
     type: ActionTypes.APPEND_PREDICTION,
@@ -258,7 +262,7 @@ export type RemovePrediction = Action<
  */
 export function removePrediction(
   fileName: string,
-  prediction: PredictLabel
+  prediction: PredictLabel,
 ): RemovePrediction {
   return {
     type: ActionTypes.REMOVE_PREDICTION,
@@ -280,7 +284,7 @@ export type RemovePredictionsByText = Action<
  */
 export function removePredictionsByText(
   fileName: string,
-  text: string
+  text: string,
 ): RemovePredictionsByText {
   return {
     type: ActionTypes.REMOVE_PREDICTIONS_BY_TEXT,
@@ -306,7 +310,7 @@ export type UpdatePredictionLabel = Action<
 export function updatePredictionLabel(
   fileName: string,
   prediction: PredictLabel,
-  newLabel: string
+  newLabel: string,
 ): UpdatePredictionLabel {
   return {
     type: ActionTypes.UPDATE_PREDICTION_LABEL,
@@ -332,7 +336,7 @@ export type UpdatePredictionsByText = Action<
 export function updatePredictionsByText(
   fileName: string,
   text: string,
-  newLabel: AllLabels | AllLabelsWithSufix
+  newLabel: AllLabels | AllLabelsWithSufix,
 ): UpdatePredictionsByText {
   return {
     type: ActionTypes.UPDATE_PREDICTIONS_BY_TEXT,

@@ -1,24 +1,24 @@
 import {
   Children,
+  type ReactElement,
+  type ReactNode,
   cloneElement,
   isValidElement,
-  ReactElement,
-  ReactNode,
-} from 'react';
+} from "react";
 
-import { Props as CheckboxProps } from '../checkbox';
-import { Group, Legend } from './CheckboxGroup.styles';
+import type { Props as CheckboxProps } from "../checkbox";
+import { Group, Legend } from "./CheckboxGroup.styles";
 
 interface Props {
   children: ReactNode;
   title?: string;
   name: string;
-  direction?: 'horizontal' | 'vertical';
+  direction?: "horizontal" | "vertical";
 }
 export default function CheckboxGroup({
   title,
   name,
-  direction = 'horizontal',
+  direction = "horizontal",
   children,
 }: Props) {
   // Inject the name to the children

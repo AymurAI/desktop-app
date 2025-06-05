@@ -1,5 +1,5 @@
-import { WHITELISTED_EXTENSIONS } from 'utils/config';
-import getExtension from './getExtension';
+import { WHITELISTED_EXTENSIONS } from "utils/config";
+import getExtension from "./getExtension";
 
 /**
  * Runs a check on a file, validating its extension

@@ -1,3 +1,3 @@
-import { ComponentPropsWithoutRef } from 'react';
+import type { ComponentPropsWithoutRef } from "react";
 
-export interface Props extends ComponentPropsWithoutRef<'div'> {}
+export interface Props extends ComponentPropsWithoutRef<"div"> {}

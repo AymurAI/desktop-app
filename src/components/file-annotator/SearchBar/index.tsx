@@ -1,13 +1,13 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { type ChangeEvent, useRef, useState } from "react";
 
-import { Grid } from 'components';
-import Select, { SelectOption } from 'components/select';
-import { anonymizerLabels } from 'types/aymurai';
+import { Grid } from "components";
+import Select, { type SelectOption } from "components/select";
+import { anonymizerLabels } from "types/aymurai";
 
-import { MagnifyingGlass } from 'phosphor-react';
-import { Counter } from './Counter';
-import * as S from './SearchBar.styles';
-import { useScroll } from './useScroll';
+import { MagnifyingGlass } from "phosphor-react";
+import { Counter } from "./Counter";
+import * as S from "./SearchBar.styles";
+import { useScroll } from "./useScroll";
 
 interface Props {
   isAnnotable?: boolean;
@@ -22,7 +22,7 @@ export const SearchBar = ({
   onLabelChange,
   onLabelSufixChange,
 }: Props) => {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   const inputSearchRef = useRef<HTMLInputElement>(null);
   const inputLabelSufixRef = useRef<HTMLInputElement>(null);
@@ -43,11 +43,12 @@ export const SearchBar = ({
 
   const searchFocus = () => inputSearchRef.current?.focus();
 
+  // biome-ignore lint/suspicious/noExplicitAny: we should add a type in the future
   const changeLabelSelectHandler = (e: any | undefined) => {
     onLabelChange?.(e);
     onLabelSufixChange?.(null);
     if (inputLabelSufixRef.current) {
-      inputLabelSufixRef.current.value = '';
+      inputLabelSufixRef.current.value = "";
     }
   };
 
@@ -70,35 +71,33 @@ export const SearchBar = ({
             placeholder="Buscar"
             onChange={changeSearchHandler}
             onClick={clickSearchHandler}
-          ></S.Input>
+          />
         </S.InputContainer>
 
         <Counter {...{ next, previous, matchesCount, count }} />
       </S.WrapperSearch>
 
       {isAnnotable && (
-        <>
-          <S.ContainerLabel>
-            <S.WrapperLabel>
-              <Select
-                placeholder="Seleccione una opción"
-                options={anonymizerLabels}
-                onChange={changeLabelSelectHandler}
+        <S.ContainerLabel>
+          <S.WrapperLabel>
+            <Select
+              placeholder="Seleccione una opción"
+              options={anonymizerLabels}
+              onChange={changeLabelSelectHandler}
+            />
+          </S.WrapperLabel>
+          <S.WrapperSufixLabel>
+            <S.InputContainer>
+              <S.Input
+                ref={inputLabelSufixRef}
+                placeholder="Sufijo"
+                onChange={changeLabelSufixHandler}
+                type="number"
+                min="1"
               />
-            </S.WrapperLabel>
-            <S.WrapperSufixLabel>
-              <S.InputContainer>
-                <S.Input
-                  ref={inputLabelSufixRef}
-                  placeholder="Sufijo"
-                  onChange={changeLabelSufixHandler}
-                  type="number"
-                  min="1"
-                ></S.Input>
-              </S.InputContainer>
-            </S.WrapperSufixLabel>
-          </S.ContainerLabel>
-        </>
+            </S.InputContainer>
+          </S.WrapperSufixLabel>
+        </S.ContainerLabel>
       )}
     </Grid>
   );

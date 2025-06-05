@@ -1,15 +1,15 @@
+import { Check } from "phosphor-react";
 import {
-  ChangeEventHandler,
+  type ChangeEventHandler,
+  type ReactNode,
   forwardRef,
-  ReactNode,
   useImperativeHandle,
   useState,
-} from 'react';
-import { Check } from 'phosphor-react';
+} from "react";
 
-import { colors } from 'styles/tokens';
-import { Input, Wrapper, Checkbox as StyledCheckbox } from './Checkbox.styles';
-import { CSS } from 'styles';
+import type { CSS } from "styles";
+import { colors } from "styles/tokens";
+import { Input, Checkbox as StyledCheckbox, Wrapper } from "./Checkbox.styles";
 
 export interface Props {
   children?: ReactNode;
@@ -21,7 +21,7 @@ export interface Props {
 }
 export default forwardRef<{ value: boolean }, Props>(function Checkbox(
   { disabled = false, checked = false, name, onChange, children, css },
-  ref
+  ref,
 ) {
   const [isChecked, setIsChecked] = useState(checked);
 
@@ -35,7 +35,7 @@ export default forwardRef<{ value: boolean }, Props>(function Checkbox(
         value: isChecked,
       };
     },
-    [isChecked]
+    [isChecked],
   );
 
   const handleToggle: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -57,7 +57,7 @@ export default forwardRef<{ value: boolean }, Props>(function Checkbox(
         name={name}
       />
       <StyledCheckbox>
-        <Check color={iconColor} weight="bold"></Check>
+        <Check color={iconColor} weight="bold" />
       </StyledCheckbox>
       {children}
     </Wrapper>

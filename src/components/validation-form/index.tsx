@@ -1,22 +1,22 @@
-import { CheckCircle } from 'phosphor-react';
+import { CheckCircle } from "phosphor-react";
 import {
   Children,
+  type FormEvent,
+  type FormEventHandler,
+  type ReactElement,
+  type ReactNode,
   cloneElement,
-  FormEvent,
-  FormEventHandler,
   isValidElement,
-  ReactElement,
-  ReactNode,
   useEffect,
   useState,
-} from 'react';
+} from "react";
 
-import { Button, Subtitle } from 'components';
-import { NativeComponent } from 'types/component';
+import { Button, Subtitle } from "components";
+import type { NativeComponent } from "types/component";
 
-import { Form } from './ValidationForm.styles';
+import { Form } from "./ValidationForm.styles";
 
-interface Props extends NativeComponent<'form'> {
+interface Props extends NativeComponent<"form"> {
   children: ReactNode;
   title: string;
   onSubmit: FormEventHandler;
@@ -41,7 +41,8 @@ export default function ValidationForm({
   const childrenWithHandler = Children.map(children, (child) => {
     if (isValidElement(child)) {
       return cloneElement(child as ReactElement, { onChange });
-    } else return child;
+    }
+    return child;
   });
 
   const handleSubmit = (e: FormEvent) => {
@@ -60,7 +61,7 @@ export default function ValidationForm({
       {childrenWithHandler}
       <Button
         size="s"
-        css={{ alignSelf: 'flex-end' }}
+        css={{ alignSelf: "flex-end" }}
         type="submit"
         onClick={handleClick}
         checked={checked}

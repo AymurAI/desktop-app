@@ -1,4 +1,4 @@
-import fs from 'node:fs/promises';
+import fs from "node:fs/promises";
 
 /**
  * Check for the existence of a specific director or file

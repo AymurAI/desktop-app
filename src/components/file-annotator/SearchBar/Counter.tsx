@@ -1,7 +1,7 @@
-import * as S from './SearchBar.styles';
-import { CaretUp as PreviousIcon, CaretDown as NextIcon } from 'phosphor-react';
+import { CaretDown as NextIcon, CaretUp as PreviousIcon } from "phosphor-react";
+import * as S from "./SearchBar.styles";
 
-import { Label, Stack, Button } from 'components';
+import { Button, Label, Stack } from "components";
 
 interface Props {
   matchesCount: number;
@@ -16,7 +16,7 @@ export const Counter = ({ matchesCount, previous, next, count }: Props) => {
 
   return (
     <S.Counter>
-      <Label css={{ color: '$textDefault' }}>{count}</Label>
+      <Label css={{ color: "$textDefault" }}>{count}</Label>
       <Label>de {matchesCount}</Label>
       <Stack direction="row" wrap="nowrap" spacing="xxs">
         <Button onClick={previous} variant="none" disabled={count === 1}>

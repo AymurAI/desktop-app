@@ -1,24 +1,24 @@
 import {
   Children,
+  type ReactElement,
+  type ReactNode,
   cloneElement,
   isValidElement,
-  ReactElement,
-  ReactNode,
-} from 'react';
+} from "react";
 
-import { Props as RadioProps } from '../radio';
-import { Group, Legend } from './RadioGroup.styles';
+import type { Props as RadioProps } from "../radio";
+import { Group, Legend } from "./RadioGroup.styles";
 
 interface Props {
   children: ReactNode;
   label?: string;
   name: string;
-  direction?: 'horizontal' | 'vertical';
+  direction?: "horizontal" | "vertical";
 }
 export default function RadioGroup({
   label,
   name,
-  direction = 'horizontal',
+  direction = "horizontal",
   children,
 }: Props) {
   // Inject the name to the children

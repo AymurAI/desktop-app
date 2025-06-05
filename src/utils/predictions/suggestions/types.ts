@@ -1,10 +1,12 @@
-import { Suggestion } from 'components/select';
-import { AllLabels, AllLabelsWithSufix, PredictLabel } from 'types/aymurai';
+import type { Suggestion } from "components/select";
+import type {
+  AllLabels,
+  AllLabelsWithSufix,
+  PredictLabel,
+} from "types/aymurai";
 
-export type Prediction<T extends any> = Partial<
-  Record<AllLabels | AllLabelsWithSufix, T>
->;
-export type PropertyCallback<T extends any> = (prediction: PredictLabel) => T;
+export type Prediction<T> = Partial<Record<AllLabels | AllLabelsWithSufix, T>>;
+export type PropertyCallback<T> = (prediction: PredictLabel) => T;
 
 type TextSuggestion<T> = Partial<{ suggestion: T }>;
 export type InputSuggestion = TextSuggestion<string>;

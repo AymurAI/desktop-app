@@ -1,10 +1,10 @@
-import fs from 'node:fs/promises';
-import { shell } from 'electron';
+import fs from "node:fs/promises";
+import { shell } from "electron";
 
-import { EXPORTS_FOLDER } from '../env';
-import filesystem from './filesystem';
+import { EXPORTS_FOLDER } from "../env";
+import filesystem from "./filesystem";
 
-const FILENAME = 'set_de_datos.xlsx';
+const FILENAME = "set_de_datos.xlsx";
 const PATH = `${EXPORTS_FOLDER}/${FILENAME}`;
 
 /**
@@ -12,20 +12,20 @@ const PATH = `${EXPORTS_FOLDER}/${FILENAME}`;
  * @returns The `Promise<Buffer>` read from the file
  */
 function read() {
-  return fs.readFile(PATH);
+  return fs.readFile(PATH).then(({ buffer }) => buffer);
 }
 
 /**
  * Writes a .xlsx file to the filesystem
  * @param buffer Data buffer to write. This is the .xlsx file
  */
-async function write(buffer: Buffer) {
+async function write(arrBuffer: ArrayBuffer) {
   // Create directory if necessary
   if (!(await filesystem.exists(EXPORTS_FOLDER))) {
     await fs.mkdir(EXPORTS_FOLDER, { recursive: true });
   }
 
-  await fs.writeFile(PATH, buffer);
+  await fs.writeFile(PATH, Buffer.from(arrBuffer));
 }
 
 /**

@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { DecisionTabs } from 'components';
-import { useFileDispatch, useForm } from 'hooks';
-import { appendValidation } from 'reducers/file/actions';
-import { DocFile } from 'types/file';
-import { countDecisiones, Suggester } from 'utils/predictions';
-import Container from './FormGroup.styles';
+import { DecisionTabs } from "components";
+import { useFileDispatch, useForm } from "hooks";
+import { appendValidation } from "reducers/file/actions";
+import type { DocFile } from "types/file";
+import { Suggester, countDecisiones } from "utils/predictions";
+import Container from "./FormGroup.styles";
 import {
   DatosAcusado,
   DatosDenunciante,
   Decision,
   InfoGral,
   InfoHecho,
-} from './forms';
+} from "./forms";
 
 interface Props {
   file: DocFile;
@@ -57,7 +57,7 @@ export default function FormGroup({ file, onCheck }: Props) {
         checkedInfoHecho &&
         checkedDecision &&
         checkedDatosDenunciante &&
-        checkedDatosAcusado
+        checkedDatosAcusado,
     );
   }, [
     onCheck,

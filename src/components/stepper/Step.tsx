@@ -1,40 +1,40 @@
-import { Label, Stack } from 'components';
-import { styled } from 'styles';
+import { Label, Stack } from "components";
+import { styled } from "styles";
 
-const Number = styled('div', {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+const StepNumber = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
 
   width: 36,
   height: 36,
 
-  borderRadius: '100%',
+  borderRadius: "100%",
 
-  fontWeight: '$strong',
-  fontSize: '$ctaMd',
-  lineHeight: '$ctaMd',
-  textAlign: 'center',
+  fontWeight: "$strong",
+  fontSize: "$ctaMd",
+  lineHeight: "$ctaMd",
+  textAlign: "center",
 
   variants: {
     status: {
       completed: {
-        bg: '$actionDefaultAlt',
-        color: '$textOnButtonAlternative',
+        bg: "$actionDefaultAlt",
+        color: "$textOnButtonAlternative",
       },
       focus: {
-        bg: '$actionDefault',
-        color: '$textOnButtonDefault',
-        b: '1px solid $borderPrimaryAlt',
+        bg: "$actionDefault",
+        color: "$textOnButtonDefault",
+        b: "1px solid $borderPrimaryAlt",
       },
       disabled: {
-        bg: '$actionDisabled',
-        color: '$textOnButtonDefault',
+        bg: "$actionDisabled",
+        color: "$textOnButtonDefault",
       },
     },
   },
   defaultVariants: {
-    status: 'completed',
+    status: "completed",
   },
 });
 
@@ -51,20 +51,20 @@ interface Props {
  */
 export default function Step({ currentStep, step, children }: Props) {
   const getStatus = () => {
-    if (currentStep === step) return 'focus';
-    else if (currentStep > step) return 'completed';
-    else return 'disabled';
+    if (currentStep === step) return "focus";
+    if (currentStep > step) return "completed";
+    return "disabled";
   };
 
   return (
     <Stack align="center">
-      <Number status={getStatus()}>{step}</Number>
-      {getStatus() === 'focus' && (
+      <StepNumber status={getStatus()}>{step}</StepNumber>
+      {getStatus() === "focus" && (
         <Label
           css={{
-            display: 'none',
-            '@lg': {
-              display: 'block',
+            display: "none",
+            "@lg": {
+              display: "block",
             },
           }}
         >

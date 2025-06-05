@@ -1,7 +1,7 @@
-import create from './create';
-import read from './read';
-import open from './open';
-import write from './write';
+import create from "./create";
+import open from "./open";
+import read from "./read";
+import write from "./write";
 
 const excel = {
   read,

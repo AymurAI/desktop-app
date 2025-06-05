@@ -1,5 +1,3 @@
-type OnceAuthCodeReceivedCallback = (authCode: string | null) => void;
-
 // Add functions to window object from the renderer process (Electron)
 declare global {
   interface Window {
@@ -8,17 +6,10 @@ declare global {
         export: (fileName: string, data: object) => Promise<void>;
       };
       excel: {
-        read: () => Promise<Buffer>;
-        write: (buffer: Buffer) => Promise<void>;
+        read: () => Promise<ArrayBuffer>;
+        write: (arrBuffer: ArrayBuffer) => Promise<void>;
         open: () => Promise<string>;
       };
-    };
-    oauth?: {
-      getVerifierCode: () => Promise<string>;
-      getChallengeCode: () => Promise<string>;
-      onceAuthCodeReceived: (
-        callback: OnceAuthCodeReceivedCallback
-      ) => Promise<void>;
     };
     taskbar?: {
       notify: () => Promise<void>;

@@ -1,15 +1,15 @@
-import { Circle } from 'phosphor-react';
+import { Circle } from "phosphor-react";
 import {
-  ChangeEventHandler,
+  type ChangeEventHandler,
+  type ReactNode,
   forwardRef,
-  ReactNode,
   useImperativeHandle,
   useRef,
-} from 'react';
+} from "react";
 
-import { CSS } from 'styles';
-import { colors } from 'styles/tokens';
-import { Wrapper, Input, Radio as StyledRadio } from './Radio.styles';
+import type { CSS } from "styles";
+import { colors } from "styles/tokens";
+import { Input, Radio as StyledRadio, Wrapper } from "./Radio.styles";
 
 export interface Props {
   children?: ReactNode;
@@ -21,7 +21,7 @@ export interface Props {
 }
 export default forwardRef<{ value: boolean }, Props>(function Radio(
   { name, checked = false, disabled = false, onChange, css, children },
-  ref
+  ref,
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -35,7 +35,7 @@ export default forwardRef<{ value: boolean }, Props>(function Radio(
         value: inputRef.current?.checked ?? false,
       };
     },
-    []
+    [],
   );
 
   const handleToggle: ChangeEventHandler<HTMLInputElement> = (e) => {

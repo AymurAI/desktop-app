@@ -1,25 +1,25 @@
 import {
-  ChangeEventHandler,
-  KeyboardEvent,
-  MouseEvent,
-  ReactNode,
+  type ChangeEventHandler,
+  type KeyboardEvent,
+  type MouseEvent,
+  type ReactNode,
   useImperativeHandle,
   useState,
-} from 'react';
+} from "react";
 
-import { Label, Text, Suggestion } from 'components';
-import { NativeComponent } from 'types/component';
+import { Label, Suggestion, Text } from "components";
+import { forwardRef } from "react";
+import type { CSS } from "styles";
+import type { NativeComponent } from "types/component";
 import {
-  Input as StyledInput,
   Container,
   InputContainer,
-} from './Input.styles';
-import { forwardRef } from 'react';
-import { CSS } from 'styles';
+  Input as StyledInput,
+} from "./Input.styles";
 
 export type InputRefValue = { value: string };
 interface Props
-  extends NativeComponent<'input', 'prefix' | 'type' | 'value' | 'onChange'> {
+  extends NativeComponent<"input", "prefix" | "type" | "value" | "onChange"> {
   label?: string;
   suggestion?: string;
   helper?: string;
@@ -27,7 +27,7 @@ interface Props
   prefix?: ReactNode;
   defaultValue?: string;
   onChange?: (value: string) => void;
-  type?: 'text' | 'number';
+  type?: "text" | "number";
   css?: CSS;
   specialCharacters?: string;
 }
@@ -40,13 +40,13 @@ export default forwardRef<{ value: string }, Props>(function Input(
     sufix,
     defaultValue,
     onChange,
-    type = 'text',
-    specialCharacters = '',
+    type = "text",
+    specialCharacters = "",
     ...props
   },
-  ref
+  ref,
 ) {
-  const [value, setValue] = useState<string>(defaultValue ?? '');
+  const [value, setValue] = useState<string>(defaultValue ?? "");
 
   // Only exposes `selected` object to the parent component
   useImperativeHandle(
@@ -56,21 +56,20 @@ export default forwardRef<{ value: string }, Props>(function Input(
         value,
       };
     },
-    [value]
+    [value],
   );
 
-  const isValueEmpty = !value || value === '';
+  const isValueEmpty = !value || value === "";
 
   const updateValue = (newValue: string) => {
-    if (type === 'number') {
+    if (type === "number") {
       const regex = new RegExp(`^[\\d${specialCharacters}.]+$`);
       if (regex.test(newValue) || !newValue) {
         setValue(newValue);
         onChange?.(newValue);
         return;
-      } else {
-        return;
       }
+      return;
     }
 
     setValue(newValue);
@@ -84,7 +83,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
   const handleKeySuggestion = (e: KeyboardEvent) => {
     e.preventDefault();
 
-    if (e.code === 'Space' || e.code === 'Enter')
+    if (e.code === "Space" || e.code === "Enter")
       updateValue(suggestion as string); // We are sure is a string because the button is enabled only in case suggestion = string
   };
 
@@ -103,7 +102,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
         {prefix && (
           <>
             <Label>{prefix}</Label>
-            <Text css={{ lineHeight: '100%', color: '$secondary' }}>|</Text>
+            <Text css={{ lineHeight: "100%", color: "$secondary" }}>|</Text>
           </>
         )}
 
@@ -118,7 +117,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
         {/* SUGGESTION */}
         {suggestion && isValueEmpty && (
           <>
-            <Text css={{ lineHeight: '100%' }}>|</Text>
+            <Text css={{ lineHeight: "100%" }}>|</Text>
             <Suggestion
               onClick={handleClickSuggestion}
               onKeyDown={handleKeySuggestion}

@@ -1,13 +1,13 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useFileDispatch, useFileParser, useUser } from 'hooks';
-import { predict } from 'services/aymurai';
-import { addPredictions, removePredictions } from 'reducers/file/actions';
+import { useFileDispatch, useFileParser, useUser } from "hooks";
+import { addPredictions, removePredictions } from "reducers/file/actions";
+import { predict } from "services/aymurai";
 
-import { FunctionType } from 'types/user';
-import { DocFile } from 'types/file';
+import type { DocFile } from "types/file";
+import { FunctionType } from "types/user";
 
-export type PredictStatus = 'processing' | 'error' | 'stopped' | 'completed';
+export type PredictStatus = "processing" | "error" | "stopped" | "completed";
 
 interface UsePredictOptions {
   onStatusChange?: (status: PredictStatus) => void;
@@ -15,10 +15,10 @@ interface UsePredictOptions {
 export function usePredict(
   file: DocFile,
   { onStatusChange }: UsePredictOptions,
-  serverUrl: string
+  serverUrl: string,
 ) {
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState<PredictStatus>('processing');
+  const [status, setStatus] = useState<PredictStatus>("processing");
   const dispatch = useFileDispatch();
   const paragraphs = useFileParser(file, serverUrl);
 
@@ -33,14 +33,13 @@ export function usePredict(
     setStatus(newValue);
     onStatusChange?.(newValue);
     // This next line is disabled because the function should only be created once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const abort = () => {
     controller.current.abort();
 
     dispatch(removePredictions(file.data.name));
-    updateStatus('stopped');
+    updateStatus("stopped");
     setProgress(0);
   };
 
@@ -49,14 +48,14 @@ export function usePredict(
     let loading = true;
 
     const fetch = async () => {
-      if (!loading || !paragraphs || status !== 'processing') return;
+      if (!loading || !paragraphs || status !== "processing") return;
 
       const promises = paragraphs.map(async (p) => {
         const prediction = await predict(
           p,
           controller.current,
-          isAnonimizing ? 'anonymizer' : 'datapublic',
-          serverUrl
+          isAnonimizing ? "anonymizer" : "datapublic",
+          serverUrl,
         );
 
         dispatch(addPredictions(file.data.name, prediction));
@@ -67,11 +66,11 @@ export function usePredict(
       // Once all promises are resolved, set status to completed or error if applicable
       await Promise.all(promises)
         .then(() => {
-          updateStatus('completed');
+          updateStatus("completed");
         })
         .catch(() => {
           setProgress(0);
-          updateStatus('error');
+          updateStatus("error");
         });
     };
 

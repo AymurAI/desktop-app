@@ -1,7 +1,7 @@
-import { AllLabels } from 'types/aymurai';
-import { PredictionFeedback } from 'types/feedback';
-import { DocFile } from 'types/file';
-import { flatValidation } from 'utils/file';
+import type { AllLabels } from "types/aymurai";
+import type { PredictionFeedback } from "types/feedback";
+import type { DocFile } from "types/file";
+import { flatValidation } from "utils/file";
 
 /**
  * Creates a new Feedback object with a specific name and value
@@ -11,10 +11,10 @@ import { flatValidation } from 'utils/file';
  */
 function newLabel(
   name: AllLabels,
-  value: PredictionFeedback['validationText']
+  value: PredictionFeedback["validationText"],
 ): PredictionFeedback {
   return {
-    paragraphId: '',
+    paragraphId: "",
     text: null,
     start_char: null,
     end_char: null,
@@ -39,7 +39,7 @@ export function joinValidation({
   predictions,
   validationObject,
 }: DocFile): PredictionFeedback[] {
-  let result: PredictionFeedback[] = [];
+  const result: PredictionFeedback[] = [];
 
   const flat = flatValidation(validationObject);
 
@@ -59,7 +59,7 @@ export function joinValidation({
     });
 
     filtered.forEach((label) =>
-      result.push(newLabel(label, val[label] ?? null))
+      result.push(newLabel(label, val[label] ?? null)),
     );
   });
 

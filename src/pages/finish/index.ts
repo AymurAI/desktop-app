@@ -1,4 +1,4 @@
-import Dataset from './dataset';
-import Anonymizer from './anonymizer';
+import Anonymizer from "./anonymizer";
+import Dataset from "./dataset";
 
 export { Dataset, Anonymizer };

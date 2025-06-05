@@ -1,14 +1,14 @@
-import { X } from 'phosphor-react';
-import { ChangeEventHandler, useContext, useRef } from 'react';
+import { X } from "phosphor-react";
+import { type ChangeEventHandler, useContext, useRef } from "react";
 
-import { HiddenInput, Stack, Button as BaseButton } from 'components';
-import Button from './Button';
-import ProgressBar from './ProgressBar';
-import { useFileDispatch } from 'hooks';
-import { replaceFile, removeFile } from 'reducers/file/actions';
-import { usePredict, PredictStatus } from 'hooks/usePredict';
-import { DocFile } from 'types/file';
-import { ServerUrlContext } from 'context/ServerUrl';
+import { Button as BaseButton, HiddenInput, Stack } from "components";
+import { ServerUrlContext } from "context/ServerUrl";
+import { useFileDispatch } from "hooks";
+import { type PredictStatus, usePredict } from "hooks/usePredict";
+import { removeFile, replaceFile } from "reducers/file/actions";
+import type { DocFile } from "types/file";
+import Button from "./Button";
+import ProgressBar from "./ProgressBar";
 
 interface Props {
   file: DocFile;
@@ -25,7 +25,7 @@ export default function FileProcessing({
   const { progress, status, abort } = usePredict(
     file,
     { onStatusChange },
-    serverUrl
+    serverUrl,
   );
   const dispatch = useFileDispatch();
 
@@ -58,17 +58,17 @@ export default function FileProcessing({
   };
 
   return (
-    <Stack align="center" spacing="m" css={{ width: '100%' }}>
+    <Stack align="center" spacing="m" css={{ width: "100%" }}>
       <HiddenInput
         multiple={false}
-        css={{ position: 'absolute' }}
+        css={{ position: "absolute" }}
         ref={inputRef}
         onChange={handleAddedFile}
       />
       <ProgressBar
         status={status}
         fileName={file.data.name}
-        progress={status === 'stopped' ? 0 : Math.round(progress * 100)}
+        progress={status === "stopped" ? 0 : Math.round(progress * 100)}
       />
       <Button
         status={status}

@@ -1,7 +1,7 @@
-import { CheckCircle, XCircle } from 'phosphor-react';
-import { Spinner } from 'components';
+import { Spinner } from "components";
+import { CheckCircle, XCircle } from "phosphor-react";
 
-import { colors } from 'styles/tokens';
+import { colors } from "styles/tokens";
 
 interface Props {
   hasError: boolean;
@@ -9,6 +9,6 @@ interface Props {
 }
 export default function Icon({ hasError, isLoading }: Props) {
   if (hasError) return <XCircle size={48} color={colors.errorPrimary} />;
-  else if (isLoading) return <Spinner />;
-  else return <CheckCircle size={48} color={colors.primary} />;
+  if (isLoading) return <Spinner />;
+  return <CheckCircle size={48} color={colors.primary} />;
 }

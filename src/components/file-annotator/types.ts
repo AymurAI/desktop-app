@@ -1,4 +1,4 @@
-import { AllLabels, AllLabelsWithSufix } from 'types/aymurai';
+import type { AllLabels, AllLabelsWithSufix } from "types/aymurai";
 
 export interface BaseAnnotation {
   start: number;
@@ -6,19 +6,19 @@ export interface BaseAnnotation {
 }
 
 export interface LabelAnnotation extends BaseAnnotation {
-  type: 'tag' | 'search';
+  type: "tag" | "search";
   paragraphId: string;
   tag?: AllLabels | AllLabelsWithSufix;
 }
 export interface TextAnnotation extends BaseAnnotation {
-  type: 'text';
+  type: "text";
 }
 
 export type Annotation = LabelAnnotation | TextAnnotation;
 export type Split = Annotation;
 
 export interface Metadata {
-  'data-start': number;
-  'data-end': number;
-  'data-tag'?: string;
+  "data-start": number;
+  "data-end": number;
+  "data-tag"?: string;
 }

@@ -1,31 +1,31 @@
-import { styled } from 'styles';
+import { styled } from "styles";
 
 /**
  * Adds the `$secondary` colors
  */
-export const Background = styled('main', {
-  bg: '$secondary',
+export const Background = styled("main", {
+  bg: "$secondary",
 
-  display: 'flex',
+  display: "flex",
 
-  height: '100vh',
+  height: "100vh",
 });
 
 /**
  * Contains the Login elements and adds the margin
  */
-export const Container = styled('div', {
-  bg: '$white',
+export const Container = styled("div", {
+  bg: "$white",
 
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  alignItems: 'center',
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  alignItems: "center",
   flex: 1,
-  gap: '$l',
+  gap: "$l",
 
-  padding: '$l',
-  margin: '$xl',
+  padding: "$l",
+  margin: "$xl",
 
-  b: '1px solid $borderPrimary',
+  b: "1px solid $borderPrimary",
 });

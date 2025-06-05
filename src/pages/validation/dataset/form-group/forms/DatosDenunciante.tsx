@@ -1,7 +1,7 @@
-import { Input, Select, ValidationForm } from 'components';
-import { LabelType } from 'types/aymurai';
-import { FormProps } from '../FormGroup.types';
-import json from './options.json';
+import { Input, Select, ValidationForm } from "components";
+import { LabelType } from "types/aymurai";
+import type { FormProps } from "../FormGroup.types";
+import json from "./options.json";
 
 export default function DatosDenunciante({
   onSubmit,

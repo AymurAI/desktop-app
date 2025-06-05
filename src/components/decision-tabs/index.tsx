@@ -1,14 +1,15 @@
-import { Plus as Icon } from 'phosphor-react';
+import { Plus as Icon } from "phosphor-react";
 
-import { Stack, TabName, Tab } from 'components';
-import { PlusButton } from './DecisionTabs.styles';
-import nArray from 'utils/nArray';
+import { Stack, Tab, TabName } from "components";
+import nArray from "utils/nArray";
+import { PlusButton } from "./DecisionTabs.styles";
 
 interface Props {
   selected: number;
   decisionAmount: number;
   addDecision: () => void;
   selectDecision: (n: number) => void;
+  // biome-ignore lint/suspicious/noExplicitAny: in the future this any will be removed
   css?: any;
 }
 export default function DecisionTabs({
@@ -28,11 +29,11 @@ export default function DecisionTabs({
         <Tab
           key={dec}
           as="button"
-          css={{ cursor: 'pointer' }}
+          css={{ cursor: "pointer" }}
           onClick={selectDecisionHandler(dec)}
-          status={selected === dec ? 'focus' : 'default'}
+          status={selected === dec ? "focus" : "default"}
         >
-          <TabName css={{ cursor: 'pointer' }}>Decisión {dec + 1}</TabName>
+          <TabName css={{ cursor: "pointer" }}>Decisión {dec + 1}</TabName>
         </Tab>
       ))}
       <PlusButton variant="secondary" onClick={addDecision}>

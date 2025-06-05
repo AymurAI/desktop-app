@@ -1,5 +1,5 @@
-import { FormValue } from 'hooks/useForm';
-import filesystem from 'services/filesystem';
+import type { FormValue } from "hooks/useForm";
+import filesystem from "services/filesystem";
 
 /**
  * Writes the validated data to the filesystem, creating new rows on the already existent dataset
@@ -9,7 +9,7 @@ import filesystem from 'services/filesystem';
  */
 export default async function offline(validations: FormValue[][]) {
   // Opens an already existent Workbook or creates a new one
-  let workbook = (await filesystem.excel.read()) ?? filesystem.excel.create();
+  const workbook = (await filesystem.excel.read()) ?? filesystem.excel.create();
 
   const worksheet = workbook.worksheets[0];
   worksheet.addRows(validations);

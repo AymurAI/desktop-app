@@ -1,4 +1,4 @@
-import { DocFile } from 'types/file';
+import type { DocFile } from "types/file";
 
 /**
  * Searches for a specific `DocFile` into an array or state of files

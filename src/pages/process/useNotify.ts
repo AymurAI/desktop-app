@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { initProcessState, isPredictionCompleted } from './utils';
-import taskbar from 'services/taskbar';
+import { useEffect, useState } from "react";
+import taskbar from "services/taskbar";
+import { type initProcessState, isPredictionCompleted } from "./utils";
 
 export default function useNotify(
-  process: ReturnType<typeof initProcessState>
+  process: ReturnType<typeof initProcessState>,
 ) {
   const [isToastVisible, setIsToastVisible] = useState(false);
 
@@ -16,7 +16,6 @@ export default function useNotify(
       taskbar.notify();
       setIsToastVisible(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPredictionCompleted(process)]);
 
   return { isToastVisible, hideToast };

@@ -1,7 +1,7 @@
-import { Stop, ArrowsLeftRight as Restart } from 'phosphor-react';
+import { ArrowsLeftRight as Restart, Stop } from "phosphor-react";
 
-import { Button as BaseButton } from 'components';
-import { PredictStatus } from 'hooks/usePredict';
+import { Button as BaseButton } from "components";
+import type { PredictStatus } from "hooks/usePredict";
 
 interface Props {
   status: PredictStatus;
@@ -11,10 +11,10 @@ interface Props {
 export default function Button({ status, onStop, onReplace }: Props) {
   const style = {
     minWidth: 210,
-    gap: '$xs',
+    gap: "$xs",
   };
 
-  return status === 'processing' ? (
+  return status === "processing" ? (
     <BaseButton onClick={onStop} variant="secondary" css={style} size="s">
       <Stop weight="bold" />
       Detener

@@ -4,5 +4,5 @@
  * @returns Extension string of the file (formatted as `doc | docx`)
  */
 export default function getExtension(file: File) {
-  return file.name.split('.').at(-1);
+  return file.name.split(".").at(-1);
 }

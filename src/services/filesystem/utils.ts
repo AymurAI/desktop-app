@@ -5,8 +5,9 @@
 export default function filesystemAPI() {
   if (window.filesystem) {
     return window.filesystem;
-  } else
-    throw new Error(
-      'There was an error trying to use the "filesystem" API, check your preload script'
-    );
+  }
+
+  throw new Error(
+    'There was an error trying to use the "filesystem" API, check your preload script',
+  );
 }

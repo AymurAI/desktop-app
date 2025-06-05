@@ -1,7 +1,20 @@
-import { Necessary } from 'types/utils';
-import { removeUndefined } from 'utils/filtering';
-import { SelectOption, Suggestion } from '.';
-import { includes } from 'utils/regex';
+import type { Necessary } from "types/utils";
+import { removeUndefined } from "utils/filtering";
+import { includes } from "utils/regex";
+import type { SelectOption, Suggestion } from ".";
+
+/**
+ * Returns a `SelectOption` based on the given `id`
+ * @param id ID to use as a filter
+ * @param options Current `SelectOption[]` array
+ * @returns Returns the already existent option in the array or `undefined` if it doesn't exist on the array
+ */
+export function findById(
+  id: SelectOption["id"] | undefined,
+  options: SelectOption[],
+) {
+  return options.find((op) => op.id === id);
+}
 
 /**
  * Makes sure the text of the suggestion is defined in any way
@@ -11,33 +24,17 @@ import { includes } from 'utils/regex';
  */
 export function secureSuggestion(
   suggestion: Suggestion | undefined,
-  options: SelectOption[]
-): Necessary<Suggestion, 'text'> | undefined {
+  options: SelectOption[],
+): Necessary<Suggestion, "text"> | undefined {
   if (suggestion) {
     const { text, id } = suggestion;
 
     if (text) return { id, text };
-    else {
-      const option = findById(id, options);
 
-      return option;
-    }
-  } else {
-    return undefined;
+    const option = findById(id, options);
+    return option;
   }
-}
-
-/**
- * Returns a `SelectOption` based on the given `id`
- * @param id ID to use as a filter
- * @param options Current `SelectOption[]` array
- * @returns Returns the already existent option in the array or `undefined` if it doesn't exist on the array
- */
-export function findById(
-  id: SelectOption['id'] | undefined,
-  options: SelectOption[]
-) {
-  return options.find((op) => op.id === id);
+  return undefined;
 }
 
 /**
@@ -48,7 +45,7 @@ export function findById(
  */
 export function orderByPriority(
   options: SelectOption[],
-  priority: SelectOption['id'][] = []
+  priority: SelectOption["id"][] = [],
 ) {
   // Remove priority options from the array
   const filtered = options.filter(({ id }) => !priority.find((p) => p === id));

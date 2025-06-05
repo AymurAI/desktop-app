@@ -1,6 +1,6 @@
-import { useUser } from 'hooks';
-import { ComponentType, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useUser } from "hooks";
+import type { ComponentType } from "react";
+import { Navigate } from "react-router-dom";
 
 /**
  * High order component that adds auth protection / private routes to a component
@@ -8,19 +8,14 @@ import { useNavigate } from 'react-router-dom';
  * @returns
  */
 export default function withAuthProtection<T extends JSX.IntrinsicAttributes>(
-  Component: ComponentType<T>
+  Component: ComponentType<T>,
 ) {
   return (props: T) => {
     const user = useUser();
-    const navigate = useNavigate();
 
-    // Check if a token is stored on the app
-    useEffect(() => {
-      if (!user) {
-        navigate('/login');
-      }
-    }, [user, navigate]);
+    // Check if the user is authenticated
+    if (!user) return <Navigate to="/login" />;
 
-    return <Component {...props}></Component>;
+    return <Component {...props} />;
   };
 }

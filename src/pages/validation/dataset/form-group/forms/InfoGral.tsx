@@ -1,6 +1,6 @@
-import { Input, ValidationForm } from 'components';
-import { LabelType } from 'types/aymurai';
-import { FormProps } from '../FormGroup.types';
+import { Input, ValidationForm } from "components";
+import { LabelType } from "types/aymurai";
+import type { FormProps } from "../FormGroup.types";
 
 export default function InfoGral({
   onSubmit,

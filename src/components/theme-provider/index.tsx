@@ -1,6 +1,6 @@
-import { globalStyles } from 'styles';
+import { globalStyles } from "styles";
 
-import { Props } from './ThemeProvider.types';
+import type { Props } from "./ThemeProvider.types";
 
 export default function ThemeProvider({ children }: Props) {
   globalStyles();

@@ -1,6 +1,6 @@
-import { useContext } from 'react';
+import { useContext } from "react";
 
-import { FileContext, FileDispatchContext } from 'context/File';
+import { FileContext, FileDispatchContext } from "context/File";
 
 /**
  * Hook used to view the files in the state

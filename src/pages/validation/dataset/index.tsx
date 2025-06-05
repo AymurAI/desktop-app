@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Button,
@@ -7,16 +7,15 @@ import {
   FileStepper,
   Grid,
   SectionTitle,
-} from 'components';
-import withFileProtection from 'features/withFileProtection';
-import { useFileDispatch, useFiles } from 'hooks';
-import { Footer, Section } from 'layout/main';
-import { validate } from 'reducers/file/actions';
-import { isFileValidated, isValidationCompleted } from 'utils/file';
-import FormGroup from './form-group';
-import { moveNext, movePrevious } from './utils';
+} from "components";
+import { useFileDispatch, useFiles } from "hooks";
+import { Footer, Section } from "layout/main";
+import { validate } from "reducers/file/actions";
+import { isFileValidated, isValidationCompleted } from "utils/file";
+import FormGroup from "./form-group";
+import { moveNext, movePrevious } from "./utils";
 
-export default withFileProtection(function Validation() {
+export default function Validation() {
   // HOOKS
   const files = useFiles();
   const [checked, setChecked] = useState(false);
@@ -40,7 +39,7 @@ export default withFileProtection(function Validation() {
   const previousFile = () => moveIndex(movePrevious(selected, files));
 
   const handleContinue = () => {
-    navigate('/finish/dataset');
+    navigate("/finish/dataset");
   };
 
   const handleValidate = async () => {
@@ -65,13 +64,14 @@ export default withFileProtection(function Validation() {
         spacing="none"
         justify="stretch"
         align="stretch"
-        css={{ overflow: 'hidden' }}
+        css={{ overflow: "hidden" }}
       >
         <FileAnnotator
           key={selectedFile.data.name}
           file={selectedFile}
-        ></FileAnnotator>
-        <Section css={{ px: 100, overflowY: 'scroll' }} spacing="xxl">
+          isAnnotable
+        />
+        <Section css={{ px: 100, overflowY: "scroll" }} spacing="xxl">
           <SectionTitle>3. Validación de datos</SectionTitle>
           <FormGroup
             key={selectedFile.data.name}
@@ -82,7 +82,7 @@ export default withFileProtection(function Validation() {
       </Grid>
       <Footer
         css={{
-          justifyContent: hasStepper ? 'space-between' : 'flex-end',
+          justifyContent: hasStepper ? "space-between" : "flex-end",
           gap: 150,
         }}
       >
@@ -106,4 +106,4 @@ export default withFileProtection(function Validation() {
       </Footer>
     </>
   );
-});
+}

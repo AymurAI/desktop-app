@@ -28,6 +28,3 @@ Al ser un proyecto basado en _Electron_, el router que utilizamos no es el mismo
 Existen dos high order components que se encargan de proteger las rutas de la aplicación dependiendo qué se requiere:
 
 - `withAuthProtection`: verifica si el usuario está autenticado y redirige a `/login` si no lo está.
-- `withFileProtection`: verifica si el usuario ha cargado un archivo y redirige `/onboarding` si no lo ha hecho.
-
-> ⚠️ **Nota**: verificar que estos HOCs funcionen correctamente ya que últimamente no se estuvieron testeando mucho estas features

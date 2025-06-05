@@ -5,10 +5,10 @@ import {
   Select,
   Stack,
   ValidationForm,
-} from 'components';
-import { LabelDecisiones } from 'types/aymurai';
-import { FormDecisionProps } from '../FormGroup.types';
-import json from './options.json';
+} from "components";
+import { LabelDecisiones } from "types/aymurai";
+import type { FormDecisionProps } from "../FormGroup.types";
+import json from "./options.json";
 
 export default function Decision({
   register,
@@ -81,7 +81,7 @@ export default function Decision({
         </Radio>
       </RadioGroup>
       {/* TODO ajustar posicionamiento de estos botones que se ponen en vertical cuando hay una sugerencia */}
-      <Stack spacing="l" css={{ '&>*': { flex: 1 } }}>
+      <Stack spacing="l" css={{ "&>*": { flex: 1 } }}>
         <Input
           ref={prop(LabelDecisiones.HORA_DE_INICIO)}
           {...suggester.text(LabelDecisiones.HORA_DE_INICIO)}

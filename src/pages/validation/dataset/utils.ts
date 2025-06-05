@@ -1,4 +1,4 @@
-import { DocFile } from 'types/file';
+import type { DocFile } from "types/file";
 
 /**
  * Finds the next available index and returns it
@@ -13,7 +13,7 @@ export function movePrevious(cur: number, state: DocFile[]) {
     index--;
 
     if (index < 0) return undefined;
-  } while (!!state[index].validated);
+  } while (state[index].validated);
 
   return index;
 }
@@ -31,7 +31,7 @@ export function moveNext(cur: number, state: DocFile[]) {
     index++;
 
     if (index === state.length) return undefined;
-  } while (!!state[index].validated);
+  } while (state[index].validated);
 
   return index;
 }

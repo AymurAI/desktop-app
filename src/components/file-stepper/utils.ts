@@ -1,4 +1,4 @@
-import { DocFile } from 'types/file';
+import type { DocFile } from "types/file";
 
 /**
  * Check if the stepper can move to the left

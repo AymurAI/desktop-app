@@ -1,6 +1,6 @@
-import { MouseEventHandler, ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode } from "react";
 
-import { Arrow, Button, Stack, Title } from 'components';
+import { Arrow, Button, Stack, Title } from "components";
 
 interface Props {
   children: ReactNode;
@@ -15,10 +15,10 @@ export default function SectionTitle({ children, onClick }: Props) {
           <Button
             variant="none"
             size="s"
-            css={{ p: 0, alignSelf: 'center' }}
+            css={{ p: 0, alignSelf: "center" }}
             onClick={onClick}
           >
-            <Arrow.Left></Arrow.Left>
+            <Arrow.Left />
           </Button>
         )}
         {children}

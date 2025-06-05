@@ -1,5 +1,5 @@
-import { Plus } from 'phosphor-react';
-import { useState } from 'react';
+import { Plus } from "phosphor-react";
+import { useState } from "react";
 
 import {
   Button,
@@ -11,11 +11,11 @@ import {
   Select,
   Stack,
   ValidationForm,
-} from 'components';
-import { LabelDecisiones } from 'types/aymurai';
-import nArray from 'utils/nArray';
-import { FormDecisionProps } from '../FormGroup.types';
-import json from './options.json';
+} from "components";
+import { LabelDecisiones } from "types/aymurai";
+import nArray from "utils/nArray";
+import type { FormDecisionProps } from "../FormGroup.types";
+import json from "./options.json";
 
 export default function DatosDenunciante({
   decision,
@@ -80,7 +80,7 @@ export default function DatosDenunciante({
           checked={
             defaultValue(LabelDecisiones.VIOLENCIA_DE_GENERO_SI) as boolean
           }
-          {...suggester.violencia_genero('si')}
+          {...suggester.violencia_genero("si")}
         >
           Sí
         </Radio>
@@ -89,7 +89,7 @@ export default function DatosDenunciante({
           checked={
             defaultValue(LabelDecisiones.VIOLENCIA_DE_GENERO_NO) as boolean
           }
-          {...suggester.violencia_genero('no')}
+          {...suggester.violencia_genero("no")}
         >
           No
         </Radio>
@@ -174,7 +174,7 @@ export default function DatosDenunciante({
         ))}
         <Button
           size="s"
-          css={{ alignSelf: 'flex-start' }}
+          css={{ alignSelf: "flex-start" }}
           variant="secondary"
           onClick={newFraseAgresion}
         >
@@ -191,17 +191,17 @@ export default function DatosDenunciante({
       />
       <Select
         ref={prop(
-          LabelDecisiones['RELACION_Y_TIPO_ENTRE_ACUSADO/A_Y_DENUNCIANTE']
+          LabelDecisiones["RELACION_Y_TIPO_ENTRE_ACUSADO/A_Y_DENUNCIANTE"],
         )}
         options={json.RELACION_Y_TIPO_ENTRE_ACUSADO_Y_DENUNCIANTE}
         label="Relación y tipo entre acusada y denunciante"
         selected={
           defaultValue(
-            LabelDecisiones['RELACION_Y_TIPO_ENTRE_ACUSADO/A_Y_DENUNCIANTE']
+            LabelDecisiones["RELACION_Y_TIPO_ENTRE_ACUSADO/A_Y_DENUNCIANTE"],
           ) as string
         }
         {...suggester.select(
-          LabelDecisiones['RELACION_Y_TIPO_ENTRE_ACUSADO/A_Y_DENUNCIANTE']
+          LabelDecisiones["RELACION_Y_TIPO_ENTRE_ACUSADO/A_Y_DENUNCIANTE"],
         )}
       />
       <Select
@@ -213,17 +213,17 @@ export default function DatosDenunciante({
       />
       <Select
         ref={prop(
-          LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
+          LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO,
         )}
         options={json.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO}
         label="Medidas de protección vigentes al momento del hecho"
         selected={
           defaultValue(
-            LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
+            LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO,
           ) as string
         }
         {...suggester.select(
-          LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO
+          LabelDecisiones.MEDIDAS_DE_PROTECCION_VIGENTES_AL_MOMENTO_DEL_HECHO,
         )}
       />
       <Select
