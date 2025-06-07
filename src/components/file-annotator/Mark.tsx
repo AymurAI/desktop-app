@@ -20,7 +20,7 @@ interface MarkProps extends HTMLAttributes<HTMLSpanElement> {
 type DialogState = {
   open: boolean;
   title?: string;
-  action: "replace" | "replaceAll" | "remove" | "removeAll";
+  action: "replace" | "replaceAll" | "removeAll";
   suffix: number | null;
   selectedOption: SelectOption | undefined;
 };
@@ -86,16 +86,35 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     const annotationData = createAnnotationData(annotation as LabelAnnotation);
     if (!annotationData) return;
 
-    if (operation === "remove" || operation === "removeByText") {
+    if (operation === "removeByText") {
       setDialogState({
         open: true,
-        action: operation === "remove" ? "remove" : "removeAll",
+        action: "removeAll",
         suffix: null,
         selectedOption: undefined,
       });
     } else {
       annotationOperations[operation](annotationData);
     }
+  };
+
+  const handleRemoveAll = () => {
+    const annotationData = createAnnotationData(annotation as LabelAnnotation);
+    if (!annotationData) return;
+
+    setDialogState({
+      open: true,
+      action: "removeAll",
+      suffix: null,
+      selectedOption: undefined,
+    });
+  };
+
+  const handleRemove = () => {
+    const annotationData = createAnnotationData(annotation as LabelAnnotation);
+    if (!annotationData) return;
+
+    remove(annotationData);
   };
 
   const handleAddBySearch = (annotation: LabelAnnotation) => {
@@ -113,20 +132,13 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
 
   const applyChanges = () => {
     if (!dialogState.selectedOption) {
-      if (
-        dialogState.action === "remove" ||
-        dialogState.action === "removeAll"
-      ) {
+      if (dialogState.action === "removeAll") {
         const annotationData = createAnnotationData(
           annotation as LabelAnnotation,
         );
         if (!annotationData) return;
 
-        if (dialogState.action === "remove") {
-          remove(annotationData);
-        } else {
-          removeByText(annotationData);
-        }
+        removeByText(annotationData);
       }
     } else {
       const annotationData = createAnnotationData(
@@ -234,7 +246,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                 </S.Button>
                 <S.Button
                   type="button"
-                  onClick={() => handleAnnotationOperation("remove")}
+                  onClick={() => handleRemove()}
                   title="Eliminar esta ocurrencia"
                 >
                   <img src="button-icons/delete-one.svg" alt="Delete One" />
@@ -243,7 +255,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                   type="button"
                   smallImage
                   css={{ pt: 1, pb: 0 }}
-                  onClick={() => handleAnnotationOperation("removeByText")}
+                  onClick={() => handleRemoveAll()}
                   title="Eliminar todas las ocurrencias"
                 >
                   <img
@@ -268,15 +280,10 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
               }))
             }
           >
-            {dialogState.action === "remove" ||
-            dialogState.action === "removeAll" ? (
+            {dialogState.action === "removeAll" ? (
               <>
                 <DialogMessage>
-                  ¿Deseas{" "}
-                  {dialogState.action === "remove"
-                    ? "eliminar la etiqueta"
-                    : "eliminar todas las etiquetas"}{" "}
-                  <b>{children}</b>?
+                  ¿Deseas eliminar todas las etiquetas <b>{children}</b>?
                 </DialogMessage>
                 <DialogButtons>
                   <Button onClick={applyChanges}>Sí, eliminar</Button>
