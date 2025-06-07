@@ -10,6 +10,7 @@ export const Container = styled("div", {
 export const File = styled("div", {
   px: "$xl",
   pb: "$xl",
+  pt: "$l",
 
   "& p, & span, & em": {
     fontFamily: "$file",
@@ -133,6 +134,7 @@ export const Mark = styled("mark", {
 
 export const SearchContainer = styled("div", {
   p: "$l",
+  pb: 0,
 
   zIndex: 1,
   top: 0,
