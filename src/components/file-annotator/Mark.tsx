@@ -199,7 +199,6 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
               <S.ButtonContainer>
                 <S.Button
                   type="button"
-                  css={{ variant: "replace" }}
                   onClick={() => {
                     setDialogState({
                       open: true,
@@ -215,7 +214,7 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                 </S.Button>
                 <S.Button
                   type="button"
-                  css={{ variant: "replaceAll" }}
+                  smallImage
                   onClick={() => {
                     setDialogState({
                       open: true,
@@ -227,11 +226,14 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                   }}
                   title="Reemplazar todas las ocurrencias"
                 >
-                  <img src="button-icons/replace-all.svg" alt="Replace All" />
+                  <img
+                    style={{ width: "24px", height: "24px" }}
+                    src="button-icons/replace-all.svg"
+                    alt="Replace All"
+                  />
                 </S.Button>
                 <S.Button
                   type="button"
-                  css={{ variant: "tag" }}
                   onClick={() => handleAnnotationOperation("remove")}
                   title="Eliminar esta ocurrencia"
                 >
@@ -239,11 +241,17 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
                 </S.Button>
                 <S.Button
                   type="button"
-                  css={{ variant: "tagAll" }}
+                  smallImage
+                  css={{ pt: 1, pb: 0 }}
                   onClick={() => handleAnnotationOperation("removeByText")}
                   title="Eliminar todas las ocurrencias"
                 >
-                  <img src="button-icons/delete-all.svg" alt="Delete All" />
+                  <img
+                    src="button-icons/delete-all.svg"
+                    alt="Delete All"
+                    width="24.5px"
+                    height="24.5px"
+                  />
                 </S.Button>
               </S.ButtonContainer>
             ) : null}
