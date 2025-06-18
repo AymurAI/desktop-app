@@ -1,6 +1,6 @@
 {
   "name": "aymurai",
-  "version": "1.20.2",
+  "version": "1.21.0",
   "private": true,
   "main": "build/main.js",
   "scripts": {
