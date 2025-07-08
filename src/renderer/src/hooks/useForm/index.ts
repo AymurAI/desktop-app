@@ -1,6 +1,6 @@
 import { LabelDecisiones, type LabelType } from "@/types/aymurai";
 import nArray from "@/utils/nArray";
-import { type FormEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { FormData, RegisterFunction, SubmitFunction } from "./types";
 
 /**
@@ -46,7 +46,7 @@ export default function useForm(initialDecisiones = 1) {
    * @param callback Callback that is called with all the data collected from the references as an argument
    * @returns A `(event) => void` function that should be applied to the `onSubmit={...}` prop of a form
    */
-  const submit = (callback: SubmitFunction) => (e: FormEvent) => {
+  const submit = (callback: SubmitFunction) => () => {
     callback(refs.current);
   };
 
