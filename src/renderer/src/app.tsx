@@ -1,5 +1,3 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
 import {
   RouterProvider,
   createMemoryRouter as createRouter,
@@ -44,17 +42,14 @@ const router = createRouter([
 
 export default function App() {
   return (
-    <React.StrictMode>
-      {/* Provides the Google OAuth2 token */}
-      <AuthProvider>
-        {/* Provides the server URL into which the user will connect */}
-        <UrlProvider>
-          {/* Stitches global styles */}
-          <ThemeProvider>
-            <RouterProvider router={router} />
-          </ThemeProvider>
-        </UrlProvider>
-      </AuthProvider>
-    </React.StrictMode>
+    <AuthProvider>
+      {/* Provides the server URL into which the user will connect */}
+      <UrlProvider>
+        {/* Stitches global styles */}
+        <ThemeProvider>
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </UrlProvider>
+    </AuthProvider>
   );
 }
