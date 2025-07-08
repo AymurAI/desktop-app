@@ -1,5 +1,5 @@
-import { join } from "node:path";
 import { BrowserWindow, shell } from "electron";
+import { join } from "node:path";
 
 import { is } from "@electron-toolkit/utils";
 import { EXTERNAL_URLS, isDebug, isProduction } from "./env";
@@ -42,7 +42,7 @@ function configureWindow(window: BrowserWindow | null) {
   });
 
   // and handlers
-  mainWindow.on("closed", () => {
+  mainWindow?.on("closed", () => {
     mainWindow = null;
   });
 }

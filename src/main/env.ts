@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
 
-import { homedir } from "node:os";
 import { is } from "@electron-toolkit/utils";
-import path = require("node:path");
+import { homedir } from "node:os";
+import path from "node:path";
 
 // ------------------------
 // CONFIG VARIABLES
