@@ -1,8 +1,8 @@
+import { is } from "@electron-toolkit/utils";
 import { BrowserWindow, shell } from "electron";
 import { join } from "node:path";
 
-import { is } from "@electron-toolkit/utils";
-import { EXTERNAL_URLS, isDebug, isProduction } from "./env";
+import { DEV_PORT, EXTERNAL_URLS, isDebug, isProduction } from "./env";
 import { resolveHTMLPath } from "./utils";
 
 export let mainWindow: BrowserWindow | null;
@@ -65,7 +65,7 @@ export default function createWindow() {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev) {
-    mainWindow.loadURL("http://localhost:5173");
+    mainWindow.loadURL(`http://localhost:${DEV_PORT}`);
   } else {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
