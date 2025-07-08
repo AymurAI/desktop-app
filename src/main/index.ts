@@ -1,4 +1,4 @@
-import { electronApp, is, optimizer } from "@electron-toolkit/utils";
+import { electronApp, optimizer } from "@electron-toolkit/utils";
 import { BrowserWindow, app, ipcMain } from "electron";
 
 import createWindow from "./createWindow";
