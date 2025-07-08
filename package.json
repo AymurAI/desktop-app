@@ -4,9 +4,11 @@
   "private": true,
   "main": "./out/main/index.js",
   "scripts": {
-    "dev:web": "vite",
+    "dev:web": "vite --config vite.config.ts",
     "dev": "electron-vite dev",
     "start": "electron-vite preview",
+    "start:web": "vite preview --config vite.config.ts",
+    "build:web": "vite build --config vite.config.ts",
     "build": "npm run typecheck && electron-vite build",
     "lint": "biome check",
     "lint:fix": "biome check --write",
