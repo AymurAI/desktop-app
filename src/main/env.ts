@@ -11,7 +11,7 @@ import path from "node:path";
 /**
  * Port for the development app
  */
-export const DEV_PORT = 5173;
+export const DEV_PORT = 3000;
 
 /**
  * Custom URI scheme name
