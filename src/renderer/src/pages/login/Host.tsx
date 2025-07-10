@@ -2,6 +2,7 @@ import { AxiosError } from "axios";
 import { ArrowBendUpLeft, HardDrives, Monitor } from "phosphor-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ZodError } from "zod";
 
 import { Button, Input, Label, Stack, Subtitle } from "@/components";
 
@@ -9,12 +10,16 @@ import { useConnectToHost } from "@/services/aymurai/useConnectToHost";
 import { localStore } from "@/store/useLocal";
 
 const errorMessage = (err: Error) => {
-  if (!(err instanceof AxiosError)) {
-    return "Error desconocido";
+  if (err instanceof AxiosError) {
+    if (err.code === "ERR_NETWORK") return "No se pudo conectar al servidor";
+    return "Error de conexión";
   }
 
-  if (err.code === "ERR_NETWORK") return "No se pudo conectar al servidor";
-  return "Error de conexión";
+  if (err instanceof ZodError) {
+    return "Formato de respuesta inválido.";
+  }
+
+  return "Error desconocido";
 };
 
 export function Host() {
