@@ -7,7 +7,7 @@ export const useConnectToHost = () => {
   return useSchemedMutation({
     mutationKey: ["healthcheck"],
     mutationFn: (host: string) =>
-      api.get(`${host}/healthcheck`).then((res) => res.data),
+      api.get(`${host}/server/healthcheck`).then((res) => res.data),
     schema: z.object({
       status: z.string(),
     }),
