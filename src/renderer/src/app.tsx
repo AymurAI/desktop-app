@@ -6,7 +6,6 @@ import {
 
 import { ThemeProvider } from "@/components";
 import AuthProvider from "@/context/Authentication";
-import UrlProvider from "@/context/ServerUrl";
 import LoginLayout from "@/layout/login";
 import MainLayout from "@/layout/main";
 import {
@@ -55,13 +54,10 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        {/* Provides the server URL into which the user will connect */}
-        <UrlProvider>
-          {/* Stitches global styles */}
-          <ThemeProvider>
-            <RouterProvider router={router} />
-          </ThemeProvider>
-        </UrlProvider>
+        {/* Stitches global styles */}
+        <ThemeProvider>
+          <RouterProvider router={router} />
+        </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

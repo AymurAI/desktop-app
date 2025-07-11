@@ -1,9 +1,7 @@
 import { Checkbox, Spinner, Text } from "@/components";
-import { ServerUrlContext } from "@/context/ServerUrl";
 import { useFileDispatch, useFileParser, useUser } from "@/hooks";
 import { toggleSelected } from "@/reducers/file/actions";
 import { FileX } from "phosphor-react";
-import { useContext } from "react";
 
 import type { DocFile } from "@/types/file";
 import { FunctionType } from "@/types/user";
@@ -16,8 +14,7 @@ interface Props {
 export default function FilePreview({ file }: Props) {
   const user = useUser();
   const dispatch = useFileDispatch();
-  const { serverUrl } = useContext(ServerUrlContext);
-  const paragraphs = useFileParser(file, serverUrl);
+  const paragraphs = useFileParser(file);
 
   const isAnonymizer = user?.function === FunctionType.ANONYMIZER;
   const isError = paragraphs && !paragraphs.length;

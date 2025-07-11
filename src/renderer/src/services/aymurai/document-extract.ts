@@ -1,7 +1,7 @@
 import type { Paragraph } from "@/types/file";
-import { AYMURAI_API_URL } from "@/utils/config";
 import { getParagraphId } from "@/utils/file/getParagraphId";
-import axios from "axios";
+
+import api from "../api";
 
 interface ParagraphsResponse {
   document: string[];
@@ -16,20 +16,17 @@ interface ParagraphsResponse {
  * @param serverUrl String with the URL of the AyMurAI api
  * @returns A list of paragraphs with their metadata
  */
-export async function getParagraphs(
-  file: File,
-  serverUrl: string,
-): Promise<Paragraph[]> {
+export async function getParagraphs(file: File): Promise<Paragraph[]> {
   const formData = new FormData();
   formData.append("file", file);
   try {
-    const response = await axios
-      .create({
-        baseURL: serverUrl ? serverUrl : AYMURAI_API_URL,
-      })
-      .post<ParagraphsResponse>("/document-extract", formData, {
+    const response = await api.post<ParagraphsResponse>(
+      "/document-extract",
+      formData,
+      {
         headers: { "Content-Type": "multipart/form-data" },
-      });
+      },
+    );
     return response.data.document.map((p, i) => ({
       value: p,
       document_id: response.data.document_id,

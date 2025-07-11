@@ -1,8 +1,8 @@
-import axios, { CanceledError } from "axios";
+import { CanceledError } from "axios";
 
 import type { PredictLabel, Workflows } from "@/types/aymurai";
 import type { Paragraph } from "@/types/file";
-import { AYMURAI_API_URL } from "@/utils/config";
+import api from "../api";
 
 interface PredictResponse {
   document: string;
@@ -19,24 +19,18 @@ interface PredictResponse {
 export default async function predict(
   paragraph: Paragraph,
   controller: AbortController,
-  // biome-ignore lint/style/useDefaultParameterLast: Not imprtant right now
   route: Workflows = "datapublic",
-  serverUrl: string,
 ): Promise<PredictLabel[]> {
   try {
-    const response = await axios
-      .create({
-        baseURL: serverUrl ? serverUrl : AYMURAI_API_URL,
-      })
-      .post<PredictResponse>(
-        `/${route}/predict/${paragraph.document_id}`,
-        {
-          text: paragraph.value,
-        },
-        {
-          signal: controller.signal,
-        },
-      );
+    const response = await api.post<PredictResponse>(
+      `/${route}/predict/${paragraph.document_id}`,
+      {
+        text: paragraph.value,
+      },
+      {
+        signal: controller.signal,
+      },
+    );
 
     const data = response.data.labels.map((l) => ({
       ...l,
