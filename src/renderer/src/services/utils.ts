@@ -1,4 +1,5 @@
 import {
+  type MutationFunction,
   type UseMutationOptions,
   type UseQueryOptions,
   useMutation,
@@ -53,6 +54,7 @@ interface SchemedMutationArgs<
   TMutationArgs extends z.Primitive,
 > extends UseMutationOptions<z.infer<TSchema>, Error, TMutationArgs> {
   schema?: TSchema;
+  mutationFn: MutationFunction<unknown, TMutationArgs>;
 }
 
 /**
@@ -84,7 +86,9 @@ export const useSchemedMutation = <
   mutationFn,
   ...options
 }: SchemedMutationArgs<TSchema, TMutationArgs>) => {
-  const fnWrapper: typeof mutationFn = async (...args) => {
+  const fnWrapper: MutationFunction<z.infer<TSchema>, TMutationArgs> = async (
+    ...args
+  ) => {
     if (mutationFn) {
       const response = await mutationFn(...args);
 
