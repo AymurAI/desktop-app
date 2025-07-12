@@ -15,6 +15,7 @@ interface ParagraphsResponse {
  * @param file File to be analyzed
  * @param serverUrl String with the URL of the AyMurAI api
  * @returns A list of paragraphs with their metadata
+ * @deprecated Replaced by React Query implementation
  */
 export async function getParagraphs(file: File): Promise<Paragraph[]> {
   const formData = new FormData();
