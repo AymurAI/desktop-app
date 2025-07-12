@@ -1,10 +1,9 @@
 import { useFileDispatch, useFiles } from "./useFiles";
 import useForm from "./useForm";
 import useLogin from "./useLogin";
-import useServerUrl from "./useServerUrl";
 import useUser from "./useUser";
 
-export { usePredict } from "./usePredict";
 export { useFileParser } from "./useFileParser";
+export { usePredict } from "./usePredict";
 
-export { useFiles, useFileDispatch, useForm, useLogin, useUser, useServerUrl };
+export { useFileDispatch, useFiles, useForm, useLogin, useUser };
