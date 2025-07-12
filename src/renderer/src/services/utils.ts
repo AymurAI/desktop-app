@@ -38,13 +38,21 @@ export const useSchemedQuery = <
 >({
   schema,
   queryFn,
+  queryKey,
   ...options
 }: SchemedQueryArgs<TSchema>) =>
   useQuery<TData>({
+    queryKey,
     queryFn: async () => {
-      const response = await queryFn();
-      const parsed = schema.parse(response);
-      return parsed;
+      try {
+        const response = await queryFn();
+        const parsed = schema.parse(response);
+        return parsed;
+      } catch (e) {
+        console.error(`Failed to run query: [${queryKey.join(", ")}]`, e);
+
+        throw e;
+      }
     },
     ...options,
   });

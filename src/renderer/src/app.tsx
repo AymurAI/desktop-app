@@ -26,13 +26,16 @@ const router = createRouter([
     path: "/",
     element: <MainLayout />,
     children: [
+      // 1. Onboarding
       { path: "onboarding", element: <Onboarding /> },
+      // 2. Preview
       { path: "preview", element: <Preview /> },
+      // 3. Process
       { path: "process", element: <Process /> },
-      // Validation
+      // 4. Validation
       { path: "validation/dataset", element: <ValidateDataset /> },
       { path: "validation/anonymizer", element: <ValidateAnonymization /> },
-      // Finish
+      // 5. Finish
       { path: "finish/dataset", element: <FinishDataset /> },
       { path: "finish/anonymizer", element: <FinishAnonymizer /> },
     ],
