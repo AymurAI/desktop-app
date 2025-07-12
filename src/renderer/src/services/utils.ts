@@ -3,6 +3,7 @@ import {
   type UseMutationOptions,
   type UseQueryOptions,
   useMutation,
+  useQueries,
   useQuery,
 } from "@tanstack/react-query";
 import type { z } from "zod";
@@ -107,5 +108,37 @@ export const useSchemedMutation = <
   return useMutation({
     mutationFn: fnWrapper,
     ...options,
+  });
+};
+
+interface SchemedQueriesArgs<
+  TSchema extends z.ZodTypeAny,
+  TData = z.infer<TSchema>,
+> {
+  queries: Omit<SchemedQueryArgs<TSchema, TData>, "schema">[];
+  schema: TSchema;
+}
+export const useSchemedQueries = <
+  TSchema extends z.ZodTypeAny,
+  TData = z.infer<TSchema>,
+>({
+  queries,
+  schema,
+}: SchemedQueriesArgs<TSchema, TData>) => {
+  return useQueries({
+    queries: queries.map((q) => ({
+      ...q,
+      queryFn: async () => {
+        try {
+          const response = await q.queryFn();
+          const parsed = schema.parse(response);
+          return parsed;
+        } catch (e) {
+          console.error(`Failed to run query: [${q.queryKey.join(", ")}]`, e);
+
+          throw e;
+        }
+      },
+    })),
   });
 };
