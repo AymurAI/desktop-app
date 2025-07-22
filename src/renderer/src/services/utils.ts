@@ -1,8 +1,11 @@
 import {
   type MutationFunction,
+  type QueryFunction,
+  type QueryKey,
   type UseMutationOptions,
   type UseQueryOptions,
   useMutation,
+  useQueries,
   useQuery,
 } from "@tanstack/react-query";
 import type { z } from "zod";
@@ -12,7 +15,7 @@ interface SchemedQueryArgs<
   TData = z.infer<TSchema>,
 > extends Omit<UseQueryOptions<TData>, "queryFn"> {
   schema: TSchema;
-  queryFn: () => Promise<unknown>;
+  queryFn: QueryFunction<unknown>;
 }
 
 /**
@@ -38,13 +41,21 @@ export const useSchemedQuery = <
 >({
   schema,
   queryFn,
+  queryKey,
   ...options
 }: SchemedQueryArgs<TSchema>) =>
   useQuery<TData>({
-    queryFn: async () => {
-      const response = await queryFn();
-      const parsed = schema.parse(response);
-      return parsed;
+    queryKey,
+    queryFn: async (...args) => {
+      try {
+        const response = await queryFn(...args);
+        const parsed = schema.parse(response);
+        return parsed;
+      } catch (e) {
+        console.error(`Failed to run query: [${queryKey.join(", ")}]`, e);
+
+        throw e;
+      }
     },
     ...options,
   });
@@ -101,3 +112,68 @@ export const useSchemedMutation = <
     ...options,
   });
 };
+
+interface SchemedQueriesArgs<TSchema extends z.ZodTypeAny, TError = Error>
+  extends Omit<
+    UseQueryOptions<unknown, TError, z.infer<TSchema>, QueryKey>,
+    "queryFn"
+  > {
+  queryFn: QueryFunction<unknown, QueryKey>;
+}
+
+/**
+ * A wrapper around React Query's useQueries that automatically validates the response
+ * using a Zod schema before returning the data for each query.
+ *
+ * @param options - Configuration object containing schema and queries array
+ * @param options.schema - Zod schema to validate all query responses
+ * @param options.queries - Array of query configurations
+ * @returns An array of React Query result objects with validated data of type TData
+ *
+ * @example
+ * ```tsx
+ * const results = useSchemedQueries({
+ *   schema: userSchema,
+ *   queries: [
+ *     {
+ *       queryFn: () => fetchUser(id1),
+ *       queryKey: ['user', id1]
+ *     },
+ *     {
+ *       queryFn: () => fetchUser(id2),
+ *       queryKey: ['user', id2]
+ *     }
+ *   ]
+ * });
+ * ```
+ */
+export const useSchemedQueries = <
+  TSchema extends z.ZodTypeAny,
+  TError = Error,
+>({
+  schema,
+  queries,
+  ...options
+}: {
+  schema: TSchema;
+  queries: Array<SchemedQueriesArgs<TSchema, TError>>;
+}) =>
+  useQueries({
+    queries: queries.map(({ queryFn, ...queryOptions }) => ({
+      ...queryOptions,
+      queryFn: async (args) => {
+        try {
+          const response = await queryFn(args);
+          return schema.parse(response);
+        } catch (e) {
+          console.error(
+            `Failed to run query: [${queryOptions.queryKey.join(", ")}]`,
+            e,
+          );
+
+          throw e;
+        }
+      },
+    })),
+    ...options,
+  });

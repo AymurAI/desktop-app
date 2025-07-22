@@ -6,8 +6,7 @@ import { useSchemedMutation } from "../utils";
 export const useConnectToHost = () => {
   return useSchemedMutation({
     mutationKey: ["healthcheck"],
-    mutationFn: (host: string) =>
-      api.get(`${host}/server/healthcheck`).then((res) => res.data),
+    mutationFn: (host: string) => api.get(`${host}/server/healthcheck`),
     schema: z.object({
       status: z.string(),
     }),
