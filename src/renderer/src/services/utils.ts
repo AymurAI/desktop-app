@@ -12,10 +12,15 @@ import type { z } from "zod";
 
 interface SchemedQueryArgs<
   TSchema extends z.ZodTypeAny,
-  TData = z.infer<TSchema>,
-> extends Omit<UseQueryOptions<TData>, "queryFn"> {
+  TError = Error,
+  TQueryKey extends QueryKey = readonly unknown[],
+  TData = unknown,
+> extends Omit<
+    UseQueryOptions<z.infer<TSchema>, TError, TData, TQueryKey>,
+    "queryFn"
+  > {
   schema: TSchema;
-  queryFn: QueryFunction<unknown>;
+  queryFn: QueryFunction<unknown, TQueryKey>;
 }
 
 /**
@@ -37,14 +42,16 @@ interface SchemedQueryArgs<
  */
 export const useSchemedQuery = <
   TSchema extends z.ZodTypeAny,
+  TError = Error,
+  TQueryKey extends QueryKey = readonly unknown[],
   TData = z.infer<TSchema>,
 >({
   schema,
   queryFn,
   queryKey,
   ...options
-}: SchemedQueryArgs<TSchema>) =>
-  useQuery<TData>({
+}: SchemedQueryArgs<TSchema, TError, TQueryKey, TData>) =>
+  useQuery({
     queryKey,
     queryFn: async (...args) => {
       try {
