@@ -16,12 +16,12 @@ export function useFileParser(file: File) {
       const formData = new FormData();
       formData.append("file", file);
 
-      return api.post("/document/extract", formData, {
+      return api.post("/misc/document-extract", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
     },
     schema: documentExtractSchema,
-    staleTime: Number.POSITIVE_INFINITY,
+    retry: false,
   });
 
   useEffect(() => {
@@ -30,10 +30,10 @@ export function useFileParser(file: File) {
       dispatch(
         addParagraphs(
           // Convert structure for backwards compatibility
-          query.data.paragraphs.map((p) => ({
-            value: p.text,
-            document_id: query.data.id,
-            id: p.id,
+          query.data.document.map((p) => ({
+            value: p,
+            document_id: query.data.document_id,
+            id: p,
           })),
           file.name,
         ),
