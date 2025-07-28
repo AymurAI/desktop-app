@@ -1,13 +1,9 @@
 import { CanceledError } from "axios";
 
+import { predictSchema } from "@/schema/predict";
 import type { PredictLabel, Workflows } from "@/types/aymurai";
 import type { Paragraph } from "@/types/file";
 import api from "../api";
-
-interface PredictResponse {
-  document: string;
-  labels: Omit<PredictLabel, "paragraphId">[];
-}
 
 /**
  * Realiza una petición a la AI para poder obtener predicciones en base a un párrafo
@@ -22,8 +18,13 @@ export default async function predict(
   route: Workflows = "datapublic",
 ): Promise<PredictLabel[]> {
   try {
-    const response = await api.post<PredictResponse>(
-      `/${route}/predict/${paragraph.document_id}`,
+    const path =
+      route === "datapublic"
+        ? `/datapublic/predict/${paragraph.document_id}`
+        : "/anonymizer/predict";
+
+    const response = await api.post(
+      path,
       {
         text: paragraph.value,
       },
@@ -31,14 +32,18 @@ export default async function predict(
         signal: controller.signal,
       },
     );
+    const parsed = predictSchema.parse(response);
 
-    const data = response.data.labels.map((l) => ({
-      ...l,
-      start_char: l.attrs.aymurai_alt_start_char || l.start_char,
-      end_char: l.attrs.aymurai_alt_end_char || l.end_char,
-      text: l.attrs.aymurai_alt_text || l.text,
-      paragraphId: paragraph.id,
-    }));
+    const data = parsed.labels.map(
+      (l) =>
+        ({
+          ...l,
+          start_char: l.attrs.aymurai_alt_start_char || l.start_char,
+          end_char: l.attrs.aymurai_alt_end_char || l.end_char,
+          text: l.attrs.aymurai_alt_text || l.text,
+          paragraphId: paragraph.id,
+        }) as PredictLabel,
+    );
 
     return data;
   } catch (e) {

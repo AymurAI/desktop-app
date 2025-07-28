@@ -2,8 +2,8 @@ import z from "zod";
 
 export const documentExtractSchema = z.object({
   document_id: z.string().uuid(),
-  footer: z.string(),
-  header: z.string(),
+  footer: z.string().nullable(),
+  header: z.string().nullable(),
   document: z.array(z.string()),
 
   // Preserving schema for future use
