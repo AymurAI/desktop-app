@@ -22,6 +22,7 @@ export function useFileParser(file: File) {
     },
     schema: documentExtractSchema,
     retry: false,
+    retryOnMount: false,
   });
 
   useEffect(() => {
