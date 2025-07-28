@@ -56,8 +56,7 @@ export const useSchemedQuery = <
     queryFn: async (...args) => {
       try {
         const response = await queryFn(...args);
-        const parsed = schema.parse(response);
-        return parsed;
+        return schema.parseAsync(response);
       } catch (e) {
         console.error(`Failed to run query: [${queryKey.join(", ")}]`, e);
 
@@ -110,7 +109,7 @@ export const useSchemedMutation = <
     if (mutationFn) {
       const response = await mutationFn(...args);
 
-      if (schema) return schema.parse(response);
+      if (schema) return schema.parseAsync(response);
       return;
     }
   };
@@ -171,7 +170,7 @@ export const useSchemedQueries = <
       queryFn: async (args) => {
         try {
           const response = await queryFn(args);
-          return schema.parse(response);
+          return schema.parseAsync(response);
         } catch (e) {
           console.error(
             `Failed to run query: [${queryOptions.queryKey.join(", ")}]`,
