@@ -1,7 +1,7 @@
 import type { PredictLabel } from "@/types/aymurai";
 import type { DocFile } from "@/types/file";
-import { AYMURAI_API_URL } from "@/utils/config";
-import axios from "axios";
+
+import api from "../api";
 
 interface Body {
   data: {
@@ -30,24 +30,24 @@ const body = (file: DocFile): Body => {
  * @param body Body containing the plain text and the annotations
  * @returns The anonymized document in a `Blob`
  */
-export const anonymize = async (file: DocFile, serverUrl: string) => {
+export const anonymize = async (file: DocFile) => {
   // Add file to `FormData`
   const formData = new FormData();
   formData.append("file", file.data);
   // TODO: add annotations whenever the backend implements it
   formData.append("annotations", JSON.stringify(body(file)));
 
-  const response = await axios
-    .create({
-      baseURL: serverUrl ? serverUrl : AYMURAI_API_URL,
-    })
-    .post<ArrayBuffer>("/anonymizer/anonymize-document", formData, {
+  const response = await api.post<ArrayBuffer>(
+    "/anonymizer/anonymize-document",
+    formData,
+    {
       headers: {
         "Content-Type": "multipart/form-data",
         Accept: "application/octet-stream",
       },
       responseType: "arraybuffer",
-    });
+    },
+  );
 
   return new Blob([response.data]);
 };

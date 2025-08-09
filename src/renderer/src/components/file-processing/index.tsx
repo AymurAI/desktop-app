@@ -1,8 +1,7 @@
 import { X } from "phosphor-react";
-import { type ChangeEventHandler, useContext, useRef } from "react";
+import { type ChangeEventHandler, useRef } from "react";
 
 import { Button as BaseButton, HiddenInput, Stack } from "@/components";
-import { ServerUrlContext } from "@/context/ServerUrl";
 import { useFileDispatch } from "@/hooks";
 import { type PredictStatus, usePredict } from "@/hooks/usePredict";
 import { removeFile, replaceFile } from "@/reducers/file/actions";
@@ -21,12 +20,7 @@ export default function FileProcessing({
   onFileReplace,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { serverUrl } = useContext(ServerUrlContext);
-  const { progress, status, abort } = usePredict(
-    file,
-    { onStatusChange },
-    serverUrl,
-  );
+  const { progress, status, abort } = usePredict(file, { onStatusChange });
   const dispatch = useFileDispatch();
 
   const handleOpenFinder = () => {

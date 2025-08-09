@@ -10,8 +10,9 @@ import { useFileDispatch } from "./useFiles";
  * Fetches the paragraphs of a file and adds them to the state. Also, returns the paragraphs
  * @param file File to be analyzed
  * @returns List of paragraphs with their metadata
+ * @deprecated Replaced by React Query implementation
  */
-export function useFileParser(file: DocFile, serverUrl: string) {
+export function useFileParser(file: DocFile) {
   const dispatch = useFileDispatch();
 
   useEffect(() => {
@@ -19,7 +20,7 @@ export function useFileParser(file: DocFile, serverUrl: string) {
     const fetchParagraphs = async () => {
       // Prevents the function from running multiple times or if the paragraphs've already been loaded
       if (!loaded && !file.paragraphs) {
-        const response = await getParagraphs(file.data, serverUrl);
+        const response = await getParagraphs(file.data);
         dispatch(addParagraphs(response, file.data.name));
       }
     };

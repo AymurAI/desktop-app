@@ -3,10 +3,8 @@ import { devtools, persist } from "zustand/middleware";
 
 interface LocalStorageStore {
   serverHost: string | null;
-  actions: {
-    setServerHost: (serverUrl: string) => void;
-    clearServerHost: () => void;
-  };
+  setServerHost: (serverUrl: string) => void;
+  clearServerHost: () => void;
 }
 
 const useLocalStore = create<LocalStorageStore>()(
@@ -14,10 +12,8 @@ const useLocalStore = create<LocalStorageStore>()(
     persist(
       (set) => ({
         serverHost: null,
-        actions: {
-          setServerHost: (serverHost: string) => set({ serverHost }),
-          clearServerHost: () => set({ serverHost: null }),
-        },
+        setServerHost: (serverHost: string) => set({ serverHost }),
+        clearServerHost: () => set({ serverHost: null }),
       }),
       {
         name: "local-storage",
@@ -28,9 +24,8 @@ const useLocalStore = create<LocalStorageStore>()(
 
 const useServerHost = () => useLocalStore((state) => state.serverHost);
 const useServerHostActions = () => {
-  const { setServerHost, clearServerHost } = useLocalStore(
-    (state) => state.actions,
-  );
+  const setServerHost = useLocalStore((state) => state.setServerHost);
+  const clearServerHost = useLocalStore((state) => state.clearServerHost);
 
   return {
     setServerHost,
