@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Button,
@@ -15,7 +15,6 @@ import { removeAllFiles } from "@/reducers/file/actions";
 import { anonymize } from "@/services/aymurai";
 import { useNavigate } from "react-router-dom";
 
-import { ServerUrlContext } from "@/context/ServerUrl";
 import Anchor from "../Anchor";
 
 const changeExtension = (name: string) => {
@@ -33,7 +32,6 @@ export default function Anonymizer() {
   const navigate = useNavigate();
   const [status, setStatus] = useState<AnonymizeStatus | null>(null);
   const [fileURI, setFileURI] = useState<string | null>(null);
-  const { serverUrl } = useContext(ServerUrlContext);
   const downloadDocument = async () => {
     if (!fileURI) {
       console.error("Tried to download a file that is not ready.");
@@ -54,7 +52,7 @@ export default function Anonymizer() {
   useEffect(() => {
     setStatus("loading");
 
-    anonymize(file, serverUrl)
+    anonymize(file)
       .then((blob) => {
         setFileURI(URL.createObjectURL(blob));
         setStatus("success");

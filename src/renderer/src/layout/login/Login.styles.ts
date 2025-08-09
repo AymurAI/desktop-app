@@ -1,3 +1,4 @@
+import { Stack } from "@/components";
 import { styled } from "@/styles";
 
 /**
@@ -28,4 +29,8 @@ export const Container = styled("div", {
   margin: "$xl",
 
   b: "1px solid $borderPrimary",
+});
+
+export const MainContent = styled(Stack, {
+  flex: 1,
 });

@@ -1,7 +1,6 @@
 import {
   type ChangeEventHandler,
   type KeyboardEvent,
-  type MouseEvent,
   type ReactNode,
   useImperativeHandle,
   useState,
@@ -77,7 +76,7 @@ export default forwardRef<{ value: string }, Props>(function Input(
     onChange?.(newValue);
   };
 
-  const handleClickSuggestion = (e: MouseEvent) => {
+  const handleClickSuggestion = () => {
     updateValue(suggestion as string); // We are sure is a string because the button is enabled only in case suggestion = string
   };
   const handleKeySuggestion = (e: KeyboardEvent) => {

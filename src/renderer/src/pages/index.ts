@@ -2,7 +2,6 @@ import {
   Anonymizer as FinishAnonymizer,
   Dataset as FinishDataset,
 } from "./finish";
-import Login from "./login";
 import Onboarding from "./onboarding";
 import Preview from "./preview";
 import Process from "./process";
@@ -11,13 +10,14 @@ import {
   Dataset as ValidateDataset,
 } from "./validation";
 
+export * from "./login";
+
 export {
-  Login,
+  FinishAnonymizer,
+  FinishDataset,
   Onboarding,
   Preview,
   Process,
-  ValidateDataset,
   ValidateAnonymization,
-  FinishDataset,
-  FinishAnonymizer,
+  ValidateDataset,
 };

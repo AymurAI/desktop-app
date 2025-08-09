@@ -33,7 +33,7 @@ const labelToAnnotation = (labels: PredictLabel[]): Annotation[] => {
 const findSearchIndexes = (paragraph: string, search: string) => {
   const regex = includes(search);
 
-  const indexes = [];
+  const indexes: number[] = [];
   let match = regex.exec(paragraph);
 
   while (match) {
