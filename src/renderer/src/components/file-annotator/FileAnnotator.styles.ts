@@ -42,7 +42,7 @@ export const ButtonContainer = styled("div", {
   "&::before": {
     content: "",
     position: "absolute",
-    width: "calc(16px + 100%)",
+    width: "100%",
     height: "calc(16px + 100%)",
     left: "50%",
     top: "0",

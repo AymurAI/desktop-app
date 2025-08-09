@@ -15,12 +15,11 @@ interface UsePredictOptions {
 export function usePredict(
   file: DocFile,
   { onStatusChange }: UsePredictOptions,
-  serverUrl: string,
 ) {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<PredictStatus>("processing");
   const dispatch = useFileDispatch();
-  const paragraphs = useFileParser(file, serverUrl);
+  const paragraphs = useFileParser(file);
 
   const user = useUser();
   const isAnonimizing = user?.function === FunctionType.ANONYMIZER;
@@ -55,7 +54,6 @@ export function usePredict(
           p,
           controller.current,
           isAnonimizing ? "anonymizer" : "datapublic",
-          serverUrl,
         );
 
         dispatch(addPredictions(file.data.name, prediction));
