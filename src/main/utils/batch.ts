@@ -1,37 +1,48 @@
-import { type ChildProcess, spawn } from "node:child_process";
-import path from "node:path";
-import { app } from "electron";
+import { type ChildProcess, exec } from "node:child_process";
 
-let batchProcess: ChildProcess | null = null;
+let child: ChildProcess | null = null;
 
-const runBatch = async () => {
-  const batFilePath = path.join(app.getAppPath(), "build/app/run_server.bat");
-  const quotedBatFilePath = `"${batFilePath}"`;
-  // Spawn the batch file as a detached process
-  batchProcess = spawn(quotedBatFilePath, {
-    shell: true,
-    detached: true,
-    stdio: "ignore",
+const runServer = () => {
+  // TODO: make this dynamic and based off the current directory
+  // const ps1FilePath = path.join(app.getAppPath(), "build/app/run_server.bat");
+  const ps1FilePath = 'C:/"Program Files"/AymurAI/run_server.ps1';
+  const command = `powershell -ExecutionPolicy Bypass -File ${ps1FilePath}`;
+
+  return new Promise<void>((resolve, reject) => {
+    child = exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        reject(error);
+        return;
+      }
+
+      console.error(stderr);
+      console.log(stdout);
+      resolve();
+    });
   });
-
-  batchProcess.unref(); // Ensures Electron doesn't wait for the batch file to exit
-
-  console.log("Batch file started in background. Starting server...");
-  return true;
 };
 
-const stopBatch = async () => {
-  if (batchProcess) {
-    batchProcess.kill(); // Stop the batch process
-    console.log("Batch process terminated.");
-    batchProcess = null;
-    return "Batch process stopped. Server will no longer be running";
+const stopServer = () => {
+  console.log("Stopping batch process...");
+  if (child) {
+    const result = child.kill(); // Stop the batch process
+
+    if (result) {
+      console.log("Batch process terminated.", result);
+      child = null;
+    } else {
+      console.log("Batch process not terminated.");
+    }
+
+    return result;
   }
-  return "No batch process to stop.";
+
+  return false;
 };
 
 const electronAPI = {
-  runBatch,
-  stopBatch,
+  runServer,
+  stopServer,
 };
 export default electronAPI;
