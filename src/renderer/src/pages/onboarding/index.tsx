@@ -2,15 +2,26 @@ import { type ChangeEventHandler, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button, HiddenInput, Stack, Text, Title } from "@/components";
-import { useFileDispatch, useUser } from "@/hooks";
+import { useFileDispatch } from "@/hooks";
 import { Footer, Section } from "@/layout/main";
 import { addFiles } from "@/reducers/file/actions";
-import { FunctionType } from "@/types/user";
-import { Card } from "./cards";
+
+import FeatureRouter from "@/features/FeatureRouter";
+import { Card } from "./Cards";
 import { Grid } from "./grid";
 
-export default function Onboarding() {
-  const user = useUser();
+interface GenericDatasetProps {
+  description: string;
+  actionText: string;
+  steps: [string, string, string, string];
+  supportMultipleFiles: boolean;
+}
+function GenericDataset({
+  description,
+  steps,
+  supportMultipleFiles,
+  actionText,
+}: GenericDatasetProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
@@ -27,7 +38,7 @@ export default function Onboarding() {
       const files = Array.from(rawFiles);
 
       dispatch(addFiles(files));
-      navigate("/preview");
+      navigate("../preview");
     }
   };
 
@@ -37,58 +48,12 @@ export default function Onboarding() {
       <Section spacing="xl">
         <Stack spacing="m">
           <Title weight="strong">¿Cómo funciona AymurAI?</Title>
-          <Text>
-            {user?.function === FunctionType.DATASET && (
-              <>
-                Esta herramienta te permitirá subir las resoluciones del juzgado
-                para que sean analizadas por una inteligencia artificial que
-                extraerá la información relevante para el set de datos abiertos
-                con perspectiva de género.
-              </>
-            )}
-            {user?.function === FunctionType.ANONYMIZER && (
-              <>
-                Esta herramienta te permitirá subir las resoluciones del juzgado
-                para que sean analizadas por una inteligencia artificial que
-                anonimizará los datos sensibles de las personas involucradas y
-                de los hechos del caso.
-              </>
-            )}
-          </Text>
+          <Text>{description}</Text>
         </Stack>
         <Grid>
-          <Card
-            step={1}
-            text={
-              user?.function === FunctionType.ANONYMIZER
-                ? "Selecciona el archivo"
-                : "Selecciona los archivos"
-            }
-          />
-          <Card
-            step={2}
-            text={
-              user?.function === FunctionType.ANONYMIZER
-                ? "La inteligencia artificial procesará el archivo"
-                : "La inteligencia artificial procesará los archivos"
-            }
-          />
-          <Card
-            step={3}
-            text={
-              user?.function === FunctionType.ANONYMIZER
-                ? "Valida que la información a anonimizar sea correcta"
-                : "Valida que la información identificada sea correcta"
-            }
-          />
-          <Card
-            step={4}
-            text={
-              user?.function === FunctionType.ANONYMIZER
-                ? "Proceso terminado. El documento esta listo para ser exportado."
-                : "Proceso terminado. Los archivos ya son parte del set de datos."
-            }
-          />
+          {steps.map((step, index) => (
+            <Card key={step} step={index + 1} text={step} />
+          ))}
         </Grid>
       </Section>
 
@@ -99,16 +64,47 @@ export default function Onboarding() {
           accept=".docx, .pdf"
           ref={inputRef}
           onChange={handleAddedFiles}
-          multiple={user?.function === FunctionType.DATASET}
+          multiple={supportMultipleFiles}
           tabIndex={-1}
         />
         <Text size="s">Formatos válidos: .docx, .pdf</Text>
         <Button onClick={handleSelectFile} size="l">
-          {user?.function === FunctionType.ANONYMIZER
-            ? "Carga el documento"
-            : "Cargar documentos"}
+          {actionText}
         </Button>
       </Footer>
     </>
+  );
+}
+
+export default function Onboarding() {
+  return (
+    <FeatureRouter
+      DATA_SET={
+        <GenericDataset
+          description="Esta herramienta te permitirá subir las resoluciones del juzgado para que sean analizadas por una inteligencia artificial que extraerá la información relevante para el set de datos abiertos con perspectiva de género."
+          actionText="Selecciona los archivos"
+          steps={[
+            "Selecciona los archivos",
+            "La inteligencia artificial procesará los archivos",
+            "Valida que la información identificada sea correcta",
+            "Proceso terminado. Los archivos ya son parte del set de datos.",
+          ]}
+          supportMultipleFiles={true}
+        />
+      }
+      ANONYMIZER={
+        <GenericDataset
+          description="Esta herramienta te permitirá subir las resoluciones del juzgado para que sean analizadas por una inteligencia artificial que anonimizará los datos sensibles de las personas involucradas y de los hechos del caso."
+          actionText="Selecciona el archivo"
+          steps={[
+            "Selecciona el archivo",
+            "La inteligencia artificial procesará el archivo",
+            "Valida que la información a anonimizar sea correcta",
+            "Proceso terminado. El documento esta listo para ser exportado.",
+          ]}
+          supportMultipleFiles={true}
+        />
+      }
+    />
   );
 }

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useFileDispatch, useFileParser, useUser } from "@/hooks";
+import { useFileDispatch, useFileParser } from "@/hooks";
 import { addPredictions, removePredictions } from "@/reducers/file/actions";
 import { predict } from "@/services/aymurai";
 
+import { Feature } from "@/types/features";
 import type { DocFile } from "@/types/file";
-import { FunctionType } from "@/types/user";
+import { useParams } from "react-router-dom";
 
 export type PredictStatus = "processing" | "error" | "stopped" | "completed";
 
@@ -16,13 +17,14 @@ export function usePredict(
   file: DocFile,
   { onStatusChange }: UsePredictOptions,
 ) {
+  const { feature } = useParams<{ feature: Feature }>();
+
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<PredictStatus>("processing");
   const dispatch = useFileDispatch();
   const paragraphs = useFileParser(file);
 
-  const user = useUser();
-  const isAnonimizing = user?.function === FunctionType.ANONYMIZER;
+  const isAnonimizing = feature === Feature.Anonymizer;
 
   // Store static values
   const controller = useRef(new AbortController());

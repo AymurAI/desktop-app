@@ -10,12 +10,11 @@ import {
   Subtitle,
   Text,
 } from "@/components";
-import { useFileDispatch, useFiles, useUser } from "@/hooks";
+import { useFileDispatch, useFiles } from "@/hooks";
 import { Footer, Section } from "@/layout/main";
 import { removeAllFiles } from "@/reducers/file/actions";
 import filesystem from "@/services/filesystem";
 import type { DocFile } from "@/types/file";
-import { DATASET_URL } from "@/utils/config";
 import { submitValidations } from "@/utils/file";
 import Anchor from "../Anchor";
 
@@ -23,7 +22,6 @@ export default function Finish() {
   const files = useFiles();
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
-  const user = useUser();
   const [errorNames, setErrorNames] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -39,7 +37,7 @@ export default function Finish() {
     try {
       // POST the validated data to the dataset
       await submitValidations({
-        isOnline: user!.online,
+        isOnline: false,
         validations: file.validationObject,
       });
     } catch {
@@ -53,8 +51,6 @@ export default function Finish() {
   // At first render, submit all the data
   useEffect(() => {
     const submitAll = async () => {
-      if (!user) return;
-
       for (const file of files) {
         await submit(file);
       }
@@ -105,22 +101,9 @@ export default function Finish() {
         <Button variant="secondary" onClick={handleRestart} size="l">
           Cargar más documentos
         </Button>
-        {user?.online ? (
-          <Button
-            css={{ textDecoration: "none" }}
-            as="a"
-            href={DATASET_URL}
-            target="_blank"
-            rel="noreferrer"
-            size="l"
-          >
-            Ver set de datos
-          </Button>
-        ) : (
-          <Button size="l" onClick={filesystem.excel.open}>
-            Ver set de datos
-          </Button>
-        )}
+        <Button size="l" onClick={filesystem.excel.open}>
+          Ver set de datos
+        </Button>
       </Footer>
     </>
   );

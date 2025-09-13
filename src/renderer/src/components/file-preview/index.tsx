@@ -1,23 +1,24 @@
 import { FileX } from "phosphor-react";
 
 import { Checkbox, Spinner, Text } from "@/components";
-import { useFileDispatch, useUser } from "@/hooks";
+import { useFileDispatch } from "@/hooks";
 import { toggleSelected } from "@/reducers/file/actions";
 import { useFileParser } from "@/services/aymurai/useFileParser";
 import type { DocFile } from "@/types/file";
-import { FunctionType } from "@/types/user";
 
+import { Feature } from "@/types/features";
+import { useParams } from "react-router-dom";
 import * as S from "./FilePreview.styles";
 
 interface Props {
   file: DocFile;
 }
 export default function FilePreview({ file }: Props) {
-  const user = useUser();
+  const { feature } = useParams<{ feature: Feature }>();
   const dispatch = useFileDispatch();
   const { data: parsedFile, isError, isPending } = useFileParser(file.data);
 
-  const isAnonymizer = user?.function === FunctionType.ANONYMIZER;
+  const isAnonymizer = feature === Feature.Anonymizer;
   const moreThanOneParagraph = parsedFile && parsedFile.document.length > 1;
 
   if (isError) {
