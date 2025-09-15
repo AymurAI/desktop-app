@@ -10,9 +10,6 @@ export const run = () => {
   child = spawn(
     "powershell",
     ["-ExecutionPolicy", "Bypass", "-File", ps1FilePath],
-    {
-      stdio: "inherit",
-    },
   );
 
   return new Promise((ok, no) => {
