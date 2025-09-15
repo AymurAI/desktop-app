@@ -1,12 +1,11 @@
 import { type ChildProcess, exec, spawn } from "node:child_process";
+import path from "node:path";
 
 let child: ChildProcess | null = null;
 
 export const run = () => {
   // TODO: make this dynamic and based off the current directory
-  // const ps1FilePath = path.join(app.getAppPath(), "build/app/run_server.bat");
-  const ps1FilePath = "C:/Program Files/AymurAI/run_server.ps1";
-
+  const ps1FilePath = path.join(process.execPath, "run_server.ps1");
   child = spawn(
     "powershell",
     ["-ExecutionPolicy", "Bypass", "-File", ps1FilePath],

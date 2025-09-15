@@ -19,7 +19,7 @@ export const useRunLocalServer = ({onSuccess}: UseRunLocalServerProps) => {
 
   const run = async ()=> {
     if (!window.electronAPI) throw new Error("Electron API not available. Check your preload script.");
-    window.electronAPI.runBatch();
+    await window.electronAPI.runBatch();
 
     await refetch();
   }
