@@ -3,4 +3,6 @@ export { anonymize } from "./anonymize";
 export { getParagraphs } from "./document-extract";
 export { predict };
 
-export * from "./useFileParser";
+  export * from "./useConnectToHost";
+  export * from "./useFileParser";
+  export * from "./useRunLocalServer";
