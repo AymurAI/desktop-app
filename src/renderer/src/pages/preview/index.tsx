@@ -11,7 +11,8 @@ import {
   Subtitle,
   Text,
 } from "@/components";
-import { useFileDispatch, useFiles, useUser } from "@/hooks";
+import FeatureRouter from "@/features/FeatureRouter";
+import { useFileDispatch, useFiles } from "@/hooks";
 import { Footer, Section } from "@/layout/main";
 import {
   addFiles,
@@ -19,10 +20,11 @@ import {
   removeAllFiles,
 } from "@/reducers/file/actions";
 
-import { FunctionType } from "@/types/user";
-
-export default function Preview() {
-  const user = useUser();
+interface GenericPreviewProps {
+  title: string;
+  supportMultipleFiles: boolean;
+}
+function GenericPreview({ title, supportMultipleFiles }: GenericPreviewProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
@@ -33,7 +35,7 @@ export default function Preview() {
 
   const handlePrevious = () => {
     dispatch(removeAllFiles());
-    navigate("/onboarding");
+    navigate("../onboarding");
   };
 
   const handleSelectFile = () => {
@@ -53,24 +55,18 @@ export default function Preview() {
 
   const handleConfirmFiles = () => {
     dispatch(filterUnselected());
-    navigate("/process");
+    navigate("../process");
   };
 
   return (
     <>
       {/* MAIN SECTION */}
       <Section spacing="xl">
-        <SectionTitle onClick={handlePrevious}>
-          {user?.function === FunctionType.ANONYMIZER
-            ? " 1. Previsualización del archivo"
-            : " 1. Previsualización de archivos"}
-        </SectionTitle>
+        <SectionTitle onClick={handlePrevious}>{title}</SectionTitle>
         <Card>
-          {user?.function === FunctionType.DATASET && (
-            <Subtitle>Archivos seleccionados</Subtitle>
-          )}
+          {supportMultipleFiles && <Subtitle>Archivos seleccionados</Subtitle>}
           <Grid
-            columns={user?.function === FunctionType.ANONYMIZER ? 1 : 5}
+            columns={supportMultipleFiles ? 5 : 1}
             spacing="xl"
             justify="center"
             css={{ width: "100%" }}
@@ -92,9 +88,9 @@ export default function Preview() {
           multiple
           tabIndex={-1}
         />
-        {user?.function === FunctionType.DATASET && (
+        {supportMultipleFiles && (
           <>
-            <Text size="s">Formatos válidos: .docx</Text>
+            <Text size="s">Formatos válidos: .docx, .pdf</Text>
             <Button onClick={handleSelectFile} size="l" variant="secondary">
               Cargar más documentos
             </Button>
@@ -111,5 +107,24 @@ export default function Preview() {
         </Button>
       </Footer>
     </>
+  );
+}
+
+export default function Preview() {
+  return (
+    <FeatureRouter
+      DATA_SET={
+        <GenericPreview
+          supportMultipleFiles={true}
+          title="1. Previsualización de archivos"
+        />
+      }
+      ANONYMIZER={
+        <GenericPreview
+          supportMultipleFiles={false}
+          title="1. Previsualización del archivo"
+        />
+      }
+    />
   );
 }

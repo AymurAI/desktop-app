@@ -7,6 +7,7 @@ import {
   useMutation,
   useQueries,
   useQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 import type { z } from "zod";
 
@@ -69,10 +70,16 @@ export const useSchemedQuery = <
 
 interface SchemedMutationArgs<
   TSchema extends z.ZodTypeAny,
-  TMutationArgs extends z.Primitive,
-> extends UseMutationOptions<z.infer<TSchema>, Error, TMutationArgs> {
+  TError = Error,
+  TVariables = unknown,
+  TContext = unknown,
+> extends Omit<
+    UseMutationOptions<z.infer<TSchema>, TError, TVariables, TContext>,
+    "mutationFn"
+  > {
+  mutationFn: MutationFunction<unknown, TVariables>;
   schema?: TSchema;
-  mutationFn: MutationFunction<unknown, TMutationArgs>;
+  invalidateQueries?: QueryKey;
 }
 
 /**
@@ -98,28 +105,49 @@ interface SchemedMutationArgs<
  */
 export const useSchemedMutation = <
   TSchema extends z.ZodTypeAny,
-  TMutationArgs extends z.Primitive,
+  TError = Error,
+  TVariables = unknown,
+  TContext = unknown,
 >({
   schema,
+  mutationKey,
+  invalidateQueries,
+
   mutationFn,
+  onSettled,
+  onError,
   ...options
-}: SchemedMutationArgs<TSchema, TMutationArgs>) => {
-  const fnWrapper: MutationFunction<z.infer<TSchema>, TMutationArgs> = async (
+}: SchemedMutationArgs<TSchema, TError, TVariables, TContext>) => {
+  const queryClient = useQueryClient();
+
+  const fnWrapper: MutationFunction<z.infer<TSchema>, TVariables> = async (
     ...args
   ) => {
-    if (mutationFn) {
-      const response = await mutationFn(...args);
+    const response = await mutationFn(...args);
 
-      if (schema) {
-        const parsed = await schema.parseAsync(response);
-        return parsed;
-      }
-      return;
-    }
+    if (schema) return schema.parse(response);
+    return response as z.infer<TSchema>;
   };
   return useMutation({
-    mutationFn: fnWrapper,
     ...options,
+    mutationFn: fnWrapper,
+    mutationKey,
+    onSettled: async (...args) => {
+      if (invalidateQueries) {
+        await queryClient.invalidateQueries({ queryKey: invalidateQueries });
+      }
+
+      return onSettled?.(...args);
+    },
+    onError: (error, ...args) => {
+      const key: string = mutationKey
+        ? `[${mutationKey.join(", ")}]`
+        : "unknown mutation";
+
+      console.error(`Failed to run mutation: ${key}`, error);
+
+      return onError?.(error, ...args);
+    },
   });
 };
 

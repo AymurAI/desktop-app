@@ -10,6 +10,7 @@ export const Container = styled("div", {
 export const File = styled("div", {
   px: "$xl",
   pb: "$xl",
+  pt: "$l",
 
   "& p, & span, & em": {
     fontFamily: "$file",
@@ -54,7 +55,6 @@ export const ButtonContainer = styled("div", {
 export const Button = styled("button", {
   background: "transparent",
   border: "none",
-  padding: "4px",
   cursor: "pointer",
   display: "flex",
   alignItems: "center",
@@ -65,20 +65,28 @@ export const Button = styled("button", {
     background: "rgba(0, 0, 0, 0.1)",
   },
 
-  img: {
-    width: "20px",
-    height: "20px",
-  },
-
   variants: {
-    variant: {
-      search: {},
-      searchSingle: {},
-      replaceAll: {},
-      replace: {},
-      tagAll: {},
-      tag: {},
+    smallImage: {
+      true: {
+        padding: "2px",
+
+        img: {
+          width: "24px",
+          height: "24px",
+        },
+      },
+      false: {
+        padding: "4px",
+
+        img: {
+          width: "20px",
+          height: "20px",
+        },
+      },
     },
+  },
+  defaultVariants: {
+    smallImage: false,
   },
 });
 
@@ -126,6 +134,7 @@ export const Mark = styled("mark", {
 
 export const SearchContainer = styled("div", {
   p: "$l",
+  pb: 0,
 
   zIndex: 1,
   top: 0,

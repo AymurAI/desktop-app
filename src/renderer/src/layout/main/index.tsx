@@ -2,26 +2,19 @@ import { Outlet } from "react-router-dom";
 
 import { ProfileInfo, Stepper, Title } from "@/components";
 import FileProvider from "@/context/File";
-import withAuthProtection from "@/features/withAuthProtection";
-import { useUser } from "@/hooks";
-import { FunctionType } from "@/types/user";
+import FeatureRouter from "@/features/FeatureRouter";
 import { Footer, Header, Layout, Section } from "./Main.styles";
 import type { Props } from "./Main.types";
 
-export { Section, Footer };
+export { Footer, Section };
 
-export default withAuthProtection(function Main({ children, ...props }: Props) {
-  const user = useUser();
-
+function GenericMain({ title }: Props) {
   return (
-    <Layout {...props}>
+    <Layout>
       <Header>
         {/* Title & Profile picture & Logout */}
         <Title weight="strong" css={{ fontSize: 24 }}>
-          AymurAI{" "}
-          {user?.function === FunctionType.ANONYMIZER
-            ? "Anonimizador"
-            : "Set de datos"}
+          AymurAI {title}
         </Title>
         <Stepper />
         <ProfileInfo />
@@ -33,4 +26,13 @@ export default withAuthProtection(function Main({ children, ...props }: Props) {
       </FileProvider>
     </Layout>
   );
-});
+}
+
+export default function Main() {
+  return (
+    <FeatureRouter
+      DATA_SET={<GenericMain title="Set de datos" />}
+      ANONYMIZER={<GenericMain title="Anonimizador" />}
+    />
+  );
+}
