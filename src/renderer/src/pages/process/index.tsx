@@ -46,7 +46,7 @@ function GenericProcess({ title, supportMultipleFiles }: GenericProcessProps) {
   };
 
   const handlePrevious = () => {
-    navigate("/preview");
+    navigate("../preview");
     dispatch(removeAllPredictions());
   };
 
