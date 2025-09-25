@@ -5,11 +5,11 @@ let child: ChildProcess | null = null;
 
 export const run = () => {
   // TODO: make this dynamic and based off the current directory
-  const ps1FilePath = path.join(process.execPath, "run_server.ps1");
-  child = spawn(
-    "powershell",
-    ["-ExecutionPolicy", "Bypass", "-File", ps1FilePath],
-  );
+  const ps1FilePath = path.join(process.execPath, "run_server.bat");
+  child = spawn(ps1FilePath, {
+    shell: true,
+    stdio: "ignore",
+  });
 
   return new Promise((ok, no) => {
     if (!child) return no(new Error("Child process not found"));
