@@ -1,39 +1,53 @@
-import { useEffect } from "react";
-
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
 import api from "../api";
-import { useSchemedQuery } from "../utils";
+import { useSchemedMutation } from "../utils";
 import { healthcheckSchema } from "./schema";
 
 interface UseRunLocalServerProps {
   onSuccess?: () => void;
 }
-export const useRunLocalServer = ({onSuccess}: UseRunLocalServerProps) => {
-  const {refetch, data, isFetching} = useSchemedQuery({
+export const useRunLocalServer = ({ onSuccess }: UseRunLocalServerProps) => {
+  const queryClient = useQueryClient();
+  const serverStatus = queryClient.getQueryData<boolean>(["run-local-server"]);
+
+  const {
+    mutateAsync: checkServerStatus,
+    isPending: isRunning,
+    isSuccess,
+  } = useSchemedMutation({
     schema: healthcheckSchema,
-    queryKey: ["run-local-server"],
-    queryFn: () => api.get("/server/healthcheck"),
-    enabled: false,
+    mutationFn: () => api.get("/server/healthcheck"),
     retryDelay: 1000,
     retry: 10,
-  })
+    onMutate: () => {
+      queryClient.setQueryData(["run-local-server"], false);
+    },
+    onSuccess: () => {
+      queryClient.setQueryData(["run-local-server"], true);
+      onSuccess?.();
+    },
+  });
 
-  const run = async ()=> {
-    if (!window.electronAPI) throw new Error("Electron API not available. Check your preload script.");
-    await window.electronAPI.runBatch();
-
-    await refetch();
-  }
-
-  const isSuccess = !!data?.status;
-  const isRunning = isFetching && !data;
-  
-  useEffect(()=> {
-    if (data?.status === "ok") onSuccess?.();
-  }, [data?.status])
+  const run = useCallback(async () => {
+    if (serverStatus === undefined) {
+      console.log("Running local server");
+      if (!window.electronAPI)
+        throw new Error(
+          "Electron API not available. Check your preload script.",
+        );
+      await window.electronAPI.runBatch();
+    } else if (serverStatus === true) {
+      console.log("Server is already running");
+    } else {
+      console.log("Server is not running yet");
+    }
+    await checkServerStatus(undefined);
+  }, [serverStatus]);
 
   return {
     isRunning,
     isSuccess,
     run,
-  }
-}
+  };
+};
