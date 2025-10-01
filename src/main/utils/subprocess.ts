@@ -1,9 +1,10 @@
+import { app } from "electron";
 import { exec, spawn } from "node:child_process";
 import path from "node:path";
 
 export const run = () => {
   // TODO: make this dynamic and based off the current directory
-  const ps1FilePath = path.join(process.execPath, "run_server.bat");
+  const ps1FilePath = path.join(app.getPath("exe"), "run_server.bat");
   const child = spawn(ps1FilePath, {
     shell: true,
     stdio: "ignore",
