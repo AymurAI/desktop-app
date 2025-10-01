@@ -1,12 +1,10 @@
-import { type ChildProcess, exec, spawn } from "node:child_process";
+import { exec, spawn } from "node:child_process";
 import path from "node:path";
-
-let child: ChildProcess | null = null;
 
 export const run = () => {
   // TODO: make this dynamic and based off the current directory
   const ps1FilePath = path.join(process.execPath, "run_server.bat");
-  child = spawn(ps1FilePath, {
+  const child = spawn(ps1FilePath, {
     shell: true,
     stdio: "ignore",
   });
