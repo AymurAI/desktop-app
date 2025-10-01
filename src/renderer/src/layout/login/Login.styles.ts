@@ -34,3 +34,9 @@ export const Container = styled("div", {
 export const MainContent = styled(Stack, {
   flex: 1,
 });
+
+export const Logo = styled("img", {
+  width: 250,
+  mt: -32,
+  mb: -16,
+});

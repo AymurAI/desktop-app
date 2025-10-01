@@ -13,7 +13,7 @@ asarUnpack:
   - resources/**
 win:
   executableName: AymurAI
-  icon: src/renderer/public/brand/logo256-text.png
+  icon: src/renderer/public/brand/logo.jpg
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -21,7 +21,7 @@ nsis:
   createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
-  icon: src/renderer/public/brand/logo256-text.png
+  icon: src/renderer/public/brand/logo.jpg
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
     - NSMicrophoneUsageDescription: Application requests access to the device's microphone.

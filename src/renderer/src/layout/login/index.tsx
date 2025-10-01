@@ -1,4 +1,4 @@
-import { Button, Label, Stack, Subtitle, Title } from "@/components";
+import { Button, Label, Stack, Subtitle } from "@/components";
 import { ArrowBendUpLeft } from "phosphor-react";
 import { Outlet, useNavigate } from "react-router-dom";
 import * as S from "./Login.styles";
@@ -19,9 +19,7 @@ export default function LoginLayout({ canGoBack = false }: LoginLayoutProps) {
           {/*  Title */}
           <Stack direction="column" align="center">
             <Subtitle>Te damos la bienvenida a</Subtitle>
-            <Title weight="heavy" size="main">
-              AymurAI
-            </Title>
+            <S.Logo src="/brand/aymurai-vert.png" alt="AymurAI" />
           </Stack>
 
           {/* Outlet: buttons and actions to proceed to the platform */}
