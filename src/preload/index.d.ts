@@ -14,9 +14,10 @@ declare global {
       notify: () => Promise<void>;
     };
     electronAPI?: {
-      runBatch: () => void;
+      runBatch: () => Promise<void>;
     };
   }
 }
 
-export {};
+export { };
+
