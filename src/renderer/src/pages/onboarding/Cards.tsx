@@ -1,10 +1,12 @@
-import { Card as StyledCard } from "@/components";
+import { Text } from "@/components";
+
+import { Card as BaseCard } from "@/components";
 import { styled } from "@/styles";
 
 /**
  * Styled card, containing step, image and description
  */
-export const Card = styled(StyledCard, {
+export const StyledCard = styled(BaseCard, {
   justifyContent: "center",
   alignItems: "center",
   textAlign: "center",
@@ -46,3 +48,25 @@ export const Step = styled("span", {
   justifyContent: "center",
   alignItems: "center",
 });
+
+interface Props {
+  step: number;
+  text: string;
+}
+/**
+ * @param step Current step, used to refer to an image on `/public`
+ * @param text Text used to describe current step
+ */
+export function Card({ step = 1, text }: Props) {
+  return (
+    <StyledCard>
+      <Step>{step}</Step>
+      <img
+        src={`onboarding-steps/step${step}.png`}
+        width="140"
+        alt={`Step ${step}`}
+      />
+      <Text size="s">{text}</Text>
+    </StyledCard>
+  );
+}

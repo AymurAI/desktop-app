@@ -3,7 +3,7 @@ import { BrowserWindow, app, ipcMain } from "electron";
 
 import createWindow from "./createWindow";
 import { installExtensions } from "./extensions";
-import { electronAPI, excel, feedback, taskbar } from "./utils";
+import { excel, feedback, subprocess, taskbar } from "./utils";
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -31,7 +31,7 @@ app.whenReady().then(async () => {
   // TASKBAR
   ipcMain.handle("TASKBAR_NOTIFY", taskbar.notify);
 
-  ipcMain.handle("RUN_BATCH", electronAPI.runBatch);
+  ipcMain.handle("RUN_BATCH", subprocess.run);
 
   await installExtensions();
   createWindow();
@@ -46,7 +46,8 @@ app.whenReady().then(async () => {
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
-app.on("window-all-closed", () => {
+app.on("window-all-closed", async () => {
+  subprocess.stop();
   if (process.platform !== "darwin") {
     app.quit();
   }

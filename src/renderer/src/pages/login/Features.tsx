@@ -1,20 +1,17 @@
 import { Button, Stack, Subtitle } from "@/components";
-import { useLogin } from "@/hooks";
-import { FunctionType } from "@/types/user";
+import { Feature } from "@/types/features";
 import { ArrowBendUpLeft, Database, Detective } from "phosphor-react";
 import { useNavigate } from "react-router-dom";
 
 export function Features() {
   const navigate = useNavigate();
-  const { login } = useLogin();
 
   const handleBack = () => {
     navigate("/login");
   };
 
-  const handleSelectFeature = (feature: FunctionType) => {
-    login.offline(feature);
-    navigate("/onboarding");
+  const handleSelectFeature = (feature: Feature) => () => {
+    navigate(`/app/${feature}/onboarding`);
   };
 
   return (
@@ -27,14 +24,14 @@ export function Features() {
       <Subtitle weight="strong" size="s" css={{ textAlign: "center" }}>
         ¿Cual función vas a utilizar?
       </Subtitle>
-      <Button onClick={() => handleSelectFeature(FunctionType.DATASET)}>
+      <Button onClick={handleSelectFeature(Feature.Dataset)}>
         <Database weight="bold" />
         Set de datos
       </Button>
       <Subtitle size="s" css={{ textAlign: "center" }}>
         o
       </Subtitle>
-      <Button onClick={() => handleSelectFeature(FunctionType.ANONYMIZER)}>
+      <Button onClick={handleSelectFeature(Feature.Anonymizer)}>
         <Detective weight="bold" />
         Anonimizador
       </Button>

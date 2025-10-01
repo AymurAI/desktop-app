@@ -1,10 +1,9 @@
 import { House, Info } from "phosphor-react";
+import { useNavigate } from "react-router-dom";
 
 import { Button, Stack } from "@/components";
-import { useLogin } from "@/hooks";
 import { styled } from "@/styles";
-import { FunctionType } from "@/types/user";
-import { useNavigate } from "react-router-dom";
+
 const Anchor = styled("a", {
   display: "flex",
   alignItems: "center",
@@ -13,15 +12,12 @@ const Anchor = styled("a", {
 
 export default function ProfileInfo() {
   const navigate = useNavigate();
-  const { login } = useLogin({
-    onLogout: () => {
-      navigate("/login");
-    },
-  });
+
+  const handleLogout = () => navigate("/login/features");
 
   return (
     <Stack spacing="l" align="center">
-      <Button css={{ p: 2 }} onClick={() => login.offline(FunctionType.NULL)}>
+      <Button css={{ p: 2 }} onClick={handleLogout}>
         <House size={32} />
       </Button>
       <Anchor href="https://www.aymurai.info/" target="_blank" rel="noreferrer">

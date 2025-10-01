@@ -6,7 +6,7 @@ import { ZodError } from "zod";
 
 import { Button, Input, Label, Stack, Subtitle } from "@/components";
 
-import { useConnectToHost } from "@/services/aymurai/useConnectToHost";
+import { useConnectToHost, useRunLocalServer } from "@/services/aymurai";
 import { localStore } from "@/store/useLocal";
 
 const errorMessage = (err: Error) => {
@@ -30,33 +30,16 @@ export function Host() {
   const remoteHost = localStore.useServerHost() ?? "";
   const { setServerHost } = localStore.useServerHostActions();
   const { mutate: connectToHost, isPending, error, reset } = useConnectToHost();
+  const { run: runLocalServer, isRunning } = useRunLocalServer({
+    onSuccess: () => navigate("/login/features"),
+  });
 
   const handleBack = () => {
     setIsLocal(null);
   };
 
   const handleUseLocal = async () => {
-    if (window.electronAPI) {
-      try {
-        await window.electronAPI.runBatch();
-        console.log("Server is running in the background.");
-
-        navigate("/login/features");
-      } catch (error) {
-        console.error(
-          "Failed to run batch. Please run the server manually.",
-          error,
-        );
-        alert(
-          "No se pudo inicializar el servidor automáticamente. Por favor inícialo manualmente.",
-        );
-      }
-    } else {
-      console.warn("Electron API not available. Unable to run the batch file.");
-      alert(
-        "No se puede inicializar el servidor automáticamente. Por favor, inícialo manualmente.",
-      );
-    }
+     await runLocalServer();
   };
 
   const handleUseRemote = () => {
@@ -89,7 +72,7 @@ export function Host() {
           </Subtitle>
           {/* Buttons */}
           <Stack direction="column" align="center" spacing="s">
-            <Button onClick={handleUseLocal}>
+            <Button onClick={handleUseLocal} disabled={isRunning}>
               <Monitor weight="bold" />
               Local
             </Button>

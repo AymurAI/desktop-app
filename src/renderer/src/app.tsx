@@ -1,52 +1,52 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
+  Navigate,
   RouterProvider,
   createMemoryRouter as createRouter,
 } from "react-router-dom";
 
 import { ThemeProvider } from "@/components";
-import AuthProvider from "@/context/Authentication";
 import LoginLayout from "@/layout/login";
 import MainLayout from "@/layout/main";
 import {
-  FinishAnonymizer,
   FinishDataset,
   LoginFeatures,
   LoginHost,
   Onboarding,
   Preview,
   Process,
-  ValidateAnonymization,
   ValidateDataset,
 } from "@/pages";
 
 const router = createRouter([
   {
-    // Main as a layout element
     path: "/",
-    element: <MainLayout />,
-    children: [
-      // 1. Onboarding
-      { path: "onboarding", element: <Onboarding /> },
-      // 2. Preview
-      { path: "preview", element: <Preview /> },
-      // 3. Process
-      { path: "process", element: <Process /> },
-      // 4. Validation
-      { path: "validation/dataset", element: <ValidateDataset /> },
-      { path: "validation/anonymizer", element: <ValidateAnonymization /> },
-      // 5. Finish
-      { path: "finish/dataset", element: <FinishDataset /> },
-      { path: "finish/anonymizer", element: <FinishAnonymizer /> },
-    ],
+    element: <Navigate to="/login" />,
   },
   {
-    path: "login",
+    path: "/login",
     element: <LoginLayout />,
     children: [
       { index: true, element: <LoginHost /> },
       { path: "host", element: <LoginHost /> },
       { path: "features", element: <LoginFeatures /> },
+    ],
+  },
+  {
+    // Main as a layout element
+    path: "app/:feature",
+    element: <MainLayout />,
+    children: [
+      // 1. Onboarding. Explanation of the workflow to process files
+      { path: "onboarding", element: <Onboarding /> },
+      // 2. Preview. Process the file to get its text contents
+      { path: "preview", element: <Preview /> },
+      // 3. Process. Passes the text contents to the AI to extract predictions
+      { path: "process", element: <Process /> },
+      // 4. Validation. Validate the predictions/anonymize the file
+      { path: "validation", element: <ValidateDataset /> },
+      // 5. Finish. Show the results and download output files
+      { path: "finish", element: <FinishDataset /> },
     ],
   },
 ]);
@@ -56,12 +56,10 @@ const queryClient = new QueryClient();
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        {/* Stitches global styles */}
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </AuthProvider>
+      {/* Stitches global styles */}
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
