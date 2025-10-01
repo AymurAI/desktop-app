@@ -19,7 +19,7 @@ export default function LoginLayout({ canGoBack = false }: LoginLayoutProps) {
           {/*  Title */}
           <Stack direction="column" align="center">
             <Subtitle>Te damos la bienvenida a</Subtitle>
-            <S.Logo src="/brand/aymurai-vert.png" alt="AymurAI" />
+            <S.Logo src="brand/aymurai-vert.png" alt="AymurAI" />
           </Stack>
 
           {/* Outlet: buttons and actions to proceed to the platform */}
