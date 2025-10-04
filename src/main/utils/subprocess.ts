@@ -4,10 +4,7 @@ import path from "node:path";
 
 export const run = () => {
   const batFilePath = path.join(app.getPath("exe"), "../run_server.bat");
-  const child = spawn(batFilePath, {
-    shell: true,
-    stdio: "ignore",
-  });
+  const child = spawn(batFilePath);
 
   return new Promise((ok, no) => {
     if (!child) return no(new Error("Child process not found"));
