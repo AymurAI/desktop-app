@@ -39,7 +39,7 @@ export function Host() {
   };
 
   const handleUseLocal = async () => {
-     await runLocalServer();
+    await runLocalServer();
   };
 
   const handleUseRemote = () => {
@@ -72,7 +72,11 @@ export function Host() {
           </Subtitle>
           {/* Buttons */}
           <Stack direction="column" align="center" spacing="s">
-            <Button onClick={handleUseLocal} disabled={isRunning}>
+            <Button
+              onClick={handleUseLocal}
+              disabled={isRunning}
+              isLoading={isRunning}
+            >
               <Monitor weight="bold" />
               Local
             </Button>

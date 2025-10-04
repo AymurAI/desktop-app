@@ -1,6 +1,7 @@
-import { styled } from "@/styles";
+import { keyframes, styled } from "@/styles";
+import { CircleNotch } from "phosphor-react";
 
-const Button = styled("button", {
+const StyledButton = styled("button", {
   display: "flex",
   flexDirection: "row",
   gap: "$xxs",
@@ -122,5 +123,25 @@ const Button = styled("button", {
     checked: false,
   },
 });
+
+const spin = keyframes({
+  "0%": { transform: "rotate(0deg)" },
+  "100%": { transform: "rotate(360deg)" },
+});
+const Spinner = styled(CircleNotch, {
+  animation: `${spin} 1s linear infinite`,
+});
+
+interface Props extends React.ComponentProps<typeof StyledButton> {
+  isLoading?: boolean;
+}
+
+function Button({ children, isLoading, disabled, ...props }: Props) {
+  return (
+    <StyledButton {...props} disabled={isLoading || disabled}>
+      {isLoading ? <Spinner /> : children}
+    </StyledButton>
+  );
+}
 
 export default Button;
