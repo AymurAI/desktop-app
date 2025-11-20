@@ -9,13 +9,13 @@ import { ThemeProvider } from "@/components";
 import LoginLayout from "@/layout/login";
 import MainLayout from "@/layout/main";
 import {
-  FinishDataset,
+  Finish,
   LoginFeatures,
   LoginHost,
   Onboarding,
   Preview,
   Process,
-  ValidateDataset,
+  Validation,
 } from "@/pages";
 
 const router = createRouter([
@@ -44,9 +44,9 @@ const router = createRouter([
       // 3. Process. Passes the text contents to the AI to extract predictions
       { path: "process", element: <Process /> },
       // 4. Validation. Validate the predictions/anonymize the file
-      { path: "validation", element: <ValidateDataset /> },
+      { path: "validation", element: <Validation /> },
       // 5. Finish. Show the results and download output files
-      { path: "finish", element: <FinishDataset /> },
+      { path: "finish", element: <Finish /> },
     ],
   },
 ]);
