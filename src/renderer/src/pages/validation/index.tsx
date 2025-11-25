@@ -1,0 +1,12 @@
+import FeatureRouter from "@/features/FeatureRouter";
+import Anonymizer from "./anonymizer";
+import Dataset from "./dataset";
+
+export default function Validation() {
+  return (
+    <FeatureRouter
+      DATA_SET={<Dataset/>}
+      ANONYMIZER={<Anonymizer  />}
+    />
+  );
+}
