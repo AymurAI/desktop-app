@@ -114,18 +114,18 @@ function RouteComponent() {
         multipleFiles={true}
       />
     );
-  else
-    return (
-      <GenericOnboarding
-        description="Esta herramienta te permitirá subir las resoluciones del juzgado para que sean analizadas por una inteligencia artificial que anonimizará los datos sensibles de las personas involucradas y de los hechos del caso."
-        actionText="Selecciona el archivo"
-        steps={[
-          "Selecciona el archivo",
-          "La inteligencia artificial procesará el archivo",
-          "Valida que la información a anonimizar sea correcta",
-          "Proceso terminado. El documento esta listo para ser exportado.",
-        ]}
-        multipleFiles={true}
-      />
-    );
+
+  return (
+    <GenericOnboarding
+      description="Esta herramienta te permitirá subir las resoluciones del juzgado para que sean analizadas por una inteligencia artificial que anonimizará los datos sensibles de las personas involucradas y de los hechos del caso."
+      actionText="Selecciona el archivo"
+      steps={[
+        "Selecciona el archivo",
+        "La inteligencia artificial procesará el archivo",
+        "Valida que la información a anonimizar sea correcta",
+        "Proceso terminado. El documento esta listo para ser exportado.",
+      ]}
+      multipleFiles={false}
+    />
+  );
 }
