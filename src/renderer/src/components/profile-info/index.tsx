@@ -1,8 +1,8 @@
 import { House, Info } from "phosphor-react";
-import { useNavigate } from "react-router-dom";
 
 import { Button, Stack } from "@/components";
 import { styled } from "@/styles";
+import { useNavigate } from "@tanstack/react-router";
 
 const Anchor = styled("a", {
   display: "flex",
@@ -13,7 +13,10 @@ const Anchor = styled("a", {
 export default function ProfileInfo() {
   const navigate = useNavigate();
 
-  const handleLogout = () => navigate("/login/features");
+  const handleLogout = () =>
+    navigate({
+      to: "/home/features",
+    });
 
   return (
     <Stack spacing="l" align="center">
