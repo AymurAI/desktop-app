@@ -6,7 +6,7 @@ import { predict } from "@/services/aymurai";
 
 import { Feature } from "@/types/features";
 import type { DocFile } from "@/types/file";
-import { useParams } from "react-router-dom";
+import { useParams } from "@tanstack/react-router";
 
 export type PredictStatus = "processing" | "error" | "stopped" | "completed";
 
@@ -17,7 +17,7 @@ export function usePredict(
   file: DocFile,
   { onStatusChange }: UsePredictOptions,
 ) {
-  const { feature } = useParams<{ feature: Feature }>();
+  const { feature } = useParams({from: '/app/$feature/process'});
 
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<PredictStatus>("processing");

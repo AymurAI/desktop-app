@@ -7,14 +7,14 @@ import { useFileParser } from "@/services/aymurai/useFileParser";
 import type { DocFile } from "@/types/file";
 
 import { Feature } from "@/types/features";
-import { useParams } from "react-router-dom";
+import { useParams } from "@tanstack/react-router";
 import * as S from "./FilePreview.styles";
 
 interface Props {
   file: DocFile;
 }
 export default function FilePreview({ file }: Props) {
-  const { feature } = useParams<{ feature: Feature }>();
+  const { feature } = useParams({from:'/app/$feature/preview'});
   const dispatch = useFileDispatch();
   const { data: parsedFile, isError, isPending } = useFileParser(file.data);
 

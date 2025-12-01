@@ -1,6 +1,6 @@
 import { Button, Label, Stack, Subtitle } from "@/components";
+import { Outlet, useNavigate } from "@tanstack/react-router";
 import { ArrowBendUpLeft } from "phosphor-react";
-import { Outlet, useNavigate } from "react-router-dom";
 import * as S from "./Login.styles";
 
 interface LoginLayoutProps {
@@ -10,7 +10,7 @@ export default function LoginLayout({ canGoBack = false }: LoginLayoutProps) {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate("/login");
+    navigate({to:"/home"});
   };
   return (
     <S.Background>
