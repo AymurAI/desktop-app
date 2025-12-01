@@ -1,5 +1,5 @@
 import { Card as BaseCard } from "@/components";
-import { styled } from "@stitches/react";
+import { styled } from "@/styles";
 
 /**
  * Styled card, containing step, image and description

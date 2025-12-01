@@ -1,4 +1,4 @@
-import { styled } from "@stitches/react";
+import { styled } from "@/styles";
 
 export const OnboardingGrid = styled("div", {
   display: "grid",
