@@ -126,7 +126,7 @@ function GenericPreview({ title, supportMultipleFiles }: GenericPreviewProps) {
 
 function RouteComponent() {
   const { feature } = useParams({
-    from: "/app/$feature/onboarding",
+    from: "/app/$feature/preview",
   });
 
   if (feature === Feature.Dataset)
