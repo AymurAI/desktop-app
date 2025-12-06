@@ -136,11 +136,11 @@ function RouteComponent() {
         title="1. Previsualización de archivos"
       />
     );
-  else
-    return (
-      <GenericPreview
-        supportMultipleFiles={false}
-        title="1. Previsualización del archivo"
-      />
-    );
+
+  return (
+    <GenericPreview
+      supportMultipleFiles={false}
+      title="1. Previsualización del archivo"
+    />
+  );
 }
