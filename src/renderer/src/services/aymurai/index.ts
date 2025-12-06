@@ -1,5 +1,4 @@
 import predict from "./predict";
-export { getParagraphs } from "./document-extract";
 export { predict };
 
 export * from "./useConnectToHost";
