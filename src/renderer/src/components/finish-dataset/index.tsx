@@ -16,10 +16,10 @@ import filesystem from "@/services/filesystem";
 import type { DocFile } from "@/types/file";
 import { submitValidations } from "@/utils/file";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import * as S from './FinishDataset.styles';
+import * as S from "./FinishDataset.styles";
 
 export function FinishDataset() {
-  const params = useParams({from:'/app/$feature/finish'})
+  const params = useParams({ from: "/app/$feature/finish" });
   const files = useFiles();
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ export function FinishDataset() {
 
   const handleRestart = () => {
     dispatch(removeAllFiles());
-    navigate({to:'/app/$feature/onboarding', params});
+    navigate({ to: "/app/$feature/onboarding", params });
   };
 
   const checkForErrors = (fileName: string) =>
