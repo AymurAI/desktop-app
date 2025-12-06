@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 
 import { ProfileInfo, Stepper, Title } from "@/components";

@@ -1,5 +1,5 @@
 import type { PredictStatus } from "@/hooks/usePredict";
-import { DocFile } from "@/types/file";
+import type { DocFile } from "@/types/file";
 
 export type ProcessState = { name: string; status: PredictStatus };
 

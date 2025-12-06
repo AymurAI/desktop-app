@@ -1,4 +1,4 @@
-import { ProcessState } from "./initProcessState";
+import type { ProcessState } from "./initProcessState";
 
 export function canContinue(state: ProcessState[]) {
   const atLeastOneCompleted = state.some(

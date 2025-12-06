@@ -1,6 +1,6 @@
-import { app } from "electron";
 import { exec, spawn } from "node:child_process";
 import path from "node:path";
+import { app } from "electron";
 
 export const run = () => {
   const batFilePath = path.join(app.getPath("exe"), "../run_server.bat");
