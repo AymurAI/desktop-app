@@ -25,7 +25,7 @@ const body = (file: DocFile): Body => {
 
 export const anonymize = (file: DocFile) =>
   queryOptions({
-    queryKey: ["anonymize"],
+    queryKey: ["anonymize", file.data.name],
     queryFn: async () => {
       const formData = new FormData();
       formData.append("file", file.data);
