@@ -1,12 +1,19 @@
 import {
-  matchQuery,
   MutationCache,
   QueryClient,
   QueryClientProvider,
+  matchQuery,
 } from "@tanstack/react-query";
 
 export function getContext() {
   const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Number.POSITIVE_INFINITY,
+        refetchOnWindowFocus: false,
+        retry: false,
+      },
+    },
     mutationCache: new MutationCache({
       onSettled: async (_data, _err, _vars, _ctx, mutation) => {
         if (!mutation.meta) return;
