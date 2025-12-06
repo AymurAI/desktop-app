@@ -17,7 +17,7 @@ export const useRunLocalServer = ({ onSuccess }: UseRunLocalServerProps) => {
     isSuccess,
   } = useSchemedMutation({
     schema: healthcheckSchema,
-    mutationFn: () => api.get("/server/healthcheck"),
+    mutationFn: () => api.get("/server/healthcheck").then((r) => r.data),
     retryDelay: 1000,
     retry: 10,
     onMutate: () => {

@@ -8,7 +8,7 @@ export const useConnectToHost = () => {
     mutationKey: ["healthcheck"],
     mutationFn: (host: string) => {
       const url = new URL(host).toString().replace(/\/$/, "");
-      return api.get(`${url}/server/healthcheck`);
+      return api.get(`${url}/server/healthcheck`).then((r) => r.data);
     },
     schema: z.object({
       status: z.string(),

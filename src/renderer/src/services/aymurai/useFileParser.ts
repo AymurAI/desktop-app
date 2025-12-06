@@ -11,14 +11,16 @@ export function useFileParser(file: File) {
   const dispatch = useFileDispatch();
 
   const query = useSchemedQuery({
-    queryKey: ["file-parser", file.name],
+    queryKey: ["file-parser", file.name, file.size],
     queryFn: async () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      return api.post("/misc/document-extract", formData, {
+      const response = await api.post("/misc/document-extract", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
+      return response.data;
     },
     schema: documentExtractSchema,
     retry: false,

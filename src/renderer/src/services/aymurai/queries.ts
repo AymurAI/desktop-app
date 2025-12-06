@@ -46,7 +46,7 @@ export const anonymize = (file: DocFile) =>
 
       console.log(response);
 
-      return response;
+      return response.data;
     },
     select: (data) => URL.createObjectURL(data),
   });
