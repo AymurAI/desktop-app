@@ -1,6 +1,6 @@
+import { join } from "node:path";
 import { is } from "@electron-toolkit/utils";
 import { BrowserWindow, shell } from "electron";
-import { join } from "node:path";
 
 import { DEV_PORT, EXTERNAL_URLS, isDebug, isProduction } from "./env";
 import { resolveHTMLPath } from "./utils";

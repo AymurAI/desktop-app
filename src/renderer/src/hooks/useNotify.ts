@@ -1,7 +1,7 @@
 import taskbar from "@/services/taskbar";
-import {
-  initProcessState,
+import type {
   ProcessState,
+  initProcessState,
 } from "@/utils/process/initProcessState";
 import { useEffect, useState } from "react";
 

@@ -2,20 +2,25 @@ import { Button, FileAnnotator, Grid, ValidateDataset } from "@/components";
 import { useFiles } from "@/hooks";
 import { Footer } from "@/layout/main";
 import { Feature } from "@/types/features";
-import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useNavigate,
+  useParams,
+} from "@tanstack/react-router";
 
 export const Route = createFileRoute("/app/$feature/validation")({
   component: ValidationRoute,
 });
 
 function ValidateAnonymizer() {
-  const {feature} = useParams({
-    from: "/app/$feature/validation"
-  })
+  const { feature } = useParams({
+    from: "/app/$feature/validation",
+  });
   const file = useFiles()[0]!;
   const navigate = useNavigate();
 
-  const handleContinue = () => navigate({to: "/app/$feature/finish", params: {feature}});
+  const handleContinue = () =>
+    navigate({ to: "/app/$feature/finish", params: { feature } });
 
   return (
     <>

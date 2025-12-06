@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import {
   Button,
   Card,
@@ -12,9 +10,10 @@ import {
 import { useFileDispatch, useFiles } from "@/hooks";
 import { Footer, Section } from "@/layout/main";
 import { removeAllFiles } from "@/reducers/file/actions";
-import { anonymize } from "@/services/aymurai";
+import { aymuraiService } from "@/services/aymurai";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import * as S from './FinishAnonymizer.styles';
+import * as S from "./FinishAnonymizer.styles";
 
 const changeExtension = (name: string) => {
   const parts = name.split(".");
@@ -22,45 +21,38 @@ const changeExtension = (name: string) => {
   return `${[...parts].join(".")}_anonimizado.odt`;
 };
 
-type AnonymizeStatus = "loading" | "success" | "error";
 export function FinishAnonymizer() {
-  const params = useParams({from:'/app/$feature/finish'})
+  const params = useParams({ from: "/app/$feature/finish" });
   // We are sure that there is only one file, because we came from
   // anonimization workflow
   const file = useFiles()[0];
   const dispatch = useFileDispatch();
   const navigate = useNavigate();
-  const [status, setStatus] = useState<AnonymizeStatus | null>(null);
-  const [fileURI, setFileURI] = useState<string | null>(null);
+
+  const {
+    data: fileURI,
+    isLoading,
+    isError,
+  } = useQuery(aymuraiService.anonymize(file));
+
   const downloadDocument = async () => {
     if (!fileURI) {
       console.error("Tried to download a file that is not ready.");
       return;
     }
     const link = document.createElement("a");
-    link.setAttribute("href", fileURI);
-    link.setAttribute("download", changeExtension(file.data.name));
+    link.href = fileURI;
+    link.download = changeExtension(file.data.name);
 
     link.click();
+
+    document.removeChild(link);
   };
 
   const handleRestart = () => {
     dispatch(removeAllFiles());
-    navigate({to:"/app/$feature/onboarding",params});
+    navigate({ to: "/app/$feature/onboarding", params });
   };
-
-  useEffect(() => {
-    setStatus("loading");
-
-    anonymize(file)
-      .then((blob) => {
-        setFileURI(URL.createObjectURL(blob));
-        setStatus("success");
-      })
-      .catch(() => {
-        setStatus("error");
-      });
-  }, []);
 
   return (
     <>
@@ -80,8 +72,8 @@ export function FinishAnonymizer() {
           >
             <FileCheck
               fileName={file.data.name}
-              hasError={status === "error"}
-              isLoading={status === "loading"}
+              hasError={isError}
+              isLoading={isLoading}
             />
           </Grid>
         </Card>
@@ -97,11 +89,7 @@ export function FinishAnonymizer() {
         <Button variant="secondary" onClick={handleRestart} size="l">
           Cargar un nuevo documento
         </Button>
-        <Button
-          onClick={downloadDocument}
-          size="l"
-          disabled={status === "error"}
-        >
+        <Button onClick={downloadDocument} size="l" disabled={isError}>
           Descargar documento
         </Button>
       </Footer>

@@ -3,7 +3,6 @@ import { Feature } from "@/types/features";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowBendUpLeft, Database, Detective } from "phosphor-react";
 
-
 export const Route = createFileRoute("/home/_layout/features")({
   component: RouteComponent,
 });
@@ -12,14 +11,14 @@ function RouteComponent() {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate({to:'/home'});
+    navigate({ to: "/home" });
   };
 
   const handleSelectFeature = (feature: Feature) => () => {
     navigate({
-      to:"/app/$feature/onboarding",
-      params: {feature}
-    })
+      to: "/app/$feature/onboarding",
+      params: { feature },
+    });
   };
 
   return (
@@ -48,8 +47,5 @@ function RouteComponent() {
         Volver al inicio
       </Button>
     </Stack>
-  )
+  );
 }
-
-
-

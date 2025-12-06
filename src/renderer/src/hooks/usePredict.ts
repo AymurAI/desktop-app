@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useFileDispatch, useFileParser } from "@/hooks";
+import { useFileDispatch } from "@/hooks";
 import { addPredictions, removePredictions } from "@/reducers/file/actions";
 import { predict } from "@/services/aymurai";
 
@@ -17,14 +17,14 @@ export function usePredict(
   file: DocFile,
   { onStatusChange }: UsePredictOptions,
 ) {
-  const { feature } = useParams({from: '/app/$feature/process'});
+  const { feature } = useParams({ from: "/app/$feature/process" });
 
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<PredictStatus>("processing");
   const dispatch = useFileDispatch();
-  const paragraphs = useFileParser(file);
 
   const isAnonimizing = feature === Feature.Anonymizer;
+  const paragraphs = file.paragraphs;
 
   // Store static values
   const controller = useRef(new AbortController());

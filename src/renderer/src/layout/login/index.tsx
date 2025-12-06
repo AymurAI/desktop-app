@@ -10,7 +10,7 @@ export default function LoginLayout({ canGoBack = false }: LoginLayoutProps) {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate({to:"/home"});
+    navigate({ to: "/home" });
   };
   return (
     <S.Background>

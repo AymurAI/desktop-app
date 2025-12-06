@@ -14,7 +14,7 @@ interface Props {
   file: DocFile;
 }
 export default function FilePreview({ file }: Props) {
-  const { feature } = useParams({from:'/app/$feature/preview'});
+  const { feature } = useParams({ from: "/app/$feature/preview" });
   const dispatch = useFileDispatch();
   const { data: parsedFile, isError, isPending } = useFileParser(file.data);
 
