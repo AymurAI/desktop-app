@@ -46,7 +46,7 @@ export function FinishAnonymizer() {
 
     link.click();
 
-    URL.revokeObjectURL(fileURI);
+    document.removeChild(link);
   };
 
   const handleRestart = () => {

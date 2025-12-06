@@ -10,7 +10,7 @@ import {
 } from "@/components";
 import { useFileDispatch, useFiles } from "@/hooks";
 import useNotify from "@/hooks/useNotify";
-import { PredictStatus } from "@/hooks/usePredict";
+import type { PredictStatus } from "@/hooks/usePredict";
 import { Footer, Section } from "@/layout/main";
 import {
   filterUnprocessed,
@@ -19,8 +19,8 @@ import {
 import { Feature } from "@/types/features";
 import { canContinue } from "@/utils/process/canContinue";
 import {
+  type ProcessState,
   initProcessState,
-  ProcessState,
 } from "@/utils/process/initProcessState";
 import {
   createFileRoute,
@@ -147,12 +147,12 @@ function RouteComponent() {
         supportMultipleFiles={true}
       />
     );
-  else
-    return (
-      <GenericProcess
-        title="2. Procesamiento del archivo"
-        supportMultipleFiles={false}
-        finishText="Se finalizó el análisis del documento."
-      ></GenericProcess>
-    );
+
+  return (
+    <GenericProcess
+      title="2. Procesamiento del archivo"
+      supportMultipleFiles={false}
+      finishText="Se finalizó el análisis del documento."
+    />
+  );
 }
