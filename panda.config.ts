@@ -3,12 +3,12 @@ import { defineConfig, defineGlobalStyles } from "@pandacss/dev";
 const globalCss = defineGlobalStyles({
   "*": {
     fontFamily:
-    '"Archivo", -apple-system, Helvetica Neue, Helvetica, Roboto, sans-serif', // TODO: Replace token here (was $primary)
+      '"Archivo", -apple-system, Helvetica Neue, Helvetica, Roboto, sans-serif', // TODO: Replace token here (was $primary)
   },
-  
-  'html': {
+
+  html: {
     color: "#110041",
-},
+  },
 
   "mark.predicted-word": {
     backgroundColor: "#E6E8FF", // TODO: Replace token here (was $primaryAlt)
@@ -165,8 +165,7 @@ export default defineConfig({
           lighter: color("#625C68"),
           "onbutton-default": color("#110041"),
           "onbutton-alternative": color("#FFFFFF"),
-          // TODO: needs to be corrected in the figma file
-          "onbutton-disabled": color("#FF0000"),
+          "onbutton-disabled": color("#2D3748"),
         },
         action: {
           default: color("#C5CAFF"),
@@ -182,7 +181,6 @@ export default defineConfig({
           "primary-alternative": color("#E5E8FF"),
           "primary-highlight": color("#C5CAFF"),
           "secondary-highlight": color("#E0DDE2"),
-          // gradient: ''
         },
         system: {
           success: color("#1B834E"),
@@ -197,8 +195,9 @@ export default defineConfig({
       },
       borders: {
         primary: { value: "1px solid #BCBAB8" },
-        secondary: { value: "1px solid #9F99A5" },
+        secondary: { value: "1px solid #EDF2F7" },
         "primary-alt": { value: "1px solid #110041" },
+        error: { value: "1px solid {colors.system.error}" },
       },
       gradients: {
         primary: {

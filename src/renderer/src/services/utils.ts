@@ -102,6 +102,8 @@ interface SchemedMutationArgs<
  *   mutationFn: (userData) => createUser(userData),
  * });
  * ```
+ *
+ * @deprecated Deprecated in favor of using regular `useMutation` with zod parsing inside
  */
 export const useSchemedMutation = <
   TSchema extends z.ZodTypeAny,
