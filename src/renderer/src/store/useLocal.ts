@@ -22,8 +22,8 @@ const useLocalStore = create<LocalStorageStore>()(
   ),
 );
 
-const useServerHost = () => useLocalStore((state) => state.serverHost);
-const useServerHostActions = () => {
+export const useServerHost = () => useLocalStore((state) => state.serverHost);
+export const useServerHostActions = () => {
   const setServerHost = useLocalStore((state) => state.setServerHost);
   const clearServerHost = useLocalStore((state) => state.clearServerHost);
 
@@ -31,9 +31,4 @@ const useServerHostActions = () => {
     setServerHost,
     clearServerHost,
   };
-};
-
-export const localStore = {
-  useServerHost,
-  useServerHostActions,
 };
