@@ -14,12 +14,13 @@ const TanStackQueryProviderContext = TanstackReactQuery.getContext();
 
 // Create a new router instance
 const memoryHistory = createMemoryHistory({
-  initialEntries: ["/home/host"], // Pass your initial url
+  initialEntries: ["/"], // Pass your initial url
 });
 const router = createRouter({
   routeTree,
   history: memoryHistory,
   context: { ...TanStackQueryProviderContext },
+  defaultViewTransition: true,
 });
 
 declare module "@tanstack/react-router" {
