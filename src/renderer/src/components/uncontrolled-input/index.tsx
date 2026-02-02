@@ -14,7 +14,7 @@ import {
   Container,
   InputContainer,
   Input as StyledInput,
-} from "./Input.styles";
+} from "./UncontrolledInput.styles";
 
 export type InputRefValue = { value: string };
 interface Props
@@ -30,7 +30,7 @@ interface Props
   css?: CSS;
   specialCharacters?: string;
 }
-export default forwardRef<{ value: string }, Props>(function Input(
+export default forwardRef<{ value: string }, Props>(function UncontrolledInput(
   {
     label,
     helper,
