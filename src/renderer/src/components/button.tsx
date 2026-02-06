@@ -92,8 +92,8 @@ const button = cva({
       },
     },
     size: {
-      md: { padding: "4" },
-      sm: { py: "2", px: "4" },
+      md: { height: "12", padding: "4" },
+      sm: { height: "8", py: "2", px: "4" },
     },
   },
   defaultVariants: {
@@ -122,11 +122,7 @@ function Button({
       disabled={disabled || isLoading}
     >
       {isLoading ? (
-        <CircleNotch
-          className={css({ animation: "spin" })}
-          // Size of the children text. this way there's no layout shift
-          size={24}
-        />
+        <CircleNotch className={css({ animation: "spin" })} />
       ) : (
         children
       )}
