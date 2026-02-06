@@ -73,10 +73,11 @@ const globalCss = defineGlobalStyles({
   },
 });
 
-const text = (size: number, weight: number) => ({
+const text = (size: number, weight: number, lineHeight: string) => ({
   value: {
     fontSize: `${size}px`,
     fontWeight: weight,
+    lineHeight,
   },
 });
 
@@ -108,48 +109,52 @@ export default defineConfig({
     textStyles: {
       title: {
         md: {
-          strong: text(32, 600),
-          default: text(32, 400),
+          strong: text(32, 700, "120%"),
+          default: text(32, 400, "120%"),
         },
       },
       subtitle: {
         md: {
-          strong: text(20, 600),
-          default: text(20, 400),
+          strong: text(20, 600, "120%"),
+          default: text(20, 400, "120%"),
         },
         sm: {
-          strong: text(14, 600),
-          default: text(14, 400),
+          strong: text(14, 600, "120%"),
+          default: text(14, 400, "120%"),
         },
       },
       paragraph: {
         md: {
-          strong: text(18, 600),
-          default: text(18, 400),
+          strong: text(18, 600, "150%"),
+          default: text(18, 400, "150%"),
         },
         sm: {
-          strong: text(16, 600),
-          default: text(16, 400),
+          strong: text(16, 600, "140%"),
+          default: text(16, 400, "140%"),
         },
         xsm: {
-          strong: text(10, 600),
-          default: text(10, 400),
+          strong: text(10, 600, "140%"),
+          default: text(10, 400, "140%"),
         },
       },
       cta: {
         md: {
-          strong: text(16, 600),
-          default: text(16, 400),
+          strong: text(16, 600, "100%"),
+          default: text(16, 400, "100%"),
+        },
+        sm: {
+          strong: text(16, 600, "115%"),
+          default: text(16, 400, "115%"),
         },
       },
       label: {
         md: {
-          strong: text(16, 600),
-          default: text(16, 400),
+          strong: text(16, 600, "120%"),
+          default: text(16, 400, "120%"),
         },
         sm: {
-          strong: text(12, 600),
-          default: text(12, 400),
+          strong: text(12, 600, "120%"),
+          default: text(12, 400, "120%"),
         },
       },
     },
