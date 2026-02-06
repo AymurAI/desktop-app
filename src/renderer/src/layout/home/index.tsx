@@ -28,15 +28,16 @@ const builtBy = css({
   bottom: "16", // 64px
 });
 
-interface LoginLayoutProps {
+interface HomeLayoutProps {
   children?: React.ReactNode;
 }
-export default function LoginLayout({ children }: LoginLayoutProps) {
+export default function HomeLayout({ children }: HomeLayoutProps) {
   return (
     <main className={background}>
       <div className={inner}>
         {children}
-        {/* Floating content below */}k
+
+        {/* Floating content below */}
         <div className={builtBy}>
           <div className={stack({ gap: "2", align: "center" })}>
             <p

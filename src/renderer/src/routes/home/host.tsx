@@ -1,6 +1,6 @@
 import ChooseHost from "@/components/home/choose-host";
 import ConnectToHost from "@/components/home/connect-to-host";
-import LoginLayout from "@/layout/home";
+import HomeLayout from "@/layout/home";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -12,13 +12,13 @@ function RouteComponent() {
   const [isLocal, setIsLocal] = useState<boolean | null>(null);
 
   return (
-    <LoginLayout>
+    <HomeLayout>
       {isLocal === null && (
         <ChooseHost onRemoteClick={() => setIsLocal(false)} />
       )}
       {isLocal === false && (
         <ConnectToHost onBackClick={() => setIsLocal(null)} />
       )}
-    </LoginLayout>
+    </HomeLayout>
   );
 }
