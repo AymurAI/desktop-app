@@ -106,6 +106,24 @@ export default defineConfig({
   strictTokens: true,
 
   theme: {
+    extend: {
+      keyframes: {
+        fadeIn: {
+          from: { opacity: "0", transform: "scale(0.96)" },
+          to: { opacity: "1", transform: "scale(1)" },
+        },
+        fadeOut: {
+          from: { opacity: "1", transform: "scale(1)" },
+          to: { opacity: "0", transform: "scale(0.96)" },
+        },
+      },
+      tokens: {
+        animations: {
+          fadeIn: { value: "fadeIn 0.15s ease-out" },
+          fadeOut: { value: "fadeOut 0.1s ease-in" },
+        },
+      },
+    },
     textStyles: {
       title: {
         md: {
