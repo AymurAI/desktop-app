@@ -1,5 +1,8 @@
 import { styled } from "@/styles";
 
+/**
+ * @deprecated
+ */
 const Card = styled("div", {
   display: "flex",
   flexDirection: "column",
