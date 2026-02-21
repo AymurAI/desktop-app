@@ -6,6 +6,9 @@ interface Props {
   children: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }
+/**
+ * @deprecated in favor of `@/components/layout/section-title`
+ */
 export default function SectionTitle({ children, onClick }: Props) {
   return (
     <Title>

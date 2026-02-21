@@ -1,11 +1,11 @@
 import { cva } from "@/styled/css";
+import { stack } from "@/styled/patterns";
 
 const content = cva({
   base: {
     flex: "1",
 
     width: "full",
-    height: "full",
 
     bg: "bg.primary",
   },
@@ -13,14 +13,14 @@ const content = cva({
     full: {
       true: {},
       false: {
-        display: "flex",
-        flexDir: "column",
-        alignItems: "center",
-        pt: "28",
+        ...stack.raw({ align: "center", gap: "0" }),
+
+        pt: "16",
+        px: "8",
 
         "& > div.spacing": {
-          width: "5xl",
-          mx: "8",
+          width: "full",
+          maxWidth: "5xl",
         },
       },
     },

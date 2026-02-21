@@ -1,0 +1,90 @@
+import { sva } from "@/styled/css";
+import { styled } from "@/styled/jsx";
+import { stack } from "@/styled/patterns";
+
+const step = sva({
+  slots: ["container", "circle", "text"],
+  base: {
+    container: {
+      ...stack.raw({ direction: "row", align: "center", gap: "2" }),
+      padding: "2",
+    },
+    circle: {
+      rounded: "full",
+      padding: "[10px]",
+    },
+    text: {
+      textStyle: "label.md.default",
+      display: "none",
+      visibility: "hidden",
+    },
+  },
+  variants: {
+    status: {
+      complete: {
+        circle: {
+          color: "text.onbutton-alternative",
+          bg: "action.alt-default",
+        },
+      },
+      pending: {
+        circle: {
+          color: "text.onbutton-default",
+          bg: "action.disabled",
+        },
+      },
+      in_progress: {
+        circle: {
+          color: "text.onbutton-default",
+          bg: "action.default",
+          border: "primary-alt",
+        },
+        text: { display: "inline" },
+      },
+    },
+  },
+});
+
+type StepStatus = "complete" | "pending" | "in_progress";
+interface StepProps {
+  children: string;
+  status: StepStatus;
+  number: number;
+}
+function Step({ children, status, number }: StepProps) {
+  const classes = step({ status });
+  return (
+    <div className={classes.container}>
+      <div className={classes.circle}>{number}</div>
+      <span className={classes.text}>{children}</span>
+    </div>
+  );
+}
+
+interface StepperProps {
+  currentStep: number;
+}
+export default function Stepper({ currentStep }: StepperProps) {
+  const status = (step: number): StepStatus => {
+    if (step === currentStep) return "in_progress";
+    if (step > currentStep) return "pending";
+    return "complete";
+  };
+
+  return (
+    <styled.div display="inline">
+      <Step number={1} status={status(1)}>
+        Selección
+      </Step>
+      <Step number={2} status={status(2)}>
+        Extracción
+      </Step>
+      <Step number={3} status={status(3)}>
+        Validación
+      </Step>
+      <Step number={4} status={status(4)}>
+        Finalización
+      </Step>
+    </styled.div>
+  );
+}

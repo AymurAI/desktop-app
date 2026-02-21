@@ -7,8 +7,8 @@ import { AxiosError } from "axios";
 import { ArrowLeft } from "phosphor-react";
 import { type ChangeEventHandler, useState } from "react";
 import { ZodError } from "zod";
-import Button from "../button";
-import Input from "../input";
+import Button from "../ui/button";
+import Input from "../ui/input";
 
 const BackButton = ({ onClick }: { onClick: () => void }) => (
   <button
@@ -43,6 +43,9 @@ export default function ConnectToHost({ onBackClick }: ConnectToHostProps) {
   };
 
   const tryConnection = () => {
+    // navigate({
+    //   to: "/home/features",
+    // });
     connectToHost(host, {
       onSuccess: () => {
         setServerHost(host);

@@ -1,6 +1,5 @@
 export { default as Arrow } from "./arrow";
-export { default as Button } from "./button";
-export { default as Card } from "./card";
+export { default as Card } from "./card-old";
 export { Checkbox, CheckboxGroup } from "./checkbox";
 export { default as DecisionTabs } from "./decision-tabs";
 export { default as FileAnnotator } from "./file-annotator";
@@ -29,7 +28,8 @@ export { default as Text } from "./text";
 export { default as ThemeProvider } from "./theme-provider";
 export { default as Title } from "./title";
 export { default as Toast } from "./toast";
-export { default as Tooltip } from "./tooltip";
+export { default as Tooltip } from "./tooltip-old";
+export { default as Button } from "./ui/button";
 export { default as Input } from "./uncontrolled-input";
 export { ValidateDataset } from "./validate-dataset";
 export { default as ValidationForm } from "./validation-form";

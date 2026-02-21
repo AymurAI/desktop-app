@@ -4,6 +4,7 @@ import BuiltBy from "../brand/built-by";
 const content = css({
   display: "flex",
   flexDirection: "row",
+  alignItems: "center",
 
   borderTop: "primary",
   px: "12",
@@ -11,6 +12,8 @@ const content = css({
 });
 const childrenContainer = css({
   flex: "1",
+  display: "flex",
+  justifyContent: "flex-end",
 });
 
 interface FooterProps {
