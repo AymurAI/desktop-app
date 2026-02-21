@@ -1,6 +1,9 @@
-import { sva } from "@/styled/css";
-import { styled } from "@/styled/jsx";
+import { css, sva } from "@/styled/css";
 import { stack } from "@/styled/patterns";
+
+const stepper = css({
+  ...stack.raw({ align: "center", direction: "row" }),
+});
 
 const step = sva({
   slots: ["container", "circle", "text"],
@@ -10,10 +13,14 @@ const step = sva({
       padding: "2",
     },
     circle: {
+      ...stack.raw({ direction: "row", align: "center", justify: "center" }),
       rounded: "full",
-      padding: "[10px]",
+      height: "9",
+      width: "9",
+      textStyle: "cta.md.strong",
     },
     text: {
+      color: "text.default",
       textStyle: "label.md.default",
       display: "none",
       visibility: "hidden",
@@ -39,7 +46,7 @@ const step = sva({
           bg: "action.default",
           border: "primary-alt",
         },
-        text: { display: "inline" },
+        text: { display: "inline", visibility: "visible" },
       },
     },
   },
@@ -72,7 +79,7 @@ export default function Stepper({ currentStep }: StepperProps) {
   };
 
   return (
-    <styled.div display="inline">
+    <div className={stepper}>
       <Step number={1} status={status(1)}>
         Selección
       </Step>
@@ -85,6 +92,6 @@ export default function Stepper({ currentStep }: StepperProps) {
       <Step number={4} status={status(4)}>
         Finalización
       </Step>
-    </styled.div>
+    </div>
   );
 }
