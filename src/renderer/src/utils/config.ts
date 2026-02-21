@@ -4,11 +4,6 @@
 export const PREDICT_PORT = 8899;
 
 /**
- * Only allow these extensions to be analyzed
- */
-export const WHITELISTED_EXTENSIONS = ["doc", "docx", "pdf"];
-
-/**
  * Dataset Spreadsheet
  */
 export const DATASET_URL =
