@@ -1,66 +1,80 @@
-import CardTool from "@/components/home/card-tool";
-import { css } from "@/styled/css";
+import FeatureIcon from "@/components/feature-icon";
+import FeaturesMenu from "@/components/features-menu";
+import Header from "@/components/layout/header";
+import MainContent from "@/components/layout/main-content";
+import Card from "@/components/ui/card";
+import { FEATURES } from "@/constants";
 import { Grid, Stack, styled } from "@/styled/jsx";
-import { Feature } from "@/types/features";
-import { createFileRoute } from "@tanstack/react-router";
-import { Database, Detective } from "phosphor-react";
+import { FeatureFlowEnum } from "@/types/features";
+import {
+  Link,
+  type LinkComponentProps,
+  createFileRoute,
+} from "@tanstack/react-router";
+import type { Icon } from "phosphor-react";
+
+interface CardToolProps extends LinkComponentProps {
+  title: string;
+  subtitle: string;
+  icon: Icon;
+  disabled?: boolean;
+}
+function CardTool({
+  title,
+  subtitle,
+  icon: Icon,
+  disabled = false,
+  ...props
+}: CardToolProps) {
+  return (
+    <Link disabled={disabled} {...props}>
+      <Card>
+        <Stack align="start" gap="4">
+          <FeatureIcon size="lg" icon={Icon} />
+          <Stack gap="1">
+            <styled.h2 textStyle="subtitle.md.strong">{title}</styled.h2>
+            <styled.p textStyle="subtitle.sm.default" color="text.lighter">
+              {subtitle}
+            </styled.p>
+          </Stack>
+        </Stack>
+      </Card>
+    </Link>
+  );
+}
 
 export const Route = createFileRoute("/home/features")({
   component: RouteComponent,
 });
 
-const header = css({
-  width: "full",
-  py: "6",
-  px: "8",
-  bg: "bg.secondary",
-  borderBottom: "[1px solid #BCBAB8]",
-});
-const content = css({
-  display: "flex",
-  justifyContent: "center",
-  flex: "1",
-
-  width: "full",
-  height: "full",
-  pt: "28",
-
-  bg: "bg.primary",
-});
-
 function RouteComponent() {
   return (
     <Stack width="screen" height="screen" gap="0">
-      <div className={header}>
-        <img
-          width={200}
-          src="brand/aymurai-hor-darkpurple.svg"
-          alt="AymurAI logo"
-        />
-      </div>
-      <main className={content}>
-        <Stack gap="6" width="5xl" mx="8">
+      <Header right={<FeaturesMenu />} />
+      <MainContent>
+        <Stack gap="6">
           <styled.h1 textStyle="title.md.strong">
             ¡Hola! Selecciona la herramienta a utilizar
           </styled.h1>
-          <Grid columns={2}>
+          <Grid columns={2} rowGap="6" columnGap="6">
+            {/* FIXME: fix the text wrapping on smaller screens */}
             <CardTool
               to="/app/$feature"
-              params={{ feature: Feature.Dataset }}
-              icon={Database}
-              title="Set de Datos"
-              subtitle="Convertí resoluciones judiciales en set de datos estructurados"
+              params={{ feature: FeatureFlowEnum.Dataset }}
+              title={FEATURES.DATA_SET.title}
+              subtitle={FEATURES.DATA_SET.subtitle}
+              icon={FEATURES.DATA_SET.icon}
             />
             <CardTool
               to="/app/$feature"
-              params={{ feature: Feature.Dataset }}
-              icon={Detective}
-              title="Anonimizador"
-              subtitle="Anonimiza resoluciones judiciales de manera automática y editable"
+              params={{ feature: FeatureFlowEnum.Anonymizer }}
+              title={FEATURES.ANONYMIZER.title}
+              subtitle={FEATURES.ANONYMIZER.subtitle}
+              icon={FEATURES.ANONYMIZER.icon}
             />
           </Grid>
         </Stack>
-      </main>
+      </MainContent>
     </Stack>
   );
 }
