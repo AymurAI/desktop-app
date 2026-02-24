@@ -10,7 +10,7 @@ import {
   Text,
 } from "@/components";
 import { useFileDispatch, useFiles } from "@/hooks";
-import { Footer, Section } from "@/layout/main";
+import { Footer, Section } from "@/layout/main-old";
 import { removeAllFiles } from "@/reducers/file/actions";
 import filesystem from "@/services/filesystem";
 import type { DocFile } from "@/types/file";
@@ -96,13 +96,13 @@ export function FinishDataset() {
           target="_blank"
           rel="noreferrer"
         >
-          <img src="brand/data-genero.png" alt="DataGenero" width={150} />
+          <img src="/brand/data-genero.png" alt="DataGenero" width={150} />
         </S.Anchor>
 
-        <Button variant="secondary" onClick={handleRestart} size="l">
+        <Button variant="secondary" onClick={handleRestart} size="md">
           Cargar más documentos
         </Button>
-        <Button size="l" onClick={filesystem.excel.open}>
+        <Button size="md" onClick={filesystem.excel.open}>
           Ver set de datos
         </Button>
       </Footer>

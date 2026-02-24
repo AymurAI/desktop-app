@@ -6,7 +6,7 @@ import { toggleSelected } from "@/reducers/file/actions";
 import { useFileParser } from "@/services/aymurai/useFileParser";
 import type { DocFile } from "@/types/file";
 
-import { Feature } from "@/types/features";
+import { FeatureFlowEnum } from "@/types/features";
 import { useParams } from "@tanstack/react-router";
 import * as S from "./FilePreview.styles";
 
@@ -18,7 +18,7 @@ export default function FilePreview({ file }: Props) {
   const dispatch = useFileDispatch();
   const { data: parsedFile, isError, isPending } = useFileParser(file.data);
 
-  const isAnonymizer = feature === Feature.Anonymizer;
+  const isAnonymizer = feature === FeatureFlowEnum.Anonymizer;
   const moreThanOneParagraph = parsedFile && parsedFile.document.length > 1;
 
   if (isError) {

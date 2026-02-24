@@ -1,5 +1,5 @@
 import { FinishAnonymizer, FinishDataset } from "@/components";
-import { Feature } from "@/types/features";
+import { FeatureFlowEnum } from "@/types/features";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/app/$feature/finish")({
@@ -9,6 +9,6 @@ export const Route = createFileRoute("/app/$feature/finish")({
 function RouteComponent() {
   const { feature } = useParams({ from: "/app/$feature/finish" });
 
-  if (feature === Feature.Dataset) return <FinishDataset />;
+  if (feature === FeatureFlowEnum.Dataset) return <FinishDataset />;
   return <FinishAnonymizer />;
 }

@@ -11,12 +11,12 @@ import {
 import { useFileDispatch, useFiles } from "@/hooks";
 import useNotify from "@/hooks/useNotify";
 import type { PredictStatus } from "@/hooks/usePredict";
-import { Footer, Section } from "@/layout/main";
+import { Footer, Section } from "@/layout/main-old";
 import {
   filterUnprocessed,
   removeAllPredictions,
 } from "@/reducers/file/actions";
-import { Feature } from "@/types/features";
+import { FeatureFlowEnum } from "@/types/features";
 import { canContinue } from "@/utils/process/canContinue";
 import {
   type ProcessState,
@@ -126,7 +126,7 @@ function GenericProcess({
         </Card>
       </Section>
       <Footer>
-        <Button size="l" disabled={!canContinue(process)} onClick={handleNext}>
+        <Button size="md" disabled={!canContinue(process)} onClick={handleNext}>
           Siguiente
         </Button>
       </Footer>
@@ -139,7 +139,7 @@ function RouteComponent() {
     from: "/app/$feature/process",
   });
 
-  if (feature === Feature.Dataset)
+  if (feature === FeatureFlowEnum.Dataset)
     return (
       <GenericProcess
         title="2. Procesamiento de los archivos"

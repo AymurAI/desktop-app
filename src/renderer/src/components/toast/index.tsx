@@ -1,8 +1,8 @@
 import { X } from "phosphor-react";
 import { cloneElement } from "react";
 
-import Button from "../button";
 import Label from "../label";
+import Button from "../ui/button";
 
 import * as S from "./Toast.styles";
 import type { Props } from "./Toast.types";

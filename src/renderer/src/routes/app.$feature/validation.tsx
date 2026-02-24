@@ -1,7 +1,7 @@
 import { Button, FileAnnotator, Grid, ValidateDataset } from "@/components";
 import { useFiles } from "@/hooks";
-import { Footer } from "@/layout/main";
-import { Feature } from "@/types/features";
+import { Footer } from "@/layout/main-old";
+import { FeatureFlowEnum } from "@/types/features";
 import {
   createFileRoute,
   useNavigate,
@@ -40,7 +40,7 @@ function ValidateAnonymizer() {
           gap: 150,
         }}
       >
-        <Button size="l" onClick={handleContinue}>
+        <Button size="md" onClick={handleContinue}>
           Anonimizar documento
         </Button>
       </Footer>
@@ -51,6 +51,6 @@ function ValidateAnonymizer() {
 function ValidationRoute() {
   const { feature } = Route.useParams();
 
-  if (feature === Feature.Dataset) return <ValidateDataset />;
+  if (feature === FeatureFlowEnum.Dataset) return <ValidateDataset />;
   return <ValidateAnonymizer />;
 }

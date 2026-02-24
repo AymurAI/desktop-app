@@ -8,12 +8,13 @@ import {
   Text,
 } from "@/components";
 import { useFileDispatch, useFiles } from "@/hooks";
-import { Footer, Section } from "@/layout/main";
+
 import { removeAllFiles } from "@/reducers/file/actions";
 import { aymuraiService } from "@/services/aymurai";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import * as S from "./FinishAnonymizer.styles";
+import Footer from "../layout/footer";
+import MainContent from "../layout/main-content";
 
 const changeExtension = (name: string) => {
   const parts = name.split(".");
@@ -56,7 +57,7 @@ export function FinishAnonymizer() {
 
   return (
     <>
-      <Section>
+      <MainContent>
         <SectionTitle>4. Finalización</SectionTitle>
         <Text css={{ maxWidth: "60%" }}>
           Los datos encontrados por AymurAI y posteriormente validados ya han
@@ -77,19 +78,12 @@ export function FinishAnonymizer() {
             />
           </Grid>
         </Card>
-      </Section>
+      </MainContent>
       <Footer>
-        <S.Anchor
-          href="https://www.datagenero.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <img src="brand/data-genero.png" alt="DataGenero" width={150} />
-        </S.Anchor>
-        <Button variant="secondary" onClick={handleRestart} size="l">
+        <Button variant="secondary" onClick={handleRestart}>
           Cargar un nuevo documento
         </Button>
-        <Button onClick={downloadDocument} size="l" disabled={isError}>
+        <Button onClick={downloadDocument} disabled={isError}>
           Descargar documento
         </Button>
       </Footer>

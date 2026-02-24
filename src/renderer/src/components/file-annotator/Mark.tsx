@@ -1,5 +1,5 @@
-import Input from "@/components/input";
 import Select, { type SelectOption } from "@/components/select";
+import Input from "@/components/ui/input";
 import { useAnnotation } from "@/context/Annotation";
 import {
   type AllLabels,
@@ -7,8 +7,8 @@ import {
   anonymizerLabels,
 } from "@/types/aymurai";
 import { type FC, type HTMLAttributes, useRef, useState } from "react";
-import Button from "../button";
-import Dialog, { DialogMessage, DialogButtons } from "../dialog";
+import Dialog, { DialogButtons, DialogMessage } from "../dialog";
+import Button from "../ui/button";
 import * as S from "./FileAnnotator.styles";
 import type { Annotation, LabelAnnotation, Metadata } from "./types";
 
