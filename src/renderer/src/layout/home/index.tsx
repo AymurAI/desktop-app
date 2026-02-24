@@ -1,3 +1,4 @@
+import BuiltBy from "@/components/brand/built-by";
 import { css } from "@/styled/css";
 import { stack } from "@/styled/patterns";
 
@@ -39,21 +40,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
 
         {/* Floating content below */}
         <div className={builtBy}>
-          <div className={stack({ gap: "2", align: "center" })}>
-            <p
-              className={css({
-                textStyle: "label.sm.default",
-                color: "text.lighter",
-              })}
-            >
-              Plataforma hecha por
-            </p>
-            <img
-              src="brand/datagenero.svg"
-              alt="DataGenero isologo"
-              width={150}
-            />
-          </div>
+          <BuiltBy />
         </div>
       </div>
     </main>

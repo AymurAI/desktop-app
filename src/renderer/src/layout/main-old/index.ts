@@ -1,5 +1,8 @@
 import { styled } from "@/styles";
 
+/**
+ * @deprecated
+ */
 export const Layout = styled("main", {
   height: "100vh",
 
@@ -7,6 +10,9 @@ export const Layout = styled("main", {
   flexDirection: "column",
 });
 
+/**
+ * @deprecated
+ */
 export const Header = styled("header", {
   display: "flex",
   flexDirection: "row",
@@ -26,6 +32,9 @@ export const Header = styled("header", {
   },
 });
 
+/**
+ * @deprecated
+ */
 export const Section = styled("section", {
   px: 40,
   py: "$xxl",
@@ -56,6 +65,9 @@ export const Section = styled("section", {
   },
 });
 
+/**
+ * @deprecated
+ */
 export const Footer = styled("nav", {
   display: "flex",
   flexDirection: "row",

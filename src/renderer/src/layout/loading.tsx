@@ -22,7 +22,7 @@ export default function Loading() {
     <div className={background}>
       <img
         className={image}
-        src="brand/iso-white.png"
+        src="/brand/iso-white.png"
         alt="AymurAI iso white"
         width={260}
       />
