@@ -21,20 +21,42 @@ const styles = cva({
       true: {
         border: "primary",
         bg: "bg.primary",
-        cursor: "not-allowed",
         color: "text.lighter",
       },
       false: {
         border: "primary",
         bg: "bg.secondary",
+      },
+    },
+    clickable: {
+      true: {},
+      false: {},
+    },
+  },
+  compoundVariants: [
+    {
+      clickable: true,
+      disabled: false,
+      css: {
         cursor: "pointer",
-
         "&:hover": {
           border: "primary-alt",
           boxShadow: "[0px 0px 15px 0px #3F479D66]",
         },
       },
     },
+    {
+      clickable: true,
+      disabled: true,
+      css: {
+        cursor: "not-allowed",
+      },
+    },
+  ],
+  defaultVariants: {
+    disabled: false,
+    clickable: false,
+    size: "lg",
   },
 });
 
@@ -42,12 +64,14 @@ interface CardProps {
   children?: React.ReactNode;
   disabled?: boolean;
   size?: "lg" | "sm";
+  clickable?: boolean;
 }
 export default function Card({
   disabled = false,
   size = "lg",
+  clickable = false,
   children,
 }: CardProps) {
-  const classes = styles({ size, disabled });
+  const classes = styles({ size, disabled, clickable });
   return <div className={classes}>{children}</div>;
 }

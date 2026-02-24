@@ -25,7 +25,7 @@ export default function FeaturesMenu() {
               to="/app/$feature"
               params={{ feature: value as FeatureFlowEnum }}
             >
-              <Card size="sm">
+              <Card size="sm" clickable>
                 <Stack gap="3" align="center">
                   <FeatureIcon feature={value as FeatureFlowEnum} size="sm" />
                   <styled.p textStyle="label.md.strong">

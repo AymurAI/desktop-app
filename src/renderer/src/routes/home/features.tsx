@@ -28,7 +28,7 @@ function CardTool({
 }: CardToolProps) {
   return (
     <Link disabled={disabled} {...props}>
-      <Card>
+      <Card clickable>
         <Stack align="start" gap="4">
           <FeatureIcon size="lg" icon={Icon} />
           <Stack gap="1">
