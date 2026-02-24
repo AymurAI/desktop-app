@@ -4,7 +4,7 @@ import { useFileDispatch } from "@/hooks";
 import { addPredictions, removePredictions } from "@/reducers/file/actions";
 import { predict } from "@/services/aymurai";
 
-import { Feature } from "@/types/features";
+import { FeatureFlowEnum } from "@/types/features";
 import type { DocFile } from "@/types/file";
 import { useParams } from "@tanstack/react-router";
 
@@ -23,7 +23,7 @@ export function usePredict(
   const [status, setStatus] = useState<PredictStatus>("processing");
   const dispatch = useFileDispatch();
 
-  const isAnonimizing = feature === Feature.Anonymizer;
+  const isAnonimizing = feature === FeatureFlowEnum.Anonymizer;
   const paragraphs = file.paragraphs;
 
   // Store static values
