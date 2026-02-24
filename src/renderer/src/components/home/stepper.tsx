@@ -8,10 +8,7 @@ const stepper = css({
 const step = sva({
   slots: ["container", "circle", "text"],
   base: {
-    container: {
-      ...stack.raw({ direction: "row", align: "center", gap: "2" }),
-      padding: "2",
-    },
+    container: stack.raw({ direction: "row", align: "center", gap: "2" }),
     circle: {
       ...stack.raw({ direction: "row", align: "center", justify: "center" }),
       rounded: "full",

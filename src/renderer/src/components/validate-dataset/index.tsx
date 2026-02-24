@@ -8,7 +8,7 @@ import {
   SectionTitle,
 } from "@/components";
 import { useFileDispatch, useFiles } from "@/hooks";
-import { Footer, Section } from "@/layout/main";
+import { Footer, Section } from "@/layout/main-old";
 import { validate } from "@/reducers/file/actions";
 import { isFileValidated, isValidationCompleted } from "@/utils/file";
 import { useNavigate, useParams } from "@tanstack/react-router";
@@ -95,12 +95,12 @@ export function ValidateDataset() {
         )}
 
         {canContinue ? (
-          <Button size="l" onClick={handleContinue}>
+          <Button size="md" onClick={handleContinue}>
             Continuar
           </Button>
         ) : (
           <Button
-            size="l"
+            size="md"
             onClick={handleValidate}
             disabled={!checked && !canValidate}
           >

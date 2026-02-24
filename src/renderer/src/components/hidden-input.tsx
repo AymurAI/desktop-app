@@ -9,7 +9,9 @@ const input = css({
   pointerEvents: "none",
 });
 
-interface HiddenInputProps extends ComponentProps<"input"> {}
+interface HiddenInputProps extends Omit<ComponentProps<"input">, "onChange"> {
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+}
 export default function HiddenInput({ className, ...props }: HiddenInputProps) {
   // Convert the array into a '.dcox' form
   const extensions = WHITELISTED_EXTENSIONS.map((ext) => `.${ext}`).join(",");
