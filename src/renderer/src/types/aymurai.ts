@@ -100,7 +100,7 @@ export const anonymizerLabels: SelectOption[] = [
   { id: "DENUNCIANTE", text: "Denunciante" },
   { id: "ACUSADO/A", text: "Acusado/a" },
   { id: "TESTIGO/A", text: "Testigo/a" },
-  { id: "NINO/A_ADOLECENTE", text: "Niño/a adolecente" },
+  { id: "NINO/A_ADOSLECENTE", text: "Niño/a adolescente" },
   { id: "AFILIADO", text: "N° de afiliado" },
   { id: "CAUSA", text: "N° de causa" },
   { id: "INSTITUCION", text: "Nombre de institución" },
