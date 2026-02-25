@@ -5,12 +5,9 @@ import {
 } from "@tanstack/react-router";
 
 import DropArea from "@/components/drop-area";
-import FeaturesMenu from "@/components/features-menu";
 import HiddenInput from "@/components/hidden-input";
 import HowItWorks from "@/components/how-it-works";
-import HowItWorksModal from "@/components/how-it-works-modal";
 import Footer from "@/components/layout/footer";
-import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import Button from "@/components/ui/button";
@@ -19,7 +16,6 @@ import { SectionTitle } from "@/layout/section-title";
 import { addFiles } from "@/reducers/file/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
 import { HStack, Stack, styled } from "@/styled/jsx";
-import { featureName } from "@/types/features";
 import { useRef } from "react";
 
 // FIRST step of the processing workflow
@@ -59,15 +55,6 @@ function RouteComponent() {
 
   return (
     <>
-      <Header
-        title={featureName(feature)}
-        right={
-          <HStack>
-            {tutorialSeen && <HowItWorksModal feature={feature} />}
-            <FeaturesMenu />
-          </HStack>
-        }
-      />
       <MainContent>
         {tutorialSeen ? (
           <Stack gap="8">
