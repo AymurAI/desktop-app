@@ -2,7 +2,7 @@ import { FEATURES } from "@/constants";
 import { Grid, Stack, styled } from "@/styled/jsx";
 import type { FeatureFlowEnum } from "@/types/features";
 import { Link } from "@tanstack/react-router";
-import { DotsNine } from "phosphor-react";
+import { House } from "phosphor-react";
 import FeatureIcon from "./feature-icon";
 import Button from "./ui/button";
 import Card from "./ui/card";
@@ -13,8 +13,8 @@ export default function FeaturesMenu() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="icon-sm" style={{ padding: 2 }}>
-          <DotsNine size={32} />
+        <Button size="icon-sm" style={{ padding: 2 }} aria-label="Ir al inicio">
+          <House size={32} />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end">

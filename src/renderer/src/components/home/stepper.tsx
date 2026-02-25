@@ -57,10 +57,22 @@ interface StepProps {
 }
 function Step({ children, status, number }: StepProps) {
   const classes = step({ status });
+  // Used to hide text from visuals but expose to screen readers
+  const srOnly = css({
+    srOnly: true,
+  });
+
   return (
     <div className={classes.container}>
-      <div className={classes.circle}>{number}</div>
-      <span className={classes.text}>{children}</span>
+      <div className={classes.circle} aria-hidden="true">
+        {number}
+      </div>
+      <span className={srOnly}>
+        Paso {number}: {children}
+      </span>
+      <span className={classes.text} aria-hidden="true">
+        {children}
+      </span>
     </div>
   );
 }
