@@ -1,5 +1,6 @@
 import { css, sva } from "@/styled/css";
 import { stack } from "@/styled/patterns";
+import { FeatureFlowEnum } from "@/types/features";
 
 const stepper = css({
   ...stack.raw({ align: "center", direction: "row" }),
@@ -49,6 +50,22 @@ const step = sva({
   },
 });
 
+// Step labels per feature flow
+const STEP_LABELS: Record<FeatureFlowEnum, [string, string, string, string]> = {
+  [FeatureFlowEnum.Dataset]: [
+    "Selección",
+    "Extracción",
+    "Validación",
+    "Finalización",
+  ],
+  [FeatureFlowEnum.Anonymizer]: [
+    "Previsualización",
+    "Procesamiento",
+    "Validación",
+    "Finalización",
+  ],
+};
+
 type StepStatus = "complete" | "pending" | "in_progress";
 interface StepProps {
   children: string;
@@ -79,8 +96,11 @@ function Step({ children, status, number }: StepProps) {
 
 interface StepperProps {
   currentStep: number;
+  feature: FeatureFlowEnum;
 }
-export default function Stepper({ currentStep }: StepperProps) {
+export default function Stepper({ currentStep, feature }: StepperProps) {
+  const labels = STEP_LABELS[feature];
+
   const status = (step: number): StepStatus => {
     if (step === currentStep) return "in_progress";
     if (step > currentStep) return "pending";
@@ -89,18 +109,14 @@ export default function Stepper({ currentStep }: StepperProps) {
 
   return (
     <div className={stepper}>
-      <Step number={1} status={status(1)}>
-        Selección
-      </Step>
-      <Step number={2} status={status(2)}>
-        Extracción
-      </Step>
-      <Step number={3} status={status(3)}>
-        Validación
-      </Step>
-      <Step number={4} status={status(4)}>
-        Finalización
-      </Step>
+      {labels.map((label, i) => {
+        const stepNumber = i + 1;
+        return (
+          <Step key={label} number={stepNumber} status={status(stepNumber)}>
+            {label}
+          </Step>
+        );
+      })}
     </div>
   );
 }
