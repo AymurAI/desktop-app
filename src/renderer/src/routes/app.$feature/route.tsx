@@ -50,11 +50,7 @@ function AppLayoutRoute() {
     <Stack width="screen" height="screen" gap="0">
       <Header
         title={featureName(feature)}
-        center={
-          feature === FeatureFlowEnum.Dataset ? (
-            <Stepper currentStep={currentStep} />
-          ) : undefined
-        }
+        center={<Stepper currentStep={currentStep} feature={feature} />}
         right={
           <HStack>
             {tutorialSeen && <HowItWorksModal feature={feature} />}
