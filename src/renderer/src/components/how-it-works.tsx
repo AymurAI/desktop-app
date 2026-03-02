@@ -2,7 +2,8 @@ import { SectionTitle } from "@/layout/section-title";
 import { css } from "@/styled/css";
 import { Grid, Stack, styled } from "@/styled/jsx";
 import { hstack, stack } from "@/styled/patterns";
-import { FeatureFlowEnum } from "@/types/features";
+import { type FeatureFlowEnum, featureNamespace } from "@/types/features";
+import { useTranslation } from "react-i18next";
 
 const card = css({
   ...hstack.raw({ gap: "4", alignItems: "center" }),
@@ -53,12 +54,16 @@ interface HowItWorksProps {
   title?: React.ReactNode;
   feature: FeatureFlowEnum;
 }
-export default function HowItWorks({
-  title = "¿Cómo funciona?",
-  feature,
-}: HowItWorksProps) {
+export default function HowItWorks({ title, feature }: HowItWorksProps) {
+  const { t } = useTranslation();
+  const { t: tFeature } = useTranslation(featureNamespace[feature]);
+
   const renderTitle =
-    typeof title === "string" ? <SectionTitle>{title}</SectionTitle> : title;
+    typeof title === "string" ? (
+      <SectionTitle>{title}</SectionTitle>
+    ) : (
+      (title ?? <SectionTitle>{t("howItWorks")}</SectionTitle>)
+    );
 
   return (
     <Stack gap="6">
@@ -66,43 +71,32 @@ export default function HowItWorks({
       <Grid columns={2}>
         <Card
           img="/onboarding-steps/step1.png"
-          imgAlt="Interfaz web con selector y cursor"
-          title="Selecciona las resoluciones judiciales"
-          subtitle="Sube los documentos que querés incorporar al set de datos."
+          imgAlt={t("howItWorksSteps.step1.alt")}
+          title={t("howItWorksSteps.step1.title")}
+          subtitle={t("howItWorksSteps.step1.subtitle")}
           step={1}
         />
         <Card
           img="/onboarding-steps/step2.png"
-          imgAlt="Barra de búsqueda con cursor"
-          title="La inteligencia artificial analiza los documentos"
-          subtitle="Extrae automáticamente la información relevante de cada documento."
+          imgAlt={t("howItWorksSteps.step2.alt")}
+          title={t("howItWorksSteps.step2.title")}
+          subtitle={t("howItWorksSteps.step2.subtitle")}
           step={2}
         />
         <Card
           img="/onboarding-steps/step3.png"
-          imgAlt="Visor de documentos con controles de revisión"
-          title="Revisión y validación humana"
-          subtitle="Es importante que verifiques que los datos sean correctos antes de exportar el archivo"
+          imgAlt={t("howItWorksSteps.step3.alt")}
+          title={t("howItWorksSteps.step3.title")}
+          subtitle={t("howItWorksSteps.step3.subtitle")}
           step={3}
         />
-        {/* Last step depends on the feature we're seeing */}
-        {feature === FeatureFlowEnum.Dataset ? (
-          <Card
-            img="/onboarding-steps/step4.png"
-            imgAlt="Binoculares con globo terráqueo"
-            title="Generación del set de datos"
-            subtitle="Los documentos pasan a formar parte del set de datos abiertos."
-            step={4}
-          />
-        ) : (
-          <Card
-            img="/onboarding-steps/step4.png"
-            imgAlt="Binoculares con globo terráqueo"
-            title="Generación del documento anonimizado"
-            subtitle="Proceso terminado. El documento esta listo para ser exportado."
-            step={4}
-          />
-        )}
+        <Card
+          img="/onboarding-steps/step4.png"
+          imgAlt={tFeature("howItWorks.step4.alt")}
+          title={tFeature("howItWorks.step4.title")}
+          subtitle={tFeature("howItWorks.step4.subtitle")}
+          step={4}
+        />
       </Grid>
     </Stack>
   );

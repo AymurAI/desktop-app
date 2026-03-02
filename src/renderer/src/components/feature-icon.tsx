@@ -1,7 +1,7 @@
-import { FEATURES } from "@/constants";
 import { cva } from "@/styled/css";
 import { stack } from "@/styled/patterns";
 import type { FeatureFlowEnum } from "@/types/features";
+import { FEATURE_ICON } from "@/utils/config";
 import type { Icon } from "phosphor-react";
 
 const styles = cva({
@@ -56,7 +56,7 @@ export default function FeatureIcon({
   icon: OverrideIcon,
   disabled = false,
 }: FeatureIconProps) {
-  const Icon = OverrideIcon ?? FEATURES[feature].icon;
+  const Icon = OverrideIcon ?? FEATURE_ICON[feature];
   return (
     <div className={styles({ disabled, size })}>
       <Icon size="100%" />

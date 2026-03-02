@@ -8,6 +8,7 @@ import type { DocFile } from "@/types/file";
 
 import { FeatureFlowEnum } from "@/types/features";
 import { useParams } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import * as S from "./FilePreview.styles";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 }
 export default function FilePreview({ file }: Props) {
   const { feature } = useParams({ from: "/app/$feature/preview" });
+  const { t } = useTranslation();
   const dispatch = useFileDispatch();
   const { data: parsedFile, isError, isPending } = useFileParser(file.data);
 
@@ -42,7 +44,7 @@ export default function FilePreview({ file }: Props) {
           title={file.data.name}
           size="xs"
         >
-          No se pudo cargar el archivo
+          {t("filePreview.loadError")}
         </Text>
       </S.Wrapper>
     );

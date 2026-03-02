@@ -1,15 +1,17 @@
-import { FEATURES } from "@/constants";
 import { Grid, Stack, styled } from "@/styled/jsx";
-import type { FeatureFlowEnum } from "@/types/features";
+import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import { Link } from "@tanstack/react-router";
 import { DotsNine } from "phosphor-react";
+import { useTranslation } from "react-i18next";
 import FeatureIcon from "./feature-icon";
 import Button from "./ui/button";
 import Card from "./ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export default function FeaturesMenu() {
-  const features = Object.entries(FEATURES);
+  const { t } = useTranslation();
+  const features = Object.values(FeatureFlowEnum);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -19,17 +21,13 @@ export default function FeaturesMenu() {
       </PopoverTrigger>
       <PopoverContent align="end">
         <Grid columns={2} padding="4">
-          {features.map(([value, feature]) => (
-            <Link
-              key={value}
-              to="/app/$feature"
-              params={{ feature: value as FeatureFlowEnum }}
-            >
+          {features.map((feature) => (
+            <Link key={feature} to="/app/$feature" params={{ feature }}>
               <Card size="sm" clickable>
                 <Stack gap="3" align="center">
-                  <FeatureIcon feature={value as FeatureFlowEnum} size="sm" />
+                  <FeatureIcon feature={feature} size="sm" />
                   <styled.p textStyle="label.md.strong">
-                    {feature.title}
+                    {t("title", { ns: featureNamespace[feature] })}
                   </styled.p>
                 </Stack>
               </Card>

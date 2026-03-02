@@ -5,7 +5,12 @@ import { Stack } from "@/styled/jsx";
 import { useNavigate } from "@tanstack/react-router";
 import { AxiosError } from "axios";
 import { ArrowLeft } from "phosphor-react";
-import { type ChangeEventHandler, useState } from "react";
+import {
+  type ChangeEventHandler,
+  type SubmitEventHandler,
+  useState,
+} from "react";
+import { useTranslation } from "react-i18next";
 import { ZodError } from "zod";
 import Button from "../ui/button";
 import Input from "../ui/input";
@@ -32,6 +37,7 @@ export default function ConnectToHost({ onBackClick }: ConnectToHostProps) {
   const navigate = useNavigate();
   const remoteHost = localStore.useServerHost() ?? "";
   const { setServerHost } = localStore.useServerHostActions();
+  const { t } = useTranslation();
 
   const [host, setHost] = useState(remoteHost);
 
@@ -42,10 +48,9 @@ export default function ConnectToHost({ onBackClick }: ConnectToHostProps) {
     reset();
   };
 
-  const tryConnection = () => {
-    // navigate({
-    //   to: "/home/features",
-    // });
+  const tryConnection: SubmitEventHandler = (e) => {
+    e.preventDefault();
+
     connectToHost(host, {
       onSuccess: () => {
         setServerHost(host);
@@ -56,46 +61,48 @@ export default function ConnectToHost({ onBackClick }: ConnectToHostProps) {
     });
   };
 
+  const errorMessage = (err: Error | null): string => {
+    console.error(err);
+    if (err instanceof AxiosError) {
+      if (err.code === "ERR_NETWORK") return t("home.host.errors.network");
+      return t("home.host.errors.connection");
+    }
+
+    if (err instanceof ZodError) {
+      return t("home.host.errors.invalidResponse");
+    }
+
+    if (err instanceof TypeError) {
+      return t("home.host.errors.invalidUrl");
+    }
+
+    return t("home.host.errors.unknown");
+  };
+
   return (
     <>
       <BackButton onClick={onBackClick} />
-      <Stack justify="center" gap="3" width="[400px]">
-        <h2 className={css({ textStyle: "subtitle.sm.strong" })}>
-          Ingresa la dirección del servidor al que deseas conectarte
-        </h2>
+      <form onSubmit={tryConnection}>
+        <Stack justify="center" gap="3" width="[400px]">
+          <h2 className={css({ textStyle: "subtitle.sm.strong" })}>
+            {t("home.host.connectServerExplanation")}
+          </h2>
 
-        <Stack gap="1" width="full">
-          <Input
-            label="Direccion del servidor"
-            placeholder="http://"
-            value={host}
-            onChange={handleChange}
-            error={error ? errorMessage(error) : undefined}
-          />
+          <Stack gap="1" width="full">
+            <Input
+              label={t("home.host.connectServerLabel")}
+              placeholder="http://"
+              value={host}
+              onChange={handleChange}
+              error={error ? errorMessage(error) : undefined}
+            />
+          </Stack>
+
+          <Button type="submit" isLoading={isPending}>
+            {t("home.host.connectServerSubmit")}
+          </Button>
         </Stack>
-
-        <Button onClick={tryConnection} isLoading={isPending}>
-          Guardar y conectar
-        </Button>
-      </Stack>
+      </form>
     </>
   );
-}
-
-function errorMessage(err: Error | null): string {
-  console.error(err);
-  if (err instanceof AxiosError) {
-    if (err.code === "ERR_NETWORK") return "No se pudo conectar al servidor";
-    return "Error de conexión";
-  }
-
-  if (err instanceof ZodError) {
-    return "El servidor no respondió correctamente";
-  }
-
-  if (err instanceof TypeError) {
-    return "El formato de la URL es incorrecto.";
-  }
-
-  return "Error desconocido";
 }

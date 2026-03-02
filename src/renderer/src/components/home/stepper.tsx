@@ -1,5 +1,6 @@
 import { css, sva } from "@/styled/css";
 import { stack } from "@/styled/patterns";
+import { useTranslation } from "react-i18next";
 
 const stepper = css({
   ...stack.raw({ align: "center", direction: "row" }),
@@ -69,6 +70,8 @@ interface StepperProps {
   currentStep: number;
 }
 export default function Stepper({ currentStep }: StepperProps) {
+  const { t } = useTranslation();
+
   const status = (step: number): StepStatus => {
     if (step === currentStep) return "in_progress";
     if (step > currentStep) return "pending";
@@ -78,16 +81,16 @@ export default function Stepper({ currentStep }: StepperProps) {
   return (
     <div className={stepper}>
       <Step number={1} status={status(1)}>
-        Selección
+        {t("stepper.selection")}
       </Step>
       <Step number={2} status={status(2)}>
-        Extracción
+        {t("stepper.extraction")}
       </Step>
       <Step number={3} status={status(3)}>
-        Validación
+        {t("stepper.validation")}
       </Step>
       <Step number={4} status={status(4)}>
-        Finalización
+        {t("stepper.finalization")}
       </Step>
     </div>
   );

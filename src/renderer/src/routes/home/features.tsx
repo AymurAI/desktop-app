@@ -3,7 +3,8 @@ import FeaturesMenu from "@/components/features-menu";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import Card from "@/components/ui/card";
-import { FEATURES } from "@/constants";
+import { FEATURES } from "@/constants/config";
+import { css } from "@/styled/css";
 import { Grid, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import {
@@ -12,6 +13,7 @@ import {
   createFileRoute,
 } from "@tanstack/react-router";
 import type { Icon } from "phosphor-react";
+import { useTranslation } from "react-i18next";
 
 interface CardToolProps extends LinkComponentProps {
   title: string;
@@ -28,7 +30,7 @@ function CardTool({
 }: CardToolProps) {
   return (
     <Link disabled={disabled} {...props}>
-      <Card clickable>
+      <Card className={css({ height: "full" })} clickable>
         <Stack align="start" gap="4">
           <FeatureIcon size="lg" icon={Icon} />
           <Stack gap="1">
@@ -48,28 +50,30 @@ export const Route = createFileRoute("/home/features")({
 });
 
 function RouteComponent() {
+  const { t } = useTranslation(["common", "dataset", "anonymizer"]);
+
   return (
     <Stack width="screen" height="screen" gap="0">
       <Header right={<FeaturesMenu />} />
       <MainContent>
         <Stack gap="6">
           <styled.h1 textStyle="title.md.strong">
-            ¡Hola! Selecciona la herramienta a utilizar
+            {t("home.features.greeting")}
           </styled.h1>
           <Grid columns={2} rowGap="6" columnGap="6">
             {/* FIXME: fix the text wrapping on smaller screens */}
             <CardTool
               to="/app/$feature"
               params={{ feature: FeatureFlowEnum.Dataset }}
-              title={FEATURES.DATA_SET.title}
-              subtitle={FEATURES.DATA_SET.subtitle}
+              title={t("dataset:title")}
+              subtitle={t("dataset:subtitle")}
               icon={FEATURES.DATA_SET.icon}
             />
             <CardTool
               to="/app/$feature"
               params={{ feature: FeatureFlowEnum.Anonymizer }}
-              title={FEATURES.ANONYMIZER.title}
-              subtitle={FEATURES.ANONYMIZER.subtitle}
+              title={t("anonymizer:title")}
+              subtitle={t("anonymizer:subtitle")}
               icon={FEATURES.ANONYMIZER.icon}
             />
           </Grid>

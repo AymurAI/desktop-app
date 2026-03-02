@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { WHITELISTED_EXTENSIONS } from "@/constants";
+import { WHITELISTED_EXTENSIONS } from "@/constants/config";
 import type { CSS } from "@/styles";
 import type { NativeComponent } from "@/types/component";
 import Input from "./HiddenInput.styles";

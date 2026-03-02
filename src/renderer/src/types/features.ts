@@ -3,11 +3,7 @@ export enum FeatureFlowEnum {
   Anonymizer = "ANONYMIZER",
 }
 
-export const featureName = (feature: FeatureFlowEnum): string => {
-  const names: Record<FeatureFlowEnum, string> = {
-    [FeatureFlowEnum.Dataset]: "Set de datos",
-    [FeatureFlowEnum.Anonymizer]: "Anonimizador",
-  };
-
-  return names[feature];
-};
+export const featureNamespace = {
+  [FeatureFlowEnum.Dataset]: "dataset",
+  [FeatureFlowEnum.Anonymizer]: "anonymizer",
+} as const satisfies Record<FeatureFlowEnum, string>;

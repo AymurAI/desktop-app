@@ -19,8 +19,9 @@ import { SectionTitle } from "@/layout/section-title";
 import { addFiles } from "@/reducers/file/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
 import { HStack, Stack, styled } from "@/styled/jsx";
-import { featureName } from "@/types/features";
+import { featureNamespace } from "@/types/features";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 // FIRST step of the processing workflow
 export const Route = createFileRoute("/app/$feature/onboarding")({
@@ -32,6 +33,7 @@ function RouteComponent() {
     from: "/app/$feature/onboarding",
   });
   const navigate = useNavigate();
+  const { t } = useTranslation(featureNamespace[feature]);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -60,7 +62,7 @@ function RouteComponent() {
   return (
     <>
       <Header
-        title={featureName(feature)}
+        title={t("title")}
         right={
           <HStack>
             {tutorialSeen && <HowItWorksModal feature={feature} />}
@@ -73,7 +75,7 @@ function RouteComponent() {
           <Stack gap="8">
             <HStack alignItems="center" gap="6">
               <BackButton to="/home/features" />
-              <SectionTitle>1. Selección de Archivos</SectionTitle>
+              <SectionTitle>{t("onboarding.sectionTitle")}</SectionTitle>
             </HStack>
             <DropArea onDropFiles={handleAddFiles} />
           </Stack>
@@ -85,10 +87,12 @@ function RouteComponent() {
         <HStack gap="4">
           {!tutorialSeen && (
             <styled.p textStyle="paragraph.sm.default">
-              Formatos válidos: .doc y .docx
+              {t("onboarding.validFormats")}
             </styled.p>
           )}
-          <Button onClick={handleOpenInput}>Cargar documentos</Button>
+          <Button onClick={handleOpenInput}>
+            {t("onboarding.loadDocuments")}
+          </Button>
         </HStack>
       </Footer>
       <HiddenInput ref={inputRef} onChange={handleInputChange} />

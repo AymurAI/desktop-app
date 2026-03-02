@@ -1,9 +1,10 @@
 import { Button } from "@/components";
 import { useRunLocalServer } from "@/services/aymurai";
 import { css } from "@/styled/css";
-import { stack } from "@/styled/patterns";
+import { Stack } from "@/styled/jsx";
 import { useNavigate } from "@tanstack/react-router";
 import { HardDrives, Monitor } from "phosphor-react";
+import { useTranslation } from "react-i18next";
 
 interface ChooseHostProps {
   onRemoteClick: () => void;
@@ -17,40 +18,42 @@ export default function ChooseHost({ onRemoteClick }: ChooseHostProps) {
       }),
   });
 
+  const { t } = useTranslation();
+
   return (
-    <div className={stack({ align: "center", gap: "12", width: "[400px]" })}>
+    <Stack align="center" gap="12" width="[400px]">
       <img
         src="/brand/aymurai-vert-darkpurple.svg"
         alt="Logotipo AymurAI"
         width={180}
       />
-      <div className={stack({ align: "stretch", gap: "4", width: "full" })}>
+      <Stack align="stretch" gap="4" width="full">
         <h2
           className={css({
             textStyle: "subtitle.sm.strong",
             textAlign: "center",
           })}
         >
-          ¿Como deseas conectarte a Aymurai?
+          {t("home.host.howToConnect")}
         </h2>
-        <div className={stack({ gap: "2", align: "center" })}>
+        <Stack gap="2" align="center">
           <Button
             onClick={runLocalServer}
             disabled={isRunning}
             isLoading={isRunning}
           >
             <Monitor weight="bold" />
-            Local
+            {t("home.host.optionLocal")}
           </Button>
           <p className={css({ textStyle: "subtitle.sm.default" })} aria-hidden>
-            o
+            {t("home.host.optionOr")}
           </p>
           <Button onClick={onRemoteClick}>
             <HardDrives weight="bold" />
-            Servidor
+            {t("home.host.optionServer")}
           </Button>
-        </div>
-      </div>
-    </div>
+        </Stack>
+      </Stack>
+    </Stack>
   );
 }

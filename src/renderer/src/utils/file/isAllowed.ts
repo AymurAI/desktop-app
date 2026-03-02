@@ -1,4 +1,4 @@
-import { WHITELISTED_EXTENSIONS } from "@/constants";
+import { WHITELISTED_EXTENSIONS } from "@/constants/config";
 import getExtension from "./getExtension";
 
 /**

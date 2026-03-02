@@ -3,6 +3,7 @@ import { css } from "@/styled/css";
 import { HStack, Stack } from "@/styled/jsx";
 import type { FeatureFlowEnum } from "@/types/features";
 import { Question, X } from "phosphor-react";
+import { useTranslation } from "react-i18next";
 import HowItWorks from "./how-it-works";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
@@ -40,6 +41,8 @@ interface HowItWorksModalProps {
   feature: FeatureFlowEnum;
 }
 export default function HowItWorksModal({ feature }: HowItWorksModalProps) {
+  const { t } = useTranslation();
+
   return (
     <Dialog>
       <Tooltip>
@@ -50,14 +53,14 @@ export default function HowItWorksModal({ feature }: HowItWorksModalProps) {
             </button>
           </DialogTrigger>
         </TooltipTrigger>
-        <TooltipContent className={tooltip}>¿Cómo funciona?</TooltipContent>
+        <TooltipContent className={tooltip}>{t("howItWorks")}</TooltipContent>
       </Tooltip>
       <DialogContent className={content}>
         <Stack gap="0">
           <HowItWorks
             title={
               <HStack justify="space-between">
-                <SectionTitle>¿Cómo funciona?</SectionTitle>
+                <SectionTitle>{t("howItWorks")}</SectionTitle>
                 <DialogClose className={closeButton}>
                   <X size={32} />
                 </DialogClose>

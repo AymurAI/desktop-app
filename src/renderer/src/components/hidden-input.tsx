@@ -1,4 +1,4 @@
-import { WHITELISTED_EXTENSIONS } from "@/constants";
+import { WHITELISTED_EXTENSIONS } from "@/constants/config";
 import { css, cx } from "@/styled/css";
 import type { ComponentProps } from "react";
 
