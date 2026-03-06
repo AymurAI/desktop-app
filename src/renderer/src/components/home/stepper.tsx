@@ -64,6 +64,24 @@ const STEP_LABELS: Record<FeatureFlowEnum, [string, string, string, string]> = {
     "Validación",
     "Finalización",
   ],
+  [FeatureFlowEnum.VoiceToText]: [
+    "Selección",
+    "Procesamiento",
+    "Validación",
+    "Finalización",
+  ],
+  [FeatureFlowEnum.Summary]: [
+    "Selección",
+    "Procesamiento",
+    "Validación",
+    "Finalización",
+  ],
+  [FeatureFlowEnum.PdfToWord]: [
+    "Selección",
+    "Procesamiento",
+    "Validación",
+    "Finalización",
+  ],
 };
 
 type StepStatus = "complete" | "pending" | "in_progress";

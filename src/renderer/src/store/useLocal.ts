@@ -23,6 +23,9 @@ const useLocalStore = create<LocalStorageStore>()(
         tutorialsSeen: {
           [FeatureFlowEnum.Anonymizer]: false,
           [FeatureFlowEnum.Dataset]: false,
+          [FeatureFlowEnum.VoiceToText]: false,
+          [FeatureFlowEnum.Summary]: false,
+          [FeatureFlowEnum.PdfToWord]: false,
         },
         hasSeenTutorial: (feature: FeatureFlowEnum) =>
           get().tutorialsSeen[feature],

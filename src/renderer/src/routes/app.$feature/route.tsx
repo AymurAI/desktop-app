@@ -17,7 +17,7 @@ import { FeatureFlowEnum, featureName } from "@/types/features";
 
 // Validation schema for feature parameter
 const featureParamSchema = z.object({
-  feature: z.enum([FeatureFlowEnum.Dataset, FeatureFlowEnum.Anonymizer]),
+  feature: z.nativeEnum(FeatureFlowEnum),
 });
 
 export const Route = createFileRoute("/app/$feature")({
