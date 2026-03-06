@@ -1,22 +1,34 @@
 import { FEATURES } from "@/constants";
+import { css } from "@/styled/css";
 import { Grid, Stack, styled } from "@/styled/jsx";
 import type { FeatureFlowEnum } from "@/types/features";
 import { Link } from "@tanstack/react-router";
-import { House } from "phosphor-react";
+import { DotsNine } from "phosphor-react";
 import FeatureIcon from "./feature-icon";
 import Button from "./ui/button";
 import Card from "./ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+
+const tooltipStyle = css({
+  padding: "2",
+  textStyle: "label.md.default",
+});
 
 export default function FeaturesMenu() {
   const features = Object.entries(FEATURES);
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button size="icon-sm" style={{ padding: 2 }} aria-label="Ir al inicio">
-          <House size={32} />
-        </Button>
-      </PopoverTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <PopoverTrigger asChild>
+            <Button size="icon-sm" style={{ padding: 2 }} aria-label="Menú">
+              <DotsNine size={32} />
+            </Button>
+          </PopoverTrigger>
+        </TooltipTrigger>
+        <TooltipContent className={tooltipStyle}>Menú</TooltipContent>
+      </Tooltip>
       <PopoverContent align="end">
         <Grid columns={2} padding="4">
           {features.map(([value, feature]) => (
