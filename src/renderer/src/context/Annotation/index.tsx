@@ -11,8 +11,10 @@ import type {
   AllLabelsWithSufix,
   PredictLabel,
 } from "@/types/aymurai";
+import { anonymizerLabels } from "@/types/aymurai";
 import type { DocFile, Paragraph } from "@/types/file";
 import { type ReactNode, createContext, useCallback, useContext } from "react";
+import toast from "react-hot-toast";
 import {
   findSearchIndexes,
   getBoundaries,
@@ -68,6 +70,13 @@ export default function AnnotationProvider({
   const add = useCallback(
     (prediction: PredictLabel) => {
       dispatch(appendPrediction(file.data.name, prediction));
+      const labelName =
+        anonymizerLabels.find((l) => l.id === prediction.attrs.aymurai_label)
+          ?.text || prediction.attrs.aymurai_label;
+      toast.success(
+        `Se aplico con exito una etiqueta de “${labelName}” en una ocurrencia.`,
+        { duration: 4000 },
+      );
     },
     [dispatch, file.data.name],
   );
@@ -125,6 +134,13 @@ export default function AnnotationProvider({
           dispatch(appendPrediction(file.data.name, prediction));
         });
       });
+
+      const labelName =
+        anonymizerLabels.find((l) => l.id === label)?.text || label;
+      toast.success(
+        `Se aplico con exito una etiqueta de “${labelName}” en todas las ocurrencias.`,
+        { duration: 4000 },
+      );
     },
     [dispatch, file.data.name, file.paragraphs],
   );

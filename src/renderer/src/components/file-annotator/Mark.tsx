@@ -158,13 +158,13 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
       if (dialogState.action === "replace") {
         updateLabel(annotationData, labelWithSuffix);
         toast.success(
-          `Se aplicó con éxito una etiqueta de "${labelName}" en una ocurrencia.`,
+          `Se aplico con exito una etiqueta de “${labelName}” en una ocurrencia.`,
           { duration: 4000 },
         );
       } else if (dialogState.action === "replaceAll") {
         updateByText(annotationData, labelWithSuffix);
         toast.success(
-          `Se aplicó con éxito una etiqueta de "${labelName}" en todas las ocurrencias.`,
+          `Se aplico con exito una etiqueta de “${labelName}” en todas las ocurrencias.`,
           { duration: 4000 },
         );
       }
