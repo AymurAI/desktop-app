@@ -1,8 +1,7 @@
-import { useId } from "react";
-
 import { cva, sva } from "@/styled/css";
 import { hstack, stack } from "@/styled/patterns";
 import { WarningCircle } from "phosphor-react";
+import { forwardRef, useId } from "react";
 
 const input = sva({
   slots: ["container", "inputBox", "input", "label", "errorMessage", "helper"],
@@ -106,86 +105,96 @@ interface InputProps {
   placeholder?: string;
   prefix?: string;
   suffix?: string;
-  suggestion?: string;
   helper?: string;
   // Control
   id?: string;
-  value: string;
+  value?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   disabled?: boolean;
   error?: string | null;
   type?: "text" | "number";
+  min?: string;
 }
-export default function Input({
-  // Rendering
-  label,
-  placeholder,
-  prefix,
-  suffix,
-  suggestion,
-  helper,
-  // Control
-  id,
-  value,
-  onChange,
-  disabled = false,
-  error,
-  type,
-}: InputProps) {
-  const randomId = useId();
-  const inputId = id ?? randomId;
-  const errorMessageId = `${inputId}-error`;
 
-  const classes = input({ disabled, error: !!error });
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      // Rendering
+      label,
+      placeholder,
+      prefix,
+      suffix,
+      helper,
+      // Control
+      id,
+      value,
+      onChange,
+      disabled = false,
+      error,
+      type = "text",
+      min,
+    },
+    ref,
+  ) => {
+    const randomId = useId();
+    const inputId = id ?? randomId;
+    const errorMessageId = `${inputId}-error`;
 
-  return (
-    <div className={classes.container}>
-      {label && (
-        <label className={classes.label} htmlFor={inputId}>
-          {label}
-        </label>
-      )}
+    const classes = input({ disabled, error: !!error });
 
-      <div className={classes.inputBox}>
-        {prefix && (
-          <div className={affix({ position: "prefix" })}>
-            <span>{prefix}</span>
-            {/* In the designs this vertical bar is defined as a Text, but it's
-            not. Use a Label instead */}
-            <span>|</span>
-          </div>
+    return (
+      <div className={classes.container}>
+        {label && (
+          <label className={classes.label} htmlFor={inputId}>
+            {label}
+          </label>
         )}
 
-        <input
-          id={inputId}
-          onChange={onChange}
-          value={value}
-          disabled={disabled}
-          placeholder={placeholder}
-          className={classes.input}
-          type="text"
-          // Accessibility
-          aria-describedby={errorMessageId}
-          aria-invalid={!!error}
-        />
-
-        {suffix && (
-          <div className={affix({ position: "suffix" })}>
-            {/* In the designs this vertical bar is defined as a Text, but it's
+        <div className={classes.inputBox}>
+          {prefix && (
+            <div className={affix({ position: "prefix" })}>
+              <span>{prefix}</span>
+              {/* In the designs this vertical bar is defined as a Text, but it's
             not. Use a Label instead */}
-            <span>|</span>
-            <span>{suffix}</span>
-          </div>
+              <span>|</span>
+            </div>
+          )}
+
+          <input
+            ref={ref}
+            id={inputId}
+            onChange={onChange}
+            value={value}
+            disabled={disabled}
+            placeholder={placeholder}
+            className={classes.input}
+            type={type}
+            min={min}
+            // Accessibility
+            aria-describedby={errorMessageId}
+            aria-invalid={!!error}
+          />
+
+          {suffix && (
+            <div className={affix({ position: "suffix" })}>
+              {/* In the designs this vertical bar is defined as a Text, but it's
+            not. Use a Label instead */}
+              <span>|</span>
+              <span>{suffix}</span>
+            </div>
+          )}
+        </div>
+
+        {helper && !error && <p className={classes.helper}>{helper}</p>}
+        {error && (
+          <p id={errorMessageId} role="alert" className={classes.errorMessage}>
+            <WarningCircle size={12} />
+            {error}
+          </p>
         )}
       </div>
+    );
+  },
+);
 
-      {helper && !error && <p className={classes.helper}>{helper}</p>}
-      {error && (
-        <p id={errorMessageId} role="alert" className={classes.errorMessage}>
-          <WarningCircle size={12} />
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
+export default Input;

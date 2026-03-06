@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import * as TanstackReactQuery from "@/features/ReactQueryProvider";
 
 // Import the generated route tree
+import { Toaster } from "react-hot-toast";
 import { routeTree } from "./routeTree.gen";
 
 const TanStackQueryProviderContext = TanstackReactQuery.getContext();
@@ -37,6 +38,22 @@ export default function App() {
       <ThemeProvider>
         <TooltipProvider>
           <RouterProvider router={router} />
+          <Toaster
+            position="bottom-center"
+            toastOptions={{
+              success: {
+                style: {
+                  background: "var(--colors-success-surface)",
+                  color: "var(--colors-success-text)",
+                  border: "1px solid var(--colors-success-border)",
+                },
+                iconTheme: {
+                  primary: "var(--colors-success-text)",
+                  secondary: "var(--colors-success-surface)",
+                },
+              },
+            }}
+          />
         </TooltipProvider>
       </ThemeProvider>
     </TanstackReactQuery.Provider>

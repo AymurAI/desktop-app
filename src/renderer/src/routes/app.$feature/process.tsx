@@ -6,10 +6,8 @@ import {
   Stack,
   Subtitle,
   Text,
-  Toast,
 } from "@/components";
 import { useFileDispatch, useFiles } from "@/hooks";
-import useNotify from "@/hooks/useNotify";
 import type { PredictStatus } from "@/hooks/usePredict";
 import { Footer, Section } from "@/layout/main-old";
 import {
@@ -27,8 +25,8 @@ import {
   useNavigate,
   useParams,
 } from "@tanstack/react-router";
-import { Bell } from "phosphor-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export const Route = createFileRoute("/app/$feature/process")({
   component: RouteComponent,
@@ -67,7 +65,20 @@ function GenericProcess({
   const dispatch = useFileDispatch();
   const files = useFiles();
   const [process, setProcess] = useState(initProcessState(files));
-  const { isToastVisible, hideToast } = useNotify(process);
+
+  // Handle toast notification when all files complete processing
+  useEffect(() => {
+    // Only verify if there is at least something to process
+    if (process.length > 0) {
+      const isCompleted = process.every((p) => p.status === "completed");
+      if (isCompleted) {
+        toast.success(finishText, {
+          id: "process-complete", // prevent duplicate toasts
+          duration: 4000,
+        });
+      }
+    }
+  }, [process, finishText]);
 
   const handleStatusChange = (name: string) => (newValue: PredictStatus) => {
     // Replace the newValue
@@ -98,9 +109,6 @@ function GenericProcess({
   return (
     <>
       <Section>
-        <Toast isVisible={isToastVisible} onClose={hideToast} icon={<Bell />}>
-          {finishText}
-        </Toast>
         <SectionTitle onClick={handlePrevious}>{title}</SectionTitle>
         <Card css={{ alignItems: "stretch" }}>
           <Stack spacing="l" direction="column">

@@ -7,6 +7,7 @@ import {
   anonymizerLabels,
 } from "@/types/aymurai";
 import { type FC, type HTMLAttributes, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import Dialog, { DialogButtons, DialogMessage } from "../dialog";
 import Button from "../ui/button";
 import * as S from "./FileAnnotator.styles";
@@ -150,10 +151,22 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
         ? (`${dialogState.selectedOption.id}_${dialogState.suffix}` as AllLabelsWithSufix)
         : (dialogState.selectedOption.id as AllLabels | AllLabelsWithSufix);
 
+      const labelName =
+        anonymizerLabels.find((l) => l.id === dialogState.selectedOption?.id)
+          ?.text || labelWithSuffix;
+
       if (dialogState.action === "replace") {
         updateLabel(annotationData, labelWithSuffix);
+        toast.success(
+          `Se aplicó con éxito una etiqueta de "${labelName}" en una ocurrencia.`,
+          { duration: 4000 },
+        );
       } else if (dialogState.action === "replaceAll") {
         updateByText(annotationData, labelWithSuffix);
+        toast.success(
+          `Se aplicó con éxito una etiqueta de "${labelName}" en todas las ocurrencias.`,
+          { duration: 4000 },
+        );
       }
     }
 
@@ -165,7 +178,8 @@ export const Mark: FC<MarkProps> = ({ children, annotation, ...props }) => {
     }));
   };
 
-  const changeLabelSufixHandler = (value: string) => {
+  const changeLabelSufixHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
     setDialogState((state) => ({
       ...state,
       suffix: value ? Number(value) : null,

@@ -27,7 +27,7 @@ export { Tab, TabName } from "./tabs";
 export { default as Text } from "./text";
 export { default as ThemeProvider } from "./theme-provider";
 export { default as Title } from "./title";
-export { default as Toast } from "./toast";
+
 export { default as Tooltip } from "./tooltip-old";
 export { default as Button } from "./ui/button";
 export { default as Input } from "./uncontrolled-input";

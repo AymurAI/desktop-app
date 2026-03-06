@@ -32,7 +32,8 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "react-hot-toast": "^2.6.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
@@ -82,6 +83,9 @@
     "zustand": "^5.0.7"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["electron", "esbuild"]
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild"
+    ]
   }
 }
