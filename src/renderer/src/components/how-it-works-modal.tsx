@@ -2,7 +2,7 @@ import { SectionTitle } from "@/layout/section-title";
 import { css } from "@/styled/css";
 import { HStack, Stack } from "@/styled/jsx";
 import type { FeatureFlowEnum } from "@/types/features";
-import { Info, X } from "phosphor-react";
+import { Question, X } from "phosphor-react";
 import HowItWorks from "./how-it-works";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
@@ -50,7 +50,7 @@ export default function HowItWorksModal({ feature }: HowItWorksModalProps) {
               className={modalButton}
               aria-label="Información sobre AymurAI"
             >
-              <Info size={32} />
+              <Question size={32} />
             </button>
           </DialogTrigger>
         </TooltipTrigger>
