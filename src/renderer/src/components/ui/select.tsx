@@ -2,7 +2,6 @@ import { CaretDown, Check } from "phosphor-react";
 import {
   type KeyboardEvent,
   type MouseEvent,
-  forwardRef,
   useEffect,
   useId,
   useImperativeHandle,
@@ -27,6 +26,9 @@ interface Props {
   onChange?: (value: SelectOption | undefined) => void;
   priorityOrder?: SelectOption["id"][];
   placeholder?: string;
+  prefix?: string;
+  suffix?: string;
+  ref?: React.Ref<{ value: SelectOption["id"] | undefined }>;
 }
 
 // ─── Styles (Panda CSS sva) ─────────────────────────────────────────────────
@@ -38,7 +40,9 @@ const select = sva({
     "triggerText",
     "caret",
     "suggestion",
-    "suggestionSep",
+    "sep",
+    "prefix",
+    "suffix",
     "list",
     "item",
     "itemCheck",
@@ -110,14 +114,16 @@ const select = sva({
     },
     suggestion: {
       textStyle: "label.md.default",
-      color: "brand.primary",
+      color: "text.default",
       cursor: "pointer",
       flexShrink: "0",
+      bg: "bg.primary-alternative",
+      rounded: "sm",
+      px: "2",
+      py: "0.5",
       // reset button
       appearance: "none",
-      bg: "transparent",
       border: "none",
-      p: "0",
 
       "&:focus-visible": {
         outline: "2px solid token(colors.brand.primary)",
@@ -125,7 +131,18 @@ const select = sva({
         rounded: "sm",
       },
     },
-    suggestionSep: {
+    sep: {
+      color: "text.lighter",
+      flexShrink: "0",
+      userSelect: "none",
+    },
+    prefix: {
+      textStyle: "label.md.default",
+      color: "text.lighter",
+      flexShrink: "0",
+    },
+    suffix: {
+      textStyle: "label.md.default",
       color: "text.lighter",
       flexShrink: "0",
     },
@@ -133,7 +150,9 @@ const select = sva({
       position: "absolute",
       top: "[calc(100% + 4px)]",
       left: "0",
-      right: "0",
+      right: "auto",
+      minWidth: "full",
+      width: "max-content",
       zIndex: "10",
 
       maxHeight: "[200px]",
@@ -231,282 +250,290 @@ function secureSuggestion(
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────
-export default forwardRef<{ value: SelectOption["id"] | undefined }, Props>(
-  function Select(
-    {
-      label,
-      helper,
-      options,
-      suggestion,
-      selected,
-      onChange,
-      priorityOrder = [],
-      placeholder = "",
-    },
-    ref,
-  ) {
-    const listId = useId();
-    const triggerId = useId();
-    const containerRef = useRef<HTMLDivElement>(null);
-    const listRef = useRef<HTMLDivElement>(null);
+export default function Select({
+  label,
+  helper,
+  options,
+  suggestion,
+  selected,
+  onChange,
+  priorityOrder = [],
+  placeholder = "",
+  prefix,
+  suffix,
+  ref,
+}: Props) {
+  const listId = useId();
+  const triggerId = useId();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
-    const [selectedId, setSelectedId] = useState<string>(
-      findById(selected, options)?.id ?? "",
-    );
-    const [isOpen, setIsOpen] = useState(false);
-    // Tracks keyboard-active option index for aria-activedescendant
-    const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const [selectedId, setSelectedId] = useState<string>(
+    findById(selected, options)?.id ?? "",
+  );
+  const [isOpen, setIsOpen] = useState(false);
+  // Tracks keyboard-active option index for aria-activedescendant
+  const [activeIndex, setActiveIndex] = useState<number>(-1);
 
-    useImperativeHandle(ref, () => ({ value: selectedId }), [selectedId]);
+  useImperativeHandle(ref, () => ({ value: selectedId }), [selectedId]);
 
-    const orderedOptions = orderByPriority(options, priorityOrder);
-    const securedSuggestion = secureSuggestion(suggestion, options);
-    const currentOption = findById(selectedId, options);
-    const isValueEmpty = !selectedId;
+  const orderedOptions = orderByPriority(options, priorityOrder);
+  const securedSuggestion = secureSuggestion(suggestion, options);
+  const currentOption = findById(selectedId, options);
+  const isValueEmpty = !selectedId;
 
-    // ID helper for each option element — required by WAI-ARIA for aria-activedescendant
-    const optionId = (id: string) => `${listId}-option-${id}`;
+  // ID helper for each option element — required by WAI-ARIA for aria-activedescendant
+  const optionId = (id: string) => `${listId}-option-${id}`;
 
-    // The id of the currently keyboard-active option (for aria-activedescendant)
-    const activeOptionId =
-      activeIndex >= 0 && activeIndex < orderedOptions.length
-        ? optionId(orderedOptions[activeIndex].id)
-        : undefined;
+  // The id of the currently keyboard-active option (for aria-activedescendant)
+  const activeOptionId =
+    activeIndex >= 0 && activeIndex < orderedOptions.length
+      ? optionId(orderedOptions[activeIndex].id)
+      : undefined;
 
-    // Close on outside click
-    useEffect(() => {
-      const handler = (e: globalThis.MouseEvent) => {
-        if (
-          containerRef.current &&
-          !containerRef.current.contains(e.target as Node)
-        ) {
-          setIsOpen(false);
-          setActiveIndex(-1);
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: globalThis.MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+        setActiveIndex(-1);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Scroll active option into view when navigating with keyboard
+  useEffect(() => {
+    if (activeIndex < 0 || !listRef.current) return;
+    const activeEl = listRef.current.querySelector(
+      `[data-active='true']`,
+    ) as HTMLElement | null;
+    activeEl?.scrollIntoView({ block: "nearest" });
+  }, [activeIndex]);
+
+  const updateValue = (newId: string) => {
+    setSelectedId(newId);
+    setIsOpen(false);
+    setActiveIndex(-1);
+    onChange?.(findById(newId, options));
+  };
+
+  // ── Trigger handlers ──
+  const handleTriggerClick = () => {
+    setIsOpen((prev) => {
+      if (!prev) setActiveIndex(-1);
+      return !prev;
+    });
+  };
+
+  const handleTriggerKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        if (!isOpen) {
+          setIsOpen(true);
+          setActiveIndex(0);
+        } else {
+          setActiveIndex((prev) =>
+            prev < orderedOptions.length - 1 ? prev + 1 : prev,
+          );
         }
-      };
-      document.addEventListener("mousedown", handler);
-      return () => document.removeEventListener("mousedown", handler);
-    }, []);
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        if (isOpen) {
+          setActiveIndex((prev) => (prev > 0 ? prev - 1 : 0));
+        }
+        break;
+      case "Enter":
+      case " ":
+        e.preventDefault();
+        if (isOpen && activeIndex >= 0) {
+          updateValue(orderedOptions[activeIndex].id);
+        } else {
+          setIsOpen((prev) => !prev);
+          setActiveIndex(0);
+        }
+        break;
+      case "Escape":
+        setIsOpen(false);
+        setActiveIndex(-1);
+        break;
+      case "Tab":
+        // Close on Tab so focus moves naturally
+        setIsOpen(false);
+        setActiveIndex(-1);
+        break;
+    }
+  };
 
-    // Scroll active option into view when navigating with keyboard
-    useEffect(() => {
-      if (activeIndex < 0 || !listRef.current) return;
-      const activeEl = listRef.current.querySelector(
-        `[data-active='true']`,
-      ) as HTMLElement | null;
-      activeEl?.scrollIntoView({ block: "nearest" });
-    }, [activeIndex]);
+  // ── Item handlers ──
+  const handleItemClick = (id: string) => (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    updateValue(id);
+  };
 
-    const updateValue = (newId: string) => {
-      setSelectedId(newId);
-      setIsOpen(false);
-      setActiveIndex(-1);
-      onChange?.(findById(newId, options));
-    };
-
-    // ── Trigger handlers ──
-    const handleTriggerClick = () => {
-      setIsOpen((prev) => {
-        if (!prev) setActiveIndex(-1);
-        return !prev;
-      });
-    };
-
-    const handleTriggerKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-      switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
-          if (!isOpen) {
-            setIsOpen(true);
-            setActiveIndex(0);
-          } else {
-            setActiveIndex((prev) =>
-              prev < orderedOptions.length - 1 ? prev + 1 : prev,
-            );
-          }
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          if (isOpen) {
-            setActiveIndex((prev) => (prev > 0 ? prev - 1 : 0));
-          }
-          break;
-        case "Enter":
-        case " ":
-          e.preventDefault();
-          if (isOpen && activeIndex >= 0) {
-            updateValue(orderedOptions[activeIndex].id);
-          } else {
-            setIsOpen((prev) => !prev);
-            setActiveIndex(0);
-          }
-          break;
-        case "Escape":
-          setIsOpen(false);
-          setActiveIndex(-1);
-          break;
-        case "Tab":
-          // Close on Tab so focus moves naturally
-          setIsOpen(false);
-          setActiveIndex(-1);
-          break;
+  const handleItemKeyDown =
+    (id: string) => (e: KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        setActiveIndex(-1);
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        updateValue(id);
       }
     };
 
-    // ── Item handlers ──
-    const handleItemClick = (id: string) => (e: MouseEvent<HTMLDivElement>) => {
+  // ── Suggestion handler ──
+  const handleSuggestionClick =
+    (id: string) => (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       updateValue(id);
     };
 
-    const handleItemKeyDown =
-      (id: string) => (e: KeyboardEvent<HTMLDivElement>) => {
-        if (e.key === "Escape") {
-          setIsOpen(false);
-          setActiveIndex(-1);
-        } else if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          updateValue(id);
-        }
-      };
-
-    // ── Suggestion handler ──
-    const handleSuggestionClick =
-      (id: string) => (e: MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation();
+  const handleSuggestionKeyDown =
+    (id: string) => (e: KeyboardEvent<HTMLButtonElement>) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
         updateValue(id);
-      };
+      }
+    };
 
-    const handleSuggestionKeyDown =
-      (id: string) => (e: KeyboardEvent<HTMLButtonElement>) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          updateValue(id);
-        }
-      };
+  const classes = select();
 
-    const classes = select();
+  return (
+    <div ref={containerRef} className={classes.container}>
+      {/* LABEL */}
+      {label && (
+        <label className={classes.label} htmlFor={triggerId}>
+          {label}
+        </label>
+      )}
 
-    return (
-      <div ref={containerRef} className={classes.container}>
-        {/* LABEL */}
-        {label && (
-          <label className={classes.label} htmlFor={triggerId}>
-            {label}
-          </label>
-        )}
+      {/* TRIGGER */}
+      <button
+        id={triggerId}
+        type="button"
+        // WAI-ARIA combobox pattern
+        role="combobox"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-controls={listId}
+        aria-autocomplete="list"
+        // Points to the id of the currently keyboard-highlighted option
+        aria-activedescendant={activeOptionId}
+        data-open={isOpen}
+        onClick={handleTriggerClick}
+        onKeyDown={handleTriggerKeyDown}
+        className={classes.trigger}
+      >
+        {/* Prefix */}
+        {prefix && <span className={classes.prefix}>{prefix}</span>}
+        {prefix && <span className={classes.sep}>|</span>}
 
-        {/* TRIGGER */}
-        <button
-          id={triggerId}
-          type="button"
-          // WAI-ARIA combobox pattern
-          role="combobox"
-          aria-expanded={isOpen}
-          aria-haspopup="listbox"
-          aria-controls={listId}
-          aria-autocomplete="list"
-          // Points to the id of the currently keyboard-highlighted option
-          aria-activedescendant={activeOptionId}
+        {/* Caret — always on the LEFT */}
+        <CaretDown
+          size={16}
+          className={classes.caret}
           data-open={isOpen}
-          onClick={handleTriggerClick}
-          onKeyDown={handleTriggerKeyDown}
-          className={classes.trigger}
-        >
+          aria-hidden="true"
+        />
+
+        {/* Suggestion chip (only when no value selected) replaces placeholder */}
+        {securedSuggestion && isValueEmpty ? (
+          <>
+            <button
+              type="button"
+              className={classes.suggestion}
+              onClick={handleSuggestionClick(securedSuggestion.id)}
+              onKeyDown={handleSuggestionKeyDown(securedSuggestion.id)}
+            >
+              {securedSuggestion.text}
+            </button>
+            {/* Flex spacer so suffix stays at the right edge */}
+            <span style={{ flex: 1 }} />
+          </>
+        ) : (
           <span
             className={classes.triggerText}
             data-placeholder={!currentOption}
           >
             {currentOption?.text ?? placeholder}
           </span>
-
-          {/* Suggestion chip (only when no value selected) */}
-          {securedSuggestion && isValueEmpty && (
-            <>
-              <span className={classes.suggestionSep}>|</span>
-              <button
-                type="button"
-                className={classes.suggestion}
-                onClick={handleSuggestionClick(securedSuggestion.id)}
-                onKeyDown={handleSuggestionKeyDown(securedSuggestion.id)}
-              >
-                {securedSuggestion.text}
-              </button>
-            </>
-          )}
-
-          <CaretDown
-            size={16}
-            className={classes.caret}
-            data-open={isOpen}
-            aria-hidden="true"
-          />
-        </button>
-
-        {/* OPTION LIST */}
-        {isOpen && orderedOptions.length > 0 && (
-          // biome-ignore lint/a11y/useSemanticElements: custom listbox with checkmarks; native <select> cannot support this design
-          <div
-            ref={listRef}
-            id={listId}
-            role="listbox"
-            tabIndex={-1}
-            className={classes.list}
-            aria-label={label}
-          >
-            {orderedOptions.map(({ id, text }, index) => {
-              const isSelected = id === selectedId;
-              const isActive = index === activeIndex;
-              return (
-                // biome-ignore lint/a11y/useSemanticElements: custom option with checkmark; native <option> cannot support this design
-                <div
-                  key={id}
-                  id={optionId(id)}
-                  role="option"
-                  tabIndex={0}
-                  // ✅ Only set aria-selected when true — omit for non-selected (per WAI-ARIA spec)
-                  aria-selected={isSelected || undefined}
-                  // Tracks keyboard focus for aria-activedescendant
-                  data-active={isActive}
-                  // aria-setsize / aria-posinset announce position to screen readers
-                  aria-setsize={orderedOptions.length}
-                  aria-posinset={index + 1}
-                  className={classes.item}
-                  onClick={handleItemClick(id)}
-                  onKeyDown={handleItemKeyDown(id)}
-                >
-                  <span
-                    className={classes.itemCheck}
-                    data-checked={isSelected}
-                    aria-hidden="true"
-                  >
-                    <Check size={14} weight="bold" />
-                  </span>
-                  {text}
-                </div>
-              );
-            })}
-          </div>
         )}
 
-        {/* HELPER */}
-        {helper && <p className={classes.helper}>{helper}</p>}
+        {/* Suffix */}
+        {suffix && <span className={classes.sep}>|</span>}
+        {suffix && <span className={classes.suffix}>{suffix}</span>}
+      </button>
 
-        {/*
-         * Visually hidden live region — announces result count to screen readers
-         * when the list opens (WCAG 4.1.3 / report requirement)
-         */}
+      {/* OPTION LIST */}
+      {isOpen && orderedOptions.length > 0 && (
+        // biome-ignore lint/a11y/useSemanticElements: custom listbox with checkmarks; native <select> cannot support this design
         <div
-          className={classes.liveRegion}
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
+          ref={listRef}
+          id={listId}
+          role="listbox"
+          tabIndex={-1}
+          className={classes.list}
+          aria-label={label}
         >
-          {isOpen
-            ? `${orderedOptions.length} ${orderedOptions.length === 1 ? "opción disponible" : "opciones disponibles"}`
-            : ""}
+          {orderedOptions.map(({ id, text }, index) => {
+            const isSelected = id === selectedId;
+            const isActive = index === activeIndex;
+            return (
+              // biome-ignore lint/a11y/useSemanticElements: custom option with checkmark; native <option> cannot support this design
+              <div
+                key={id}
+                id={optionId(id)}
+                role="option"
+                tabIndex={0}
+                // ✅ Only set aria-selected when true — omit for non-selected (per WAI-ARIA spec)
+                aria-selected={isSelected || undefined}
+                // Tracks keyboard focus for aria-activedescendant
+                data-active={isActive}
+                // aria-setsize / aria-posinset announce position to screen readers
+                aria-setsize={orderedOptions.length}
+                aria-posinset={index + 1}
+                className={classes.item}
+                onClick={handleItemClick(id)}
+                onKeyDown={handleItemKeyDown(id)}
+              >
+                <span
+                  className={classes.itemCheck}
+                  data-checked={isSelected}
+                  aria-hidden="true"
+                >
+                  <Check size={14} weight="bold" />
+                </span>
+                {text}
+              </div>
+            );
+          })}
         </div>
+      )}
+
+      {/* HELPER */}
+      {helper && <p className={classes.helper}>{helper}</p>}
+
+      {/*
+       * Visually hidden live region — announces result count to screen readers
+       * when the list opens (WCAG 4.1.3 / report requirement)
+       */}
+      <div
+        className={classes.liveRegion}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {isOpen
+          ? `${orderedOptions.length} ${orderedOptions.length === 1 ? "opción disponible" : "opciones disponibles"}`
+          : ""}
       </div>
-    );
-  },
-);
+    </div>
+  );
+}
