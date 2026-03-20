@@ -8,6 +8,10 @@ import {
   Text,
   Toast,
 } from "@/components";
+import FeaturesMenu from "@/components/features-menu";
+import HowItWorksModal from "@/components/how-it-works-modal";
+import Stepper from "@/components/home/stepper";
+import Header from "@/components/layout/header";
 import { useFileDispatch, useFiles } from "@/hooks";
 import useNotify from "@/hooks/useNotify";
 import type { PredictStatus } from "@/hooks/usePredict";
@@ -16,7 +20,9 @@ import {
   filterUnprocessed,
   removeAllPredictions,
 } from "@/reducers/file/actions";
-import { FeatureFlowEnum } from "@/types/features";
+import { useTutorialSeen } from "@/store/useLocal";
+import { HStack } from "@/styled/jsx";
+import { FeatureFlowEnum, featureName } from "@/types/features";
 import { canContinue } from "@/utils/process/canContinue";
 import {
   type ProcessState,
@@ -68,6 +74,7 @@ function GenericProcess({
   const files = useFiles();
   const [process, setProcess] = useState(initProcessState(files));
   const { isToastVisible, hideToast } = useNotify(process);
+  const tutorialSeen = useTutorialSeen(feature);
 
   const handleStatusChange = (name: string) => (newValue: PredictStatus) => {
     // Replace the newValue
@@ -97,6 +104,20 @@ function GenericProcess({
 
   return (
     <>
+      <Header
+        title={featureName(feature)}
+        center={
+          feature === FeatureFlowEnum.Dataset ? (
+            <Stepper currentStep={2} />
+          ) : undefined
+        }
+        right={
+          <HStack>
+            {tutorialSeen && <HowItWorksModal feature={feature} />}
+            <FeaturesMenu />
+          </HStack>
+        }
+      />
       <Section>
         <Toast isVisible={isToastVisible} onClose={hideToast} icon={<Bell />}>
           {finishText}

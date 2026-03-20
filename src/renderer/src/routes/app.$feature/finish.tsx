@@ -1,5 +1,11 @@
 import { FinishAnonymizer, FinishDataset } from "@/components";
-import { FeatureFlowEnum } from "@/types/features";
+import FeaturesMenu from "@/components/features-menu";
+import HowItWorksModal from "@/components/how-it-works-modal";
+import Stepper from "@/components/home/stepper";
+import Header from "@/components/layout/header";
+import { useTutorialSeen } from "@/store/useLocal";
+import { HStack } from "@/styled/jsx";
+import { FeatureFlowEnum, featureName } from "@/types/features";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/app/$feature/finish")({
@@ -8,7 +14,29 @@ export const Route = createFileRoute("/app/$feature/finish")({
 
 function RouteComponent() {
   const { feature } = useParams({ from: "/app/$feature/finish" });
+  const tutorialSeen = useTutorialSeen(feature);
 
-  if (feature === FeatureFlowEnum.Dataset) return <FinishDataset />;
-  return <FinishAnonymizer />;
+  return (
+    <>
+      <Header
+        title={featureName(feature)}
+        center={
+          feature === FeatureFlowEnum.Dataset ? (
+            <Stepper currentStep={4} />
+          ) : undefined
+        }
+        right={
+          <HStack>
+            {tutorialSeen && <HowItWorksModal feature={feature} />}
+            <FeaturesMenu />
+          </HStack>
+        }
+      />
+      {feature === FeatureFlowEnum.Dataset ? (
+        <FinishDataset />
+      ) : (
+        <FinishAnonymizer />
+      )}
+    </>
+  );
 }

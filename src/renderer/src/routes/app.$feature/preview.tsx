@@ -8,6 +8,10 @@ import {
   Subtitle,
   Text,
 } from "@/components";
+import FeaturesMenu from "@/components/features-menu";
+import HowItWorksModal from "@/components/how-it-works-modal";
+import Stepper from "@/components/home/stepper";
+import Header from "@/components/layout/header";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { Footer, Section } from "@/layout/main-old";
 import {
@@ -15,7 +19,9 @@ import {
   filterUnselected,
   removeAllFiles,
 } from "@/reducers/file/actions";
-import { FeatureFlowEnum } from "@/types/features";
+import { useTutorialSeen } from "@/store/useLocal";
+import { HStack } from "@/styled/jsx";
+import { FeatureFlowEnum, featureName } from "@/types/features";
 import {
   createFileRoute,
   useNavigate,
@@ -38,6 +44,7 @@ function GenericPreview({ title, supportMultipleFiles }: GenericPreviewProps) {
 
   const files = useFiles();
   const dispatch = useFileDispatch();
+  const tutorialSeen = useTutorialSeen(feature);
 
   const isAnyFileSelected = files.some((file) => file.selected);
 
@@ -74,6 +81,20 @@ function GenericPreview({ title, supportMultipleFiles }: GenericPreviewProps) {
 
   return (
     <>
+      <Header
+        title={featureName(feature)}
+        center={
+          feature === FeatureFlowEnum.Dataset ? (
+            <Stepper currentStep={1} />
+          ) : undefined
+        }
+        right={
+          <HStack>
+            {tutorialSeen && <HowItWorksModal feature={feature} />}
+            <FeaturesMenu />
+          </HStack>
+        }
+      />
       {/* MAIN SECTION */}
       <Section spacing="xl">
         <SectionTitle onClick={handlePrevious}>{title}</SectionTitle>
