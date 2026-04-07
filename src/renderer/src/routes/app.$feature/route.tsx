@@ -1,7 +1,12 @@
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import {
+  Outlet,
+  createFileRoute,
+  redirect,
+} from "@tanstack/react-router";
 import { z } from "zod";
 
 import FileProvider from "@/context/File";
+import { withAPIProtection } from "@/features/withAPIProtection";
 import { Stack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 
@@ -22,7 +27,7 @@ export const Route = createFileRoute("/app/$feature")({
     },
     stringify: (params) => params,
   },
-  component: AppLayoutRoute,
+  component: withAPIProtection(AppLayoutRoute),
 });
 
 function AppLayoutRoute() {

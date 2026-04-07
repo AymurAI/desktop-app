@@ -3,10 +3,11 @@ import FeaturesMenu from "@/components/features-menu";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import Card from "@/components/ui/card";
-import { FEATURES } from "@/constants/config";
+import { withAPIProtection } from "@/features/withAPIProtection";
 import { css } from "@/styled/css";
 import { Grid, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import { FEATURE_ICON } from "@/utils/config";
 import {
   Link,
   type LinkComponentProps,
@@ -46,7 +47,7 @@ function CardTool({
 }
 
 export const Route = createFileRoute("/home/features")({
-  component: RouteComponent,
+  component: withAPIProtection(RouteComponent),
 });
 
 function RouteComponent() {
@@ -67,14 +68,14 @@ function RouteComponent() {
               params={{ feature: FeatureFlowEnum.Dataset }}
               title={t("dataset:title")}
               subtitle={t("dataset:subtitle")}
-              icon={FEATURES.DATA_SET.icon}
+              icon={FEATURE_ICON.DATA_SET}
             />
             <CardTool
               to="/app/$feature"
               params={{ feature: FeatureFlowEnum.Anonymizer }}
               title={t("anonymizer:title")}
               subtitle={t("anonymizer:subtitle")}
-              icon={FEATURES.ANONYMIZER.icon}
+              icon={FEATURE_ICON.ANONYMIZER}
             />
           </Grid>
         </Stack>
