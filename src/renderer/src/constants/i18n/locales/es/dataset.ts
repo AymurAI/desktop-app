@@ -32,6 +32,14 @@ const dataset = {
     finishText: "Se finalizó el análisis de tus documentos.",
   },
   result: { sectionTitle: "" },
+  finish: {
+    sectionTitle: "4. Finalización",
+    description:
+      "Los datos encontrados por AymurAI y posteriormente validados ya son parte del set de datos abiertos con perspectiva de género.",
+    subtitle: "Archivos procesados",
+    restart: "Cargar más documentos",
+    viewDataset: "Ver set de datos",
+  },
 };
 
 export default dataset;

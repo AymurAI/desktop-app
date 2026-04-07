@@ -32,6 +32,14 @@ const anonymizer = {
     finishText: "Se finalizó el análisis del documento.",
   },
   result: { sectionTitle: "" },
+  finish: {
+    sectionTitle: "4. Finalización",
+    description:
+      "Los datos encontrados por AymurAI y posteriormente validados ya han sido anonimizados correctamente.",
+    subtitle: "Archivo procesado",
+    restart: "Cargar un nuevo documento",
+    download: "Descargar documento",
+  },
 };
 
 export default anonymizer;
