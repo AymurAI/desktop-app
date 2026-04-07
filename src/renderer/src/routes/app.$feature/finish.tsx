@@ -5,8 +5,9 @@ import Stepper from "@/components/home/stepper";
 import Header from "@/components/layout/header";
 import { useTutorialSeen } from "@/store/useLocal";
 import { HStack } from "@/styled/jsx";
-import { FeatureFlowEnum, featureName } from "@/types/features";
+import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import { createFileRoute, useParams } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/app/$feature/finish")({
   component: RouteComponent,
@@ -14,12 +15,13 @@ export const Route = createFileRoute("/app/$feature/finish")({
 
 function RouteComponent() {
   const { feature } = useParams({ from: "/app/$feature/finish" });
+  const { t } = useTranslation(featureNamespace[feature]);
   const tutorialSeen = useTutorialSeen(feature);
 
   return (
     <>
       <Header
-        title={featureName(feature)}
+        title={t("title")}
         center={
           feature === FeatureFlowEnum.Dataset ? (
             <Stepper currentStep={4} />

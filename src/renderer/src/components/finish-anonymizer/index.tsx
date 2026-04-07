@@ -13,6 +13,7 @@ import { removeAllFiles } from "@/reducers/file/actions";
 import { aymuraiService } from "@/services/aymurai";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import Footer from "../layout/footer";
 import MainContent from "../layout/main-content";
 
@@ -23,6 +24,7 @@ const changeExtension = (name: string) => {
 };
 
 export function FinishAnonymizer() {
+  const { t } = useTranslation("anonymizer");
   const params = useParams({ from: "/app/$feature/finish" });
   // We are sure that there is only one file, because we came from
   // anonimization workflow
@@ -58,13 +60,10 @@ export function FinishAnonymizer() {
   return (
     <>
       <MainContent>
-        <SectionTitle>4. Finalización</SectionTitle>
-        <Text css={{ maxWidth: "60%" }}>
-          Los datos encontrados por AymurAI y posteriormente validados ya han
-          sido anonimizados correctamente.
-        </Text>
+        <SectionTitle>{t("finish.sectionTitle")}</SectionTitle>
+        <Text css={{ maxWidth: "60%" }}>{t("finish.description")}</Text>
         <Card>
-          <Subtitle>Archivo procesado</Subtitle>
+          <Subtitle>{t("finish.subtitle")}</Subtitle>
           <Grid
             columns={4}
             spacing="xl"
@@ -81,10 +80,10 @@ export function FinishAnonymizer() {
       </MainContent>
       <Footer>
         <Button variant="secondary" onClick={handleRestart}>
-          Cargar un nuevo documento
+          {t("finish.restart")}
         </Button>
         <Button onClick={downloadDocument} disabled={isError}>
-          Descargar documento
+          {t("finish.download")}
         </Button>
       </Footer>
     </>

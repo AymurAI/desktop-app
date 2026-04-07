@@ -16,9 +16,11 @@ import filesystem from "@/services/filesystem";
 import type { DocFile } from "@/types/file";
 import { submitValidations } from "@/utils/file";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import * as S from "./FinishDataset.styles";
 
 export function FinishDataset() {
+  const { t } = useTranslation("dataset");
   const params = useParams({ from: "/app/$feature/finish" });
   const files = useFiles();
   const dispatch = useFileDispatch();
@@ -65,14 +67,11 @@ export function FinishDataset() {
   return (
     <>
       <Section>
-        <SectionTitle>4. Finalización</SectionTitle>
-        <Text css={{ maxWidth: "60%" }}>
-          Los datos encontrados por AymurAI y posteriormente validados ya son
-          parte del set de datos abiertos con perspectiva de género.
-        </Text>
+        <SectionTitle>{t("finish.sectionTitle")}</SectionTitle>
+        <Text css={{ maxWidth: "60%" }}>{t("finish.description")}</Text>
 
         <Card>
-          <Subtitle>Archivos procesados</Subtitle>
+          <Subtitle>{t("finish.subtitle")}</Subtitle>
           <Grid
             columns={4}
             spacing="xl"
@@ -100,10 +99,10 @@ export function FinishDataset() {
         </S.Anchor>
 
         <Button variant="secondary" onClick={handleRestart} size="md">
-          Cargar más documentos
+          {t("finish.restart")}
         </Button>
         <Button size="md" onClick={filesystem.excel.open}>
-          Ver set de datos
+          {t("finish.viewDataset")}
         </Button>
       </Footer>
     </>
