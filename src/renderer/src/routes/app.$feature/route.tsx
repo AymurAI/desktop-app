@@ -2,6 +2,7 @@ import {
   Outlet,
   createFileRoute,
   redirect,
+  useParams,
 } from "@tanstack/react-router";
 import { z } from "zod";
 
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/app/$feature")({
 });
 
 function AppLayoutRoute() {
+  const { feature } = useParams({ from: "/app/$feature" });
   return (
     <APIProtected>
       <Stack width="screen" height="screen" gap="0">
