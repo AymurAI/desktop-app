@@ -3,7 +3,7 @@ import FeaturesMenu from "@/components/features-menu";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import Card from "@/components/ui/card";
-import { withAPIProtection } from "@/features/withAPIProtection";
+import APIProtected from "@/features/APIProtected";
 import { css } from "@/styled/css";
 import { Grid, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
@@ -47,39 +47,41 @@ function CardTool({
 }
 
 export const Route = createFileRoute("/home/features")({
-  component: withAPIProtection(RouteComponent),
+  component: RouteComponent,
 });
 
 function RouteComponent() {
   const { t } = useTranslation(["common", "dataset", "anonymizer"]);
 
   return (
-    <Stack width="screen" height="screen" gap="0">
-      <Header right={<FeaturesMenu />} />
-      <MainContent>
-        <Stack gap="6">
-          <styled.h1 textStyle="title.md.strong">
-            {t("home.features.greeting")}
-          </styled.h1>
-          <Grid columns={2} rowGap="6" columnGap="6">
-            {/* FIXME: fix the text wrapping on smaller screens */}
-            <CardTool
-              to="/app/$feature"
-              params={{ feature: FeatureFlowEnum.Dataset }}
-              title={t("dataset:title")}
-              subtitle={t("dataset:subtitle")}
-              icon={FEATURE_ICON.DATA_SET}
-            />
-            <CardTool
-              to="/app/$feature"
-              params={{ feature: FeatureFlowEnum.Anonymizer }}
-              title={t("anonymizer:title")}
-              subtitle={t("anonymizer:subtitle")}
-              icon={FEATURE_ICON.ANONYMIZER}
-            />
-          </Grid>
-        </Stack>
-      </MainContent>
-    </Stack>
+    <APIProtected>
+      <Stack width="screen" height="screen" gap="0">
+        <Header right={<FeaturesMenu />} />
+        <MainContent>
+          <Stack gap="6">
+            <styled.h1 textStyle="title.md.strong">
+              {t("home.features.greeting")}
+            </styled.h1>
+            <Grid columns={2} rowGap="6" columnGap="6">
+              {/* FIXME: fix the text wrapping on smaller screens */}
+              <CardTool
+                to="/app/$feature"
+                params={{ feature: FeatureFlowEnum.Dataset }}
+                title={t("dataset:title")}
+                subtitle={t("dataset:subtitle")}
+                icon={FEATURE_ICON.DATA_SET}
+              />
+              <CardTool
+                to="/app/$feature"
+                params={{ feature: FeatureFlowEnum.Anonymizer }}
+                title={t("anonymizer:title")}
+                subtitle={t("anonymizer:subtitle")}
+                icon={FEATURE_ICON.ANONYMIZER}
+              />
+            </Grid>
+          </Stack>
+        </MainContent>
+      </Stack>
+    </APIProtected>
   );
 }
