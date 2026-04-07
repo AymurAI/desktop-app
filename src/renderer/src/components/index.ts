@@ -10,7 +10,6 @@ export { default as FileStepper } from "./file-stepper";
 export { FinishAnonymizer } from "./finish-anonymizer";
 export { FinishDataset } from "./finish-dataset";
 export { default as Grid } from "./grid";
-export { default as HiddenInput } from "./hidden-input-old";
 export { default as Label } from "./label";
 export { OnboardingCard } from "./onboarding-card";
 export { OnboardingGrid } from "./onboarding-grid";
