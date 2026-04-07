@@ -48,7 +48,11 @@ export default function HowItWorksModal({ feature }: HowItWorksModalProps) {
       <Tooltip>
         <TooltipTrigger asChild>
           <DialogTrigger asChild>
-            <button type="button" className={modalButton}>
+            <button
+              type="button"
+              className={modalButton}
+              aria-label="Información sobre AymurAI"
+            >
               <Question size={32} />
             </button>
           </DialogTrigger>

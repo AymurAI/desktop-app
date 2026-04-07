@@ -8,14 +8,20 @@ import {
   Subtitle,
   Text,
 } from "@/components";
+import FeaturesMenu from "@/components/features-menu";
+import HowItWorksModal from "@/components/how-it-works-modal";
+import Stepper from "@/components/home/stepper";
+import Header from "@/components/layout/header";
 import { useFileDispatch, useFiles } from "@/hooks";
-import { Footer, Section } from "@/layout/main";
+import { Footer, Section } from "@/layout/main-old";
 import {
   addFiles,
   filterUnselected,
   removeAllFiles,
 } from "@/reducers/file/actions";
-import { Feature } from "@/types/features";
+import { useTutorialSeen } from "@/store/useLocal";
+import { HStack } from "@/styled/jsx";
+import { FeatureFlowEnum, featureName } from "@/types/features";
 import {
   createFileRoute,
   useNavigate,
@@ -38,6 +44,7 @@ function GenericPreview({ title, supportMultipleFiles }: GenericPreviewProps) {
 
   const files = useFiles();
   const dispatch = useFileDispatch();
+  const tutorialSeen = useTutorialSeen(feature);
 
   const isAnyFileSelected = files.some((file) => file.selected);
 
@@ -74,6 +81,20 @@ function GenericPreview({ title, supportMultipleFiles }: GenericPreviewProps) {
 
   return (
     <>
+      <Header
+        title={featureName(feature)}
+        center={
+          feature === FeatureFlowEnum.Dataset ? (
+            <Stepper currentStep={1} />
+          ) : undefined
+        }
+        right={
+          <HStack>
+            {tutorialSeen && <HowItWorksModal feature={feature} />}
+            <FeaturesMenu />
+          </HStack>
+        }
+      />
       {/* MAIN SECTION */}
       <Section spacing="xl">
         <SectionTitle onClick={handlePrevious}>{title}</SectionTitle>
@@ -105,7 +126,7 @@ function GenericPreview({ title, supportMultipleFiles }: GenericPreviewProps) {
         {supportMultipleFiles && (
           <>
             <Text size="s">Formatos válidos: .docx, .pdf</Text>
-            <Button onClick={handleSelectFile} size="l" variant="secondary">
+            <Button onClick={handleSelectFile} size="md" variant="secondary">
               Cargar más documentos
             </Button>
           </>
@@ -115,7 +136,7 @@ function GenericPreview({ title, supportMultipleFiles }: GenericPreviewProps) {
           disabled={
             !isAnyFileSelected || files.some((f) => !f.paragraphs?.length)
           }
-          size="l"
+          size="md"
         >
           Continuar
         </Button>
@@ -129,7 +150,7 @@ function RouteComponent() {
     from: "/app/$feature/preview",
   });
 
-  if (feature === Feature.Dataset)
+  if (feature === FeatureFlowEnum.Dataset)
     return (
       <GenericPreview
         supportMultipleFiles={true}

@@ -1,7 +1,13 @@
 import { Button, FileAnnotator, Grid, ValidateDataset } from "@/components";
+import FeaturesMenu from "@/components/features-menu";
+import HowItWorksModal from "@/components/how-it-works-modal";
+import Stepper from "@/components/home/stepper";
+import Header from "@/components/layout/header";
 import { useFiles } from "@/hooks";
 import { Footer } from "@/layout/main-old";
-import { FeatureFlowEnum } from "@/types/features";
+import { useTutorialSeen } from "@/store/useLocal";
+import { HStack } from "@/styled/jsx";
+import { FeatureFlowEnum, featureName } from "@/types/features";
 import {
   createFileRoute,
   useNavigate,
@@ -50,7 +56,29 @@ function ValidateAnonymizer() {
 
 function ValidationRoute() {
   const { feature } = Route.useParams();
+  const tutorialSeen = useTutorialSeen(feature);
 
-  if (feature === FeatureFlowEnum.Dataset) return <ValidateDataset />;
-  return <ValidateAnonymizer />;
+  return (
+    <>
+      <Header
+        title={featureName(feature)}
+        center={
+          feature === FeatureFlowEnum.Dataset ? (
+            <Stepper currentStep={3} />
+          ) : undefined
+        }
+        right={
+          <HStack>
+            {tutorialSeen && <HowItWorksModal feature={feature} />}
+            <FeaturesMenu />
+          </HStack>
+        }
+      />
+      {feature === FeatureFlowEnum.Dataset ? (
+        <ValidateDataset />
+      ) : (
+        <ValidateAnonymizer />
+      )}
+    </>
+  );
 }

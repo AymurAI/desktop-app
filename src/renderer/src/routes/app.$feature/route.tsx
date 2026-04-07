@@ -1,4 +1,8 @@
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import {
+  Outlet,
+  createFileRoute,
+  redirect,
+} from "@tanstack/react-router";
 import { z } from "zod";
 
 import FileProvider from "@/context/File";
@@ -27,8 +31,6 @@ export const Route = createFileRoute("/app/$feature")({
 });
 
 function AppLayoutRoute() {
-  const { feature } = Route.useParams();
-
   return (
     <APIProtected>
       <Stack width="screen" height="screen" gap="0">

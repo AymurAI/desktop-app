@@ -30,3 +30,5 @@ yarn-error.log*
 
 # Panda CSS generated files
 src/renderer/src/styled
+
+/me/

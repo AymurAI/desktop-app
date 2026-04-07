@@ -15,7 +15,7 @@ export default function FeaturesMenu() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="icon-sm" style={{ padding: 2 }}>
+        <Button size="icon-sm" style={{ padding: 2 }} aria-label="Ir al inicio">
           <DotsNine size={32} />
         </Button>
       </PopoverTrigger>
