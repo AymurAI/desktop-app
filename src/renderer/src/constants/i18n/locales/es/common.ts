@@ -34,8 +34,7 @@ const common = {
     step1: {
       alt: "Interfaz web con selector y cursor",
       title: "Selecciona las resoluciones judiciales",
-      subtitle:
-        "Sube los documentos que querés incorporar al set de datos.",
+      subtitle: "Sube los documentos que querés incorporar al set de datos.",
     },
     step2: {
       alt: "Barra de búsqueda con cursor",
@@ -49,10 +48,6 @@ const common = {
       subtitle:
         "Es importante que verifiques que los datos sean correctos antes de exportar el archivo",
     },
-  },
-  dropArea: {
-    selectFile: "Selecciona el archivo para\nagregar a la base de datos",
-    validFormats: "Formatos válidos:",
   },
   filePreview: {
     loadError: "No se pudo cargar el archivo",

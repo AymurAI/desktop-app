@@ -1,11 +1,14 @@
+import { WHITELISTED_EXTENSIONS } from "@/constants/config";
+
 const anonymizer = {
   title: "Anonimizador",
-  subtitle:
-    "Anonimiza resoluciones judiciales de manera automática y editable",
+  subtitle: "Anonimiza resoluciones judiciales de manera automática y editable",
   onboarding: {
     sectionTitle: "1. Selección de Archivos",
     validFormats: "Formatos válidos: .doc y .docx",
     loadDocuments: "Cargar documentos",
+    dropAreaTitle: "Selecciona el archivo para anonimizar",
+    dropAreaFormats: `Formatos válidos: ${WHITELISTED_EXTENSIONS.map((e) => `.${e}`).join(", ")}`,
   },
   preview: {
     sectionTitle: "1. Selección de Archivos",
@@ -22,7 +25,12 @@ const anonymizer = {
         "Proceso terminado. El documento esta listo para ser exportado.",
     },
   },
-  process: { sectionTitle: "" },
+  process: {
+    sectionTitle: "2. Procesamiento del archivo",
+    processingTitle: "AymurAI está extrayendo los datos del archivo",
+    processingSubtitle: "Este proceso puede tardar algunos minutos.",
+    finishText: "Se finalizó el análisis del documento.",
+  },
   result: { sectionTitle: "" },
 };
 
