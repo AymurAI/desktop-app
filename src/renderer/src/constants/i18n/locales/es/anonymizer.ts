@@ -4,14 +4,14 @@ const anonymizer = {
   title: "Anonimizador",
   subtitle: "Anonimiza resoluciones judiciales de manera automática y editable",
   onboarding: {
-    sectionTitle: "1. Selección de Archivos",
+    sectionTitle: "1. Selección de Archivo",
     validFormats: "Formatos válidos: .doc y .docx",
     loadDocuments: "Cargar documentos",
     dropAreaTitle: "Selecciona el archivo para anonimizar",
     dropAreaFormats: `Formatos válidos: ${WHITELISTED_EXTENSIONS.map((e) => `.${e}`).join(", ")}`,
   },
   preview: {
-    sectionTitle: "1. Selección de Archivos",
+    sectionTitle: "1. Selección de Archivo",
     filesLabel: "Archivos seleccionados",
     validFormats: "Formatos válidos: .doc y .docx",
     loadMore: "Cargar más documentos",
