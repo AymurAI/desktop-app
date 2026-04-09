@@ -1,4 +1,4 @@
-import { cva } from "@/styled/css";
+import { cva, cx } from "@/styled/css";
 
 const styles = cva({
   base: {
@@ -65,13 +65,15 @@ interface CardProps {
   disabled?: boolean;
   size?: "lg" | "sm";
   clickable?: boolean;
+  className?: string;
 }
 export default function Card({
   disabled = false,
   size = "lg",
   clickable = false,
   children,
+  className,
 }: CardProps) {
   const classes = styles({ size, disabled, clickable });
-  return <div className={classes}>{children}</div>;
+  return <div className={cx(className, classes)}>{children}</div>;
 }

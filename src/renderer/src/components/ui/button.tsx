@@ -89,6 +89,10 @@ const button = cva({
       tertiary: {
         // TODO: not implemented
       },
+      none: {
+        padding: "0",
+        bg: "[inherit]",
+      },
     },
     size: {
       md: { height: "12", padding: "4", rounded: "sm" },

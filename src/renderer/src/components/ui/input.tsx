@@ -100,7 +100,7 @@ const affix = cva({
   },
 });
 
-interface InputProps {
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "prefix" | "suffix">, React.RefAttributes<HTMLInputElement> {
   // Rendering
   label?: string;
   placeholder?: string;
@@ -126,11 +126,13 @@ export default function Input({
   helper,
   // Control
   id,
+  ref,
   value,
   onChange,
   disabled = false,
   error,
   type,
+  ...props
 }: InputProps) {
   const randomId = useId();
   const inputId = id ?? randomId;
@@ -157,6 +159,8 @@ export default function Input({
         )}
 
         <input
+          {...props}
+          ref={ref}
           id={inputId}
           onChange={onChange}
           value={value}
