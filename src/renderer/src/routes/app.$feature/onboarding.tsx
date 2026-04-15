@@ -5,10 +5,8 @@ import {
 } from "@tanstack/react-router";
 
 import DropArea from "@/components/drop-area";
-import FeaturesMenu from "@/components/features-menu";
 import HiddenInput from "@/components/hidden-input";
 import HowItWorks from "@/components/how-it-works";
-import HowItWorksModal from "@/components/how-it-works-modal";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
@@ -34,6 +32,7 @@ function RouteComponent() {
   });
   const navigate = useNavigate();
   const { t } = useTranslation(featureNamespace[feature]);
+  console.log({ feature, title: t("onboarding.dropAreaTitle") });
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -61,15 +60,7 @@ function RouteComponent() {
 
   return (
     <>
-      <Header
-        title={t("title")}
-        right={
-          <HStack>
-            {tutorialSeen && <HowItWorksModal feature={feature} />}
-            <FeaturesMenu />
-          </HStack>
-        }
-      />
+      <Header title={t("title")} feature={feature} />
       <MainContent>
         {tutorialSeen ? (
           <Stack gap="8">
@@ -77,7 +68,11 @@ function RouteComponent() {
               <BackButton to="/home/features" />
               <SectionTitle>{t("onboarding.sectionTitle")}</SectionTitle>
             </HStack>
-            <DropArea onDropFiles={handleAddFiles} />
+            <DropArea
+              title={t("onboarding.dropAreaTitle")}
+              description={t("onboarding.dropAreaFormats")}
+              onDropFiles={handleAddFiles}
+            />
           </Stack>
         ) : (
           <HowItWorks feature={feature} />
