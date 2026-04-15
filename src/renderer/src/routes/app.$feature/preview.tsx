@@ -1,74 +1,56 @@
-import {
-  Button,
-  Card,
-  FilePreview,
-  Grid,
-  HiddenInput,
-  SectionTitle,
-  Subtitle,
-  Text,
-} from "@/components";
-import FeaturesMenu from "@/components/features-menu";
-import HowItWorksModal from "@/components/how-it-works-modal";
+import { Button, FilePreview } from "@/components";
+import HiddenInput from "@/components/hidden-input";
 import Stepper from "@/components/home/stepper";
+import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
+import MainContent from "@/components/layout/main-content";
+import BackButton from "@/components/ui/back-button";
+import Card from "@/components/ui/card";
 import { useFileDispatch, useFiles } from "@/hooks";
-import { Footer, Section } from "@/layout/main-old";
-import {
-  addFiles,
-  filterUnselected,
-  removeAllFiles,
-} from "@/reducers/file/actions";
-import { useTutorialSeen } from "@/store/useLocal";
-import { HStack } from "@/styled/jsx";
-import { FeatureFlowEnum, featureName } from "@/types/features";
+import { SectionTitle } from "@/layout/section-title";
+import { addFiles, filterUnselected } from "@/reducers/file/actions";
+import { Grid, HStack, Stack, styled } from "@/styled/jsx";
+import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import {
   createFileRoute,
   useNavigate,
   useParams,
 } from "@tanstack/react-router";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/app/$feature/preview")({
   component: RouteComponent,
 });
 
-interface GenericPreviewProps {
-  title: string;
-  supportMultipleFiles: boolean;
-}
-function GenericPreview({ title, supportMultipleFiles }: GenericPreviewProps) {
-  const { feature } = useParams({ from: "/app/$feature/preview" });
-  const inputRef = useRef<HTMLInputElement>(null);
+function RouteComponent() {
+  const { feature } = useParams({
+    from: "/app/$feature/preview",
+  });
   const navigate = useNavigate();
+  const { t } = useTranslation(featureNamespace[feature]);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const files = useFiles();
   const dispatch = useFileDispatch();
-  const tutorialSeen = useTutorialSeen(feature);
 
-  const isAnyFileSelected = files.some((file) => file.selected);
+  const isProcessing = files.some((file) => !file.paragraphs);
 
-  const handlePrevious = () => {
-    dispatch(removeAllFiles());
-    navigate({
-      to: "/app/$feature/onboarding",
-      params: { feature },
-    });
-  };
-
-  const handleSelectFile = () => {
-    inputRef.current?.click();
-  };
-
-  const handleAddedFiles: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleAddFiles: React.ChangeEventHandler<HTMLInputElement> = async (
+    e,
+  ) => {
     const rawFiles = e.target.files;
-
-    // Check if any file was added
     if (rawFiles) {
-      const fileArray = Array.from(rawFiles);
-
-      dispatch(addFiles(fileArray));
+      dispatch(addFiles([...rawFiles]));
+      await navigate({
+        to: "/app/$feature/preview",
+        params: { feature },
+      });
     }
+  };
+  const handleOpenInput = () => {
+    inputRef.current?.click();
   };
 
   const handleConfirmFiles = () => {
@@ -82,86 +64,48 @@ function GenericPreview({ title, supportMultipleFiles }: GenericPreviewProps) {
   return (
     <>
       <Header
-        title={featureName(feature)}
-        center={
-          feature === FeatureFlowEnum.Dataset ? (
-            <Stepper currentStep={1} />
-          ) : undefined
-        }
-        right={
-          <HStack>
-            {tutorialSeen && <HowItWorksModal feature={feature} />}
-            <FeaturesMenu />
+        title={t("title")}
+        center={<Stepper currentStep={1} />}
+        feature={feature}
+      />
+      <MainContent>
+        <Stack gap="8">
+          <HStack alignItems="center" gap="6">
+            <BackButton to="/app/$feature/onboarding" params={{ feature }} />
+            <SectionTitle>{t("preview.sectionTitle")}</SectionTitle>
           </HStack>
-        }
-      />
-      {/* MAIN SECTION */}
-      <Section spacing="xl">
-        <SectionTitle onClick={handlePrevious}>{title}</SectionTitle>
-        <Card>
-          {supportMultipleFiles && <Subtitle>Archivos seleccionados</Subtitle>}
-          <Grid
-            columns={supportMultipleFiles ? 5 : 1}
-            spacing="xl"
-            justify="center"
-            css={{ width: "100%" }}
-          >
-            {files.map((file) => (
-              <FilePreview key={file.data.name} file={file} />
-            ))}
-          </Grid>
-        </Card>
-      </Section>
-
-      {/* FOOTER */}
-      <Footer>
-        <HiddenInput
-          type="file"
-          accept=".docx"
-          ref={inputRef}
-          onChange={handleAddedFiles}
-          multiple
-          tabIndex={-1}
-        />
-        {supportMultipleFiles && (
-          <>
-            <Text size="s">Formatos válidos: .docx, .pdf</Text>
-            <Button onClick={handleSelectFile} size="md" variant="secondary">
-              Cargar más documentos
-            </Button>
-          </>
-        )}
-        <Button
-          onClick={handleConfirmFiles}
-          disabled={
-            !isAnyFileSelected || files.some((f) => !f.paragraphs?.length)
-          }
-          size="md"
-        >
-          Continuar
-        </Button>
+          <Card>
+            <Stack gap="8">
+              <styled.h2 textStyle="subtitle.md.default">
+                {t("preview.filesLabel")}
+              </styled.h2>
+              <Grid columns={5}>
+                {files.map((file) => (
+                  <FilePreview key={file.data.name} file={file} />
+                ))}
+              </Grid>
+            </Stack>
+          </Card>
+        </Stack>
+      </MainContent>
+      <Footer withBuiltBy>
+        <HStack gap="4">
+          {feature === FeatureFlowEnum.Dataset && (
+            <>
+              <styled.p textStyle="paragraph.sm.default">
+                {t("preview.validFormats")}
+              </styled.p>
+              <Button variant="secondary" onClick={handleOpenInput}>
+                {t("preview.loadMore")}
+              </Button>
+            </>
+          )}
+          <Button onClick={handleConfirmFiles} disabled={isProcessing}>
+            {t("preview.continue")}
+          </Button>
+        </HStack>
       </Footer>
+      <HiddenInput ref={inputRef} onChange={handleAddFiles} />
     </>
-  );
-}
-
-function RouteComponent() {
-  const { feature } = useParams({
-    from: "/app/$feature/preview",
-  });
-
-  if (feature === FeatureFlowEnum.Dataset)
-    return (
-      <GenericPreview
-        supportMultipleFiles={true}
-        title="1. Previsualización de archivos"
-      />
-    );
-
-  return (
-    <GenericPreview
-      supportMultipleFiles={false}
-      title="1. Previsualización del archivo"
-    />
   );
 }
