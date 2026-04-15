@@ -1,7 +1,9 @@
 import { styled } from "@/styles";
 
 export const Container = styled("div", {
-  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+  flex: 1,
+  minWidth: 0,
+  // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
 
   zIndex: 1,
   overflowY: "scroll",
@@ -10,7 +12,7 @@ export const Container = styled("div", {
 export const File = styled("div", {
   px: "$xl",
   pb: "$xl",
-  pt: "$l",
+  // pt: "$l",
 
   "& p, & span, & em": {
     fontFamily: "$file",
@@ -130,14 +132,4 @@ export const Mark = styled("mark", {
     type: "tag",
     annotable: false,
   },
-});
-
-export const SearchContainer = styled("div", {
-  p: "$l",
-  pb: 0,
-
-  zIndex: 1,
-  top: 0,
-  position: "sticky",
-  background: "white",
 });
