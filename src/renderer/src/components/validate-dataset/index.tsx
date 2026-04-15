@@ -73,7 +73,7 @@ export function ValidateDataset() {
         <FileAnnotator
           key={selectedFile.data.name}
           file={selectedFile}
-          isAnnotable
+          isAnnotable={false}
         />
         <Section css={{ px: 100, overflowY: "scroll" }} spacing="xxl">
           <SectionTitle>3. Validación de datos</SectionTitle>
