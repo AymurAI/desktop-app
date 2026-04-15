@@ -1,5 +1,7 @@
 import { Grid, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
+import { useFileDispatch } from "@/hooks/useFiles";
+import { removeAllFiles } from "@/reducers/file/actions";
 import { Link } from "@tanstack/react-router";
 import { DotsNine } from "phosphor-react";
 import { useTranslation } from "react-i18next";
@@ -10,7 +12,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export default function FeaturesMenu() {
   const { t } = useTranslation();
+  const dispatch = useFileDispatch();
   const features = Object.values(FeatureFlowEnum);
+
+  const handleClearFiles = () => {
+    dispatch(removeAllFiles());
+  };
 
   return (
     <Popover>
@@ -22,7 +29,12 @@ export default function FeaturesMenu() {
       <PopoverContent align="end">
         <Grid columns={2} padding="4">
           {features.map((feature) => (
-            <Link key={feature} to="/app/$feature" params={{ feature }}>
+            <Link
+              key={feature}
+              to="/app/$feature"
+              params={{ feature }}
+              onClick={handleClearFiles}
+            >
               <Card size="sm" clickable>
                 <Stack gap="3" align="center">
                   <FeatureIcon feature={feature} size="sm" />
