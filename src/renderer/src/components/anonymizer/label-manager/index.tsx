@@ -1,5 +1,12 @@
 import { useState } from "react";
 
+import { useFileDispatch } from "@/hooks";
+import {
+  removePredictionsByCanonicalId,
+  removePredictionValueByCanonicalId,
+  updatePredictionsByCanonicalId,
+} from "@/reducers/file/actions";
+import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 import { sva } from "@/styled/css";
 import { HStack } from "@/styled/jsx";
 import { stack } from "@/styled/patterns";
@@ -31,8 +38,30 @@ interface LabelManagerProps {
 }
 export default function LabelManager({ onClose }: LabelManagerProps) {
   const [selectedTab, setSelectedTab] = useState<"entity" | "config">("entity");
+  const dispatch = useFileDispatch();
 
   const classes = styles();
+
+  function handleDerivedGroupRemove(canonicalId: string) {
+    dispatch(removePredictionsByCanonicalId(canonicalId));
+  }
+
+  function handleDerivedValueRemove(canonicalId: string, value: string) {
+    dispatch(removePredictionValueByCanonicalId(canonicalId, value));
+  }
+
+  function handleDerivedLabelChange(
+    canonicalId: string,
+    labelId: string | undefined,
+  ) {
+    if (!labelId) return;
+    dispatch(
+      updatePredictionsByCanonicalId(
+        canonicalId,
+        labelId as AllLabels | AllLabelsWithSufix,
+      ),
+    );
+  }
 
   return (
     <div className={classes.container}>
@@ -56,7 +85,15 @@ export default function LabelManager({ onClose }: LabelManagerProps) {
         </button>
       </HStack>
       <div className={classes.body}>
-        {selectedTab === "entity" ? <LabelEntityTab /> : <LabelConfigTab />}
+        {selectedTab === "entity" ? (
+          <LabelEntityTab
+            onDerivedGroupRemove={handleDerivedGroupRemove}
+            onDerivedValueRemove={handleDerivedValueRemove}
+            onDerivedLabelChange={handleDerivedLabelChange}
+          />
+        ) : (
+          <LabelConfigTab />
+        )}
       </div>
     </div>
   );

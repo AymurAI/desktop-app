@@ -1,11 +1,11 @@
-import { useState } from "react";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { anonymizerLabels } from "@/types/aymurai";
+import { useState } from "react";
 
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import BaseSwitch from "@/components/ui/switch";
-import { XCircle } from "phosphor-react";
+import { Label } from "./label";
 import LabelManagerSection from "./section";
 
 interface ToggleProps {
@@ -24,33 +24,13 @@ function Switch({ name, value, onToggle }: ToggleProps) {
   );
 }
 
-interface ExcludedWordProps {
-  value: string;
-  onRemove: () => void;
-}
-function ExcludedWord({ value, onRemove }: ExcludedWordProps) {
-  return (
-    <HStack
-      justify="space-between"
-      px="2"
-      py="1"
-      bg="bg.primary-alternative"
-      rounded="xs"
-    >
-      <styled.span textStyle="label.md.default">{value}</styled.span>
-      <styled.button type="button" onClick={onRemove} cursor="pointer">
-        <XCircle size={16} />
-      </styled.button>
-    </HStack>
-  );
-}
-
 const initialToggles = Object.fromEntries(
-  anonymizerLabels.map((label) => [label.id, true])
+  anonymizerLabels.map((label) => [label.id, true]),
 );
 
 export default function LabelConfigTab() {
-  const [toggles, setToggles] = useState<Record<string, boolean>>(initialToggles);
+  const [toggles, setToggles] =
+    useState<Record<string, boolean>>(initialToggles);
   const [excludedWords, setExcludedWords] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -101,11 +81,9 @@ export default function LabelConfigTab() {
           {excludedWords.length > 0 && (
             <Stack p="1" bg="bg.secondary" rounded="xs" gap="1">
               {excludedWords.map((word) => (
-                <ExcludedWord
-                  key={word}
-                  value={word}
-                  onRemove={() => handleRemoveWord(word)}
-                />
+                <Label key={word} onRemove={() => handleRemoveWord(word)}>
+                  {word}
+                </Label>
               ))}
             </Stack>
           )}

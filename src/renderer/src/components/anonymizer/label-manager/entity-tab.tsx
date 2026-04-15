@@ -1,13 +1,14 @@
 import { Trash, XCircle } from "phosphor-react";
 import { useMemo, useState } from "react";
 
-import { css } from "@/styled/css";
-import { HStack, Stack, styled } from "@/styled/jsx";
-import { useFiles } from "@/hooks";
-import { anonymizerLabels } from "@/types/aymurai";
 import Select from "@/components/select";
 import Button from "@/components/ui/button";
+import { useFiles } from "@/hooks";
+import { css } from "@/styled/css";
+import { HStack, Stack, styled } from "@/styled/jsx";
+import { anonymizerLabels } from "@/types/aymurai";
 
+import { Label } from "./label";
 import LabelManagerSection from "./section";
 
 // ─── Category config ────────────────────────────────────────────────────────
@@ -102,7 +103,7 @@ const valueItem = css({
   justifyContent: "space-between",
   px: "3",
   py: "2",
-  bg: "white",
+  bg: "bg.primary-alternative",
   p: "1",
   rounded: "sm",
   textStyle: "label.md.default",
@@ -120,24 +121,19 @@ const iconButton = css({
   "&:hover": { color: "text.default" },
 });
 
-// ─── Props ───────────────────────────────────────────────────────────────────
-
 interface LabelEntityTabProps {
-  onDerivedGroupRemove?: (canonicalId: string) => void;
-  onDerivedValueRemove?: (canonicalId: string, value: string) => void;
-  onDerivedLabelChange?: (
+  onDerivedGroupRemove: (canonicalId: string) => void;
+  onDerivedValueRemove: (canonicalId: string, value: string) => void;
+  onDerivedLabelChange: (
     canonicalId: string,
     labelId: string | undefined,
   ) => void;
 }
-
-// ─── Component ───────────────────────────────────────────────────────────────
-
 export default function LabelEntityTab({
   onDerivedGroupRemove,
   onDerivedValueRemove,
   onDerivedLabelChange,
-}: LabelEntityTabProps = {}) {
+}: LabelEntityTabProps) {
   const files = useFiles();
   const [manualGroups, setManualGroups] =
     useState<ManualCategoryGroups>(initialManualGroups);
@@ -270,9 +266,9 @@ export default function LabelEntityTab({
                   .map((group) => {
                     const visibleValues = group.values.filter(
                       (v) =>
-                        !(removedDerivedValues[group.canonicalId] ?? []).includes(
-                          v,
-                        ),
+                        !(
+                          removedDerivedValues[group.canonicalId] ?? []
+                        ).includes(v),
                     );
                     const selectedLabel =
                       overriddenDerivedLabels[group.canonicalId] ??
@@ -299,21 +295,24 @@ export default function LabelEntityTab({
                             <Trash size={20} />
                           </button>
                         </HStack>
-                        {visibleValues.map((value) => (
-                          <div key={value} className={valueItem}>
-                            <span>{value}</span>
-                            <button
-                              type="button"
-                              className={iconButton}
-                              onClick={() =>
+                        <Stack
+                          gap="1"
+                          align="stretch"
+                          bg="white"
+                          p="1"
+                          rounded="sm"
+                        >
+                          {visibleValues.map((value) => (
+                            <Label
+                              key={value}
+                              onRemove={() =>
                                 removeDerivedValue(group.canonicalId, value)
                               }
-                              aria-label={`Eliminar ${value}`}
                             >
-                              <XCircle size={18} />
-                            </button>
-                          </div>
-                        ))}
+                              {value}
+                            </Label>
+                          ))}
+                        </Stack>
                       </Stack>
                     );
                   })}
