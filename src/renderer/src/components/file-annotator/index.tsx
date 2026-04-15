@@ -4,8 +4,10 @@ import { SearchBar } from "./SearchBar";
 
 import type { SelectOption } from "@/components/select";
 import AnnotationProvider from "@/context/Annotation";
+import { HStack } from "@/styled/jsx";
 import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 import type { DocFile } from "@/types/file";
+import LabelManager from "../anonymizer/label-manager";
 import * as S from "./FileAnnotator.styles";
 import { Mark } from "./Mark";
 import { createAnnotationsWithSearch } from "./annotations";
@@ -45,6 +47,7 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
 
   const [labelSearch, setLabelSearch] = useState<AllLabels | null>(null);
   const [sufixlabelSearch, setSufixLabelSearch] = useState<number | null>(0);
+  const [labelManagerOpen, setLabelManagerOpen] = useState(false);
 
   const searchTag = useMemo<AllLabels | AllLabelsWithSufix | null>(() => {
     return labelSearch
@@ -62,39 +65,46 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
     setLabelSearch((option?.id as AllLabels) ?? null);
   };
 
+  const toggleManagerLabel = () => {
+    setLabelManagerOpen(!labelManagerOpen);
+  };
+
   return (
-    <S.Container>
-      <S.SearchContainer>
+    <HStack w="full" h="full" alignItems="unset" overflow="hidden">
+      <S.Container>
         <SearchBar
           onSearchChange={setSearch}
           onLabelChange={selectChangeHandler}
           onLabelSufixChange={setSufixLabelSearch}
+          onLabelManagerToggle={toggleManagerLabel}
           isAnnotable={isAnnotable}
+          isLabelManagerOpen={labelManagerOpen}
         />
-      </S.SearchContainer>
-      <S.File>
-        <AnnotationProvider
-          {...{
-            file,
-            isAnnotable,
-            searchTag,
-          }}
-        >
-          {paragraphs.map((p) => {
-            const annotations = createAnnotationsWithSearch(
-              file.predictions ?? [],
-              search,
-              p,
+        <S.File>
+          <AnnotationProvider
+            {...{
+              file,
+              isAnnotable,
               searchTag,
-            );
-            return (
-              <Paragraph key={p.id} id={p.id} annotations={annotations}>
-                {p.value}
-              </Paragraph>
-            );
-          })}
-        </AnnotationProvider>
-      </S.File>
-    </S.Container>
+            }}
+          >
+            {paragraphs.map((p) => {
+              const annotations = createAnnotationsWithSearch(
+                file.predictions ?? [],
+                search,
+                p,
+                searchTag,
+              );
+              return (
+                <Paragraph key={p.id} id={p.id} annotations={annotations}>
+                  {p.value}
+                </Paragraph>
+              );
+            })}
+          </AnnotationProvider>
+        </S.File>
+      </S.Container>
+      {labelManagerOpen && <LabelManager onClose={toggleManagerLabel} />}
+    </HStack>
   );
 }
