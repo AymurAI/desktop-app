@@ -3,7 +3,6 @@ import { css, cva } from "@/styled/css";
 import { Stack, styled } from "@/styled/jsx";
 import { File } from "phosphor-react";
 import { useCallback, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 function FileIcon() {
   return (
@@ -53,14 +52,17 @@ const styles = cva({
 
 interface DropAreaProps {
   onDropFiles: (files: File[]) => void;
+  title: string;
+  description: string;
   multiple?: boolean;
 }
 
 export default function DropArea({
   onDropFiles,
+  title,
+  description,
   multiple = true,
 }: DropAreaProps) {
-  const { t } = useTranslation();
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);
@@ -132,11 +134,10 @@ export default function DropArea({
           textAlign="center"
           whiteSpace="pre-line"
         >
-          {t("dropArea.selectFile")}
+          {title}
         </styled.p>
         <styled.p textStyle="subtitle.sm.default" color="text.lighter">
-          {t("dropArea.validFormats")}{" "}
-          {WHITELISTED_EXTENSIONS.map((e) => `.${e}`).join(", ")}
+          {description}
         </styled.p>
       </Stack>
       <input
