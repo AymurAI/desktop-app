@@ -1,5 +1,9 @@
+import { useTutorialSeen } from "@/store/useLocal";
 import { css } from "@/styled/css";
-import { Divider, Stack, styled } from "@/styled/jsx";
+import { Divider, HStack, Stack, styled } from "@/styled/jsx";
+import type { FeatureFlowEnum } from "@/types/features";
+import FeaturesMenu from "../features-menu";
+import HowItWorksModal from "../how-it-works-modal";
 
 const header = css({
   position: "relative",
@@ -20,15 +24,30 @@ const centerSlot = css({
   transform: "translateX(-50%)",
 });
 
-interface HeaderProps {
+type HeaderProps = {
   title?: string;
   center?: React.ReactNode;
-  right?: React.ReactNode;
-}
-export default function Header({ title, center, right }: HeaderProps) {
+} & (
+  | { feature: FeatureFlowEnum; right?: never }
+  | { right: React.ReactNode; feature?: never }
+  | { right?: never; feature?: never }
+);
+
+export default function Header({ title, center, feature, right }: HeaderProps) {
+  const tutorialSeen = useTutorialSeen(feature!);
+
   const img = title
     ? "/brand/aymurai-iso-darkpurple.svg"
     : "/brand/aymurai-hor-darkpurple.svg";
+
+  const rightSlot = feature ? (
+    <HStack>
+      {tutorialSeen && <HowItWorksModal feature={feature} />}
+      <FeaturesMenu />
+    </HStack>
+  ) : (
+    right
+  );
 
   return (
     <header className={header}>
@@ -47,7 +66,7 @@ export default function Header({ title, center, right }: HeaderProps) {
         )}
       </Stack>
       {center && <div className={centerSlot}>{center}</div>}
-      <div>{right}</div>
+      {rightSlot}
     </header>
   );
 }
