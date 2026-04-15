@@ -6,10 +6,14 @@ export const Container = styled("div", {
   // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
 
   zIndex: 1,
-  overflowY: "scroll",
+  display: "flex",
+  flexDirection: "column",
+  overflow: "hidden",
 });
 
 export const File = styled("div", {
+  flex: 1,
+  overflowY: "scroll",
   px: "$xl",
   pb: "$xl",
   // pt: "$l",
