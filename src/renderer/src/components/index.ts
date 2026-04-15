@@ -19,7 +19,6 @@ export { default as SectionTitle } from "./section-title";
 export { default as Select } from "./select";
 export { default as Spinner } from "./spinner";
 export { default as Stack } from "./stack";
-export { default as Stepper } from "./stepper";
 export { default as Subtitle } from "./subtitle";
 export { default as Suggestion } from "./suggestion";
 export { Tab, TabName } from "./tabs";
