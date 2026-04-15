@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { css } from "@/styled/css";
-import { HStack, styled } from "@/styled/jsx";
+import { HStack, Stack, styled } from "@/styled/jsx";
 import { CaretUp } from "phosphor-react";
 
 const header = css({
@@ -30,19 +30,28 @@ interface SectionProps {
   children: React.ReactNode;
   title: string;
 }
-export default function Section({ title: sectionTitle, children }: SectionProps) {
+export default function LabelManagerSection({
+  title: sectionTitle,
+  children,
+}: SectionProps) {
   const [open, setOpen] = useState(true);
 
   return (
-    <div>
-      <HStack gap="2" className={header} onClick={() => setOpen((prev) => !prev)}>
+    <Stack gap="6">
+      <HStack
+        gap="2"
+        className={header}
+        onClick={() => setOpen((prev) => !prev)}
+      >
         <div
           className={caret}
           style={{ transform: open ? "rotate(0deg)" : "rotate(180deg)" }}
         >
           <CaretUp size={24} />
         </div>
-        <styled.p textStyle="subtitle.md.strong" color="text.default">{sectionTitle}</styled.p>
+        <styled.p textStyle="subtitle.md.strong" color="text.default">
+          {sectionTitle}
+        </styled.p>
       </HStack>
       <div
         className={contentOuter}
@@ -50,6 +59,6 @@ export default function Section({ title: sectionTitle, children }: SectionProps)
       >
         <div className={contentInner}>{children}</div>
       </div>
-    </div>
+    </Stack>
   );
 }

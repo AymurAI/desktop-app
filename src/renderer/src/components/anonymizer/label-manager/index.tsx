@@ -3,22 +3,26 @@ import { useState } from "react";
 import { sva } from "@/styled/css";
 import { HStack } from "@/styled/jsx";
 import { stack } from "@/styled/patterns";
-import Section from "./section";
+import LabelConfigTab from "./config-tab";
+import LabelEntityTab from "./entity-tab";
 import LabelManagerTab from "./tab";
 
 const styles = sva({
-  slots: ["container", "body"],
+  slots: ["container", "body", "close"],
   base: {
     container: {
       ...stack.raw({ gap: "11" }),
       px: "8",
-      pt: "6",
-      pb: "0",
+      py: "6",
       width: "[400px]",
+      overflow: "scroll",
 
       bg: "bg.primary",
     },
     body: {},
+    close: {
+      cursor: "pointer",
+    },
   },
 });
 
@@ -47,14 +51,12 @@ export default function LabelManager({ onClose }: LabelManagerProps) {
             Configuracion
           </LabelManagerTab>
         </HStack>
-        <button onClick={onClose} type="button">
+        <button onClick={onClose} type="button" className={classes.close}>
           X
         </button>
       </HStack>
       <div className={classes.body}>
-        <Section title="Categorias incluidas">
-          <div />
-        </Section>
+        {selectedTab === "entity" ? <LabelEntityTab /> : <LabelConfigTab />}
       </div>
     </div>
   );
