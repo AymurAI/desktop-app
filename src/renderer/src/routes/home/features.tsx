@@ -1,3 +1,4 @@
+import BuiltBy from "@/components/brand/built-by";
 import FeatureIcon from "@/components/feature-icon";
 import FeaturesMenu from "@/components/features-menu";
 import Header from "@/components/layout/header";
@@ -15,6 +16,13 @@ import {
 } from "@tanstack/react-router";
 import type { Icon } from "phosphor-react";
 import { useTranslation } from "react-i18next";
+
+const builtBy = css({
+  pos: "absolute",
+  bottom: "16", // 64px
+  left: "[50%]",
+  transform: "[translateX(-50%)]",
+});
 
 interface CardToolProps extends LinkComponentProps {
   title: string;
@@ -80,6 +88,10 @@ function RouteComponent() {
               />
             </Grid>
           </Stack>
+          {/* Floating content below */}
+          <div className={builtBy}>
+            <BuiltBy />
+          </div>
         </MainContent>
       </Stack>
     </APIProtected>
