@@ -18,7 +18,8 @@ import { addFiles } from "@/reducers/file/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { featureNamespace } from "@/types/features";
-import { useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 // FIRST step of the processing workflow
@@ -27,12 +28,12 @@ export const Route = createFileRoute("/app/$feature/onboarding")({
 });
 
 function RouteComponent() {
+  const queryClient = useQueryClient();
   const { feature } = useParams({
     from: "/app/$feature/onboarding",
   });
   const navigate = useNavigate();
   const { t } = useTranslation(featureNamespace[feature]);
-  console.log({ feature, title: t("onboarding.dropAreaTitle") });
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -57,6 +58,11 @@ function RouteComponent() {
   const handleOpenInput = () => {
     inputRef.current?.click();
   };
+
+  useEffect(() => {
+    queryClient.removeQueries({ queryKey: ["predict"] });
+    queryClient.removeQueries({ queryKey: ["file-parser"] });
+  }, []);
 
   return (
     <>
