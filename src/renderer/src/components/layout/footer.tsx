@@ -1,4 +1,4 @@
-import { css } from "@/styled/css";
+import { css, cx } from "@/styled/css";
 import BuiltBy from "../brand/built-by";
 
 const content = css({
@@ -19,10 +19,15 @@ const childrenContainer = css({
 interface FooterProps {
   withBuiltBy?: boolean;
   children?: React.ReactNode;
+  className?: string;
 }
-export default function Footer({ withBuiltBy, children }: FooterProps) {
+export default function Footer({
+  withBuiltBy,
+  children,
+  className,
+}: FooterProps) {
   return (
-    <footer className={content}>
+    <footer className={cx(content, className)}>
       {withBuiltBy && <BuiltBy size={120} gap="0" />}
       <div className={childrenContainer}>{children}</div>
     </footer>
