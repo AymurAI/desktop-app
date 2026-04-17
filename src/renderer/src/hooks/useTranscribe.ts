@@ -2,8 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { CanceledError } from "axios";
 
+import { addTranscription } from "@/reducers/transcription/actions";
 import { transcribe } from "@/services/aymurai/transcribe";
 import type { Transcription } from "@/types/transcription";
+import type { TranscriptionAction } from "@/reducers/transcription";
 
 export type TranscribeStatus =
   | "idle"
@@ -15,11 +17,12 @@ export type TranscribeStatus =
 interface UseTranscribeOptions {
   onTranscription?: (transcription: Transcription) => void;
   onStatusChange?: (status: TranscribeStatus) => void;
+  dispatch?: React.Dispatch<TranscriptionAction>;
 }
 
 export function useTranscribe(
   files: File[],
-  { onTranscription, onStatusChange }: UseTranscribeOptions = {},
+  { onTranscription, onStatusChange, dispatch }: UseTranscribeOptions = {},
 ) {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<TranscribeStatus>("idle");
@@ -53,6 +56,7 @@ export function useTranscribe(
         if (!active) return;
 
         onTranscription?.(result);
+        dispatch?.(addTranscription(result));
         setProgress((current) => current + 1 / files.length);
       });
 
