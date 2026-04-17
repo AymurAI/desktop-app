@@ -1,5 +1,6 @@
 import Arrow from "./arrow";
 import AudioPlayer from "./audio-player";
+import TranscriptionEditor from "./transcription-editor";
 import Button from "./button";
 import Card from "./card";
 import FeatureCard from "./feature-card";
@@ -37,6 +38,7 @@ export type { AudioPlayerHandle } from "./audio-player";
 export {
   Arrow,
   AudioPlayer,
+  TranscriptionEditor,
   Button,
   Card,
   FeatureCard,
