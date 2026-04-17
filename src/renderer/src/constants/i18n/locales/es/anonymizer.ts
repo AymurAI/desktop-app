@@ -38,7 +38,7 @@ const anonymizer = {
       "Los datos encontrados por AymurAI y posteriormente validados ya han sido anonimizados correctamente.",
     subtitle: "Archivo procesado",
     restart: "Cargar un nuevo documento",
-    download: "Descargar documento",
+    viewResult: "Descargar documento",
   },
 };
 

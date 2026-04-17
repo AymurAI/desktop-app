@@ -38,7 +38,7 @@ const dataset = {
       "Los datos encontrados por AymurAI y posteriormente validados ya son parte del set de datos abiertos con perspectiva de género.",
     subtitle: "Archivos procesados",
     restart: "Cargar más documentos",
-    viewDataset: "Ver set de datos",
+    viewResult: "Ver set de datos",
   },
 };
 
