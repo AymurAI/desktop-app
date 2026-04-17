@@ -1,6 +1,9 @@
 import Arrow from "./arrow";
 import Button from "./button";
 import Card from "./card";
+import FeatureCard from "./feature-card";
+import SpeakerAvatar from "./speaker-avatar";
+import Switch from "./switch";
 import { Checkbox, CheckboxGroup } from "./checkbox";
 import DecisionTabs from "./decision-tabs";
 import FileAnnotator from "./file-annotator";
@@ -33,6 +36,9 @@ export {
   Arrow,
   Button,
   Card,
+  FeatureCard,
+  SpeakerAvatar,
+  Switch,
   Checkbox,
   CheckboxGroup,
   DecisionTabs,
