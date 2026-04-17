@@ -1,4 +1,5 @@
 import Arrow from "./arrow";
+import AudioPlayer from "./audio-player";
 import Button from "./button";
 import Card from "./card";
 import FeatureCard from "./feature-card";
@@ -32,8 +33,10 @@ import Toast from "./toast";
 import Tooltip from "./tooltip";
 import ValidationForm from "./validation-form";
 
+export type { AudioPlayerHandle } from "./audio-player";
 export {
   Arrow,
+  AudioPlayer,
   Button,
   Card,
   FeatureCard,
