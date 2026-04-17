@@ -18,3 +18,6 @@ export const DATASET_URL =
  * AymurAI API URL
  */
 export const AYMURAI_API_URL = `http://localhost:${PREDICT_PORT}`;
+
+export const USE_MOCK_STT = true;
+export const STT_MOCK_DELAY_MS = 4000;
