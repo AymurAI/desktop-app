@@ -7,6 +7,7 @@ export default function Validation() {
     <FeatureRouter
       DATA_SET={<Dataset/>}
       ANONYMIZER={<Anonymizer  />}
+      VOICE_TO_TEXT={null}
     />
   );
 }

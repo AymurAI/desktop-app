@@ -105,6 +105,7 @@ export default function Onboarding() {
           supportMultipleFiles={true}
         />
       }
+      VOICE_TO_TEXT={null}
     />
   );
 }

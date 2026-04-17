@@ -125,6 +125,7 @@ export default function Preview() {
           title="1. Previsualización del archivo"
         />
       }
+      VOICE_TO_TEXT={null}
     />
   );
 }

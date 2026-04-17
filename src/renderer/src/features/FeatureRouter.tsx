@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 interface ComponentsProps {
   [Feature.Dataset]: JSX.Element;
   [Feature.Anonymizer]: JSX.Element;
+  [Feature.VoiceToText]: JSX.Element | null;
 }
 
 export default function FeatureRouter(
@@ -12,5 +13,5 @@ export default function FeatureRouter(
   const { feature } = useParams<{ feature: Feature }>();
   if (!feature) return null;
 
-  return components[feature];
+  return components[feature] ?? null;
 }

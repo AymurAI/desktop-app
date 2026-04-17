@@ -36,6 +36,7 @@ export default function Main() {
     <FeatureRouter
       DATA_SET={<GenericMain title="Set de datos" />}
       ANONYMIZER={<GenericMain title="Anonimizador" />}
+      VOICE_TO_TEXT={<GenericMain title="Voz a Texto" />}
     />
   );
 }

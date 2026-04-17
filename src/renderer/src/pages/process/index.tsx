@@ -111,6 +111,7 @@ export default function Process() {
           supportMultipleFiles={false}
         />
       }
+      VOICE_TO_TEXT={null}
     />
   );
 }
