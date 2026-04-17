@@ -1,26 +1,49 @@
-import { X } from "phosphor-react";
-import { type ChangeEventHandler, useRef } from "react";
+import { ArrowsLeftRight, Stop, X } from "phosphor-react";
+import { type ChangeEventHandler, type MouseEventHandler, useRef } from "react";
 
-import { Button as BaseButton, HiddenInput, Stack } from "@/components";
+import HiddenInput from "@/components/hidden-input";
+import Button from "@/components/ui/button";
 import { useFileDispatch } from "@/hooks";
-import { type PredictStatus, usePredict } from "@/hooks/usePredict";
+import type { PredictStatus } from "@/hooks/usePredict";
 import { removeFile, replaceFile } from "@/reducers/file/actions";
-import type { DocFile } from "@/types/file";
-import Button from "./Button";
+import { css } from "@/styled/css";
+import { Stack } from "@/styled/jsx";
 import ProgressBar from "./ProgressBar";
 
+function ActionButton({
+  status,
+  onClick,
+}: { status: PredictStatus; onClick: MouseEventHandler }) {
+  return (
+    <Button onClick={onClick} className={css({ w: "36" })}>
+      {status === "processing" ? (
+        <>
+          <Stop weight="bold" />
+          Detener
+        </>
+      ) : (
+        <>
+          <ArrowsLeftRight weight="bold" />
+          Reemplazar
+        </>
+      )}
+    </Button>
+  );
+}
+
 interface Props {
-  file: DocFile;
-  onStatusChange?: (newStatus: PredictStatus) => void;
-  onFileReplace?: (newName: string) => void;
+  fileName: string;
+  status: PredictStatus;
+  progress: number;
+  onAbort?: () => void;
 }
 export default function FileProcessing({
-  file,
-  onStatusChange,
-  onFileReplace,
+  fileName,
+  status,
+  progress,
+  onAbort,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { progress, status, abort } = usePredict(file, { onStatusChange });
   const dispatch = useFileDispatch();
 
   const handleOpenFinder = () => {
@@ -30,48 +53,43 @@ export default function FileProcessing({
   const handleAddedFile: ChangeEventHandler<HTMLInputElement> = (e) => {
     const rawFiles = e.target.files;
 
-    // Check if any file was added
     if (rawFiles) {
       const files = Array.from(rawFiles);
-
-      // Only one file can be used to replace the old one
       if (files.length > 0) {
-        onFileReplace?.(files[0].name);
-        dispatch(replaceFile(file.data.name, files[0]));
+        dispatch(replaceFile(fileName, files[0]));
       }
     }
   };
 
   const handleStop = () => {
-    abort();
+    onAbort?.();
   };
 
   const remove = () => {
-    abort();
-    dispatch(removeFile(file.data.name));
+    onAbort?.();
+    dispatch(removeFile(fileName));
   };
 
   return (
-    <Stack align="center" spacing="m" css={{ width: "100%" }}>
+    <Stack align="center" gap="4" width="full" direction="row">
       <HiddenInput
         multiple={false}
-        css={{ position: "absolute" }}
+        style={{ position: "absolute" }}
         ref={inputRef}
         onChange={handleAddedFile}
       />
       <ProgressBar
         status={status}
-        fileName={file.data.name}
+        fileName={fileName}
         progress={status === "stopped" ? 0 : Math.round(progress * 100)}
       />
-      <Button
+      <ActionButton
         status={status}
-        onStop={handleStop}
-        onReplace={handleOpenFinder}
+        onClick={status === "processing" ? handleStop : handleOpenFinder}
       />
-      <BaseButton variant="none" onClick={remove}>
+      <Button variant="none" onClick={remove}>
         <X />
-      </BaseButton>
+      </Button>
     </Stack>
   );
 }
