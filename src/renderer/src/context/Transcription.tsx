@@ -17,9 +17,9 @@ TranscriptionContext.displayName = "TranscriptionContext";
 /**
  * Context used to provide the dispatch function
  */
-export const TranscriptionDispatchContext = createContext<Dispatch<TranscriptionAction>>(
-  () => {},
-);
+export const TranscriptionDispatchContext = createContext<
+  Dispatch<TranscriptionAction>
+>(() => {});
 TranscriptionDispatchContext.displayName = "TranscriptionDispatchContext";
 
 interface Props {

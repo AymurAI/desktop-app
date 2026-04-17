@@ -2,10 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { CanceledError } from "axios";
 
+import type { TranscriptionAction } from "@/reducers/transcription";
 import { addTranscription } from "@/reducers/transcription/actions";
 import { transcribe } from "@/services/aymurai/transcribe";
 import type { Transcription } from "@/types/transcription";
-import type { TranscriptionAction } from "@/reducers/transcription";
 
 export type TranscribeStatus =
   | "idle"
@@ -29,10 +29,10 @@ export function useTranscribe(
 
   const controller = useRef(new AbortController());
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally omitting onStatusChange to avoid re-runs on parent re-renders
   const updateStatus = useCallback((newValue: TranscribeStatus) => {
     setStatus(newValue);
     onStatusChange?.(newValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const abort = () => {
@@ -41,6 +41,7 @@ export function useTranscribe(
     setProgress(0);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: dispatch/onTranscription/updateStatus are stable callbacks; files is the intended trigger
   useEffect(() => {
     if (files.length === 0) return;
 

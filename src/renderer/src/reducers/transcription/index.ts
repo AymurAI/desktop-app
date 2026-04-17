@@ -64,7 +64,10 @@ function updateTranscription(
  * @param action Action to perform
  * @returns A new state
  */
-export default function reducer(state: State, action: TranscriptionAction): State {
+export default function reducer(
+  state: State,
+  action: TranscriptionAction,
+): State {
   const { type, payload } = action;
 
   switch (type) {

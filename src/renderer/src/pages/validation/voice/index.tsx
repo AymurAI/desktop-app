@@ -20,7 +20,14 @@ export default function VoiceValidation() {
 
   return (
     <>
-      <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <div
+        style={{
+          flex: 1,
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <TranscriptionEditor
           transcription={transcription}
           isEditMode={isEditMode}
@@ -28,7 +35,11 @@ export default function VoiceValidation() {
         />
       </div>
       <Footer>
-        <Button size="l" variant="secondary" onClick={() => navigate("../process")}>
+        <Button
+          size="l"
+          variant="secondary"
+          onClick={() => navigate("../process")}
+        >
           Volver
         </Button>
         <Button size="l" onClick={() => navigate("../finish")}>

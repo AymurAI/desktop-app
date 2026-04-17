@@ -1,6 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
-import { Button, Card, SectionTitle, Stack, Subtitle, Text } from "@/components";
+import {
+  Button,
+  Card,
+  SectionTitle,
+  Stack,
+  Subtitle,
+  Text,
+} from "@/components";
 import { formatTime } from "@/components/audio-player/formatTime";
 import { useTranscriptions } from "@/hooks/useTranscriptions";
 import { Footer, Section } from "@/layout/main";
@@ -14,7 +21,9 @@ export default function VoiceFinish() {
     if (!transcription) return;
 
     const lines = transcription.turns.map((turn) => {
-      const speaker = transcription.speakers.find((s) => s.id === turn.speakerId);
+      const speaker = transcription.speakers.find(
+        (s) => s.id === turn.speakerId,
+      );
       const time = formatTime(turn.startMs);
       return `[${time}] ${speaker?.label ?? "Locutor"}: ${turn.text}`;
     });
@@ -62,7 +71,11 @@ export default function VoiceFinish() {
         )}
       </Section>
       <Footer>
-        <Button size="l" variant="secondary" onClick={() => navigate("../validation")}>
+        <Button
+          size="l"
+          variant="secondary"
+          onClick={() => navigate("../validation")}
+        >
           Volver
         </Button>
         <Button size="l" disabled={!transcription} onClick={handleDownloadTxt}>

@@ -1,6 +1,6 @@
+import { FileAudio, Trash } from "phosphor-react";
 import { type ChangeEventHandler, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileAudio, Trash } from "phosphor-react";
 
 import {
   Button,

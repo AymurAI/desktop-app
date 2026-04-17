@@ -1,5 +1,5 @@
-import { type SpeakerColor } from "@/types/transcription";
 import { styled } from "@/styles/stitches.config";
+import type { SpeakerColor } from "@/types/transcription";
 
 const AvatarRoot = styled("div", {
   display: "flex",

@@ -1,16 +1,21 @@
 import { useState } from "react";
 
-import Dialog from "@/components/dialog";
 import Button from "@/components/button";
+import Dialog from "@/components/dialog";
 import SpeakerAvatar from "@/components/speaker-avatar";
-import { styled } from "@/styles/stitches.config";
-import type { Speaker, SpeakerColor, Transcription, Turn } from "@/types/transcription";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import {
   addSpeaker,
   reassignTurnSpeaker,
   renameSpeakerGlobal,
 } from "@/reducers/transcription/actions";
+import { styled } from "@/styles/stitches.config";
+import type {
+  Speaker,
+  SpeakerColor,
+  Transcription,
+  Turn,
+} from "@/types/transcription";
 
 // ---------------------------------------------------------------------------
 // Styled components
@@ -125,7 +130,12 @@ const Divider = styled("div", {
 // Color cycling for new speakers
 // ---------------------------------------------------------------------------
 
-const SPEAKER_COLORS: SpeakerColor[] = ["primary", "secondary", "warning", "success"];
+const SPEAKER_COLORS: SpeakerColor[] = [
+  "primary",
+  "secondary",
+  "warning",
+  "success",
+];
 
 function pickColor(existingColors: SpeakerColor[]): SpeakerColor {
   for (const color of SPEAKER_COLORS) {
@@ -152,7 +162,13 @@ interface SpeakerDialogProps {
   speaker: Speaker;
 }
 
-function SpeakerDialog({ open, onClose, transcription, turn, speaker }: SpeakerDialogProps) {
+function SpeakerDialog({
+  open,
+  onClose,
+  transcription,
+  turn,
+  speaker,
+}: SpeakerDialogProps) {
   const dispatch = useTranscriptionDispatch();
   const [renameValue, setRenameValue] = useState(speaker.label);
   const [selectedSpeakerId, setSelectedSpeakerId] = useState(turn.speakerId);
@@ -198,7 +214,9 @@ function SpeakerDialog({ open, onClose, transcription, turn, speaker }: SpeakerD
           <RenameInput
             value={renameValue}
             onChange={(e) => setRenameValue(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleRename(); }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleRename();
+            }}
             aria-label="Nuevo nombre del locutor"
           />
           <Button variant="primary" size="s" onClick={handleRename}>
@@ -260,11 +278,17 @@ function SpeakerDialog({ open, onClose, transcription, turn, speaker }: SpeakerD
               placeholder="Nombre del nuevo locutor"
               value={newSpeakerName}
               onChange={(e) => setNewSpeakerName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleNewSpeakerConfirm(); }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleNewSpeakerConfirm();
+              }}
               autoFocus
               aria-label="Nombre del nuevo locutor"
             />
-            <Button variant="primary" size="s" onClick={handleNewSpeakerConfirm}>
+            <Button
+              variant="primary"
+              size="s"
+              onClick={handleNewSpeakerConfirm}
+            >
               Agregar
             </Button>
           </NewSpeakerRow>

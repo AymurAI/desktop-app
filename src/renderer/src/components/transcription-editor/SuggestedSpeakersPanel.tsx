@@ -1,10 +1,10 @@
-import { styled } from "@/styles/stitches.config";
 import SpeakerAvatar from "@/components/speaker-avatar";
-import type { Transcription } from "@/types/transcription";
-import type { SuggestedSpeaker } from "@/types/transcription";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { assignSuggestedSpeakerToTurn } from "@/reducers/transcription/actions";
 import { SUGGESTED_SPEAKERS } from "@/services/aymurai/fixtures/suggestedSpeakers";
+import { styled } from "@/styles/stitches.config";
+import type { Transcription } from "@/types/transcription";
+import type { SuggestedSpeaker } from "@/types/transcription";
 
 // ---------------------------------------------------------------------------
 // Styled components
@@ -82,12 +82,17 @@ interface SuggestedSpeakersPanelProps {
   selectedTurnId: string | null;
 }
 
-function SuggestedSpeakersPanel({ transcription, selectedTurnId }: SuggestedSpeakersPanelProps) {
+function SuggestedSpeakersPanel({
+  transcription,
+  selectedTurnId,
+}: SuggestedSpeakersPanelProps) {
   const dispatch = useTranscriptionDispatch();
 
   const handleAssign = (suggested: SuggestedSpeaker) => {
     if (!selectedTurnId) return;
-    dispatch(assignSuggestedSpeakerToTurn(transcription.id, selectedTurnId, suggested));
+    dispatch(
+      assignSuggestedSpeakerToTurn(transcription.id, selectedTurnId, suggested),
+    );
   };
 
   return (
@@ -95,7 +100,9 @@ function SuggestedSpeakersPanel({ transcription, selectedTurnId }: SuggestedSpea
       <PanelTitle>Speakers sugeridos</PanelTitle>
 
       {!selectedTurnId && (
-        <EmptyHint>Seleccioná un turno para asignar un speaker sugerido.</EmptyHint>
+        <EmptyHint>
+          Seleccioná un turno para asignar un speaker sugerido.
+        </EmptyHint>
       )}
 
       {SUGGESTED_SPEAKERS.map((suggested) => (

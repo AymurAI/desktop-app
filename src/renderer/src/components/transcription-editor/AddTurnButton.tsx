@@ -1,7 +1,7 @@
-import { styled } from "@/styles/stitches.config";
-import type { Turn } from "@/types/transcription";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { insertTurn } from "@/reducers/transcription/actions";
+import { styled } from "@/styles/stitches.config";
+import type { Turn } from "@/types/transcription";
 
 // ---------------------------------------------------------------------------
 // Styled components

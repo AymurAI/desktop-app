@@ -1,16 +1,17 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
 import {
   ArrowClockwise,
   ArrowCounterClockwise,
   Pause,
   Play,
 } from "phosphor-react";
+import type React from "react";
+import {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
 import { styled } from "@/styles";
 import { formatTime } from "./formatTime";
@@ -242,11 +243,11 @@ const AudioPlayer = forwardRef<AudioPlayerHandle, AudioPlayerProps>(
       [durationMs, onTimeUpdate],
     );
 
-    const fillPercent =
-      durationMs > 0 ? (currentMs / durationMs) * 100 : 0;
+    const fillPercent = durationMs > 0 ? (currentMs / durationMs) * 100 : 0;
 
     return (
       <PlayerBar>
+        {/* biome-ignore lint/a11y/useMediaCaption: programmatic audio player, captions not applicable */}
         <audio
           ref={audioRef}
           src={src}

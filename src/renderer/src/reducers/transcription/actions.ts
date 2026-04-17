@@ -1,4 +1,9 @@
-import type { Speaker, SuggestedSpeaker, Transcription, Turn } from "@/types/transcription";
+import type {
+  Speaker,
+  SuggestedSpeaker,
+  Transcription,
+  Turn,
+} from "@/types/transcription";
 
 /**
  * List of action types.
@@ -31,7 +36,9 @@ export type AddTranscriptionAction = Action<
  * Adds a new transcription to the state
  * @param transcription Transcription to be added
  */
-export function addTranscription(transcription: Transcription): AddTranscriptionAction {
+export function addTranscription(
+  transcription: Transcription,
+): AddTranscriptionAction {
   return {
     type: ActionTypes.ADD_TRANSCRIPTION,
     payload: { transcription },
@@ -146,7 +153,10 @@ export type RemoveTurnAction = Action<
  * @param transcriptionId ID of the transcription to modify
  * @param turnId ID of the turn to remove
  */
-export function removeTurn(transcriptionId: string, turnId: string): RemoveTurnAction {
+export function removeTurn(
+  transcriptionId: string,
+  turnId: string,
+): RemoveTurnAction {
   return {
     type: ActionTypes.REMOVE_TURN,
     payload: { transcriptionId, turnId },
@@ -162,7 +172,10 @@ export type AddSpeakerAction = Action<
  * @param transcriptionId ID of the transcription to modify
  * @param speaker Speaker to add
  */
-export function addSpeaker(transcriptionId: string, speaker: Speaker): AddSpeakerAction {
+export function addSpeaker(
+  transcriptionId: string,
+  speaker: Speaker,
+): AddSpeakerAction {
   return {
     type: ActionTypes.ADD_SPEAKER,
     payload: { transcriptionId, speaker },

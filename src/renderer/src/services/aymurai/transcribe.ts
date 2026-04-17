@@ -1,10 +1,10 @@
 import { CanceledError } from "axios";
 
-import { USE_MOCK_STT, STT_MOCK_DELAY_MS } from "@/utils/config";
 import { TranscriptionSchema } from "@/schema/transcription";
-import { buildFixture } from "./fixtures/transcription";
 import type { Transcription } from "@/types/transcription";
+import { STT_MOCK_DELAY_MS, USE_MOCK_STT } from "@/utils/config";
 import api from "../api";
+import { buildFixture } from "./fixtures/transcription";
 
 /**
  * Sends an audio file to the STT service and returns a Transcription.

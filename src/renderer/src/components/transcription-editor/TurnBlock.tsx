@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 
-import { Trash } from "phosphor-react";
-import { styled } from "@/styles/stitches.config";
 import SpeakerAvatar from "@/components/speaker-avatar";
-import type { Speaker, Transcription, Turn } from "@/types/transcription";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { removeTurn, updateTurnText } from "@/reducers/transcription/actions";
-import { formatMs } from "./formatMs";
+import { styled } from "@/styles/stitches.config";
+import type { Speaker, Transcription, Turn } from "@/types/transcription";
+import { Trash } from "phosphor-react";
 import SpeakerDialog from "./SpeakerDialog";
+import { formatMs } from "./formatMs";
 
 // ---------------------------------------------------------------------------
 // Styled components
@@ -20,7 +20,8 @@ const TurnWrap = styled("div", {
   paddingLeft: "32px",
   paddingRight: "32px",
   boxSizing: "border-box",
-  transition: "border-left 150ms ease, background-color 150ms ease, outline 150ms ease",
+  transition:
+    "border-left 150ms ease, background-color 150ms ease, outline 150ms ease",
   position: "relative",
 
   variants: {

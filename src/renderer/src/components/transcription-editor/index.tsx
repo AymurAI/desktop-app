@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
-import { CaretLeft, CaretRight, MagnifyingGlass } from "phosphor-react";
-import AudioPlayer, { AudioPlayerHandle } from "@/components/audio-player";
+import AudioPlayer, { type AudioPlayerHandle } from "@/components/audio-player";
 import Switch from "@/components/switch";
 import { styled } from "@/styles/stitches.config";
 import type { Transcription } from "@/types/transcription";
-import TurnBlock from "./TurnBlock";
+import { CaretLeft, CaretRight, MagnifyingGlass } from "phosphor-react";
 import AddTurnButton from "./AddTurnButton";
 import SuggestedSpeakersPanel from "./SuggestedSpeakersPanel";
+import TurnBlock from "./TurnBlock";
 import { useActiveTurn } from "./useActiveTurn";
 
 // ---------------------------------------------------------------------------
@@ -144,7 +144,10 @@ interface SearchMatch {
   index: number; // match index within the turn text
 }
 
-function findMatches(turns: Transcription["turns"], query: string): SearchMatch[] {
+function findMatches(
+  turns: Transcription["turns"],
+  query: string,
+): SearchMatch[] {
   if (!query) return [];
   const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const regex = new RegExp(escaped, "gi");

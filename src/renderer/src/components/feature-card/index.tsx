@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { styled } from "@/styles/stitches.config";
 
@@ -67,7 +67,13 @@ interface FeatureCardProps {
   disabled?: boolean;
 }
 
-function FeatureCard({ icon, title, description, onClick, disabled = false }: FeatureCardProps) {
+function FeatureCard({
+  icon,
+  title,
+  description,
+  onClick,
+  disabled = false,
+}: FeatureCardProps) {
   return (
     <StyledCard
       disabled={disabled}

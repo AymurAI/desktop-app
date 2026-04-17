@@ -11,12 +11,15 @@ import {
   Text,
   Toast,
 } from "@/components";
-import { useFiles } from "@/hooks";
-import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
-import { useTranscribe } from "@/hooks/useTranscribe";
-import { Footer, Section } from "@/layout/main";
-import { Bar, BarContainer } from "@/components/file-processing/FileProcessing.styles";
+import {
+  Bar,
+  BarContainer,
+} from "@/components/file-processing/FileProcessing.styles";
 import Label from "@/components/label";
+import { useFiles } from "@/hooks";
+import { useTranscribe } from "@/hooks/useTranscribe";
+import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
+import { Footer, Section } from "@/layout/main";
 
 export default function VoiceProcess() {
   const navigate = useNavigate();
@@ -77,14 +80,12 @@ export default function VoiceProcess() {
                     ? files[0].data.name
                     : `${files.length} archivos`}
                 </Label>
-                <Label
-                  status={isError ? "error" : "default"}
-                >
+                <Label status={isError ? "error" : "default"}>
                   {isError
                     ? "Error en la transcripción"
                     : isCompleted
-                    ? "Transcripción completada 100%"
-                    : `${progressPercent}%`}
+                      ? "Transcripción completada 100%"
+                      : `${progressPercent}%`}
                 </Label>
               </Stack>
               <BarContainer>
