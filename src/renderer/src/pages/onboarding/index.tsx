@@ -9,6 +9,7 @@ import { addFiles } from "@/reducers/file/actions";
 import FeatureRouter from "@/features/FeatureRouter";
 import { Card } from "./Cards";
 import { Grid } from "./grid";
+import VoiceOnboarding from "./voice";
 
 interface GenericDatasetProps {
   description: string;
@@ -105,7 +106,7 @@ export default function Onboarding() {
           supportMultipleFiles={true}
         />
       }
-      VOICE_TO_TEXT={null}
+      VOICE_TO_TEXT={<VoiceOnboarding />}
     />
   );
 }

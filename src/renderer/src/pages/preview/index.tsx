@@ -13,6 +13,7 @@ import {
 } from "@/components";
 import FeatureRouter from "@/features/FeatureRouter";
 import { useFileDispatch, useFiles } from "@/hooks";
+import VoicePreview from "./voice";
 import { Footer, Section } from "@/layout/main";
 import {
   addFiles,
@@ -125,7 +126,7 @@ export default function Preview() {
           title="1. Previsualización del archivo"
         />
       }
-      VOICE_TO_TEXT={null}
+      VOICE_TO_TEXT={<VoicePreview />}
     />
   );
 }

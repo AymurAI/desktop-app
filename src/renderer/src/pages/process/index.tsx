@@ -21,6 +21,7 @@ import {
 } from "@/reducers/file/actions";
 
 import FeatureRouter from "@/features/FeatureRouter";
+import VoiceProcess from "./voice";
 import useNotify from "./useNotify";
 import { canContinue, initProcessState, replace } from "./utils";
 
@@ -111,7 +112,7 @@ export default function Process() {
           supportMultipleFiles={false}
         />
       }
-      VOICE_TO_TEXT={null}
+      VOICE_TO_TEXT={<VoiceProcess />}
     />
   );
 }
