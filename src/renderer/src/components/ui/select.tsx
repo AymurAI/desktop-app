@@ -1,6 +1,6 @@
 import * as RadixSelect from "@radix-ui/react-select";
 import { CaretDown, Check } from "phosphor-react";
-import { useId } from "react";
+import { type Ref, useId, useImperativeHandle } from "react";
 
 import Suggestion from "@/components/ui/suggestion";
 import { sva } from "@/styled/css";
@@ -16,18 +16,37 @@ const Affix = styled("span", {
 });
 
 export type SelectOption = { id: string; text: string };
-export type SelectSuggestion = { text?: string; value: string };
+export type SelectSuggestion = { id: string; text?: string };
 
 interface SelectProps {
   options: SelectOption[];
   label?: string;
   value?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: SelectOption) => void;
   prefix?: string;
   suffix?: string;
   suggestion?: SelectSuggestion;
+  priorityOrder?: string[];
   placeholder?: string;
   disabled?: boolean;
+  ref?: Ref<{ value: string | undefined }>;
+}
+
+function orderByPriority(options: SelectOption[], priority: string[] = []) {
+  const filtered = options.filter(({ id }) => !priority.includes(id));
+  const preferred = priority
+    .map((p) => options.find(({ id }) => p === id))
+    .filter((o): o is SelectOption => !!o);
+  return [...preferred, ...filtered];
+}
+
+function secureSuggestion(
+  suggestion: SelectSuggestion | undefined,
+  options: SelectOption[],
+): SelectOption | undefined {
+  if (!suggestion) return undefined;
+  if (suggestion.text) return { id: suggestion.id, text: suggestion.text };
+  return options.find(({ id }) => id === suggestion.id);
 }
 
 const select = sva({
@@ -141,21 +160,33 @@ export default function Select({
   prefix,
   suffix,
   suggestion,
+  priorityOrder = [],
   placeholder = "",
   disabled = false,
+  ref,
 }: SelectProps) {
   const triggerId = useId();
   const classes = select();
 
+  const orderedOptions = orderByPriority(options, priorityOrder);
+  const securedSuggestion = secureSuggestion(suggestion, options);
+
+  useImperativeHandle(ref, () => ({ value }), [value]);
+
+  const handleChange = (id: string) => {
+    const option = options.find((o) => o.id === id);
+    if (option) onChange?.(option);
+  };
+
   const handleSuggestionClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onChange?.(suggestion?.value ?? "");
+    if (securedSuggestion) handleChange(securedSuggestion.id);
   };
 
   const handleSuggestionKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.stopPropagation();
-      onChange?.(suggestion?.value ?? "");
+      if (securedSuggestion) handleChange(securedSuggestion.id);
     }
   };
 
@@ -173,7 +204,7 @@ export default function Select({
 
       <RadixSelect.Root
         value={value}
-        onValueChange={onChange}
+        onValueChange={handleChange}
         disabled={disabled}
       >
         <RadixSelect.Trigger id={triggerId} asChild>
@@ -186,14 +217,14 @@ export default function Select({
             </RadixSelect.Icon>
 
             <span className={classes.value}>
-              {!value && suggestion ? (
+              {!value && securedSuggestion ? (
                 <button
                   type="button"
                   onPointerDown={(e) => e.stopPropagation()}
                   onKeyDown={handleSuggestionKeyDown}
                   onClick={handleSuggestionClick}
                 >
-                  <Suggestion clickable>{suggestion.text ?? suggestion.value}</Suggestion>
+                  <Suggestion clickable>{securedSuggestion.text}</Suggestion>
                 </button>
               ) : (
                 <RadixSelect.Value placeholder={placeholder} />
@@ -211,7 +242,7 @@ export default function Select({
             sideOffset={4}
           >
             <RadixSelect.Viewport>
-              {options.map(({ id, text }) => (
+              {orderedOptions.map(({ id, text }) => (
                 <RadixSelect.Item key={id} value={id} className={classes.item}>
                   <RadixSelect.ItemIndicator className={classes.itemIndicator}>
                     <Check size={14} weight="bold" />
