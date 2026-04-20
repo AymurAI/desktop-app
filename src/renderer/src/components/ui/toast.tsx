@@ -1,48 +1,7 @@
-import { cva, cx } from "@/styled/css";
-import { Bell, X } from "phosphor-react";
 import { type Toast as HotToast, toast } from "react-hot-toast";
+import Callout, { type CalloutVariant } from "./callout";
 
-const toastRecipe = cva({
-  base: {
-    display: "flex",
-    flexDir: "row",
-    alignItems: "center",
-    gap: "3",
-    px: "4",
-    py: "3",
-    rounded: "lg",
-    borderWidth: "[1px]",
-    borderStyle: "solid",
-    width: "[360px]",
-    textStyle: "paragraph.sm.default",
-    color: "text.default",
-  },
-  variants: {
-    variant: {
-      error: {
-        bg: "system.error-secondary",
-        borderColor: "system.error",
-      },
-      warning: {
-        bg: "system.warning-secondary",
-        borderColor: "system.warning",
-      },
-      success: {
-        bg: "system.success-secondary",
-        borderColor: "system.success",
-      },
-      info: {
-        bg: "system.info-secondary",
-        borderColor: "[#BCBAB8]",
-      },
-    },
-  },
-  defaultVariants: {
-    variant: "info",
-  },
-});
-
-export type ToastVariant = "error" | "warning" | "success" | "info";
+export type ToastVariant = CalloutVariant;
 
 interface ToastProps {
   t: HotToast;
@@ -50,17 +9,21 @@ interface ToastProps {
   variant?: ToastVariant;
 }
 
+const ASSERTIVE_VARIANTS: ToastVariant[] = ["error", "warning"];
+
 function Toast({ t, message, variant = "info" }: ToastProps) {
+  const isAssertive = ASSERTIVE_VARIANTS.includes(variant);
+
   return (
-    <div className={cx(toastRecipe({ variant }))}>
-      <Bell size={20} weight="light" style={{ flexShrink: 0 }} />
-      <span style={{ flex: 1 }}>{message}</span>
-      <button type="button" onClick={() => toast.dismiss(t.id)}>
-        <X size={18} />
-      </button>
-    </div>
+    <Callout
+      message={message}
+      variant={variant}
+      onDismiss={() => toast.dismiss(t.id)}
+      role={isAssertive ? "alert" : "status"}
+      aria-live={isAssertive ? "assertive" : "polite"}
+      aria-atomic="true"
+    />
   );
 }
-
 
 export default Toast;
