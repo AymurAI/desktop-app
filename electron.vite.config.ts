@@ -10,6 +10,7 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()],
   },
   renderer: {
+    envDir: resolve(__dirname),
     server: {
       port: 3000,
     },

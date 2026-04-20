@@ -19,5 +19,7 @@ export const DATASET_URL =
  */
 export const AYMURAI_API_URL = `http://localhost:${PREDICT_PORT}`;
 
-export const USE_MOCK_STT = false;
-export const STT_MOCK_DELAY_MS = 4000;
+export const USE_MOCK_STT = import.meta.env.VITE_USE_MOCK_STT === "true";
+export const STT_MOCK_DELAY_MS = Number(
+  import.meta.env.VITE_STT_MOCK_DELAY_MS ?? 4000,
+);
