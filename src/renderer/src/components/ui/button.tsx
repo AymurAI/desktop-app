@@ -1,4 +1,4 @@
-import { type RecipeVariantProps, css, cva } from "@/styled/css";
+import { type RecipeVariantProps, css, cva, cx } from "@/styled/css";
 import { CircleNotch } from "phosphor-react";
 import type { ButtonHTMLAttributes } from "react";
 
@@ -8,7 +8,6 @@ const button = cva({
     flexDir: "row",
     gap: "1", // 4px
     justifyContent: "center",
-    alignSelf: "stretch",
     alignItems: "center",
 
     transitionProperty: "[background-color, color, box-shadow]",
@@ -105,10 +104,18 @@ const button = cva({
       },
       "icon-sm": { height: "9", width: "9", padding: "2", rounded: "md" },
     },
+    checked: {
+      true: {
+        bg: "action.pressed !important",
+        color: "text.onbutton-alternative !important",
+      },
+      false: {},
+    },
   },
   defaultVariants: {
     size: "md",
     variant: "primary",
+    checked: false,
   },
 });
 
@@ -123,12 +130,14 @@ function Button({
   isLoading,
   disabled,
   children,
+  className,
+  checked,
   ...props
 }: ButtonProps) {
   return (
     <button
       {...props}
-      className={button({ size, variant })}
+      className={cx(button({ size, variant, checked }), className)}
       disabled={disabled || isLoading}
     >
       {isLoading ? (
