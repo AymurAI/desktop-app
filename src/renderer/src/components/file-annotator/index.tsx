@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 
 import { SearchBar } from "./SearchBar";
 
-import type { SelectOption } from "@/components/select";
+import type { SelectOption } from "@/components/ui/select";
 import AnnotationProvider from "@/context/Annotation";
 import { HStack } from "@/styled/jsx";
 import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";

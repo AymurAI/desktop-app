@@ -32,7 +32,7 @@ const input = sva({
         color: "text.lighter",
       },
     },
-    label: { textStyle: "label.sm.default" },
+    label: { textStyle: "label.sm.default", color: "text.lighter" },
     errorMessage: {
       ...hstack.raw({ gap: "1" }),
       textStyle: "label.sm.default",

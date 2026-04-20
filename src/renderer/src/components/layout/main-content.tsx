@@ -1,4 +1,4 @@
-import { cva } from "@/styled/css";
+import { cva, cx } from "@/styled/css";
 import { stack } from "@/styled/patterns";
 
 const content = cva({
@@ -33,13 +33,15 @@ const content = cva({
 interface MainContentProps {
   children: React.ReactNode;
   full?: boolean;
+  className?: string;
 }
 export default function MainContent({
   children,
+  className,
   full = false,
 }: MainContentProps) {
   return (
-    <main className={content({ full })}>
+    <main className={cx(content({ full }), className)}>
       <div className="spacing">{children}</div>
     </main>
   );

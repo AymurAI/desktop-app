@@ -11,9 +11,11 @@ import {
   useState,
 } from "react";
 
-import { Button, Subtitle } from "@/components";
+import { Button } from "@/components";
 import type { NativeComponent } from "@/types/component";
 
+import { css } from "@/styled/css";
+import { styled } from "@/styled/jsx";
 import { Form } from "./ValidationForm.styles";
 
 interface Props extends NativeComponent<"form"> {
@@ -57,11 +59,11 @@ export default function ValidationForm({
 
   return (
     <Form {...props} onSubmit={handleSubmit}>
-      <Subtitle weight="strong">{title}</Subtitle>
+      <styled.h3 textStyle="subtitle.md.strong">{title}</styled.h3>
       {childrenWithHandler}
       <Button
-        size="s"
-        css={{ alignSelf: "flex-end" }}
+        size="sm"
+        className={css({ alignSelf: "flex-end" })}
         type="submit"
         onClick={handleClick}
         checked={checked}

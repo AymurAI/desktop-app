@@ -1,17 +1,15 @@
 import { useState } from "react";
 
-import {
-  Button,
-  FileAnnotator,
-  FileStepper,
-  Grid,
-  SectionTitle,
-} from "@/components";
+import { Button, FileAnnotator, FileStepper, Grid } from "@/components";
+import Footer from "@/components/layout/footer";
 import { useFileDispatch, useFiles } from "@/hooks";
-import { Footer, Section } from "@/layout/main-old";
+import { SectionTitle } from "@/layout/section-title";
 import { validate } from "@/reducers/file/actions";
+import { css } from "@/styled/css";
+import { HStack } from "@/styled/jsx";
 import { isFileValidated, isValidationCompleted } from "@/utils/file";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import MainContent from "../layout/main-content";
 import FormGroup from "./form-group";
 import { moveNext, movePrevious } from "./utils";
 
@@ -75,38 +73,44 @@ export function ValidateDataset() {
           file={selectedFile}
           isAnnotable={false}
         />
-        <Section css={{ px: 100, overflowY: "scroll" }} spacing="xxl">
-          <SectionTitle>3. Validación de datos</SectionTitle>
+        <MainContent
+          className={css({ px: "[100px]", overflowY: "scroll", gap: "16" })}
+        >
+          <SectionTitle className={css({ whiteSpace: "nowrap" })}>
+            3. Validación de datos
+          </SectionTitle>
           <FormGroup
             key={selectedFile.data.name}
             file={selectedFile}
             onCheck={handleCheck}
           />
-        </Section>
+        </MainContent>
       </Grid>
-      <Footer
-        css={{
-          justifyContent: hasStepper ? "space-between" : "flex-end",
-          gap: 150,
-        }}
-      >
-        {hasStepper && (
-          <FileStepper {...{ selected, nextFile, previousFile }} />
-        )}
+      <Footer>
+        <HStack
+          alignItems="center"
+          width="full"
+          justify={hasStepper ? "space-between" : "flex-end"}
+          gap="36"
+        >
+          {hasStepper && (
+            <FileStepper {...{ selected, nextFile, previousFile }} />
+          )}
 
-        {canContinue ? (
-          <Button size="md" onClick={handleContinue}>
-            Continuar
-          </Button>
-        ) : (
-          <Button
-            size="md"
-            onClick={handleValidate}
-            disabled={!checked && !canValidate}
-          >
-            Validar documento
-          </Button>
-        )}
+          {canContinue ? (
+            <Button size="md" onClick={handleContinue}>
+              Continuar
+            </Button>
+          ) : (
+            <Button
+              size="md"
+              onClick={handleValidate}
+              disabled={!checked && !canValidate}
+            >
+              Validar documento
+            </Button>
+          )}
+        </HStack>
       </Footer>
     </>
   );

@@ -1,10 +1,8 @@
 import { type ChangeEvent, useRef, useState } from "react";
 
-import type { SelectOption } from "@/components/select";
-
-import Select from "@/components/select";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import Select, { type SelectOption } from "@/components/ui/select";
 import { sva } from "@/styled/css";
 import { Grid, HStack, styled } from "@/styled/jsx";
 import { hstack } from "@/styled/patterns";

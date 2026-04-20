@@ -6,7 +6,8 @@ import {
   useState,
 } from "react";
 
-import { Label, Suggestion, Text } from "@/components";
+import { Label, Text } from "@/components";
+import Suggestion from "@/components/ui/suggestion";
 import type { CSS } from "@/styles";
 import type { NativeComponent } from "@/types/component";
 import { forwardRef } from "react";

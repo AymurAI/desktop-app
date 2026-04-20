@@ -36,7 +36,7 @@ export default function ChooseHost({ onRemoteClick }: ChooseHostProps) {
         >
           {t("home.host.howToConnect")}
         </h2>
-        <Stack gap="2" align="center">
+        <Stack gap="2" align="stretch" textAlign="center">
           <Button
             onClick={runLocalServer}
             disabled={isRunning}

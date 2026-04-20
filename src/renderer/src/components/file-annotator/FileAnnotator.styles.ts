@@ -66,6 +66,9 @@ export const Button = styled("button", {
   alignItems: "center",
   justifyContent: "center",
   transition: "background-color 0.2s",
+  width: "28px",
+  height: "28px",
+  flexShrink: 0,
 
   "&:hover": {
     background: "rgba(0, 0, 0, 0.1)",
