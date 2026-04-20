@@ -1,5 +1,6 @@
 import { useFiles } from "@/hooks";
 import { aymuraiService } from "@/services/aymurai";
+import { HStack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -47,12 +48,14 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
         />
       </FinishMainContent>
       <Footer withBuiltBy>
-        <Button variant="secondary" onClick={onRestart}>
-          {t("finish.restart")}
-        </Button>
-        <Button onClick={downloadDocument} disabled={isError}>
-          {t("finish.viewResult")}
-        </Button>
+        <HStack alignItems="center" gap="4">
+          <Button variant="secondary" onClick={onRestart}>
+            {t("finish.restart")}
+          </Button>
+          <Button onClick={downloadDocument} disabled={isError}>
+            {t("finish.viewResult")}
+          </Button>
+        </HStack>
       </Footer>
     </>
   );

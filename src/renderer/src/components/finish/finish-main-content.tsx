@@ -25,10 +25,12 @@ export default function FinishMainContent({
           </styled.h2>
         </Stack>
         <Card>
-          <styled.h3>{t("finish.subtitle")}</styled.h3>
-          <Grid columns={4} gap="8" justifyContent="center" width="full">
-            {children}
-          </Grid>
+          <Stack gap="8">
+            <styled.h3>{t("finish.subtitle")}</styled.h3>
+            <Grid columns={4} gap="8" justifyContent="center" width="full">
+              {children}
+            </Grid>
+          </Stack>
         </Card>
       </Stack>
     </MainContent>
