@@ -9,6 +9,7 @@ import Card from "@/components/ui/card";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
 import { addFiles, filterUnselected } from "@/reducers/file/actions";
+import { css } from "@/styled/css";
 import { Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import {
@@ -92,10 +93,14 @@ function RouteComponent() {
         <HStack gap="4">
           {feature === FeatureFlowEnum.Dataset && (
             <>
-              <styled.p textStyle="paragraph.sm.default">
+              <styled.p textStyle="paragraph.sm.default" whiteSpace="nowrap">
                 {t("preview.validFormats")}
               </styled.p>
-              <Button variant="secondary" onClick={handleOpenInput}>
+              <Button
+                variant="secondary"
+                onClick={handleOpenInput}
+                className={css({ whiteSpace: "nowrap" })}
+              >
                 {t("preview.loadMore")}
               </Button>
             </>
