@@ -1,6 +1,7 @@
 import { cva, cx } from "@/styled/css";
 import { hstack } from "@/styled/patterns";
 import { Bell, X } from "phosphor-react";
+import type { Icon } from "phosphor-react";
 import type { HTMLAttributes } from "react";
 
 const calloutRecipe = cva({
@@ -60,6 +61,7 @@ interface CalloutProps extends HTMLAttributes<HTMLDivElement> {
   variant?: CalloutVariant;
   noBorder?: boolean;
   onDismiss?: () => void;
+  icon?: Icon;
 }
 
 function Callout({
@@ -67,12 +69,13 @@ function Callout({
   variant = "info",
   noBorder = false,
   onDismiss,
+  icon: IconComponent = Bell,
   className,
   ...props
 }: CalloutProps) {
   return (
     <div className={cx(calloutRecipe({ variant, noBorder }), className)} {...props}>
-      <Bell
+      <IconComponent
         size={20}
         weight="light"
         aria-hidden="true"
