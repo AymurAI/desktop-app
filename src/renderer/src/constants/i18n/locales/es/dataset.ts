@@ -26,7 +26,7 @@ const dataset = {
     },
   },
   process: {
-    sectionTitle: "2. Procesamiento de los archivos",
+    sectionTitle: "2. Extracción de datos",
     processingTitle: "AymurAI está extrayendo los datos de los archivos",
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
     finishText: "Se finalizó el análisis de tus documentos.",
