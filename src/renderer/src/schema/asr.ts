@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const ASRParagraphSchema = z.object({
-  speaker_no: z.number().int().nonnegative(),
+  speaker_no: z.number().int(),
   start: z.union([z.string(), z.number()]),
   end: z.union([z.string(), z.number()]),
   text: z.string(),

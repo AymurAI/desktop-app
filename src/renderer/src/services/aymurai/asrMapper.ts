@@ -48,9 +48,12 @@ export function mapASRDocumentToTranscription(
   file: File,
   audioObjectUrl: string,
 ): Transcription {
-  // Collect unique speaker numbers in order of appearance
+  // Negative speaker_no marks non-speech segments (silence, music, etc.).
+  // Keep them out of the editor UI but still use them to compute full audio duration.
+  const speechParagraphs = doc.document.filter((p) => p.speaker_no >= 0);
+
   const speakerNos: number[] = [];
-  for (const para of doc.document) {
+  for (const para of speechParagraphs) {
     if (!speakerNos.includes(para.speaker_no)) speakerNos.push(para.speaker_no);
   }
 
@@ -61,7 +64,7 @@ export function mapASRDocumentToTranscription(
     color: SPEAKER_COLORS[idx % SPEAKER_COLORS.length],
   }));
 
-  const turns: Turn[] = doc.document.map((para) => ({
+  const turns: Turn[] = speechParagraphs.map((para) => ({
     id: para.paragraph_id ?? crypto.randomUUID(),
     speakerId: `s${para.speaker_no}`,
     text: para.text,
@@ -70,7 +73,9 @@ export function mapASRDocumentToTranscription(
   }));
 
   const audioDurationMs =
-    turns.length > 0 ? Math.max(...turns.map((t) => t.endMs)) : 0;
+    doc.document.length > 0
+      ? Math.max(...doc.document.map((p) => parseDurationToMs(p.end)))
+      : 0;
 
   return {
     id: doc.document_id,
