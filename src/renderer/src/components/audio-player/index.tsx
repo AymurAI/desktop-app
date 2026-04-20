@@ -70,13 +70,16 @@ const PlayButton = styled(IconButton, {
 });
 
 const SkipLabel = styled("span", {
-  fontSize: "9px",
+  fontSize: "8px",
   lineHeight: 1,
   position: "absolute",
-  bottom: "6px",
-  fontWeight: 600,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  fontWeight: 700,
   color: "#110041",
   userSelect: "none",
+  pointerEvents: "none",
 });
 
 const SpeedText = styled("span", {
