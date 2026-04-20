@@ -76,6 +76,7 @@
     "prettier": "^2.7.1",
     "react": "19",
     "react-dom": "19",
+    "react-hot-toast": "^2.6.0",
     "react-i18next": "^16.5.4",
     "regex-escape": "^3.4.10",
     "typescript": "^5.9.2",

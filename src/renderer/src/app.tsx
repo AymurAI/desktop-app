@@ -3,6 +3,7 @@ import {
   createMemoryHistory,
   createRouter,
 } from "@tanstack/react-router";
+import { Toaster } from "react-hot-toast";
 
 import { ThemeProvider } from "@/components";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -37,6 +38,7 @@ export default function App() {
       <ThemeProvider>
         <TooltipProvider>
           <RouterProvider router={router} />
+          <Toaster position="bottom-center" />
         </TooltipProvider>
       </ThemeProvider>
     </TanstackReactQuery.Provider>
