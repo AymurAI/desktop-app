@@ -4,19 +4,34 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { Button, TranscriptionEditor } from "@/components";
 import { useTranscriptions } from "@/hooks/useTranscriptions";
 import { Footer } from "@/layout/main";
+import { saveValidation } from "@/services/aymurai/asrValidation";
+import { USE_MOCK_STT } from "@/utils/config";
 
 export default function VoiceValidation() {
   const navigate = useNavigate();
   const transcriptions = useTranscriptions();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Use the first transcription (one file at a time in voice-to-text workflow)
   const transcription = transcriptions[0];
 
   if (!transcription) {
-    // Guard: redirect back if there's no transcription (e.g. direct navigation)
     return <Navigate to="../process" replace />;
   }
+
+  const handleFinish = async () => {
+    if (!USE_MOCK_STT) {
+      try {
+        setIsSaving(true);
+        await saveValidation(transcription);
+      } catch {
+        // Best-effort — don't block navigation on save failure
+      } finally {
+        setIsSaving(false);
+      }
+    }
+    navigate("../finish");
+  };
 
   return (
     <>
@@ -42,8 +57,8 @@ export default function VoiceValidation() {
         >
           Volver
         </Button>
-        <Button size="l" onClick={() => navigate("../finish")}>
-          Finalizar
+        <Button size="l" onClick={handleFinish} disabled={isSaving}>
+          {isSaving ? "Guardando..." : "Finalizar"}
         </Button>
       </Footer>
     </>

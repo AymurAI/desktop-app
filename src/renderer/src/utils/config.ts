@@ -6,7 +6,7 @@ export const PREDICT_PORT = 8899;
 /**
  * Only allow these extensions to be analyzed
  */
-export const WHITELISTED_EXTENSIONS = ["doc", "docx", "pdf"];
+export const WHITELISTED_EXTENSIONS = ["doc", "docx", "pdf", "mp3", "wav", "m4a", "webm", "ogg", "flac"];
 
 /**
  * Dataset Spreadsheet
@@ -19,5 +19,5 @@ export const DATASET_URL =
  */
 export const AYMURAI_API_URL = `http://localhost:${PREDICT_PORT}`;
 
-export const USE_MOCK_STT = true;
+export const USE_MOCK_STT = false;
 export const STT_MOCK_DELAY_MS = 4000;

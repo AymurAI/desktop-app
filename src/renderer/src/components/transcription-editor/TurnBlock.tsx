@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import SpeakerAvatar from "@/components/speaker-avatar";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
@@ -49,29 +49,19 @@ const TurnWrap = styled("div", {
   },
 });
 
-const TurnHeader = styled("div", {
+const TurnHeader = styled("button", {
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
   gap: "8px",
   marginBottom: "8px",
-
-  variants: {
-    clickable: {
-      true: {
-        cursor: "pointer",
-        "&:hover": {
-          opacity: 0.8,
-        },
-      },
-      false: {
-        cursor: "pointer",
-        "&:hover": {
-          opacity: 0.8,
-        },
-      },
-    },
-  },
+  background: "none",
+  border: "none",
+  padding: 0,
+  textAlign: "left",
+  width: "100%",
+  cursor: "pointer",
+  "&:hover": { opacity: 0.8 },
 });
 
 const SpeakerLabel = styled("span", {
@@ -165,8 +155,8 @@ function highlightText(text: string, query: string): React.ReactNode {
 
   return parts.map((part, i) => {
     if (regex.test(part)) {
-      // Reset lastIndex after test()
       regex.lastIndex = 0;
+      // biome-ignore lint/suspicious/noArrayIndexKey: split+regex parts are positionally stable within a single text render
       return <HighlightMark key={i}>{part}</HighlightMark>;
     }
     regex.lastIndex = 0;
@@ -230,6 +220,16 @@ function TurnBlock({
     }
   };
 
+  // Resize textarea to fit content when entering edit mode or when text changes externally
+  // biome-ignore lint/correctness/useExhaustiveDependencies: textValue needed to re-measure after external reducer updates
+  useEffect(() => {
+    if (isEditMode && textareaRef.current) {
+      const el = textareaRef.current;
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  }, [isEditMode, textValue]);
+
   const handleTextBlur = () => {
     if (textValue !== turn.text) {
       dispatch(updateTurnText(transcription.id, turn.id, textValue));
@@ -266,17 +266,7 @@ function TurnBlock({
           </TrashButton>
         )}
 
-        <TurnHeader
-          onClick={handleHeaderClick}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleHeaderClick();
-            }
-          }}
-        >
+        <TurnHeader onClick={handleHeaderClick} type="button">
           <SpeakerAvatar speaker={speaker} size="sm" />
           <SpeakerLabel>{speaker.label}</SpeakerLabel>
           <Timestamp>{formatMs(turn.startMs)}</Timestamp>

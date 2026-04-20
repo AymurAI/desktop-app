@@ -1,5 +1,5 @@
 import { Bell } from "phosphor-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -26,7 +26,7 @@ export default function VoiceProcess() {
   const files = useFiles();
   const transcriptionDispatch = useTranscriptionDispatch();
 
-  const audioFiles = files.map((f) => f.data);
+  const audioFiles = useMemo(() => files.map((f) => f.data), [files]);
 
   const { progress, status } = useTranscribe(audioFiles, {
     dispatch: transcriptionDispatch,
@@ -38,6 +38,7 @@ export default function VoiceProcess() {
   const isError = status === "error";
   const progressPercent = Math.round(progress * 100);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only fire when completion changes, not on every isToastVisible toggle
   useEffect(() => {
     if (isCompleted && !isToastVisible) {
       setIsToastVisible(true);
