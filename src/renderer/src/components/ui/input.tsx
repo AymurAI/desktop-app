@@ -1,8 +1,9 @@
+import { WarningCircle } from "phosphor-react";
 import { useId } from "react";
 
+import Suggestion from "@/components/ui/suggestion";
 import { cva, sva } from "@/styled/css";
 import { hstack, stack } from "@/styled/patterns";
-import { WarningCircle } from "phosphor-react";
 
 const input = sva({
   slots: ["container", "inputBox", "input", "label", "errorMessage", "helper"],
@@ -69,11 +70,7 @@ const input = sva({
         inputBox: {
           border: "error",
         },
-        input: {
-          // "&::placeholder": {
-          //   color: "system.error-secondary",
-          // },
-        },
+        input: {},
         label: { color: "system.error" },
       },
       false: {},
@@ -90,7 +87,6 @@ const affix = cva({
     ...hstack.raw({ alignItems: "center", gap: "1" }),
     userSelect: "none",
     textStyle: "label.md.default",
-    // py: "3",
   },
   variants: {
     position: {
@@ -100,7 +96,12 @@ const affix = cva({
   },
 });
 
-interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "prefix" | "suffix">, React.RefAttributes<HTMLInputElement> {
+interface InputProps
+  extends Omit<
+      React.InputHTMLAttributes<HTMLInputElement>,
+      "prefix" | "suffix"
+    >,
+    React.RefAttributes<HTMLInputElement> {
   // Rendering
   label?: string;
   placeholder?: string;
@@ -157,6 +158,8 @@ export default function Input({
             <span>|</span>
           </div>
         )}
+
+        {suggestion && <Suggestion clickable>{suggestion}</Suggestion>}
 
         <input
           {...props}

@@ -4,7 +4,15 @@ const Suggestion = styled("mark", {
   base: {
     bg: "bg.primary-alternative",
     textStyle: "label.md.default",
-    cursor: "pointer",
+  },
+  variants: {
+    clickable: {
+      true: { cursor: "pointer" },
+      false: { cursor: "unset" },
+    },
+  },
+  defaultVariants: {
+    clickable: false,
   },
 });
 
