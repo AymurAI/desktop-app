@@ -29,6 +29,7 @@ interface SelectProps {
   priorityOrder?: string[];
   placeholder?: string;
   disabled?: boolean;
+  size?: "md" | "sm";
   ref?: Ref<{ value: string | undefined }>;
 }
 
@@ -66,8 +67,6 @@ const select = sva({
       alignItems: "center",
       gap: "2",
       width: "full",
-      px: "3",
-      py: "3",
       bg: "white",
       border: "primary",
       rounded: "sm",
@@ -124,8 +123,6 @@ const select = sva({
       display: "flex",
       alignItems: "center",
       gap: "2",
-      px: "3",
-      py: "3",
       textStyle: "label.md.default",
       color: "text.default",
       cursor: "pointer",
@@ -150,6 +147,21 @@ const select = sva({
       flexShrink: "0",
     },
   },
+  variants: {
+    size: {
+      md: {
+        trigger: { px: "3", py: "3" },
+        item: { px: "3", py: "3" },
+      },
+      sm: {
+        trigger: { px: "3", py: "1" },
+        item: { px: "3", py: "3" },
+      },
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
 });
 
 export default function Select({
@@ -163,10 +175,11 @@ export default function Select({
   priorityOrder = [],
   placeholder = "",
   disabled = false,
+  size = "md",
   ref,
 }: SelectProps) {
   const triggerId = useId();
-  const classes = select();
+  const classes = select({ size });
 
   const orderedOptions = orderByPriority(options, priorityOrder);
   const securedSuggestion = secureSuggestion(suggestion, options);
