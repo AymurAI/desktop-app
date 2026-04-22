@@ -1,6 +1,6 @@
 import { css, cx } from "@/styled/css";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef, HTMLAttributes } from "react";
 
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
@@ -29,11 +29,13 @@ const contentStyles = css({
   zIndex: 50,
 
   bg: "bg.secondary",
-  rounded: "lg",
+  rounded: "sm",
   p: "6",
-  boxShadow: "[0px 0px 15px 0px #00000026]",
+  boxShadow: "[0px 4px 8px rgba(0, 0, 0, 0.1)]",
 
   width: "[90vw]",
+  minW: "[300px]",
+  maxW: "[700px]",
   h: "[fit-content]",
 
   "&[data-state='open']": {
@@ -42,6 +44,21 @@ const contentStyles = css({
   "&[data-state='closed']": {
     animation: "fadeOut",
   },
+});
+
+const headerStyles = css({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  mb: "4",
+});
+
+const footerStyles = css({
+  display: "flex",
+  gap: "2",
+  justifyContent: "flex-end",
+  alignItems: "center",
+  mt: "8",
 });
 
 function DialogOverlay({
@@ -77,11 +94,21 @@ function DialogContent({
   );
 }
 
+function DialogHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cx(headerStyles, className)} {...props} />;
+}
+
+function DialogFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cx(footerStyles, className)} {...props} />;
+}
+
 export {
   Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
+  DialogHeader,
   DialogOverlay,
   DialogTitle,
   DialogTrigger,
