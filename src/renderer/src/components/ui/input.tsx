@@ -26,8 +26,6 @@ const input = sva({
       outline: "none",
       flex: "[1]",
 
-      p: "3",
-
       "&::placeholder": {
         color: "text.lighter",
       },
@@ -44,6 +42,14 @@ const input = sva({
     },
   },
   variants: {
+    size: {
+      md: {
+        input: { p: "3" },
+      },
+      sm: {
+        input: { px: "3", py: "1" },
+      },
+    },
     disabled: {
       true: {
         inputBox: {
@@ -79,6 +85,7 @@ const input = sva({
   defaultVariants: {
     error: false,
     disabled: false,
+    size: "md",
   },
 });
 
@@ -99,7 +106,7 @@ const affix = cva({
 interface InputProps
   extends Omit<
       React.InputHTMLAttributes<HTMLInputElement>,
-      "prefix" | "suffix"
+      "prefix" | "suffix" | "size"
     >,
     React.RefAttributes<HTMLInputElement> {
   // Rendering
@@ -116,6 +123,7 @@ interface InputProps
   disabled?: boolean;
   error?: string | null;
   type?: "text" | "number";
+  size?: "md" | "sm";
 }
 export default function Input({
   // Rendering
@@ -133,13 +141,14 @@ export default function Input({
   disabled = false,
   error,
   type,
+  size = "md",
   ...props
 }: InputProps) {
   const randomId = useId();
   const inputId = id ?? randomId;
   const errorMessageId = `${inputId}-error`;
 
-  const classes = input({ disabled, error: !!error });
+  const classes = input({ disabled, error: !!error, size });
 
   return (
     <div className={classes.container}>
