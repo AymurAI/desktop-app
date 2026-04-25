@@ -4,7 +4,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { css } from "@/styled/css";
-import type { ComponentPropsWithoutRef, FocusEventHandler, ReactNode } from "react";
+import type {
+  ComponentPropsWithoutRef,
+  FocusEventHandler,
+  ReactNode,
+} from "react";
 import { useRef, useState } from "react";
 
 const triggerReset = css({
@@ -39,6 +43,7 @@ export default function AnnotationPopover({
   const isFocusInside = useRef(false);
 
   const scheduleClose = () => {
+    cancelClose();
     closeTimer.current = setTimeout(() => {
       if (!isFocusInside.current) setOpen(false);
     }, 100);
@@ -71,6 +76,8 @@ export default function AnnotationPopover({
         side="top"
         sideOffset={8}
         showArrow={false}
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        onCloseAutoFocus={(e) => e.preventDefault()}
         onMouseEnter={cancelClose}
         onMouseLeave={scheduleClose}
         onFocus={() => {

@@ -8,10 +8,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import Suggestion from "@/components/ui/suggestion";
 import { useAnnotation } from "@/context/Annotation";
 import { css, cva } from "@/styled/css";
+import type {
+  AllLabels,
+  AllLabelsWithSufix,
+  AnonymizerLabels,
+} from "@/types/aymurai";
 import { useRef, useState } from "react";
+import ReplaceDialog from "./replace-dialog";
+import SuggestionLabel from "./suggestion-label";
 import Tagger from "./tagger";
 
 const triggerReset = css({
@@ -46,20 +52,31 @@ const search = cva({
 interface MarkProps {
   children: string;
   isAnnotable: boolean;
-  isSearch: boolean;
   annotation: Annotation;
 }
-export default function Mark({
-  children,
-  isAnnotable,
-  isSearch,
-  annotation,
-}: MarkProps) {
+export default function Mark({ children, isAnnotable, annotation }: MarkProps) {
   const [open, setOpen] = useState(false);
+  const [replaceAllOpen, setReplaceAllOpen] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState<
+    AnonymizerLabels | undefined
+  >(
+    annotation.type === "tag"
+      ? (annotation.tag as AnonymizerLabels | undefined)
+      : undefined,
+  );
+  const [suffix, setSuffix] = useState("");
   const closeTimer = useRef<ReturnType<typeof setTimeout>>(null);
   const isFocusInside = useRef(false);
 
-  const { add, addBySearch, remove } = useAnnotation();
+  const { add, addBySearch, updateLabel, updateByText, createAnnotationData } =
+    useAnnotation();
+
+  const resolvedLabel: AllLabels | AllLabelsWithSufix | undefined =
+    selectedLabel
+      ? suffix
+        ? (`${selectedLabel}_${suffix}` as AllLabelsWithSufix)
+        : selectedLabel
+      : undefined;
 
   function scheduleClose() {
     closeTimer.current = setTimeout(() => {
@@ -82,80 +99,109 @@ export default function Mark({
     };
   }
 
-  const renderAnnotation = isSearch ? (
-    <mark className={search({ clickable: isAnnotable })}>{children}</mark>
+  const isTag = annotation.type === "tag";
+
+  const renderAnnotation = isTag ? (
+    <SuggestionLabel
+      label={annotation.tag ?? "DESCONOCIDO"}
+      isClickable={isAnnotable}
+    >
+      {children}
+    </SuggestionLabel>
   ) : (
-    <Suggestion clickable={isAnnotable}>{children}</Suggestion>
+    <mark className={search({ clickable: isAnnotable })}>{children}</mark>
   );
 
-  if (!isAnnotable) return annotation;
+  if (!isAnnotable) return renderAnnotation;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
-        className={triggerReset}
-        onMouseEnter={() => {
-          cancelClose();
-          setOpen(true);
-        }}
-        onMouseLeave={scheduleClose}
-      >
-        {renderAnnotation}
-      </PopoverTrigger>
-      <PopoverContent
-        side="top"
-        sideOffset={8}
-        showArrow={false}
-        onMouseEnter={cancelClose}
-        onMouseLeave={scheduleClose}
-        onFocus={() => {
-          isFocusInside.current = true;
-        }}
-        onBlur={(e) => {
-          if (!e.currentTarget.contains(e.relatedTarget)) {
-            isFocusInside.current = false;
-            scheduleClose();
-          }
-        }}
-      >
-        <Tagger
-          // suffix={1}
-          // label="PER"
-          onAddAll={console.log}
-          onAddOne={console.log}
+    <>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger
+          className={triggerReset}
+          onMouseEnter={() => {
+            cancelClose();
+            setOpen(true);
+          }}
+          onMouseLeave={scheduleClose}
+        >
+          {renderAnnotation}
+        </PopoverTrigger>
+        <PopoverContent
+          side="top"
+          sideOffset={8}
+          showArrow={false}
+          onMouseEnter={cancelClose}
+          onMouseLeave={scheduleClose}
+          onFocus={() => {
+            isFocusInside.current = true;
+          }}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget)) {
+              isFocusInside.current = false;
+              scheduleClose();
+            }
+          }}
+        >
+          <Tagger
+            label={selectedLabel}
+            suffix={suffix}
+            onLabelChange={setSelectedLabel}
+            onSuffixChange={setSuffix}
+            onClickOne={
+              annotation.type === "search" ? handleAddOne : handleReplaceOne
+            }
+            onClickAll={
+              annotation.type === "search" ? handleAddAll : handleReplaceAll
+            }
+          />
+        </PopoverContent>
+      </Popover>
+      {resolvedLabel && (
+        <ReplaceDialog
+          isOpen={replaceAllOpen}
+          label={resolvedLabel}
+          onClose={(open) => setReplaceAllOpen(open)}
+          onConfirm={handleConfirmReplaceAll}
         />
-      </PopoverContent>
-    </Popover>
+      )}
+    </>
   );
 
-  function createAnnotationData(annotation: LabelAnnotation) {
-    const { start, end, paragraphId, tag } = annotation;
-    if (!tag) return null;
-    return {
-      text: children,
-      start_char: start,
-      end_char: end,
-      paragraphId: paragraphId,
-      attrs: {
-        aymurai_label: tag,
-        aymurai_label_subclass: null,
-        aymurai_alt_text: null,
-        aymurai_alt_start_char: start,
-        aymurai_alt_end_char: end,
-      },
-    };
-  }
-
-  function handleAdd() {
-    const annotationData = createAnnotationData(annotation as LabelAnnotation);
+  function handleAddOne() {
+    const annotationData = createAnnotationData(
+      annotation as LabelAnnotation,
+      resolvedLabel,
+    );
     if (annotationData) add(annotationData);
   }
-  function handleAddBySearch() {
-    if (annotation.type === "search" && annotation.tag)
-      addBySearch(children, annotation.tag);
+  function handleAddAll() {
+    if (!resolvedLabel) return;
+    addBySearch(children, resolvedLabel);
   }
 
-  function handleReplace() {}
+  function handleReplaceOne() {
+    if (!resolvedLabel) return;
+    const annotationData = createAnnotationData(
+      children,
+      annotation as LabelAnnotation,
+    );
+    if (annotationData) updateLabel(annotationData, resolvedLabel);
+  }
 
-  function handleReplaceAll() {}
+  function handleReplaceAll() {
+    if (!resolvedLabel) return;
+    setReplaceAllOpen(true);
+  }
+
+  function handleConfirmReplaceAll() {
+    if (!resolvedLabel) return;
+
+    const annotationData = createAnnotationData(
+      children,
+      annotation as LabelAnnotation,
+    );
+    if (annotationData) updateByText(annotationData, resolvedLabel);
+    setReplaceAllOpen(false);
+  }
 }

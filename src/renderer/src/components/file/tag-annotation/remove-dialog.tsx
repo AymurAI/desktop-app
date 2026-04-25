@@ -4,33 +4,31 @@ import {
   DialogContent,
   DialogFooter,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Stack } from "@/styled/jsx";
-import type { AnonymizerLabels } from "@/types/aymurai";
 
-interface ReplaceDialogProps {
+interface RemoveDialogProps {
   isOpen: boolean;
-  label: AnonymizerLabels;
+  label: string;
   onClose: (open: boolean) => void;
   onConfirm: () => void;
 }
-export default function ReplaceDialog({
+export default function RemoveDialog({
   isOpen,
   onClose,
   onConfirm,
   label,
-}: ReplaceDialogProps) {
+}: RemoveDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogTrigger>hola</DialogTrigger>
       <DialogContent>
-        <DialogTitle>Reemplazar</DialogTitle>
+        <DialogTitle>Eliminar todas las ocurrencias</DialogTitle>
         <Stack>
-          ¿Deseas eliminar todas las etiquetas <b>{label}</b>?
+          ¿Deseas eliminar todas las ocurrencias con la etiqueta{" "}
+          <b>{label}</b>?
         </Stack>
         <DialogFooter>
-          <Button onClick={onConfirm}>Aplicar</Button>
+          <Button onClick={onConfirm}>Eliminar</Button>
           <Button onClick={() => onClose(false)}>Cancelar</Button>
         </DialogFooter>
       </DialogContent>

@@ -14,9 +14,9 @@ const tagger = sva({
   base: {
     container: {
       ...hstack.raw({ alignItems: "center", gap: "1" }),
-      p: "2",
+      p: "1",
       bg: "action.alt-default",
-      rounded: "md",
+      rounded: "lg",
     },
     button: {
       cursor: "pointer",
@@ -32,34 +32,34 @@ const tagger = sva({
 });
 
 interface MarkTaggerProps {
-  initialLabel?: AnonymizerLabels;
-  initialSuffix?: string;
-  onLabelChange?: (label: AnonymizerLabels) => void;
-  onSuffixChange?: (suffix: string) => void;
+  initialLabel: AnonymizerLabels;
+  initialSuffix: string;
   onAddOne: () => void;
   onAddAll: () => void;
 }
 export default function SearchTagger({
   initialLabel,
   initialSuffix,
-  onLabelChange,
-  onSuffixChange,
   onAddOne,
   onAddAll,
 }: MarkTaggerProps) {
   const classes = tagger();
 
-  const [label, setLabel] = useState<AnonymizerLabels | undefined>(initialLabel);
+  const [label, setLabel] = useState<AnonymizerLabels | undefined>(
+    initialLabel,
+  );
   const [suffix, setSuffix] = useState<string>(initialSuffix ?? "");
 
   function handleLabelChange(newLabel: AnonymizerLabels) {
     setLabel(newLabel);
-    onLabelChange?.(newLabel);
+    // TODO: figure out what to do with these
+    // onLabelChange?.(newLabel);
   }
 
   function handleSuffixChange(newSuffix: string) {
     setSuffix(newSuffix);
-    onSuffixChange?.(newSuffix);
+    // TODO: figure out what to do with these
+    // onSuffixChange?.(newSuffix);
   }
 
   return (
