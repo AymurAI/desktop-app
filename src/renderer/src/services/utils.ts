@@ -1,13 +1,9 @@
 import {
-  type MutationFunction,
   type QueryFunction,
   type QueryKey,
-  type UseMutationOptions,
   type UseQueryOptions,
-  useMutation,
   useQueries,
   useQuery,
-  useQueryClient,
 } from "@tanstack/react-query";
 import type { z } from "zod";
 
@@ -67,91 +63,6 @@ export const useSchemedQuery = <
     },
     ...options,
   });
-
-interface SchemedMutationArgs<
-  TSchema extends z.ZodTypeAny,
-  TError = Error,
-  TVariables = unknown,
-  TContext = unknown,
-> extends Omit<
-    UseMutationOptions<z.infer<TSchema>, TError, TVariables, TContext>,
-    "mutationFn"
-  > {
-  mutationFn: MutationFunction<unknown, TVariables>;
-  schema?: TSchema;
-  invalidateQueries?: QueryKey;
-}
-
-/**
- * A wrapper around React Query's useMutation that optionally validates the response
- * using a Zod schema before returning the data.
- *
- * @param options - Configuration object containing schema, mutationFn, and other React Query options
- * @param options.schema - Optional Zod schema to validate the mutation response
- * @returns A React Query mutation object with validated data if schema is provided
- *
- * @example
- * ```tsx
- * const mutation = useSchemedMutation({
- *   schema: userSchema,
- *   mutationFn: (userData) => createUser(userData),
- * });
- *
- * // Without schema validation
- * const mutation = useSchemedMutation({
- *   mutationFn: (userData) => createUser(userData),
- * });
- * ```
- *
- * @deprecated Deprecated in favor of using regular `useMutation` with zod parsing inside
- */
-export const useSchemedMutation = <
-  TSchema extends z.ZodTypeAny,
-  TError = Error,
-  TVariables = unknown,
-  TContext = unknown,
->({
-  schema,
-  mutationKey,
-  invalidateQueries,
-
-  mutationFn,
-  onSettled,
-  onError,
-  ...options
-}: SchemedMutationArgs<TSchema, TError, TVariables, TContext>) => {
-  const queryClient = useQueryClient();
-
-  const fnWrapper: MutationFunction<z.infer<TSchema>, TVariables> = async (
-    ...args
-  ) => {
-    const response = await mutationFn(...args);
-
-    if (schema) return schema.parse(response);
-    return response as z.infer<TSchema>;
-  };
-  return useMutation({
-    ...options,
-    mutationFn: fnWrapper,
-    mutationKey,
-    onSettled: async (...args) => {
-      if (invalidateQueries) {
-        await queryClient.invalidateQueries({ queryKey: invalidateQueries });
-      }
-
-      return onSettled?.(...args);
-    },
-    onError: (error, ...args) => {
-      const key: string = mutationKey
-        ? `[${mutationKey.join(", ")}]`
-        : "unknown mutation";
-
-      console.error(`Failed to run mutation: ${key}`, error);
-
-      return onError?.(error, ...args);
-    },
-  });
-};
 
 interface SchemedQueriesArgs<TSchema extends z.ZodTypeAny, TError = Error>
   extends Omit<
