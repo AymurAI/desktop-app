@@ -4,13 +4,13 @@ import { useFileDispatch } from "@/hooks";
 import { addParagraphs } from "@/reducers/file/actions";
 import { documentExtractSchema } from "@/schema/extract";
 
+import { useQuery } from "@tanstack/react-query";
 import api from "../api";
-import { useSchemedQuery } from "../utils";
 
 export function useFileParser(file: File) {
   const dispatch = useFileDispatch();
 
-  const query = useSchemedQuery({
+  const query = useQuery({
     queryKey: ["file-parser", file.name, file.size],
     queryFn: async () => {
       const formData = new FormData();
@@ -20,9 +20,8 @@ export function useFileParser(file: File) {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      return response.data;
+      return documentExtractSchema.parse(response.data);
     },
-    schema: documentExtractSchema,
     retry: false,
     retryOnMount: false,
   });
