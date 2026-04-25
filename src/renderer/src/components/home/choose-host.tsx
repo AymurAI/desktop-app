@@ -27,8 +27,15 @@ export default function ChooseHost({ onRemoteClick }: ChooseHostProps) {
         alt="Logotipo AymurAI"
         width={180}
       />
-      <Stack align="stretch" gap="4" width="full">
+      <Stack
+        as="fieldset"
+        aria-labelledby="connect-heading"
+        align="stretch"
+        gap="4"
+        width="full"
+      >
         <h2
+          id="connect-heading"
           className={css({
             textStyle: "subtitle.sm.strong",
             textAlign: "center",
@@ -45,7 +52,7 @@ export default function ChooseHost({ onRemoteClick }: ChooseHostProps) {
             <Monitor weight="bold" />
             {t("home.host.optionLocal")}
           </Button>
-          <p className={css({ textStyle: "subtitle.sm.default" })} aria-hidden>
+          <p className={css({ textStyle: "subtitle.sm.default" })}>
             {t("home.host.optionOr")}
           </p>
           <Button onClick={onRemoteClick}>

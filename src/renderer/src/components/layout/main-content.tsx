@@ -33,15 +33,13 @@ const content = cva({
 interface MainContentProps {
   children: React.ReactNode;
   full?: boolean;
-  className?: string;
 }
 export default function MainContent({
   children,
-  className,
   full = false,
 }: MainContentProps) {
   return (
-    <main className={cx(content({ full }), className)}>
+    <main className={cx(content({ full }))}>
       <div className="spacing">{children}</div>
     </main>
   );
