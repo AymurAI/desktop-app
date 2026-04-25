@@ -1,98 +1,56 @@
-import {
-  Button,
-  Card,
-  FileProcessing,
-  SectionTitle,
-  Stack,
-  Subtitle,
-  Text,
-  Toast,
-} from "@/components";
-import FeaturesMenu from "@/components/features-menu";
-import HowItWorksModal from "@/components/how-it-works-modal";
+import { Button, FileProcessing } from "@/components";
 import Stepper from "@/components/home/stepper";
+import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
+import MainContent from "@/components/layout/main-content";
+import BackButton from "@/components/ui/back-button";
+import Callout from "@/components/ui/callout";
+import Card from "@/components/ui/card";
+import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
-import useNotify from "@/hooks/useNotify";
-import type { PredictStatus } from "@/hooks/usePredict";
-import { Footer, Section } from "@/layout/main-old";
-import {
-  filterUnprocessed,
-  removeAllPredictions,
-} from "@/reducers/file/actions";
-import { useTutorialSeen } from "@/store/useLocal";
-import { HStack } from "@/styled/jsx";
-import { FeatureFlowEnum, featureName } from "@/types/features";
-import { canContinue } from "@/utils/process/canContinue";
-import {
-  type ProcessState,
-  initProcessState,
-} from "@/utils/process/initProcessState";
+import { useDisambiguate } from "@/hooks/useDisambiguate";
+import { type PredictStatus, usePredict } from "@/hooks/usePredict";
+import { SectionTitle } from "@/layout/section-title";
+import { filterUnprocessed } from "@/reducers/file/actions";
+import { css } from "@/styled/css";
+import { HStack, Stack, styled } from "@/styled/jsx";
+import type { Workflows } from "@/types/aymurai";
+import { FeatureFlowEnum, featureNamespace } from "@/types/features";
+import type { DocFile } from "@/types/file";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   createFileRoute,
   useNavigate,
   useParams,
 } from "@tanstack/react-router";
-import { Bell } from "phosphor-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/app/$feature/process")({
   component: RouteComponent,
 });
 
-/**
- * Updates the status of a file in the state
- * @param name Name of the file to be updated
- * @param newValue New `PredictStatus` value to be updated
- * @param state `ProcessState[]` state in `/process` page
- * @returns A new array with the status of the given file changed
- */
-function replace(
-  name: string,
-  value: Partial<ProcessState>,
-  state: ProcessState[],
-) {
-  return state.map((process) => {
-    if (process.name === name) return { ...process, ...value };
-    return process;
+function RouteComponent() {
+  const queryClient = useQueryClient();
+  const { feature } = useParams({
+    from: "/app/$feature/process",
   });
-}
+  const { t } = useTranslation(featureNamespace[feature]);
 
-interface GenericProcessProps {
-  title: string;
-  finishText: string;
-  supportMultipleFiles: boolean;
-}
-function GenericProcess({
-  title,
-  supportMultipleFiles,
-  finishText,
-}: GenericProcessProps) {
-  const { feature } = useParams({ from: "/app/$feature/process" });
-  const navigate = useNavigate();
   const dispatch = useFileDispatch();
+  const navigate = useNavigate();
   const files = useFiles();
-  const [process, setProcess] = useState(initProcessState(files));
-  const { isToastVisible, hideToast } = useNotify(process);
-  const tutorialSeen = useTutorialSeen(feature);
 
-  const handleStatusChange = (name: string) => (newValue: PredictStatus) => {
-    // Replace the newValue
-    setProcess((cur) => replace(name, { status: newValue }, cur));
-  };
-  const handleReplaceFile = (name: string) => (newName: string) => {
-    setProcess((cur) =>
-      replace(name, { name: newName, status: "processing" }, cur),
-    );
-  };
+  const [isDismissed, setIsDismissed] = useState(false);
 
-  const handlePrevious = () => {
-    navigate({
-      to: "/app/$feature/preview",
-      params: { feature },
-    });
-    dispatch(removeAllPredictions());
-  };
+  const workflow: Workflows =
+    feature === FeatureFlowEnum.Anonymizer ? "anonymizer" : "datapublic";
+  const fileStatuses = usePredict(files, workflow);
+  const disambiguateStatuses = useDisambiguate(
+    files,
+    fileStatuses,
+    workflow === "anonymizer",
+  );
 
   const handleNext = () => {
     dispatch(filterUnprocessed());
@@ -102,78 +60,88 @@ function GenericProcess({
     });
   };
 
+  const isProcessing = files.some(
+    (f) =>
+      fileStatuses[f.data.name]?.status === "processing" ||
+      disambiguateStatuses[f.data.name]?.status === "processing",
+  );
+
+  // For the anonymizer flow there are two sequential steps (predict + disambiguate),
+  // so each contributes half the progress bar. For datapublic, predict is the only step.
+  const getProgress = (fileName: string): number => {
+    const predictProgress = fileStatuses[fileName]?.progress ?? 0;
+    if (workflow !== "anonymizer") return predictProgress;
+
+    const disambiguateDone =
+      disambiguateStatuses[fileName]?.status === "completed";
+    return (predictProgress + (disambiguateDone ? 1 : 0)) / 2;
+  };
+
+  // Status must also account for both steps so "completed" text only shows when the
+  // bar is genuinely at 100%.
+  const getCombinedStatus = (fileName: string): PredictStatus => {
+    const predictStatus = fileStatuses[fileName]?.status ?? "processing";
+    if (workflow !== "anonymizer" || predictStatus !== "completed")
+      return predictStatus;
+    return disambiguateStatuses[fileName]?.status ?? "processing";
+  };
+
+  const handleAbort = (file: DocFile) => () => {
+    queryClient.removeQueries({
+      queryKey: ["predict", feature, file.data.name],
+    });
+    fileStatuses[file.data.name]?.abort?.();
+  };
+
   return (
-    <>
+    <RequireFile>
       <Header
-        title={featureName(feature)}
-        center={
-          feature === FeatureFlowEnum.Dataset ? (
-            <Stepper currentStep={2} />
-          ) : undefined
-        }
-        right={
-          <HStack>
-            {tutorialSeen && <HowItWorksModal feature={feature} />}
-            <FeaturesMenu />
-          </HStack>
-        }
+        title={t("title")}
+        feature={feature}
+        center={<Stepper currentStep={2} />}
       />
-      <Section>
-        <Toast isVisible={isToastVisible} onClose={hideToast} icon={<Bell />}>
-          {finishText}
-        </Toast>
-        <SectionTitle onClick={handlePrevious}>{title}</SectionTitle>
-        <Card css={{ alignItems: "stretch" }}>
-          <Stack spacing="l" direction="column">
-            <Stack direction="column" spacing="xs">
-              {supportMultipleFiles ? (
-                <Text>AymurAI está extrayendo los datos de los archivos</Text>
-              ) : (
-                <Text>AymurAI está extrayendo los datos del archivo</Text>
+      <MainContent>
+        <Stack gap="10">
+          <HStack alignItems="center" gap="6">
+            <BackButton to="/app/$feature/preview" params={{ feature }} />
+            <SectionTitle>{t("process.sectionTitle")}</SectionTitle>
+          </HStack>
+          <Card className={css({ alignItems: "stretch" })}>
+            <Stack gap="6" direction="column">
+              <Stack direction="column" gap="1">
+                <styled.h2 textStyle="subtitle.md.default">
+                  {t("process.processingTitle")}
+                </styled.h2>
+                <styled.p textStyle="subtitle.sm.default" color="text.lighter">
+                  {t("process.processingSubtitle")}
+                </styled.p>
+              </Stack>
+              {!isProcessing && !isDismissed && (
+                <Callout
+                  message={t("process.finishText")}
+                  variant="info"
+                  noBorder
+                  onDismiss={() => setIsDismissed(true)}
+                />
               )}
-              <Subtitle size="s">
-                Este proceso puede tardar algunos minutos.
-              </Subtitle>
+              {files.map((f) => (
+                <FileProcessing
+                  key={f.data.name}
+                  fileName={f.data.name}
+                  status={getCombinedStatus(f.data.name)}
+                  progress={getProgress(f.data.name)}
+                  onAbort={handleAbort(f)}
+                />
+              ))}
             </Stack>
-            {files.map((f) => (
-              <FileProcessing
-                key={f.data.name}
-                file={f}
-                onStatusChange={handleStatusChange(f.data.name)}
-                onFileReplace={handleReplaceFile(f.data.name)}
-              />
-            ))}
-          </Stack>
-        </Card>
-      </Section>
-      <Footer>
-        <Button size="md" disabled={!canContinue(process)} onClick={handleNext}>
+          </Card>
+        </Stack>
+      </MainContent>
+      <Footer withBuiltBy>
+        <Button onClick={handleNext} disabled={isProcessing}>
           Siguiente
         </Button>
       </Footer>
-    </>
-  );
-}
-
-function RouteComponent() {
-  const { feature } = useParams({
-    from: "/app/$feature/process",
-  });
-
-  if (feature === FeatureFlowEnum.Dataset)
-    return (
-      <GenericProcess
-        title="2. Procesamiento de los archivos"
-        finishText="Se finalizó el análisis de tus documentos."
-        supportMultipleFiles={true}
-      />
-    );
-
-  return (
-    <GenericProcess
-      title="2. Procesamiento del archivo"
-      supportMultipleFiles={false}
-      finishText="Se finalizó el análisis del documento."
-    />
+    </RequireFile>
   );
 }

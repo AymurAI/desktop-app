@@ -6,6 +6,7 @@ import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import Card from "@/components/ui/card";
+import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
 import { addFiles, filterUnselected } from "@/reducers/file/actions";
@@ -63,7 +64,7 @@ function RouteComponent() {
   };
 
   return (
-    <>
+    <RequireFile>
       <Header
         title={t("title")}
         center={<Stepper currentStep={1} />}
@@ -111,6 +112,6 @@ function RouteComponent() {
         </HStack>
       </Footer>
       <HiddenInput ref={inputRef} onChange={handleAddFiles} />
-    </>
+    </RequireFile>
   );
 }
