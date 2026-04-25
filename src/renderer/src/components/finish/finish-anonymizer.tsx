@@ -2,7 +2,7 @@ import { useFiles } from "@/hooks";
 import { aymuraiService } from "@/services/aymurai";
 import { HStack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import FileCheck from "../file-check";
 import Footer from "../layout/footer";
@@ -19,23 +19,34 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
   if (!file) throw new Error("Reached /finish but there's no file to read");
 
   const {
-    data: fileURI,
+    data: odtFile,
     isLoading,
     isError,
   } = useQuery(aymuraiService.anonymize(file));
 
-  const downloadDocument = async () => {
-    if (!fileURI) {
+  const { mutate: convertToPdf, isPending: isPdfPending } = useMutation(
+    aymuraiService.odtToPdf(),
+  );
+
+  const downloadDocument = () => {
+    if (!odtFile) {
       console.error("Tried to download a file that is not ready.");
       return;
     }
-    const link = document.createElement("a");
-    link.href = fileURI;
-    link.download = changeExtension(file.data.name);
+    triggerDownload(odtFile, changeExtension(file.data.name));
+  };
 
-    link.click();
+  const downloadPdf = () => {
+    if (!odtFile) {
+      console.error("Tried to download a file that is not ready.");
+      return;
+    }
 
-    document.removeChild(link);
+    convertToPdf(odtFile, {
+      onSuccess: (pdfBlob) => {
+        triggerDownload(pdfBlob, changeExtension(file.data.name, "pdf"));
+      },
+    });
   };
 
   return (
@@ -52,8 +63,11 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
           <Button variant="secondary" onClick={onRestart}>
             {t("finish.restart")}
           </Button>
-          <Button onClick={downloadDocument} disabled={isError}>
+          <Button onClick={downloadDocument} disabled={isError} isLoading={isLoading}>
             {t("finish.viewResult")}
+          </Button>
+          <Button onClick={downloadPdf} disabled={isError} isLoading={isLoading || isPdfPending}>
+            {t("finish.viewResultPDF")}
           </Button>
         </HStack>
       </Footer>
@@ -61,8 +75,17 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
   );
 }
 
-function changeExtension(name: string) {
+function triggerDownload(blob: Blob, fileName: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function changeExtension(name: string, ext = "odt") {
   const parts = name.split(".");
   parts.pop();
-  return `${[...parts].join(".")}_anonimizado.odt`;
+  return `${parts.join(".")}_anonimizado.${ext}`;
 }

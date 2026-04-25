@@ -1,7 +1,7 @@
 import { disambiguateSchema } from "@/schema/disambiguate";
 import type { PredictLabel, Workflows } from "@/types/aymurai";
 import type { DocFile, Paragraph } from "@/types/file";
-import { queryOptions } from "@tanstack/react-query";
+import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import api from "../api";
 import predict from "./predict";
 
@@ -68,7 +68,7 @@ export const anonymize = (file: DocFile) =>
 
       return response.data;
     },
-    select: (data) => URL.createObjectURL(data),
+    // select: (data) => URL.createObjectURL(data),
   });
 
 export const disambiguate = (file: DocFile) =>
@@ -114,5 +114,27 @@ export const disambiguate = (file: DocFile) =>
           paragraphId: paragraph?.id ?? item.document,
         }));
       });
+    },
+  });
+
+export const odtToPdf = () =>
+  mutationOptions({
+    mutationFn: async (file: Blob) => {
+      const formData = new FormData();
+      formData.append("file", file, "document.odt");
+
+      const response = await api.post<Blob>(
+        "/convert/odt/pdf",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Accept: "application/octet-stream",
+          },
+          responseType: "blob",
+        },
+      );
+
+      return response.data;
     },
   });
