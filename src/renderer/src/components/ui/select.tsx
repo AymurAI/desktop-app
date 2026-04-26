@@ -1,5 +1,5 @@
 import * as RadixSelect from "@radix-ui/react-select";
-import { CaretDown, Check } from "phosphor-react";
+import { CaretDown, CaretUp, Check } from "phosphor-react";
 import { type Ref, useId, useImperativeHandle } from "react";
 
 import Suggestion from "@/components/ui/suggestion";
@@ -57,8 +57,10 @@ const select = sva({
     "value",
     "caret",
     "content",
+    "viewport",
     "item",
     "itemIndicator",
+    "scrollButton",
   ],
   base: {
     container: { ...stack.raw({ gap: "1" }), width: "full" },
@@ -118,6 +120,19 @@ const select = sva({
       overflow: "hidden",
       zIndex: "10",
       minWidth: "[var(--radix-select-trigger-width)]",
+    },
+    viewport: {
+      maxHeight: "[400px]",
+      overflowY: "auto",
+    },
+    scrollButton: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      py: "1",
+      color: "text.lighter",
+      cursor: "default",
+      bg: "white",
     },
     item: {
       display: "flex",
@@ -254,7 +269,10 @@ export default function Select({
             position="popper"
             sideOffset={4}
           >
-            <RadixSelect.Viewport>
+            <RadixSelect.ScrollUpButton className={classes.scrollButton}>
+              <CaretUp size={12} />
+            </RadixSelect.ScrollUpButton>
+            <RadixSelect.Viewport className={classes.viewport}>
               {orderedOptions.map(({ id, text }) => (
                 <RadixSelect.Item key={id} value={id} className={classes.item}>
                   <RadixSelect.ItemIndicator className={classes.itemIndicator}>
@@ -264,6 +282,9 @@ export default function Select({
                 </RadixSelect.Item>
               ))}
             </RadixSelect.Viewport>
+            <RadixSelect.ScrollDownButton className={classes.scrollButton}>
+              <CaretDown size={12} />
+            </RadixSelect.ScrollDownButton>
           </RadixSelect.Content>
         </RadixSelect.Portal>
       </RadixSelect.Root>
