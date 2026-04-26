@@ -1,3 +1,4 @@
+import type { LabelAnnotation } from "@/components/file-annotator/types";
 import { useFileDispatch } from "@/hooks";
 import {
   appendPrediction,
@@ -23,6 +24,8 @@ import {
 
 interface AnnotationContextValues {
   isAnnotable: boolean;
+  label: AllLabels | null;
+  suffix: number | null;
   add: (prediction: PredictLabel) => void;
   remove: (prediction: PredictLabel) => void;
   removeByText: (prediction: PredictLabel) => void;
@@ -42,6 +45,8 @@ interface AnnotationContextValues {
  */
 export const AnnotationContext = createContext<AnnotationContextValues>({
   isAnnotable: false,
+  label: null,
+  suffix: null,
   add: () => {},
   remove: () => {},
   removeByText: () => {},
@@ -55,14 +60,21 @@ interface Props {
   children?: ReactNode;
   file: DocFile;
   isAnnotable?: boolean;
-  searchTag: AllLabels | AllLabelsWithSufix | null;
+  label: AllLabels | null;
+  suffix: number | null;
 }
 export default function AnnotationProvider({
   children,
   file,
   isAnnotable = false,
-  searchTag,
+  label,
+  suffix,
 }: Props) {
+  const searchTag: AllLabels | AllLabelsWithSufix | null = label
+    ? suffix
+      ? `${label}_${suffix}`
+      : label
+    : null;
   const dispatch = useFileDispatch();
 
   const add = useCallback(
@@ -169,6 +181,8 @@ export default function AnnotationProvider({
     <AnnotationContext.Provider
       value={{
         isAnnotable,
+        label,
+        suffix,
         add,
         remove,
         removeByText,
@@ -188,18 +202,47 @@ export const useAnnotation = () => {
     remove,
     removeByText,
     isAnnotable,
+    label,
+    suffix,
     updateLabel,
     updateByText,
     addBySearch,
   } = useContext(AnnotationContext);
+
+  const createAnnotationData = (
+    text: string,
+    annotation: LabelAnnotation,
+    labelOverride?: AllLabels | AllLabelsWithSufix,
+  ) => {
+    const { start, end, paragraphId, tag } = annotation;
+    const resolvedTag = labelOverride ?? tag;
+    if (!resolvedTag) return null;
+    return {
+      text,
+      start_char: start,
+      end_char: end,
+      paragraphId: paragraphId,
+      attrs: {
+        aymurai_label: resolvedTag,
+        aymurai_label_subclass: null,
+        aymurai_alt_text: null,
+        aymurai_alt_start_char: start,
+        aymurai_alt_end_char: end,
+        canonical_entity_id: crypto.randomUUID(),
+      },
+    } satisfies PredictLabel;
+  };
 
   return {
     add,
     remove,
     removeByText,
     isAnnotable,
+    label,
+    suffix,
     updateLabel,
     updateByText,
     addBySearch,
+    createAnnotationData,
   };
 };
