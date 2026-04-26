@@ -6,7 +6,7 @@ import { useFileDispatch, useFiles } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
 import { validate } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
-import { HStack } from "@/styled/jsx";
+import { HStack, Stack } from "@/styled/jsx";
 import { isFileValidated, isValidationCompleted } from "@/utils/file";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import MainContent from "../layout/main-content";
@@ -73,17 +73,17 @@ export function ValidateDataset() {
           file={selectedFile}
           isAnnotable={false}
         />
-        <MainContent
-          className={css({ px: "[100px]", overflowY: "scroll", gap: "16" })}
-        >
-          <SectionTitle className={css({ whiteSpace: "nowrap" })}>
-            3. Validación de datos
-          </SectionTitle>
-          <FormGroup
-            key={selectedFile.data.name}
-            file={selectedFile}
-            onCheck={handleCheck}
-          />
+        <MainContent>
+          <Stack px="[100px]" pb="16" overflowY="scroll" gap="16">
+            <SectionTitle className={css({ whiteSpace: "nowrap" })}>
+              3. Validación de datos
+            </SectionTitle>
+            <FormGroup
+              key={selectedFile.data.name}
+              file={selectedFile}
+              onCheck={handleCheck}
+            />
+          </Stack>
         </MainContent>
       </Grid>
       <Footer>
