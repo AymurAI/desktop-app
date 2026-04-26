@@ -1,7 +1,8 @@
 import { cva, cx } from "@/styled/css";
+import { styled } from "@/styled/jsx";
 import { hstack } from "@/styled/patterns";
-import { Bell, X } from "phosphor-react";
 import type { Icon } from "phosphor-react";
+import { Bell, X } from "phosphor-react";
 import type { HTMLAttributes } from "react";
 
 const calloutRecipe = cva({
@@ -21,25 +22,28 @@ const calloutRecipe = cva({
     width: "full",
 
     textStyle: "paragraph.sm.default",
-    color: "text.default",
   },
   variants: {
     variant: {
       error: {
         bg: "system.error-secondary",
         borderColor: "system.error",
+        color: "system.error",
       },
       warning: {
         bg: "system.warning-secondary",
         borderColor: "system.warning",
+        color: "system.warning",
       },
       success: {
         bg: "system.success-secondary",
         borderColor: "system.success",
+        color: "system.success",
       },
       info: {
         bg: "system.info-secondary",
         borderColor: "system.info",
+        color: "text.default",
       },
     },
     noBorder: {
@@ -74,22 +78,26 @@ function Callout({
   ...props
 }: CalloutProps) {
   return (
-    <div className={cx(calloutRecipe({ variant, noBorder }), className)} {...props}>
+    <div
+      className={cx(calloutRecipe({ variant, noBorder }), className)}
+      {...props}
+    >
       <IconComponent
         size={20}
         weight="light"
         aria-hidden="true"
         style={{ flexShrink: 0 }}
       />
-      <span style={{ flex: 1 }}>{message}</span>
+      <styled.span flex="1">{message}</styled.span>
       {onDismiss && (
-        <button
+        <styled.button
           type="button"
           aria-label="Dismiss notification"
           onClick={onDismiss}
+          cursor="pointer"
         >
           <X size={18} aria-hidden="true" />
-        </button>
+        </styled.button>
       )}
     </div>
   );
