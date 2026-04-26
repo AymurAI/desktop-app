@@ -1,8 +1,10 @@
 import Suggestion from "@/components/ui/suggestion";
 import { HStack, styled } from "@/styled/jsx";
 import type { AllLabels } from "@/types/aymurai";
+import type { ComponentPropsWithoutRef } from "react";
 
-interface SuggestionLabelProps {
+interface SuggestionLabelProps
+  extends Omit<ComponentPropsWithoutRef<"mark">, "translate" | "color"> {
   isClickable?: boolean;
   children: string;
   label: AllLabels;
@@ -11,9 +13,10 @@ export default function SuggestionLabel({
   isClickable = false,
   label,
   children,
+  ...props
 }: SuggestionLabelProps) {
   return (
-    <Suggestion clickable={isClickable} rounded>
+    <Suggestion clickable={isClickable} rounded {...props}>
       <HStack gap="2" alignItems="baseline" px="1">
         <styled.span m="0">{children}</styled.span>
         <styled.span
