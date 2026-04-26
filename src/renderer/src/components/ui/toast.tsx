@@ -1,5 +1,5 @@
-import { type Toast as HotToast, toast } from "react-hot-toast";
 import type { Icon } from "phosphor-react";
+import { type Toast as HotToast, toast } from "react-hot-toast";
 import Callout, { type CalloutVariant } from "./callout";
 
 export type ToastVariant = CalloutVariant;
@@ -17,15 +17,18 @@ function Toast({ t, message, variant = "info", icon }: ToastProps) {
   const isAssertive = ASSERTIVE_VARIANTS.includes(variant);
 
   return (
-    <Callout
-      message={message}
-      variant={variant}
-      icon={icon}
-      onDismiss={() => toast.dismiss(t.id)}
-      role={isAssertive ? "alert" : "status"}
-      aria-live={isAssertive ? "assertive" : "polite"}
-      aria-atomic="true"
-    />
+    <div style={{ maxWidth: "75%", width: "100%" }}>
+      <Callout
+        message={message}
+        variant={variant}
+        icon={icon}
+        onDismiss={() => toast.remove(t.id)}
+        role={isAssertive ? "alert" : "status"}
+        aria-live={isAssertive ? "assertive" : "polite"}
+        aria-atomic="true"
+        noBorder
+      />
+    </div>
   );
 }
 
