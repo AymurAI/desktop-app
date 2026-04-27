@@ -13,6 +13,7 @@ type LabelAttributes = {
   aymurai_alt_start_char: number | null;
   aymurai_alt_end_char: number | null;
   canonical_entity_id?: string | null;
+  aymurai_anonymize?: boolean | null;
 };
 
 export type PredictLabel = {
