@@ -42,14 +42,8 @@ export default function SearchAnnotation({
       `Annotation of type "search" expected but got: ${annotation.type}`,
     );
 
-  const { add, addBySearch, createAnnotationData, label, suffix, isAnnotable } =
+  const { add, addBySearch, createAnnotationData, isAnnotable } =
     useAnnotation();
-
-  // const annotateTo: AllLabels | AllLabelsWithSufix | null = label
-  //   ? suffix
-  //     ? `${label}_${suffix}`
-  //     : label
-  //   : null;
 
   const metadata: Metadata = {
     "data-start": annotation.start,
