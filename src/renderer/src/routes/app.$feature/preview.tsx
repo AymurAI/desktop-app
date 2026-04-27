@@ -8,6 +8,7 @@ import BackButton from "@/components/ui/back-button";
 import Card from "@/components/ui/card";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
+import { useFileParse } from "@/hooks/useFileParse";
 import { SectionTitle } from "@/layout/section-title";
 import { addFiles, filterUnselected } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
@@ -36,6 +37,7 @@ function RouteComponent() {
 
   const files = useFiles();
   const dispatch = useFileDispatch();
+  const parseStatuses = useFileParse(files);
 
   const isProcessing = files.some((file) => !file.paragraphs);
 
@@ -83,7 +85,11 @@ function RouteComponent() {
               </styled.h2>
               <Grid columns={5}>
                 {files.map((file) => (
-                  <FilePreview key={file.data.name} file={file} />
+                  <FilePreview
+                    key={file.data.name}
+                    file={file}
+                    status={parseStatuses[file.data.name]?.status ?? "processing"}
+                  />
                 ))}
               </Grid>
             </Stack>

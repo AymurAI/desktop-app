@@ -9,6 +9,7 @@ import Card from "@/components/ui/card";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { useDisambiguate } from "@/hooks/useDisambiguate";
+import { useFileParse } from "@/hooks/useFileParse";
 import { type PredictStatus, usePredict } from "@/hooks/usePredict";
 import { SectionTitle } from "@/layout/section-title";
 import { filterUnprocessed } from "@/reducers/file/actions";
@@ -45,6 +46,7 @@ function RouteComponent() {
 
   const workflow: Workflows =
     feature === FeatureFlowEnum.Anonymizer ? "anonymizer" : "datapublic";
+  const parseStatuses = useFileParse(files);
   const fileStatuses = usePredict(files, workflow);
   const disambiguateStatuses = useDisambiguate(
     files,
@@ -62,35 +64,48 @@ function RouteComponent() {
 
   const isProcessing = files.some(
     (f) =>
+      parseStatuses[f.data.name]?.status === "processing" ||
       fileStatuses[f.data.name]?.status === "processing" ||
       disambiguateStatuses[f.data.name]?.status === "processing",
   );
 
-  // For the anonymizer flow there are two sequential steps (predict + disambiguate),
-  // so each contributes half the progress bar. For datapublic, predict is the only step.
+  // Weighted progress: 10% parse / 70% predict / 20% disambiguate (anonymizer)
+  // or 10% parse / 90% predict (datapublic).
   const getProgress = (fileName: string): number => {
+    const parseDone = parseStatuses[fileName]?.status === "completed" ? 1 : 0;
     const predictProgress = fileStatuses[fileName]?.progress ?? 0;
-    if (workflow !== "anonymizer") return predictProgress;
 
+    if (workflow !== "anonymizer") {
+      return parseDone * 0.1 + predictProgress * 0.9;
+    }
     const disambiguateDone =
-      disambiguateStatuses[fileName]?.status === "completed";
-    return (predictProgress + (disambiguateDone ? 1 : 0)) / 2;
+      disambiguateStatuses[fileName]?.status === "completed" ? 1 : 0;
+    return parseDone * 0.1 + predictProgress * 0.7 + disambiguateDone * 0.2;
   };
 
-  // Status must also account for both steps so "completed" text only shows when the
-  // bar is genuinely at 100%.
+  // Status accounts for all three stages so "completed" only shows at 100%.
   const getCombinedStatus = (fileName: string): PredictStatus => {
+    const parseStatus = parseStatuses[fileName]?.status ?? "processing";
+    if (parseStatus !== "completed") return parseStatus;
+
     const predictStatus = fileStatuses[fileName]?.status ?? "processing";
     if (workflow !== "anonymizer" || predictStatus !== "completed")
       return predictStatus;
+
     return disambiguateStatuses[fileName]?.status ?? "processing";
   };
 
   const handleAbort = (file: DocFile) => () => {
     queryClient.removeQueries({
+      queryKey: ["file-parser", file.data.name],
+      exact: false,
+    });
+    queryClient.removeQueries({
       queryKey: ["predict", feature, file.data.name],
+      exact: false,
     });
     fileStatuses[file.data.name]?.abort?.();
+    parseStatuses[file.data.name]?.abort?.();
   };
 
   return (

@@ -1,4 +1,5 @@
 import { disambiguateSchema } from "@/schema/disambiguate";
+import { documentExtractSchema } from "@/schema/extract";
 import type { PredictLabel, Workflows } from "@/types/aymurai";
 import type { DocFile, Paragraph } from "@/types/file";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
@@ -115,6 +116,21 @@ export const disambiguate = (file: DocFile) =>
         }));
       });
     },
+  });
+
+export const fileParser = (file: File) =>
+  queryOptions({
+    queryKey: ["file-parser", file.name, file.size],
+    queryFn: async () => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await api.post("/misc/document-extract", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return documentExtractSchema.parse(response.data);
+    },
+    retry: false,
+    retryOnMount: false,
   });
 
 export const odtToPdf = () =>

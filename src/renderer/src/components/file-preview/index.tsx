@@ -2,8 +2,8 @@ import { FileX } from "phosphor-react";
 
 import { Checkbox, Spinner, Text } from "@/components";
 import { useFileDispatch } from "@/hooks";
+import type { PredictStatus } from "@/hooks/usePredict";
 import { toggleSelected } from "@/reducers/file/actions";
-import { useFileParser } from "@/services/aymurai/useFileParser";
 import type { DocFile } from "@/types/file";
 
 import { FeatureFlowEnum } from "@/types/features";
@@ -13,15 +13,17 @@ import * as S from "./FilePreview.styles";
 
 interface Props {
   file: DocFile;
+  status: PredictStatus;
 }
-export default function FilePreview({ file }: Props) {
+export default function FilePreview({ file, status }: Props) {
   const { feature } = useParams({ from: "/app/$feature/preview" });
   const { t } = useTranslation();
   const dispatch = useFileDispatch();
-  const { data: parsedFile, isError, isPending } = useFileParser(file.data);
 
   const isAnonymizer = feature === FeatureFlowEnum.Anonymizer;
-  const moreThanOneParagraph = parsedFile && parsedFile.document.length > 1;
+  const moreThanOneParagraph = file.paragraphs && file.paragraphs.length > 1;
+  const isError = status === "error";
+  const isPending = status === "processing";
 
   if (isError) {
     return (
@@ -50,7 +52,7 @@ export default function FilePreview({ file }: Props) {
     );
   }
 
-  if (isPending || !parsedFile) {
+  if (isPending || !file.paragraphs) {
     return (
       <S.Wrapper>
         <S.FileContainer error={false} isLoading={true}>
@@ -71,9 +73,9 @@ export default function FilePreview({ file }: Props) {
       )}
 
       <S.FileContainer error={isError} isLoading={isPending}>
-        {parsedFile.document.map((p) => (
-          <S.Paragraph key={p} id={p}>
-            {p}
+        {file.paragraphs.map((p) => (
+          <S.Paragraph key={p.id} id={p.id}>
+            {p.value}
           </S.Paragraph>
         ))}
       </S.FileContainer>

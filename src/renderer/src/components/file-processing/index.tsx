@@ -8,6 +8,7 @@ import type { PredictStatus } from "@/hooks/usePredict";
 import { removeFile, replaceFile } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { Stack } from "@/styled/jsx";
+import { useQueryClient } from "@tanstack/react-query";
 import ProgressBar from "./ProgressBar";
 
 function ActionButton({
@@ -45,6 +46,7 @@ export default function FileProcessing({
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useFileDispatch();
+  const queryClient = useQueryClient();
 
   const handleOpenFinder = () => {
     inputRef.current?.click();
@@ -56,6 +58,14 @@ export default function FileProcessing({
     if (rawFiles) {
       const files = Array.from(rawFiles);
       if (files.length > 0) {
+        queryClient.removeQueries({ queryKey: ["file-parser", fileName], exact: false });
+        queryClient.removeQueries({ queryKey: ["disambiguate", fileName], exact: false });
+        queryClient.removeQueries({
+          predicate: (query) => {
+            const key = query.queryKey as unknown[];
+            return key[0] === "predict" && key[2] === fileName;
+          },
+        });
         dispatch(replaceFile(fileName, files[0]));
       }
     }
