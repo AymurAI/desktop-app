@@ -1,14 +1,14 @@
-import { Trash, XCircle } from "phosphor-react";
-import { useMemo, useState } from "react";
-
-import Select from "@/components/select";
 import Button from "@/components/ui/button";
 import { useFiles } from "@/hooks";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { anonymizerLabels } from "@/types/aymurai";
+import { Trash, XCircle } from "phosphor-react";
+import { useMemo, useState } from "react";
 
+import Select from "@/components/ui/select";
 import { Label } from "./label";
+import RemoveDialog from "./remove-dialog";
 import LabelManagerSection from "./section";
 
 // ─── Category config ────────────────────────────────────────────────────────
@@ -145,6 +145,12 @@ export default function LabelEntityTab({
     Record<string, string | undefined>
   >({});
 
+  const [pendingRemoval, setPendingRemoval] = useState<
+    | { kind: "derived"; canonicalId: string; label: string }
+    | { kind: "manual"; category: string; groupId: string; label: string }
+    | null
+  >(null);
+
   // Derive groups from predictions, merging by canonical_entity_id
   const derivedGroups = useMemo(() => {
     const result: Record<string, DerivedGroup[]> = Object.fromEntries(
@@ -157,7 +163,8 @@ export default function LabelEntityTab({
         const { canonical_entity_id, aymurai_label } = pred.attrs;
         if (!canonical_entity_id) continue;
 
-        const category = labelToCategory[aymurai_label];
+        const baseLabel = aymurai_label.replace(/_\d+$/, "");
+        const category = labelToCategory[baseLabel];
         if (!category) continue;
 
         if (byCanonicalId.has(canonical_entity_id)) {
@@ -168,7 +175,7 @@ export default function LabelEntityTab({
         } else {
           const group: DerivedGroup = {
             canonicalId: canonical_entity_id,
-            labelId: aymurai_label,
+            labelId: baseLabel,
             values: [pred.text],
           };
           byCanonicalId.set(canonical_entity_id, group);
@@ -180,9 +187,15 @@ export default function LabelEntityTab({
     return result;
   }, [files]);
 
-  const removeDerivedGroup = (canonicalId: string) => {
-    setRemovedDerivedIds((prev) => [...prev, canonicalId]);
-    onDerivedGroupRemove?.(canonicalId);
+  const confirmRemoval = () => {
+    if (!pendingRemoval) return;
+    if (pendingRemoval.kind === "derived") {
+      setRemovedDerivedIds((prev) => [...prev, pendingRemoval.canonicalId]);
+      onDerivedGroupRemove?.(pendingRemoval.canonicalId);
+    } else {
+      removeManualGroup(pendingRemoval.category, pendingRemoval.groupId);
+    }
+    setPendingRemoval(null);
   };
 
   const removeDerivedValue = (canonicalId: string, value: string) => {
@@ -247,6 +260,13 @@ export default function LabelEntityTab({
   };
 
   return (
+    <>
+    <RemoveDialog
+      isOpen={pendingRemoval !== null}
+      label={pendingRemoval?.label ?? ""}
+      onClose={(open) => { if (!open) setPendingRemoval(null); }}
+      onConfirm={confirmRemoval}
+    />
     <Stack gap="6">
       {categories.map((category, i) => {
         const { labelIds, placeholder } = categoryConfig[category];
@@ -279,16 +299,20 @@ export default function LabelEntityTab({
                           <Select
                             options={options}
                             placeholder={placeholder}
-                            selected={selectedLabel}
+                            value={selectedLabel}
                             onChange={(opt) =>
-                              changeDerivedLabel(group.canonicalId, opt?.id)
+                              changeDerivedLabel(group.canonicalId, opt.id)
                             }
                           />
                           <button
                             type="button"
                             className={iconButton}
                             onClick={() =>
-                              removeDerivedGroup(group.canonicalId)
+                              setPendingRemoval({
+                                kind: "derived",
+                                canonicalId: group.canonicalId,
+                                label: selectedLabel,
+                              })
                             }
                             aria-label="Eliminar grupo"
                           >
@@ -323,15 +347,22 @@ export default function LabelEntityTab({
                       <Select
                         options={options}
                         placeholder={placeholder}
-                        selected={group.selectedLabelId}
+                        value={group.selectedLabelId}
                         onChange={(opt) =>
-                          setManualGroupLabel(category, group.id, opt?.id)
+                          setManualGroupLabel(category, group.id, opt.id)
                         }
                       />
                       <button
                         type="button"
                         className={iconButton}
-                        onClick={() => removeManualGroup(category, group.id)}
+                        onClick={() =>
+                          setPendingRemoval({
+                            kind: "manual",
+                            category,
+                            groupId: group.id,
+                            label: group.selectedLabelId ?? placeholder,
+                          })
+                        }
                         aria-label="Eliminar grupo"
                       >
                         <Trash size={20} />
@@ -368,5 +399,6 @@ export default function LabelEntityTab({
         );
       })}
     </Stack>
+    </>
   );
 }

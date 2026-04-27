@@ -2,7 +2,7 @@ import { HStack, styled } from "@/styled/jsx";
 import { XCircle } from "phosphor-react";
 
 interface LabelProps {
-  children: string;
+  children: string | string[];
   onRemove: () => void;
 }
 export function Label({ children, onRemove }: LabelProps) {
