@@ -34,7 +34,7 @@ const closeButton = css({
 });
 
 const content = css({
-  maxWidth: "[1000px]",
+  minWidth: "[900px]",
 });
 
 interface HowItWorksModalProps {
