@@ -28,6 +28,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
+    "@microsoft/fetch-event-source": "^2.0.1",
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {
