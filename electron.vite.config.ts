@@ -6,6 +6,7 @@
  * `envDir` is set explicitly so `.env` files are resolved from the project root.
  */
 import { resolve } from "node:path";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
 
@@ -26,6 +27,12 @@ export default defineConfig({
         "@": resolve("src/renderer/src"),
       },
     },
-    plugins: [react()],
+    plugins: [
+      tanstackRouter({
+        target: "react",
+        autoCodeSplitting: true,
+      }),
+      react(),
+    ],
   },
 });
