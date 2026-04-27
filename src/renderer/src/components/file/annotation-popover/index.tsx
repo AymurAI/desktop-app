@@ -36,6 +36,7 @@ export default function AnnotationPopover({
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout>>(null);
   const isFocusInside = useRef(false);
+  const isKeyboardOpen = useRef(false);
 
   const scheduleClose = () => {
     cancelClose();
@@ -64,6 +65,11 @@ export default function AnnotationPopover({
           setOpen(true);
         }}
         onMouseLeave={scheduleClose}
+        onKeyDown={(e) => {
+          if (e.key === " " || e.key === "Enter") {
+            isKeyboardOpen.current = true;
+          }
+        }}
       >
         {children}
       </PopoverTrigger>
@@ -71,8 +77,13 @@ export default function AnnotationPopover({
         side="top"
         sideOffset={8}
         showArrow={false}
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        onCloseAutoFocus={(e) => e.preventDefault()}
+        onOpenAutoFocus={(e) => {
+          if (!isKeyboardOpen.current) e.preventDefault();
+        }}
+        onCloseAutoFocus={(e) => {
+          if (!isKeyboardOpen.current) e.preventDefault();
+          isKeyboardOpen.current = false;
+        }}
         onMouseEnter={cancelClose}
         onMouseLeave={scheduleClose}
         onFocus={() => {
