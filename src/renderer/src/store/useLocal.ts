@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useShallow } from "zustand/react/shallow";
 import { devtools, persist } from "zustand/middleware";
 import type { AnonymizerLabels } from "../types/aymurai";
 import { FeatureFlowEnum } from "../types/features";
@@ -66,9 +67,9 @@ export const useSetTutorialSeen = () =>
   useLocalStore((state) => state.setTutorialSeen);
 
 export const useExcludedTagsConfig = () =>
-  useLocalStore((s) => ({ tags: s.excludedTags, words: s.excludedWords }));
+  useLocalStore(useShallow((s) => ({ tags: s.excludedTags, words: s.excludedWords })));
 export const useExcludedTagsConfigActions = () =>
-  useLocalStore((s) => ({
+  useLocalStore(useShallow((s) => ({
     setTags: s.setExcludedTags,
     setWords: s.setExcludedWords,
-  }));
+  })));
