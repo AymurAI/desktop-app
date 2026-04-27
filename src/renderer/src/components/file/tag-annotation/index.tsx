@@ -1,7 +1,7 @@
-import SuggestionLabel from "@/components/anonymizer/mark/suggestion-label";
 import type {
   Annotation,
   LabelAnnotation,
+  Metadata,
 } from "@/components/file-annotator/types";
 import { useAnnotation } from "@/context/Annotation";
 import { showToast } from "@/features/showToast";
@@ -9,6 +9,7 @@ import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 import { Check } from "phosphor-react";
 import { useState } from "react";
 import AnnotationPopover from "../annotation-popover";
+import SuggestionLabel from "../suggestion-label";
 import RemoveDialog from "./remove-dialog";
 import ReplaceDialog from "./replace-dialog";
 import TagTagger from "./tag-tagger";
@@ -62,14 +63,24 @@ export default function TagAnnotation({
       }
     : null;
 
+  const metadata: Metadata = {
+    "data-start": annotation.start,
+    "data-end": annotation.end,
+    "data-tag": annotation.tag,
+  };
+
   if (!isAnnotable)
-    return <SuggestionLabel label={tag}>{children}</SuggestionLabel>;
+    return (
+      <SuggestionLabel label={tag} {...metadata}>
+        {children}
+      </SuggestionLabel>
+    );
 
   return (
     <>
       <AnnotationPopover
         trigger={
-          <SuggestionLabel isClickable label={tag}>
+          <SuggestionLabel isClickable label={tag} {...metadata}>
             {children}
           </SuggestionLabel>
         }

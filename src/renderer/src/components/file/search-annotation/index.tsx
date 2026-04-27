@@ -1,6 +1,7 @@
 import type {
   Annotation,
   LabelAnnotation,
+  Metadata,
 } from "@/components/file-annotator/types";
 import AnnotationPopover from "@/components/file/annotation-popover";
 import { useAnnotation } from "@/context/Annotation";
@@ -55,12 +56,26 @@ export default function SearchAnnotation({
       : label
     : null;
 
+  const metadata: Metadata = {
+    "data-start": annotation.start,
+    "data-end": annotation.end,
+    "data-tag": annotation.tag,
+  };
+
   if (!isAnnotable)
-    return <mark className={search({ clickable: false })}>{children}</mark>;
+    return (
+      <mark className={search({ clickable: false })} {...metadata}>
+        {children}
+      </mark>
+    );
 
   return (
     <AnnotationPopover
-      trigger={<mark className={search({ clickable: true })}>{children}</mark>}
+      trigger={
+        <mark className={search({ clickable: true })} {...metadata}>
+          {children}
+        </mark>
+      }
       content={
         // TODO: IMPLEMENT SUFFIX HERE
         // TODO: FIX TYPING HERE
