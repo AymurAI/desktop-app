@@ -118,7 +118,7 @@ interface InputProps
   helper?: string;
   // Control
   id?: string;
-  value: string;
+  value: string | undefined;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   disabled?: boolean;
   error?: string | null;
