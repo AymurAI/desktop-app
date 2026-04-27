@@ -10,6 +10,7 @@ import {
   type RemoveTranscriptionAction,
   type RemoveTurnAction,
   type RenameSpeakerGlobalAction,
+  type UpdateTurnStartMsAction,
   type UpdateTurnTextAction,
 } from "./actions";
 
@@ -21,6 +22,7 @@ export type TranscriptionAction =
   | RenameSpeakerGlobalAction
   | ReassignTurnSpeakerAction
   | UpdateTurnTextAction
+  | UpdateTurnStartMsAction
   | InsertTurnAction
   | RemoveTurnAction
   | AddSpeakerAction
@@ -125,6 +127,26 @@ export default function reducer(
         turns: t.turns.map((turn) =>
           turn.id === turnId ? { ...turn, text } : turn,
         ),
+      }));
+    }
+
+    // ----------------
+    // UPDATE TURN START MS
+    // ----------------
+    case ActionTypes.UPDATE_TURN_START_MS: {
+      const { transcriptionId, turnId, startMs } = payload;
+      const safeStart = Math.max(0, Math.floor(startMs));
+      return updateTranscription(state, transcriptionId, (t) => ({
+        ...t,
+        turns: t.turns.map((turn) => {
+          if (turn.id !== turnId) return turn;
+          const duration = Math.max(0, turn.endMs - turn.startMs);
+          return {
+            ...turn,
+            startMs: safeStart,
+            endMs: safeStart + duration,
+          };
+        }),
       }));
     }
 

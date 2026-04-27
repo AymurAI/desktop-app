@@ -14,6 +14,7 @@ export enum ActionTypes {
   RENAME_SPEAKER_GLOBAL = "RENAME_SPEAKER_GLOBAL",
   REASSIGN_TURN_SPEAKER = "REASSIGN_TURN_SPEAKER",
   UPDATE_TURN_TEXT = "UPDATE_TURN_TEXT",
+  UPDATE_TURN_START_MS = "UPDATE_TURN_START_MS",
   INSERT_TURN = "INSERT_TURN",
   REMOVE_TURN = "REMOVE_TURN",
   ADD_SPEAKER = "ADD_SPEAKER",
@@ -120,6 +121,25 @@ export function updateTurnText(
   return {
     type: ActionTypes.UPDATE_TURN_TEXT,
     payload: { transcriptionId, turnId, text },
+  };
+}
+
+export type UpdateTurnStartMsAction = Action<
+  ActionTypes.UPDATE_TURN_START_MS,
+  { transcriptionId: string; turnId: string; startMs: number }
+>;
+/**
+ * Updates the start timestamp (in milliseconds) of a turn.
+ * If the new start exceeds the current end, end is shifted to keep duration positive.
+ */
+export function updateTurnStartMs(
+  transcriptionId: string,
+  turnId: string,
+  startMs: number,
+): UpdateTurnStartMsAction {
+  return {
+    type: ActionTypes.UPDATE_TURN_START_MS,
+    payload: { transcriptionId, turnId, startMs },
   };
 }
 

@@ -98,10 +98,14 @@ export function mapTranscriptionToASRParagraphRequests(
     speakerNoMap.set(speaker.id, idx + 1);
   }
 
-  return transcription.turns.map((turn) => ({
-    speaker_no: speakerNoMap.get(turn.speakerId) ?? 1,
-    start: turn.startMs / 1000,
-    end: turn.endMs / 1000,
-    text: turn.text,
-  }));
+  return transcription.turns.map((turn) => {
+    const speaker = transcription.speakers.find((s) => s.id === turn.speakerId);
+    return {
+      speaker_no: speakerNoMap.get(turn.speakerId) ?? 1,
+      speaker_name: speaker?.label ?? null,
+      start: turn.startMs / 1000,
+      end: turn.endMs / 1000,
+      text: turn.text,
+    };
+  });
 }

@@ -8,6 +8,7 @@ import {
   addSpeaker,
   reassignTurnSpeaker,
   renameSpeakerGlobal,
+  updateTurnStartMs,
 } from "@/reducers/transcription/actions";
 import { styled } from "@/styles/stitches.config";
 import type {
@@ -16,6 +17,22 @@ import type {
   Transcription,
   Turn,
 } from "@/types/transcription";
+import { formatMs } from "./formatMs";
+
+// Parses "mm:ss" or "hh:mm:ss" into milliseconds. Returns null on invalid input.
+function parseTimestampToMs(input: string): number | null {
+  const trimmed = input.trim();
+  if (!/^\d{1,3}(?::\d{1,2}){1,2}$/.test(trimmed)) return null;
+  const parts = trimmed.split(":").map((p) => Number.parseInt(p, 10));
+  if (parts.some((n) => Number.isNaN(n))) return null;
+  let h = 0;
+  let m = 0;
+  let s = 0;
+  if (parts.length === 2) [m, s] = parts;
+  else [h, m, s] = parts;
+  if (m > 59 || s > 59) return null;
+  return ((h * 60 + m) * 60 + s) * 1000;
+}
 
 // ---------------------------------------------------------------------------
 // Styled components
@@ -174,11 +191,28 @@ function SpeakerDialog({
   const [selectedSpeakerId, setSelectedSpeakerId] = useState(turn.speakerId);
   const [showNewSpeaker, setShowNewSpeaker] = useState(false);
   const [newSpeakerName, setNewSpeakerName] = useState("");
+  const [timestampValue, setTimestampValue] = useState(formatMs(turn.startMs));
+  const [timestampError, setTimestampError] = useState<string | null>(null);
 
   const handleRename = () => {
     const trimmed = renameValue.trim();
     if (!trimmed) return;
     dispatch(renameSpeakerGlobal(transcription.id, speaker.id, trimmed));
+    onClose();
+  };
+
+  const handleTimestampSave = () => {
+    const parsed = parseTimestampToMs(timestampValue);
+    if (parsed === null) {
+      setTimestampError("Formato inválido. Usá mm:ss o hh:mm:ss.");
+      return;
+    }
+    if (parsed === turn.startMs) {
+      onClose();
+      return;
+    }
+    setTimestampError(null);
+    dispatch(updateTurnStartMs(transcription.id, turn.id, parsed));
     onClose();
   };
 
@@ -224,6 +258,35 @@ function SpeakerDialog({
           </Button>
         </RenameRow>
         <HelperText>Cambia el nombre en todos los turnos</HelperText>
+      </Section>
+
+      <Divider />
+
+      {/* Section: Edit timestamp */}
+      <Section>
+        <SectionTitle>Marca de tiempo</SectionTitle>
+        <RenameRow>
+          <RenameInput
+            value={timestampValue}
+            onChange={(e) => {
+              setTimestampValue(e.target.value);
+              if (timestampError) setTimestampError(null);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleTimestampSave();
+            }}
+            placeholder="mm:ss"
+            inputMode="numeric"
+            aria-label="Marca de tiempo del turno"
+          />
+          <Button variant="primary" size="s" onClick={handleTimestampSave}>
+            Guardar
+          </Button>
+        </RenameRow>
+        <HelperText css={timestampError ? { color: "#DC3545" } : undefined}>
+          {timestampError ??
+            "Formato mm:ss o hh:mm:ss. Cambia el inicio de este turno."}
+        </HelperText>
       </Section>
 
       <Divider />

@@ -91,7 +91,12 @@ export function Host() {
 
       {/* Remote host option selected */}
       {isLocal === false && (
-        <Stack spacing="m" align="center" w-full justify="center">
+        <Stack
+          spacing="m"
+          align="center"
+          justify="center"
+          css={{ width: "100%" }}
+        >
           <Subtitle weight="strong" size="s" css={{ textAlign: "center" }}>
             Ingresa la dirección del servidor al que deseas conectarte
           </Subtitle>

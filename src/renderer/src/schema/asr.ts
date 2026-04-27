@@ -13,5 +13,13 @@ export const ASRDocumentSchema = z.object({
   document: z.array(ASRParagraphSchema),
 });
 
+export const ASRStreamEventSchema = z.object({
+  document_id: z.string(),
+  document: z.array(ASRParagraphSchema),
+  current_time: z.number().nullable(),
+  total_time: z.number(),
+});
+
 export type ASRParagraph = z.infer<typeof ASRParagraphSchema>;
 export type ASRDocument = z.infer<typeof ASRDocumentSchema>;
+export type ASRStreamEvent = z.infer<typeof ASRStreamEventSchema>;
