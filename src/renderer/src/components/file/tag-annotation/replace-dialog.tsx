@@ -5,7 +5,6 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Stack } from "@/styled/jsx";
 
 interface ReplaceDialogProps {
   isOpen: boolean;
@@ -23,10 +22,10 @@ export default function ReplaceDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogTitle>Reemplazar todas las ocurrencias</DialogTitle>
-        <Stack>
-          ¿Deseas reemplazar todas las ocurrencias con la etiqueta{" "}
+        <p>
+          ¿Deseas reemplazar todas las ocurrencias del grupo con la etiqueta{" "}
           <b>{label}</b>?
-        </Stack>
+        </p>
         <DialogFooter>
           <Button onClick={onConfirm}>Aplicar</Button>
           <Button onClick={() => onClose(false)}>Cancelar</Button>

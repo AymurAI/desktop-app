@@ -8,11 +8,10 @@ import type {
 } from "@/components/file-annotator/types";
 import { useAnnotation } from "@/context/Annotation";
 import { showToast } from "@/features/showToast";
-import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 
+import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 import AnnotationPopover from "../annotation-popover";
 import SuggestionLabel from "../suggestion-label";
-import RemoveDialog from "./remove-dialog";
 import ReplaceDialog from "./replace-dialog";
 
 interface TagAnnotationProps {
@@ -28,25 +27,13 @@ export default function TagAnnotation({
       `Annotation of type "tag" expected but got: ${annotation.type}`,
     );
 
-  const {
-    updateLabel,
-    removeByText,
-    updateByText,
-    label,
-    suffix,
-    isAnnotable,
-  } = useAnnotation();
-  const [replaceAllOpen, setReplaceAllOpen] = useState(false);
-  const [removeAllOpen, setRemoveAllOpen] = useState(false);
-  const tag = annotation.tag ?? "DESCONOCIDO";
+  const { updateLabel, updateByText, updateByCanonicalId, isAnnotable } = useAnnotation();
+  const [replaceAllLabelWithSuffix, setReplaceAllLabelWithSuffix] = useState<
+    AllLabels | AllLabelsWithSufix | null
+  >(null);
+  const tag = annotation.tag;
 
-  const annotateTo: AllLabels | AllLabelsWithSufix | null = label
-    ? suffix
-      ? `${label}_${suffix}`
-      : label
-    : null;
-
-  const { start, end, paragraphId } = annotation as LabelAnnotation;
+  const { start, end, paragraphId, canonical_entity_id } = annotation as LabelAnnotation;
   const annotationData = annotation.tag
     ? {
         text: children,
@@ -87,57 +74,39 @@ export default function TagAnnotation({
         </SuggestionLabel>
       </AnnotationPopover>
       <ReplaceDialog
-        isOpen={replaceAllOpen}
-        label={annotateTo ?? ""}
-        onClose={setReplaceAllOpen}
+        isOpen={!!replaceAllLabelWithSuffix}
+        label={replaceAllLabelWithSuffix ?? ""}
+        onClose={(open) => !open && setReplaceAllLabelWithSuffix(null)}
         onConfirm={confirmReplaceAll}
-      />
-      <RemoveDialog
-        isOpen={removeAllOpen}
-        label={tag}
-        onClose={setRemoveAllOpen}
-        onConfirm={confirmRemoveAll}
       />
     </>
   );
 
-  function handleReplaceOne() {
-    if (!annotationData || !annotateTo) return;
-    updateLabel(annotationData, annotateTo);
+  function handleReplaceOne(label: AllLabels, suffix: number | null) {
+    console.log({ annotationData, label });
+    if (!annotationData || !label) return;
+
+    const labelWithSuffix = suffix ? (`${label}_${suffix}` as const) : label;
+    updateLabel(annotationData, labelWithSuffix);
     showToast("Se reemplazó la etiqueta en esta ocurrencia.", "success", Check);
   }
 
-  function handleReplaceAll() {
-    setReplaceAllOpen(true);
+  function handleReplaceAll(label: AllLabels, suffix: number | null) {
+    const labelWithSuffix = suffix ? (`${label}_${suffix}` as const) : label;
+    setReplaceAllLabelWithSuffix(labelWithSuffix);
   }
 
   function confirmReplaceAll() {
-    if (!annotationData || !annotateTo) return;
-    updateByText(annotationData, annotateTo);
-    setReplaceAllOpen(false);
+    if (!annotationData || !replaceAllLabelWithSuffix) return;
+
+    if (canonical_entity_id) {
+      updateByCanonicalId(canonical_entity_id, replaceAllLabelWithSuffix);
+    } else {
+      updateByText(annotationData, replaceAllLabelWithSuffix);
+    }
+    setReplaceAllLabelWithSuffix(null);
     showToast(
       "Se reemplazó la etiqueta en todas las ocurrencias.",
-      "success",
-      Check,
-    );
-  }
-
-  // function handleRemoveOne() {
-  //   if (!annotationData) return;
-  //   remove(annotationData);
-  //   showToast("Se eliminó la etiqueta en esta ocurrencia.", "success", Check);
-  // }
-
-  // function handleRemoveAll() {
-  //   setRemoveAllOpen(true);
-  // }
-
-  function confirmRemoveAll() {
-    if (!annotationData) return;
-    removeByText(annotationData);
-    setRemoveAllOpen(false);
-    showToast(
-      "Se eliminaron todas las etiquetas de este texto.",
       "success",
       Check,
     );

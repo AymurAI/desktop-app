@@ -78,7 +78,7 @@ export default function Tagger({ onClickAll, onClickOne }: MarkTaggerProps) {
       <div className={classes.divider} />
       <styled.div maxWidth="16">
         <Input
-          value={(suffix ?? "")?.toString()}
+          value={suffix ? suffix.toString() : undefined}
           size="sm"
           onChange={handleSuffixChange}
           type="number"
@@ -105,7 +105,7 @@ export default function Tagger({ onClickAll, onClickOne }: MarkTaggerProps) {
         disabled={!label}
       >
         <img
-          src="/button-icons/replace-all.svg"
+          src="/button-icons/add-all.svg"
           alt="Afectar todas las ocurrencias"
           width={IMG_SIZE}
           height={IMG_SIZE}

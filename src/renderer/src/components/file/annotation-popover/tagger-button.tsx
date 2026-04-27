@@ -14,6 +14,7 @@ const button = sva({
       p: "0.5",
       rounded: "[6px]",
       cursor: "pointer",
+      flexShrink: "0",
       _hover: {
         bg: "action.hover",
       },

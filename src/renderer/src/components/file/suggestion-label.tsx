@@ -1,13 +1,13 @@
 import Suggestion from "@/components/ui/suggestion";
 import { HStack, styled } from "@/styled/jsx";
-import type { AllLabels } from "@/types/aymurai";
+import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 import type { ComponentPropsWithoutRef } from "react";
 
 interface SuggestionLabelProps
   extends Omit<ComponentPropsWithoutRef<"mark">, "translate" | "color"> {
   isClickable?: boolean;
   children: string;
-  label: AllLabels;
+  label: AllLabels | AllLabelsWithSufix | undefined;
 }
 export default function SuggestionLabel({
   isClickable = false,
@@ -26,7 +26,7 @@ export default function SuggestionLabel({
           textStyle="cta.md.strong"
           fontFamily="[Archivo !important]"
         >
-          {label}
+          {label ?? "DESCONOCIDO"}
         </styled.span>
       </HStack>
     </Suggestion>
