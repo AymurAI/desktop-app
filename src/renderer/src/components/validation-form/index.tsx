@@ -42,7 +42,7 @@ export default function ValidationForm({
   // Add the onChange handler to every children
   const childrenWithHandler = Children.map(children, (child) => {
     if (isValidElement(child)) {
-      return cloneElement(child as ReactElement, { onChange });
+      return cloneElement(child as ReactElement<{ onChange: () => void }>, { onChange });
     }
     return child;
   });
