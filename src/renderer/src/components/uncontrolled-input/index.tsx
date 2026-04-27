@@ -122,6 +122,7 @@ export default forwardRef<{ value: string }, Props>(function UncontrolledInput(
               onClick={handleClickSuggestion}
               onKeyDown={handleKeySuggestion}
               tabIndex={0}
+              clickable
             >
               {suggestion}
             </Suggestion>
