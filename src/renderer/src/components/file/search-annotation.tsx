@@ -7,13 +7,8 @@ import AnnotationPopover from "@/components/file/annotation-popover";
 import { useAnnotation } from "@/context/Annotation";
 import { showToast } from "@/features/showToast";
 import { cva } from "@/styled/css";
-import type {
-  AllLabels,
-  AllLabelsWithSufix,
-  AnonymizerLabels,
-} from "@/types/aymurai";
+import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 import { Check } from "phosphor-react";
-import SearchTagger from "./search-tagger";
 
 const search = cva({
   base: {
@@ -70,24 +65,11 @@ export default function SearchAnnotation({
     );
 
   return (
-    <AnnotationPopover
-      trigger={
-        <mark className={search({ clickable: true })} {...metadata}>
-          {children}
-        </mark>
-      }
-      content={
-        // TODO: IMPLEMENT SUFFIX HERE
-        // TODO: FIX TYPING HERE
-        <SearchTagger
-          // TODO: FIX TYPING HERE — SearchTagger only handles AnonymizerLabels but label can be any AllLabels
-          initialLabel={label as AnonymizerLabels}
-          initialSuffix={suffix?.toString() ?? ""}
-          onAddAll={handleAddAll}
-          onAddOne={handleAddOne}
-        />
-      }
-    />
+    <AnnotationPopover onClickOne={handleAddOne} onClickAll={handleAddAll}>
+      <mark className={search({ clickable: true })} {...metadata}>
+        {children}
+      </mark>
+    </AnnotationPopover>
   );
 
   function handleAddOne() {

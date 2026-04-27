@@ -4,12 +4,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { css } from "@/styled/css";
-import type {
-  ComponentPropsWithoutRef,
-  FocusEventHandler,
-  ReactNode,
-} from "react";
+import type { AllLabels } from "@/types/aymurai";
+import type { FocusEventHandler, ReactNode } from "react";
 import { useRef, useState } from "react";
+import Tagger from "./tagger";
 
 const triggerReset = css({
   appearance: "none",
@@ -25,18 +23,15 @@ const triggerReset = css({
 });
 
 interface AnnotationPopoverProps {
-  trigger: ReactNode;
-  content: ReactNode;
-  contentProps?: Omit<
-    ComponentPropsWithoutRef<typeof PopoverContent>,
-    "children"
-  >;
+  children: ReactNode;
+  onClickOne: (label: AllLabels, suffix: number | null) => void;
+  onClickAll: (label: AllLabels, suffix: number | null) => void;
 }
 
 export default function AnnotationPopover({
-  trigger,
-  content,
-  contentProps,
+  children,
+  onClickAll,
+  onClickOne,
 }: AnnotationPopoverProps) {
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout>>(null);
@@ -70,7 +65,7 @@ export default function AnnotationPopover({
         }}
         onMouseLeave={scheduleClose}
       >
-        {trigger}
+        {children}
       </PopoverTrigger>
       <PopoverContent
         side="top"
@@ -84,9 +79,8 @@ export default function AnnotationPopover({
           isFocusInside.current = true;
         }}
         onBlur={handleBlur}
-        {...contentProps}
       >
-        {content}
+        <Tagger onClickOne={onClickOne} onClickAll={onClickAll} />
       </PopoverContent>
     </Popover>
   );

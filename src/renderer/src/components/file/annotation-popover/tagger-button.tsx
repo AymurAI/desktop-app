@@ -26,24 +26,44 @@ const button = sva({
       rounded: "sm",
     },
   },
+  variants: {
+    disabled: {
+      true: {
+        button: {
+          cursor: "not-allowed",
+          _hover: {
+            bg: "transparent",
+          },
+        },
+      },
+    },
+  },
 });
 
 interface TaggerButtonProps {
   tooltip: string;
   children: React.ReactNode;
   onClick: () => void;
+  disabled?: boolean;
 }
 export default function TaggerButton({
   children,
   tooltip,
   onClick,
+  disabled = false,
 }: TaggerButtonProps) {
-  const classes = button();
+  const classes = button({ disabled });
   return (
     <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button type="button" onClick={onClick} className={classes.button}>
+          <button
+            type="button"
+            onClick={disabled ? undefined : onClick}
+            disabled={disabled}
+            aria-disabled={disabled}
+            className={classes.button}
+          >
             {children}
           </button>
         </TooltipTrigger>

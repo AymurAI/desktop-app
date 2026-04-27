@@ -1,3 +1,6 @@
+import { Check } from "phosphor-react";
+import { useState } from "react";
+
 import type {
   Annotation,
   LabelAnnotation,
@@ -6,13 +9,11 @@ import type {
 import { useAnnotation } from "@/context/Annotation";
 import { showToast } from "@/features/showToast";
 import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
-import { Check } from "phosphor-react";
-import { useState } from "react";
+
 import AnnotationPopover from "../annotation-popover";
 import SuggestionLabel from "../suggestion-label";
 import RemoveDialog from "./remove-dialog";
 import ReplaceDialog from "./replace-dialog";
-import TagTagger from "./tag-tagger";
 
 interface TagAnnotationProps {
   children: string;
@@ -29,7 +30,6 @@ export default function TagAnnotation({
 
   const {
     updateLabel,
-    remove,
     removeByText,
     updateByText,
     label,
@@ -79,20 +79,13 @@ export default function TagAnnotation({
   return (
     <>
       <AnnotationPopover
-        trigger={
-          <SuggestionLabel isClickable label={tag} {...metadata}>
-            {children}
-          </SuggestionLabel>
-        }
-        content={
-          <TagTagger
-            onRemove={handleRemoveOne}
-            onRemoveAll={handleRemoveAll}
-            onReplaceOne={handleReplaceOne}
-            onReplaceAll={handleReplaceAll}
-          />
-        }
-      />
+        onClickOne={handleReplaceOne}
+        onClickAll={handleReplaceAll}
+      >
+        <SuggestionLabel isClickable label={tag} {...metadata}>
+          {children}
+        </SuggestionLabel>
+      </AnnotationPopover>
       <ReplaceDialog
         isOpen={replaceAllOpen}
         label={annotateTo ?? ""}
@@ -129,15 +122,15 @@ export default function TagAnnotation({
     );
   }
 
-  function handleRemoveOne() {
-    if (!annotationData) return;
-    remove(annotationData);
-    showToast("Se eliminó la etiqueta en esta ocurrencia.", "success", Check);
-  }
+  // function handleRemoveOne() {
+  //   if (!annotationData) return;
+  //   remove(annotationData);
+  //   showToast("Se eliminó la etiqueta en esta ocurrencia.", "success", Check);
+  // }
 
-  function handleRemoveAll() {
-    setRemoveAllOpen(true);
-  }
+  // function handleRemoveAll() {
+  //   setRemoveAllOpen(true);
+  // }
 
   function confirmRemoveAll() {
     if (!annotationData) return;
