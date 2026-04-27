@@ -118,6 +118,8 @@ export default function AnnotationProvider({
     (search: string, label: AllLabels | AllLabelsWithSufix) => {
       if (!search || search.length < 3) return;
 
+      const canonical_entity_id = crypto.randomUUID();
+
       file.paragraphs?.forEach((paragraph: Paragraph) => {
         const indexes = findSearchIndexes(paragraph.value, search);
         indexes.forEach((start: number) => {
@@ -132,6 +134,7 @@ export default function AnnotationProvider({
               aymurai_alt_text: null,
               aymurai_alt_start_char: start,
               aymurai_alt_end_char: start + search.length,
+              canonical_entity_id,
             },
           };
           dispatch(appendPrediction(file.data.name, prediction));
