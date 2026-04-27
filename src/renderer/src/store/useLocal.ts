@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import type { AnonymizerLabels } from "../types/aymurai";
 import { FeatureFlowEnum } from "../types/features";
 
 type TutorialsSeen = Record<FeatureFlowEnum, boolean>;
@@ -11,6 +12,10 @@ interface LocalStorageStore {
   tutorialsSeen: TutorialsSeen;
   hasSeenTutorial: (feature: FeatureFlowEnum) => boolean;
   setTutorialSeen: (feature: FeatureFlowEnum) => void;
+  excludedTags: Record<AnonymizerLabels, boolean> | null;
+  setExcludedTags: (tags: Record<AnonymizerLabels, boolean>) => void;
+  excludedWords: string[];
+  setExcludedWords: (words: string[]) => void;
 }
 
 const useLocalStore = create<LocalStorageStore>()(
@@ -30,6 +35,10 @@ const useLocalStore = create<LocalStorageStore>()(
           set((state) => ({
             tutorialsSeen: { ...state.tutorialsSeen, [feature]: true },
           })),
+        excludedTags: null,
+        setExcludedTags: (tags) => set({ excludedTags: tags }),
+        excludedWords: [],
+        setExcludedWords: (words) => set({ excludedWords: words }),
       }),
       {
         name: "local-storage",
@@ -55,3 +64,11 @@ export const useTutorialSeen = (feature: FeatureFlowEnum) =>
   useLocalStore((state) => state.tutorialsSeen[feature]);
 export const useSetTutorialSeen = () =>
   useLocalStore((state) => state.setTutorialSeen);
+
+export const useExcludedTagsConfig = () =>
+  useLocalStore((s) => ({ tags: s.excludedTags, words: s.excludedWords }));
+export const useExcludedTagsConfigActions = () =>
+  useLocalStore((s) => ({
+    setTags: s.setExcludedTags,
+    setWords: s.setExcludedWords,
+  }));

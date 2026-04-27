@@ -1,10 +1,15 @@
 import { HStack, Stack, styled } from "@/styled/jsx";
-import { anonymizerLabels } from "@/types/aymurai";
+import { type AnonymizerLabels, anonymizerLabels } from "@/types/aymurai";
 import { useState } from "react";
 
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import BaseSwitch from "@/components/ui/switch";
+import { EXCLUDED_TAGS } from "@/constants/excluded-tags";
+import {
+  useExcludedTagsConfig,
+  useExcludedTagsConfigActions,
+} from "@/store/useLocal";
 import { Label } from "./label";
 import LabelManagerSection from "./section";
 
@@ -24,29 +29,35 @@ function Switch({ name, value, onToggle }: ToggleProps) {
   );
 }
 
-const initialToggles = Object.fromEntries(
-  anonymizerLabels.map((label) => [label.id, true]),
-);
-
 export default function LabelConfigTab() {
-  const [toggles, setToggles] =
-    useState<Record<string, boolean>>(initialToggles);
-  const [excludedWords, setExcludedWords] = useState<string[]>([]);
+  const { tags: storedTags, words: storedWords } = useExcludedTagsConfig();
+  const { setTags, setWords } = useExcludedTagsConfigActions();
+
+  const [toggles, setToggles] = useState<Record<string, boolean>>(
+    storedTags ?? EXCLUDED_TAGS,
+  );
+  const [excludedWords, setExcludedWords] = useState<string[]>(storedWords);
   const [inputValue, setInputValue] = useState("");
 
   function handleToggle(id: string, value: boolean) {
-    setToggles((prev) => ({ ...prev, [id]: value }));
+    const next = { ...toggles, [id]: value };
+    setToggles(next);
+    setTags(next as Record<AnonymizerLabels, boolean>);
   }
 
   function handleAddWord() {
     const trimmed = inputValue.trim();
     if (!trimmed || excludedWords.includes(trimmed)) return;
-    setExcludedWords((prev) => [...prev, trimmed]);
+    const next = [...excludedWords, trimmed];
+    setExcludedWords(next);
+    setWords(next);
     setInputValue("");
   }
 
   function handleRemoveWord(word: string) {
-    setExcludedWords((prev) => prev.filter((w) => w !== word));
+    const next = excludedWords.filter((w) => w !== word);
+    setExcludedWords(next);
+    setWords(next);
   }
 
   return (
