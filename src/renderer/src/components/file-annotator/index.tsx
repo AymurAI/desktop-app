@@ -1,42 +1,71 @@
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState, useTransition } from "react";
 
 import { SearchBar } from "./SearchBar";
 
 import type { SelectOption } from "@/components/ui/select";
-import AnnotationProvider from "@/context/Annotation";
+import AnnotationProvider, { useAnnotation } from "@/context/Annotation";
 import { HStack } from "@/styled/jsx";
-import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
-import type { DocFile } from "@/types/file";
+import type { AllLabels, AllLabelsWithSufix, PredictLabel } from "@/types/aymurai";
+import type { DocFile, Paragraph as ParagraphType } from "@/types/file";
 import LabelManager from "../anonymizer/label-manager";
+import SearchAnnotation from "../file/search-annotation";
+import TagAnnotation from "../file/tag-annotation";
 import * as S from "./FileAnnotator.styles";
-import { Mark } from "./Mark";
-import { createAnnotationsWithSearch } from "./annotations";
+import { createAnnotationsWithSearch, predictionsToMap } from "./annotations";
 import { generateSplits } from "./generateSplits";
-import type { Annotation } from "./types";
 
 interface ParagraphProps {
   children: string;
-  annotations?: Annotation[];
-  id: string;
+  search: string;
+  paragraph: ParagraphType;
+  predictions: PredictLabel[];
 }
-const Paragraph = ({ children, annotations = [], id }: ParagraphProps) => {
+const Paragraph = memo(({ children, search, paragraph, predictions }: ParagraphProps) => {
+  const { label, suffix } = useAnnotation();
+  const searchTag = label
+    ? suffix
+      ? (`${label}_${suffix}` as AllLabelsWithSufix)
+      : label
+    : null;
+
+  const annotations = useMemo(() => {
+    return createAnnotationsWithSearch(
+      predictions,
+      search,
+      paragraph,
+      searchTag,
+    );
+  }, [predictions, search, paragraph, searchTag]);
+
   const splits = generateSplits(children, annotations);
 
   return (
-    <S.Paragraph id={id}>
+    <S.Paragraph id={paragraph.id}>
       {splits.map((s) => {
         const content = children.slice(s.start, s.end);
         const key = `${s.start}-${s.end}`;
 
-        return (
-          <Mark key={key} annotation={s}>
-            {content}
-          </Mark>
-        );
+        switch (s.type) {
+          case "search":
+            return (
+              <SearchAnnotation key={key} annotation={s}>
+                {content}
+              </SearchAnnotation>
+            );
+          case "tag":
+            return (
+              <TagAnnotation key={key} annotation={s}>
+                {content}
+              </TagAnnotation>
+            );
+          case "text":
+          default:
+            return <span key={key}>{content}</span>;
+        }
       })}
     </S.Paragraph>
   );
-};
+});
 
 interface Props {
   file: DocFile;
@@ -44,63 +73,59 @@ interface Props {
 }
 export default function FileAnnotator({ file, isAnnotable = false }: Props) {
   const [search, setSearch] = useState("");
+  const [, startTransition] = useTransition();
 
-  const [labelSearch, setLabelSearch] = useState<AllLabels | null>(null);
-  const [sufixlabelSearch, setSufixLabelSearch] = useState<number | null>(0);
+  const [label, setLabel] = useState<AllLabels | null>(null);
+  const [suffix, setSuffix] = useState<number | null>(0);
   const [labelManagerOpen, setLabelManagerOpen] = useState(false);
-
-  const searchTag = useMemo<AllLabels | AllLabelsWithSufix | null>(() => {
-    return labelSearch
-      ? sufixlabelSearch
-        ? `${labelSearch}_${sufixlabelSearch}`
-        : labelSearch
-      : null;
-  }, [labelSearch, sufixlabelSearch]);
 
   const paragraphs = file.paragraphs!;
 
+  const predictionsMap = useMemo(
+    () => predictionsToMap(file.predictions ?? []),
+    [file.predictions],
+  );
+
   const selectChangeHandler = (option?: SelectOption) => {
-    // We're sure the option is an AllLabels enum.
-    // Check the type following the SearchBar component
-    setLabelSearch((option?.id as AllLabels) ?? null);
+    setLabel((option?.id as AllLabels) ?? null);
   };
 
   const toggleManagerLabel = () => {
     setLabelManagerOpen(!labelManagerOpen);
   };
 
+  const handleSearchChange = (value: string) => {
+    startTransition(() => setSearch(value));
+  };
+
   return (
     <HStack w="full" h="full" alignItems="unset" overflow="hidden">
       <S.Container>
         <SearchBar
-          onSearchChange={setSearch}
+          onSearchChange={handleSearchChange}
           onLabelChange={selectChangeHandler}
-          onLabelSufixChange={setSufixLabelSearch}
+          onLabelSufixChange={setSuffix}
           onLabelManagerToggle={toggleManagerLabel}
           isAnnotable={isAnnotable}
           isLabelManagerOpen={labelManagerOpen}
         />
         <S.File>
           <AnnotationProvider
-            {...{
-              file,
-              isAnnotable,
-              searchTag,
-            }}
+            file={file}
+            isAnnotable={isAnnotable}
+            label={label}
+            suffix={suffix}
           >
-            {paragraphs.map((p) => {
-              const annotations = createAnnotationsWithSearch(
-                file.predictions ?? [],
-                search,
-                p,
-                searchTag,
-              );
-              return (
-                <Paragraph key={p.id} id={p.id} annotations={annotations}>
-                  {p.value}
-                </Paragraph>
-              );
-            })}
+            {paragraphs.map((p) => (
+              <Paragraph
+                key={p.id}
+                search={search}
+                paragraph={p}
+                predictions={predictionsMap.get(p.id) ?? []}
+              >
+                {p.value}
+              </Paragraph>
+            ))}
           </AnnotationProvider>
         </S.File>
       </S.Container>
