@@ -18,13 +18,14 @@ import { HStack, Stack, styled } from "@/styled/jsx";
 import type { Workflows } from "@/types/aymurai";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import type { DocFile } from "@/types/file";
+import taskbar from "@/services/taskbar";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   createFileRoute,
   useNavigate,
   useParams,
 } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/app/$feature/process")({
@@ -43,6 +44,7 @@ function RouteComponent() {
   const files = useFiles();
 
   const [isDismissed, setIsDismissed] = useState(false);
+  const hasNotified = useRef(false);
 
   const workflow: Workflows =
     feature === FeatureFlowEnum.Anonymizer ? "anonymizer" : "datapublic";
@@ -68,6 +70,13 @@ function RouteComponent() {
       fileStatuses[f.data.name]?.status === "processing" ||
       disambiguateStatuses[f.data.name]?.status === "processing",
   );
+
+  useEffect(() => {
+    if (files.length > 0 && !isProcessing && !hasNotified.current) {
+      hasNotified.current = true;
+      taskbar.notify();
+    }
+  }, [isProcessing, files.length]);
 
   // Weighted progress: 10% parse / 70% predict / 20% disambiguate (anonymizer)
   // or 10% parse / 90% predict (datapublic).
