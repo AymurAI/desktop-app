@@ -9,7 +9,6 @@ import { css } from "@/styled/css";
 import { HStack, Stack } from "@/styled/jsx";
 import { isFileValidated, isValidationCompleted } from "@/utils/file";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import MainContent from "../layout/main-content";
 import FormGroup from "./form-group";
 import { moveNext, movePrevious } from "./utils";
 
@@ -60,31 +59,37 @@ export function ValidateDataset() {
   };
 
   return (
-    <>
+    <Stack gap="0" flex="1" minHeight="0">
       <Grid
         columns={2}
         spacing="none"
         justify="stretch"
         align="stretch"
-        css={{ overflow: "hidden" }}
+        css={{ overflow: "hidden", flex: 1, minHeight: 0 }}
       >
         <FileAnnotator
           key={selectedFile.data.name}
           file={selectedFile}
           isAnnotable={false}
         />
-        <MainContent>
-          <Stack px="[100px]" pb="16" overflowY="scroll" gap="16">
-            <SectionTitle className={css({ whiteSpace: "nowrap" })}>
-              3. Validación de datos
-            </SectionTitle>
-            <FormGroup
-              key={selectedFile.data.name}
-              file={selectedFile}
-              onCheck={handleCheck}
-            />
-          </Stack>
-        </MainContent>
+        <Stack
+          px="[100px]"
+          pt="16"
+          pb="16"
+          overflowY="scroll"
+          gap="16"
+          bg="bg.primary"
+          minHeight="0"
+        >
+          <SectionTitle className={css({ whiteSpace: "nowrap" })}>
+            3. Validación de datos
+          </SectionTitle>
+          <FormGroup
+            key={selectedFile.data.name}
+            file={selectedFile}
+            onCheck={handleCheck}
+          />
+        </Stack>
       </Grid>
       <Footer>
         <HStack
@@ -112,6 +117,6 @@ export function ValidateDataset() {
           )}
         </HStack>
       </Footer>
-    </>
+    </Stack>
   );
 }
