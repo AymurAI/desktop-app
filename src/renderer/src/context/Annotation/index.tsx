@@ -5,6 +5,7 @@ import {
   removePrediction,
   removePredictionsByText,
   updatePredictionLabel,
+  updatePredictionsByCanonicalId,
   updatePredictionsByText,
 } from "@/reducers/file/actions";
 import type {
@@ -37,6 +38,10 @@ interface AnnotationContextValues {
     prediction: PredictLabel,
     newLabel: AllLabels | AllLabelsWithSufix,
   ) => void;
+  updateByCanonicalId: (
+    canonicalId: string,
+    newLabel: AllLabels | AllLabelsWithSufix,
+  ) => void;
   addBySearch: (search: string, label: AllLabels | AllLabelsWithSufix) => void;
 }
 
@@ -52,6 +57,7 @@ export const AnnotationContext = createContext<AnnotationContextValues>({
   removeByText: () => {},
   updateLabel: () => {},
   updateByText: () => {},
+  updateByCanonicalId: () => {},
   addBySearch: () => {},
 });
 AnnotationContext.displayName = "AnnotationContext";
@@ -112,6 +118,13 @@ export default function AnnotationProvider({
       );
     },
     [dispatch, file.data.name],
+  );
+
+  const updateByCanonicalId = useCallback(
+    (canonicalId: string, newLabel: AllLabels | AllLabelsWithSufix) => {
+      dispatch(updatePredictionsByCanonicalId(canonicalId, newLabel));
+    },
+    [dispatch],
   );
 
   const addBySearch = useCallback(
@@ -191,6 +204,7 @@ export default function AnnotationProvider({
         removeByText,
         updateLabel,
         updateByText,
+        updateByCanonicalId,
         addBySearch,
       }}
     >
@@ -209,6 +223,7 @@ export const useAnnotation = () => {
     suffix,
     updateLabel,
     updateByText,
+    updateByCanonicalId,
     addBySearch,
   } = useContext(AnnotationContext);
 
@@ -245,6 +260,7 @@ export const useAnnotation = () => {
     suffix,
     updateLabel,
     updateByText,
+    updateByCanonicalId,
     addBySearch,
     createAnnotationData,
   };
