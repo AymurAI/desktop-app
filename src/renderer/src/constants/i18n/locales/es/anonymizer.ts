@@ -31,6 +31,12 @@ const anonymizer = {
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
     finishText: "Se finalizó el análisis del documento.",
   },
+  validation: {
+    toastSingleSuccess:
+      'Se aplicó con éxito una etiqueta de "{{label}}" en una ocurrencia.',
+    toastAllSuccess:
+      'Se aplicó con éxito una etiqueta de "{{label}}" en todas las ocurrencias.',
+  },
   result: { sectionTitle: "" },
   finish: {
     sectionTitle: "4. Finalización",
@@ -38,7 +44,8 @@ const anonymizer = {
       "Los datos encontrados por AymurAI y posteriormente validados ya han sido anonimizados correctamente.",
     subtitle: "Archivo procesado",
     restart: "Cargar un nuevo documento",
-    viewResult: "Descargar documento",
+    viewResult: "Descargar ODT",
+    viewResultPDF: "Descargar PDF",
   },
 };
 
