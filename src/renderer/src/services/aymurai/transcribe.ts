@@ -1,7 +1,11 @@
 import { CanceledError } from "axios";
 
+import {
+  STT_MOCK_DELAY_MS,
+  USE_ASR_CACHE,
+  USE_MOCK_STT,
+} from "@/constants/config";
 import type { Transcription } from "@/types/transcription";
-import { STT_MOCK_DELAY_MS, USE_ASR_CACHE, USE_MOCK_STT } from "@/utils/config";
 import { buildFixture } from "./fixtures/transcription";
 import { transcribeStream } from "./transcribeStream";
 

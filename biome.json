@@ -7,7 +7,13 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["node_modules", "build", ".husky", "out"]
+    "ignore": [
+      "node_modules",
+      "build",
+      "out",
+      "routeTree.gen.ts",
+      "src/renderer/src/styled"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -39,6 +45,9 @@
           "fix": "safe",
           "level": "error"
         }
+      },
+      "suspicious": {
+        "noConsoleLog": "warn"
       },
       "a11y": {
         "noSvgWithoutTitle": "off",

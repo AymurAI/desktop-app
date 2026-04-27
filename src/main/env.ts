@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
 
-import { is } from "@electron-toolkit/utils";
 import { homedir } from "node:os";
 import path from "node:path";
+import { is } from "@electron-toolkit/utils";
 
 // ------------------------
 // CONFIG VARIABLES

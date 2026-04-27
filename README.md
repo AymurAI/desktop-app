@@ -9,37 +9,29 @@ tools
 - ⚡ **Electron** as the _deployment and packaging tool_. It also serves the
 purpose of communicating the webapp with the _NodeJS_ process.
 - 🪡 **Stitches** as the _styling library_
-- 🛣️ **React Router** as the _routing library_ to navigate across the webapp
+- 🛣️ **Tanstack React Router** as the _routing library_ to navigate across the webapp
 - 📄 **Mammoth** + **ExcelJS** as the _libraries_ to read and write `.docx` and
 datasheet files
 
 ### Other technologies
 
-- **npm** as the _package manager_
-- **ESLint** as the _code linter_
+- **pnpm** as _package manager_
+- **biome** as code _linter and formatter_
 
 ##  Getting started
 
 1. Clone the repository
-1. Add your [Google OAuth Client ID](https://developers.google.com/identity/protocols/oauth2)
-as an `.env` file
 
-   ```bash
-   $ vim .env
+1. Navigate to the repository folder and install dependencies with
 
-   REACT_APP_CLIENT_ID="XXXXXXXXXXXX" # Your Client ID
-   ```
-
-1. Install dependencies with
-
-   ```bash
-   npm install
-   ```
+    ```bash
+    pnpm install
+    ```
 
 1. Start the app in development mode with
 
    ```bash
-   npm run dev
+   pnpm run dev
    ```
 
 ## Run Aymurai API
@@ -60,36 +52,35 @@ as an `.env` file
 
 ### Development
 
-- `dev:web`: levanta el frontend localmente para poder ser visualizado en un
-  browser convencional
-- `dev`: levanta el frontend localmente y crea una instancia de _Electron_ para
-  poder visualizarlo
+- `dev:web`: starts the frontend locally to be viewed in a conventional browser
+- `dev`: starts the frontend locally and creates an _Electron_ instance to view it
+- `start`: previews the production build with Electron
+- `start:web`: previews the production web build in a browser
 
 ### Build
 
-- `build:renderer`: genera un build de la aplicación de _Electron_
-- `build:app`: genera un build de la aplicación de _React_
-- `build`: genera un build de la aplicación de _React_ y luego un build de la
-  aplicación de _Electron_
+- `build:web`: builds the React Vite project
+- `build`: builds both React and Electron projects (without packaging the application)
 
 ### Validation
 
-- `lint`: corre el linter (_ESLint_) en todo el proyecto
-- `lint:markdown`: corre el linter de markdown (_MarkdownLint_), pero
-  únicamente en los archivos de markdown
-- `lint:fix`: corrige los errores de linter de formato
-- `check-types:react`: corre un checko de tipado en la aplicación de _React_
-- `check-types:renderer`: corre un checko de tipado en la aplicación de
-  _Electron_
-- `validate`: corre el linter y luego el checkeo de tipos
-- `pre-commit`: corre el _LintStaged_
+- `lint`: runs the linter (_Biome_) across the entire project
+- `lint:fix`: fixes linter errors automatically
+- `format`: checks code formatting with _Biome_
+- `format:fix`: fixes code formatting automatically
+- `typecheck`: runs type checking on both _Node_ and _Web_ applications
+- `typecheck:node`: runs type checking on the _Electron_ application
+- `typecheck:web`: runs type checking on the _React_ application
+- `validate`: runs linting and type checking on both React and renderer
+- `pre-commit`: runs _LintStaged_
 
 ### Deployment
 
-- `package`: genera la aplicación empaquetada en la carpeta `/out`. El tipo de
-  aplicación depende del OS host
-- `make`: genera un instalador de la aplicación empaquetada. También depende del
-  OS host
+- `build:unpack`: builds and creates an unpacked distribution directory
+- `build:[win|mac|linux]`: builds and packages the application for the desired target
+- `package`: cleans build directory, builds, and packages the app with Electron Forge
+- `make`: cleans build directory, builds, and creates distributables with Electron Forge
+- `postinstall`: installs app dependencies for Electron Builder
 
 ##  Colaborators
 

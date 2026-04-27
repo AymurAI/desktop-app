@@ -32,7 +32,7 @@ export default async function predict(
         signal: controller.signal,
       },
     );
-    const parsed = predictSchema.parse(response);
+    const parsed = predictSchema.parse(response.data);
 
     const data = parsed.labels.map(
       (l) =>
@@ -50,11 +50,10 @@ export default async function predict(
     // If the POST is cancelled by the controller, just return an empty prediction
     if (e instanceof CanceledError) {
       return [];
-      // Otherwise, throw again the same error
     }
 
+    // Otherwise, throw again the same error
     console.error(e);
-    const { message } = e as Error;
-    throw new Error(message);
+    throw e;
   }
 }

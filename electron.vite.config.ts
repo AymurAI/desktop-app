@@ -1,6 +1,14 @@
+/**
+ * Electron-vite config for building the desktop app.
+ * Used by the `dev`, `build`, and `build:*` scripts.
+ *
+ * Configures all three Electron processes: main, preload, and renderer.
+ * `envDir` is set explicitly so `.env` files are resolved from the project root.
+ */
+import { resolve } from "node:path";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
-import { resolve } from "node:path";
 
 export default defineConfig({
   main: {
@@ -10,7 +18,7 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()],
   },
   renderer: {
-    envDir: resolve(__dirname),
+    envDir: resolve("."),
     server: {
       port: 3000,
     },
@@ -19,6 +27,12 @@ export default defineConfig({
         "@": resolve("src/renderer/src"),
       },
     },
-    plugins: [react()],
+    plugins: [
+      tanstackRouter({
+        target: "react",
+        autoCodeSplitting: true,
+      }),
+      react(),
+    ],
   },
 });

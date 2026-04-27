@@ -1,0 +1,346 @@
+import { CaretLeft, CaretRight, MagnifyingGlass } from "phosphor-react";
+import { Fragment, useCallback, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+
+import Switch from "@/components/ui/switch";
+import { css } from "@/styled/css";
+import type { Transcription } from "@/types/transcription";
+import AudioPlayer, { type AudioPlayerHandle } from "../audio-player";
+import { useActiveTurn } from "../use-active-turn";
+import AddTurnButton from "./add-turn-button";
+import SuggestedSpeakersPanel from "./suggested-speakers-panel";
+import TurnBlock from "./turn-block";
+
+const wrap = css({
+  display: "flex",
+  flexDir: "column",
+  height: "full",
+  overflow: "hidden",
+});
+
+const header = css({
+  bg: "bg.secondary",
+  borderBottomWidth: "[1px]",
+  borderBottomStyle: "solid",
+  borderBottomColor: "[#BCBAB8]",
+  pt: "[42px]",
+  pb: "6",
+  px: "12",
+  flexShrink: "0",
+});
+
+const title = css({
+  fontSize: "[32px]",
+  lineHeight: "[38px]",
+  fontWeight: "[600]",
+  color: "text.default",
+  m: "[0]",
+  p: "[0]",
+});
+
+const toolBar = css({
+  display: "flex",
+  flexDir: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  mt: "4",
+  gap: "4",
+});
+
+const searchWrapper = css({
+  display: "flex",
+  flexDir: "row",
+  alignItems: "center",
+  flex: "[1]",
+  maxWidth: "[711px]",
+  borderWidth: "[1px]",
+  borderStyle: "solid",
+  borderColor: "[#BCBAB8]",
+  rounded: "[24px]",
+  px: "4",
+  py: "2",
+  bg: "bg.secondary",
+  gap: "2",
+  boxSizing: "border-box",
+  "&:focus-within": { borderColor: "brand.primary" },
+});
+
+const searchInput = css({
+  flex: "[1]",
+  border: "[none]",
+  outline: "none",
+  fontSize: "[16px]",
+  lineHeight: "[22px]",
+  color: "text.default",
+  bg: "transparent",
+  "&::placeholder": { color: "[#9F99A5]" },
+});
+
+const searchCounter = css({
+  fontSize: "[13px]",
+  lineHeight: "[18px]",
+  color: "[#9F99A5]",
+  whiteSpace: "nowrap",
+  flexShrink: "0",
+});
+
+const navButton = css({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "6",
+  height: "6",
+  border: "[none]",
+  rounded: "[4px]",
+  bg: "transparent",
+  cursor: "pointer",
+  color: "text.lighter",
+  p: "[0]",
+  flexShrink: "0",
+  "&:hover": {
+    bg: "[rgba(63, 71, 157, 0.08)]",
+    color: "brand.primary",
+  },
+  "&:disabled": {
+    opacity: "0.3",
+    cursor: "default",
+    "&:hover": { bg: "transparent", color: "text.lighter" },
+  },
+});
+
+const switchLabel = css({
+  fontSize: "[14px]",
+  color: "text.default",
+  display: "flex",
+  alignItems: "center",
+  gap: "2",
+  cursor: "pointer",
+});
+
+const content = css({
+  flex: "[1]",
+  display: "flex",
+  flexDir: "row",
+  overflow: "hidden",
+});
+
+const body = css({
+  flex: "[1]",
+  overflowY: "auto",
+  p: "12",
+  display: "flex",
+  flexDir: "column",
+  gap: "6",
+  bg: "bg.primary",
+});
+
+interface SearchMatch {
+  turnId: string;
+  index: number;
+}
+
+function findMatches(
+  turns: Transcription["turns"],
+  query: string,
+): SearchMatch[] {
+  if (!query) return [];
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(escaped, "gi");
+  const matches: SearchMatch[] = [];
+  for (const turn of turns) {
+    let match: RegExpExecArray | null;
+    // biome-ignore lint/suspicious/noAssignInExpressions: standard regex iteration pattern
+    while ((match = regex.exec(turn.text)) !== null) {
+      matches.push({ turnId: turn.id, index: match.index });
+    }
+  }
+  return matches;
+}
+
+interface TranscriptionEditorProps {
+  transcription: Transcription;
+  isEditMode: boolean;
+  onEditModeChange: (val: boolean) => void;
+}
+
+export default function TranscriptionEditor({
+  transcription,
+  isEditMode,
+  onEditModeChange,
+}: TranscriptionEditorProps) {
+  const { t } = useTranslation("voice-to-text");
+
+  const [currentMs, setCurrentMs] = useState(0);
+  const playerRef = useRef<AudioPlayerHandle>(null);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [matchIndex, setMatchIndex] = useState(0);
+  const [selectedTurnId, setSelectedTurnId] = useState<string | null>(null);
+
+  const turnRefsMap = useRef<Map<string, HTMLDivElement>>(new Map());
+  const setTurnRef = useCallback(
+    (turnId: string) => (el: HTMLDivElement | null) => {
+      if (el) turnRefsMap.current.set(turnId, el);
+      else turnRefsMap.current.delete(turnId);
+    },
+    [],
+  );
+
+  const speakerMap = useMemo(
+    () => Object.fromEntries(transcription.speakers.map((s) => [s.id, s])),
+    [transcription.speakers],
+  );
+
+  const activeTurnId = useActiveTurn(transcription.turns, currentMs);
+
+  const handleSeekTo = (ms: number) => {
+    playerRef.current?.seekTo(ms);
+  };
+
+  const matches = useMemo(
+    () => findMatches(transcription.turns, searchQuery),
+    [transcription.turns, searchQuery],
+  );
+
+  const safeMatchIndex = matches.length > 0 ? matchIndex % matches.length : 0;
+
+  const scrollToMatch = (idx: number) => {
+    if (matches.length === 0) return;
+    const match = matches[idx % matches.length];
+    const el = turnRefsMap.current.get(match.turnId);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  const handlePrev = () => {
+    if (matches.length === 0) return;
+    const newIdx = (safeMatchIndex - 1 + matches.length) % matches.length;
+    setMatchIndex(newIdx);
+    scrollToMatch(newIdx);
+  };
+
+  const handleNext = () => {
+    if (matches.length === 0) return;
+    const newIdx = (safeMatchIndex + 1) % matches.length;
+    setMatchIndex(newIdx);
+    scrollToMatch(newIdx);
+  };
+
+  const handleTurnSelect = (turnId: string) => {
+    setSelectedTurnId((prev) => (prev === turnId ? null : turnId));
+  };
+
+  const switchId = "transcription-edit-mode";
+
+  return (
+    <div className={wrap}>
+      <div className={header}>
+        <h1 className={title}>{transcription.title}</h1>
+        <div className={toolBar}>
+          <div className={searchWrapper}>
+            <MagnifyingGlass size={20} color="#9F99A5" weight="bold" />
+            <input
+              type="text"
+              placeholder={t("editor.searchPlaceholder")}
+              aria-label={t("editor.searchAria")}
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setMatchIndex(0);
+              }}
+              className={searchInput}
+            />
+            {searchQuery && (
+              <>
+                <span className={searchCounter}>
+                  {matches.length > 0
+                    ? `${safeMatchIndex + 1} / ${matches.length}`
+                    : "0 / 0"}
+                </span>
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  disabled={matches.length === 0}
+                  aria-label={t("editor.prevResult")}
+                  className={navButton}
+                >
+                  <CaretLeft size={16} weight="bold" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={matches.length === 0}
+                  aria-label={t("editor.nextResult")}
+                  className={navButton}
+                >
+                  <CaretRight size={16} weight="bold" />
+                </button>
+              </>
+            )}
+          </div>
+
+          <label className={switchLabel} htmlFor={switchId}>
+            <Switch
+              id={switchId}
+              checked={isEditMode}
+              onCheckedChange={onEditModeChange}
+            />
+            <span>{t("editor.editMode")}</span>
+          </label>
+        </div>
+      </div>
+
+      <div className={content}>
+        <div className={body}>
+          {transcription.turns.map((turn, index) => {
+            const speaker = speakerMap[turn.speakerId];
+            if (!speaker) return null;
+
+            return (
+              <Fragment key={turn.id}>
+                <TurnBlock
+                  turn={turn}
+                  speaker={speaker}
+                  transcription={transcription}
+                  isActive={turn.id === activeTurnId}
+                  isEditMode={isEditMode}
+                  isSelected={turn.id === selectedTurnId}
+                  searchQuery={searchQuery}
+                  onSeekTo={handleSeekTo}
+                  onSelect={handleTurnSelect}
+                  turnRef={setTurnRef(turn.id)}
+                />
+                {isEditMode && index < transcription.turns.length - 1 && (
+                  <AddTurnButton
+                    transcriptionId={transcription.id}
+                    afterTurn={turn}
+                  />
+                )}
+              </Fragment>
+            );
+          })}
+
+          {isEditMode && transcription.turns.length > 0 && (
+            <AddTurnButton
+              transcriptionId={transcription.id}
+              afterTurn={transcription.turns[transcription.turns.length - 1]}
+            />
+          )}
+        </div>
+
+        {isEditMode && (
+          <SuggestedSpeakersPanel
+            transcription={transcription}
+            selectedTurnId={selectedTurnId}
+          />
+        )}
+      </div>
+
+      <AudioPlayer
+        ref={playerRef}
+        src={transcription.audioObjectUrl}
+        durationMs={transcription.audioDurationMs}
+        onTimeUpdate={(ms) => setCurrentMs(ms)}
+      />
+    </div>
+  );
+}

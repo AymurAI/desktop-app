@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-
+import { useMutation } from "@tanstack/react-query";
 import { CanceledError } from "axios";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { TranscriptionAction } from "@/reducers/transcription";
 import { addTranscription } from "@/reducers/transcription/actions";
-import { transcribe } from "@/services/aymurai/transcribe";
+import { transcribeBatch } from "@/services/aymurai/queries";
 import type { Transcription } from "@/types/transcription";
 
 export type TranscribeStatus =
@@ -25,100 +25,104 @@ export function useTranscribe(
   { onTranscription, onStatusChange, dispatch }: UseTranscribeOptions = {},
 ) {
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState<TranscribeStatus>("idle");
   const [partialText, setPartialText] = useState("");
+  const [stopped, setStopped] = useState(false);
 
-  // Tracks the AbortController of the in-flight run so the consumer's abort()
-  // can cancel whatever is currently running. A new controller is created per
-  // run inside the effect — never reuse one across runs (an aborted controller
-  // stays aborted forever).
-  const activeControllerRef = useRef<AbortController | null>(null);
+  // Distinguishes a user-initiated abort (→ "stopped") from a cleanup-driven
+  // abort during StrictMode double-mount (→ silently ignored).
+  const userAbortedRef = useRef(false);
+  const controllerRef = useRef<AbortController | null>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally omitting onStatusChange to avoid re-runs on parent re-renders
-  const updateStatus = useCallback((newValue: TranscribeStatus) => {
-    setStatus(newValue);
-    onStatusChange?.(newValue);
-  }, []);
+  const onStatusChangeRef = useRef(onStatusChange);
+  const onTranscriptionRef = useRef(onTranscription);
+  const dispatchRef = useRef(dispatch);
+  onStatusChangeRef.current = onStatusChange;
+  onTranscriptionRef.current = onTranscription;
+  dispatchRef.current = dispatch;
 
-  const abort = () => {
-    activeControllerRef.current?.abort();
-    updateStatus("stopped");
-    setProgress(0);
-    setPartialText("");
-  };
+  const mutation = useMutation(
+    transcribeBatch({
+      onProgress: (ratio) => setProgress(ratio),
+      onPartialText: (text) => setPartialText(text),
+    }),
+  );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: dispatch/onTranscription/updateStatus are stable callbacks; files is the intended trigger
+  const { mutate, reset } = mutation;
+
+  // Stable key so identical file lists don't refire the run on parent re-renders.
+  const filesKey = useMemo(
+    () => files.map((f) => `${f.name}:${f.size}`).join("|"),
+    [files],
+  );
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: filesKey is the intended trigger; mutate/reset are stable
   useEffect(() => {
     if (files.length === 0) return;
 
-    let active = true;
+    userAbortedRef.current = false;
+    setStopped(false);
+    setProgress(0);
+    setPartialText("");
+
     const controller = new AbortController();
-    activeControllerRef.current = controller;
-    const perFileRatios = new Array(files.length).fill(0);
+    controllerRef.current = controller;
 
-    const recomputeProgress = () => {
-      if (!active) return;
-      const total = perFileRatios.reduce((sum, r) => sum + r, 0);
-      setProgress(total / files.length);
-    };
-
-    const run = async () => {
-      updateStatus("processing");
-      setProgress(0);
-      setPartialText("");
-
-      const promises = files.map(async (file, idx) => {
-        const result = await transcribe(file, {
-          signal: controller.signal,
-          onProgress: (ratio) => {
-            if (!active) return;
-            perFileRatios[idx] = ratio;
-            recomputeProgress();
-          },
-          onPartialText: (text) => {
-            if (!active) return;
-            setPartialText(text);
-          },
-        });
-
-        if (!active) return;
-
-        perFileRatios[idx] = 1;
-        recomputeProgress();
-
-        onTranscription?.(result);
-        dispatch?.(addTranscription(result));
-      });
-
-      await Promise.all(promises)
-        .then(() => {
-          if (!active) return;
-          updateStatus("completed");
-        })
-        .catch((err) => {
-          if (!active) return;
-          if (err instanceof CanceledError) {
-            updateStatus("stopped");
-          } else {
-            setProgress(0);
-            updateStatus("error");
+    mutate(
+      { files, signal: controller.signal },
+      {
+        onSuccess: (results) => {
+          for (const result of results) {
+            onTranscriptionRef.current?.(result);
+            dispatchRef.current?.(addTranscription(result));
           }
-        });
-    };
-
-    run();
+        },
+      },
+    );
 
     return () => {
-      active = false;
-      // Cancel the in-flight SSE so a re-run (e.g. React StrictMode's
-      // mount → unmount → mount in dev) doesn't leave a stale stream open.
-      // The catch handler bails early because `active` is already false.
+      // StrictMode cleanup or files change: abort silently. The mutation's
+      // CanceledError will be reflected as `error` status, but we treat it as
+      // a stop only if the user clicked stop (userAbortedRef).
       controller.abort();
-      if (activeControllerRef.current === controller) {
-        activeControllerRef.current = null;
+      if (controllerRef.current === controller) {
+        controllerRef.current = null;
       }
     };
-  }, [files]);
+  }, [filesKey]);
 
-  return { progress, status, abort, partialText };
+  const status: TranscribeStatus = useMemo(() => {
+    if (stopped) return "stopped";
+    if (mutation.isPending) return "processing";
+    if (mutation.isSuccess) return "completed";
+    if (mutation.isError) {
+      return mutation.error instanceof CanceledError ? "stopped" : "error";
+    }
+    return "idle";
+  }, [
+    stopped,
+    mutation.isPending,
+    mutation.isSuccess,
+    mutation.isError,
+    mutation.error,
+  ]);
+
+  // Notify status changes via callback while keeping it out of effect deps.
+  const lastStatusRef = useRef<TranscribeStatus>("idle");
+  useEffect(() => {
+    if (lastStatusRef.current !== status) {
+      lastStatusRef.current = status;
+      onStatusChangeRef.current?.(status);
+    }
+  }, [status]);
+
+  const abort = useCallback(() => {
+    userAbortedRef.current = true;
+    setStopped(true);
+    setProgress(0);
+    setPartialText("");
+    controllerRef.current?.abort();
+    reset();
+  }, [reset]);
+
+  return { progress, status, partialText, abort };
 }
