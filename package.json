@@ -27,7 +27,8 @@
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "cross-env VITE_APP_MODE=electron electron-vite build && electron-builder --mac",
-    "build:linux": "cross-env VITE_APP_MODE=electron electron-vite build && electron-builder --linux"
+    "build:linux": "cross-env VITE_APP_MODE=electron electron-vite build && electron-builder --linux",
+    "knip": "knip"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
@@ -70,6 +71,7 @@
     "exceljs": "^4.4.0",
     "husky": "^8.0.0",
     "i18next": "^25.8.13",
+    "knip": "^6.7.0",
     "lint-staged": "^13.0.3",
     "markdownlint-cli": "^0.32.2",
     "nodemon": "^2.0.20",
