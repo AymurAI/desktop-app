@@ -4,7 +4,7 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import RequireFile from "@/features/RequireFile";
 import { useFiles } from "@/hooks";
-import { Grid } from "@/styled/jsx";
+import { Grid, Stack } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import {
   createFileRoute,
@@ -57,12 +57,14 @@ function RouteComponent() {
     );
   return (
     <RequireFile>
-      <Header
-        title={t("title")}
-        center={<Stepper currentStep={3} />}
-        feature={feature}
-      />
-      <ValidateDataset />
+      <Stack gap="0" height="screen" overflow="hidden">
+        <Header
+          title={t("title")}
+          center={<Stepper currentStep={3} />}
+          feature={feature}
+        />
+        <ValidateDataset />
+      </Stack>
     </RequireFile>
   );
 }
