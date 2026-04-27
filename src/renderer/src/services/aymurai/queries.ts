@@ -1,17 +1,18 @@
 import { disambiguateSchema } from "@/schema/disambiguate";
 import { documentExtractSchema } from "@/schema/extract";
-import type { PredictLabel, Workflows } from "@/types/aymurai";
+import type { AnonymizerLabels, PredictLabel, Workflows } from "@/types/aymurai";
 import type { DocFile, Paragraph } from "@/types/file";
+import { EXCLUDED_TAGS } from "@/constants/excluded-tags";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import api from "../api";
 import predict from "./predict";
 
 interface Body {
   data: {
-    // The paragraph
     document: string;
     labels: PredictLabel[];
   }[];
+  label_policies?: Record<string, { anonymize: boolean }>;
 }
 
 /**
@@ -34,26 +35,50 @@ export const predictParagraph = (
     retry: false,
   });
 
-const body = (file: DocFile): Body => {
+const body = (
+  file: DocFile,
+  excludedTags: Record<AnonymizerLabels, boolean> | null,
+  excludedWords: string[],
+): Body => {
+  const effectiveTags = excludedTags ?? EXCLUDED_TAGS;
   const paragraphs = file.paragraphs ?? [];
   const labels = file.predictions ?? [];
+
+  const label_policies = Object.fromEntries(
+    Object.entries(effectiveTags)
+      .filter(([, enabled]) => !enabled)
+      .map(([id]) => [id, { anonymize: false }]),
+  ) as Record<string, { anonymize: boolean }>;
 
   return {
     data: paragraphs.map((p) => ({
       document: p.value,
-      labels: labels.filter((l) => l.paragraphId === p.id),
+      labels: labels
+        .filter((l) => l.paragraphId === p.id)
+        .map((l) => {
+          const isExcluded = excludedWords.some(
+            (w) => l.text.toLowerCase() === w.toLowerCase(),
+          );
+          return isExcluded
+            ? { ...l, attrs: { ...l.attrs, aymurai_anonymize: false } }
+            : l;
+        }),
     })),
+    ...(Object.keys(label_policies).length > 0 && { label_policies }),
   };
 };
 
-export const anonymize = (file: DocFile) =>
+export const anonymize = (
+  file: DocFile,
+  excludedTags: Record<AnonymizerLabels, boolean> | null,
+  excludedWords: string[],
+) =>
   queryOptions({
     queryKey: ["anonymize", file.data.name],
     queryFn: async () => {
       const formData = new FormData();
       formData.append("file", file.data);
-      // TODO: add annotations whenever the backend implements it
-      formData.append("annotations", JSON.stringify(body(file)));
+      formData.append("annotations", JSON.stringify(body(file, excludedTags, excludedWords)));
 
       const response = await api.post<Blob>(
         "/anonymizer/anonymize-document",

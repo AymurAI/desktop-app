@@ -1,5 +1,6 @@
 import { useFiles } from "@/hooks";
 import { aymuraiService } from "@/services/aymurai";
+import { useExcludedTagsConfig } from "@/store/useLocal";
 import { HStack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -15,6 +16,7 @@ interface FinishAnonymizerProps {
 export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
   const { t } = useTranslation("anonymizer");
   const file = useFiles().at(0);
+  const { tags, words } = useExcludedTagsConfig();
 
   if (!file) throw new Error("Reached /finish but there's no file to read");
 
@@ -22,7 +24,7 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
     data: odtFile,
     isLoading,
     isError,
-  } = useQuery(aymuraiService.anonymize(file));
+  } = useQuery(aymuraiService.anonymize(file, tags, words));
 
   const { mutate: convertToPdf, isPending: isPdfPending } = useMutation(
     aymuraiService.odtToPdf(),
@@ -63,10 +65,18 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
           <Button variant="secondary" onClick={onRestart}>
             {t("finish.restart")}
           </Button>
-          <Button onClick={downloadDocument} disabled={isError} isLoading={isLoading}>
+          <Button
+            onClick={downloadDocument}
+            disabled={isError}
+            isLoading={isLoading}
+          >
             {t("finish.viewResult")}
           </Button>
-          <Button onClick={downloadPdf} disabled={isError} isLoading={isLoading || isPdfPending}>
+          <Button
+            onClick={downloadPdf}
+            disabled={isError}
+            isLoading={isLoading || isPdfPending}
+          >
             {t("finish.viewResultPDF")}
           </Button>
         </HStack>
