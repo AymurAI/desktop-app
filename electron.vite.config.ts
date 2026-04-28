@@ -5,10 +5,10 @@
  * Configures all three Electron processes: main, preload, and renderer.
  * `envDir` is set explicitly so `.env` files are resolved from the project root.
  */
-import { resolve } from "node:path";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
+import { resolve } from "node:path";
 
 export default defineConfig({
   main: {
@@ -19,6 +19,10 @@ export default defineConfig({
   },
   renderer: {
     envDir: resolve("."),
+    // Use relative asset URLs so the renderer works under the file:// protocol
+    // when the app is packaged. The standalone web build (vite.config.ts)
+    // keeps the default base of "/".
+    base: "./",
     server: {
       port: 3000,
     },

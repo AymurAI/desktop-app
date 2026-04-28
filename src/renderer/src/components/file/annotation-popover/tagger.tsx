@@ -92,7 +92,7 @@ export default function Tagger({ onClickAll, onClickOne }: MarkTaggerProps) {
         disabled={!label}
       >
         <img
-          src="/button-icons/add-one.svg"
+          src={`${import.meta.env.BASE_URL}button-icons/add-one.svg`}
           alt="Afectar una ocurrencia"
           width={IMG_SIZE}
           height={IMG_SIZE}
@@ -105,7 +105,7 @@ export default function Tagger({ onClickAll, onClickOne }: MarkTaggerProps) {
         disabled={!label}
       >
         <img
-          src="/button-icons/add-all.svg"
+          src={`${import.meta.env.BASE_URL}button-icons/add-all.svg`}
           alt="Afectar todas las ocurrencias"
           width={IMG_SIZE}
           height={IMG_SIZE}

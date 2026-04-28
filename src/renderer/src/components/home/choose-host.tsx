@@ -23,7 +23,7 @@ export default function ChooseHost({ onRemoteClick }: ChooseHostProps) {
   return (
     <Stack align="center" gap="12" width="[400px]">
       <img
-        src="/brand/aymurai-vert-darkpurple.svg"
+        src={`${import.meta.env.BASE_URL}brand/aymurai-vert-darkpurple.svg`}
         alt="Logotipo AymurAI"
         width={180}
       />

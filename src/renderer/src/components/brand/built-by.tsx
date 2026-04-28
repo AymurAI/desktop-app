@@ -19,7 +19,11 @@ export default function BuiltBy({ size = 150, gap = "2" }: BuiltByProps) {
       <styled.p textStyle="label.sm.default" color="text.lighter">
         {t("platformBuiltBy")}
       </styled.p>
-      <img src="/brand/datagenero.svg" alt="DataGenero isologo" width={size} />
+      <img
+        src={`${import.meta.env.BASE_URL}brand/datagenero.svg`}
+        alt="DataGenero isologo"
+        width={size}
+      />
     </a>
   );
 }

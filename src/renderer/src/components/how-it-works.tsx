@@ -70,28 +70,28 @@ export default function HowItWorks({ title, feature }: HowItWorksProps) {
       {renderTitle}
       <Grid columns={2}>
         <Card
-          img="/onboarding-steps/step1.png"
+          img={`${import.meta.env.BASE_URL}onboarding-steps/step1.png`}
           imgAlt={t("howItWorksSteps.step1.alt")}
           title={t("howItWorksSteps.step1.title")}
           subtitle={t("howItWorksSteps.step1.subtitle")}
           step={1}
         />
         <Card
-          img="/onboarding-steps/step2.png"
+          img={`${import.meta.env.BASE_URL}onboarding-steps/step2.png`}
           imgAlt={t("howItWorksSteps.step2.alt")}
           title={t("howItWorksSteps.step2.title")}
           subtitle={t("howItWorksSteps.step2.subtitle")}
           step={2}
         />
         <Card
-          img="/onboarding-steps/step3.png"
+          img={`${import.meta.env.BASE_URL}onboarding-steps/step3.png`}
           imgAlt={t("howItWorksSteps.step3.alt")}
           title={t("howItWorksSteps.step3.title")}
           subtitle={t("howItWorksSteps.step3.subtitle")}
           step={3}
         />
         <Card
-          img="/onboarding-steps/step4.png"
+          img={`${import.meta.env.BASE_URL}onboarding-steps/step4.png`}
           imgAlt={tFeature("howItWorks.step4.alt")}
           title={tFeature("howItWorks.step4.title")}
           subtitle={tFeature("howItWorks.step4.subtitle")}

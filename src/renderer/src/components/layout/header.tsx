@@ -37,8 +37,8 @@ export default function Header({ title, center, feature, right }: HeaderProps) {
   const tutorialSeen = useTutorialSeen(feature!);
 
   const img = title
-    ? "/brand/aymurai-iso-darkpurple.svg"
-    : "/brand/aymurai-hor-darkpurple.svg";
+    ? `${import.meta.env.BASE_URL}brand/aymurai-iso-darkpurple.svg`
+    : `${import.meta.env.BASE_URL}brand/aymurai-hor-darkpurple.svg`;
 
   const rightSlot = feature ? (
     <HStack>
