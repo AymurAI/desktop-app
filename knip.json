@@ -1,4 +1,55 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "tags": ["-lintignore"]
+  "tags": ["-lintignore"],
+  "rules": {
+    "files": "warn",
+    "dependencies": "warn",
+    "devDependencies": "warn",
+    "optionalPeerDependencies": "warn",
+    "unlisted": "warn",
+    "unresolved": "warn",
+    "exports": "warn",
+    "types": "warn",
+    "duplicates": "warn",
+    "enumMembers": "warn",
+    "nsExports": "warn",
+    "nsTypes": "warn",
+    "binaries": "warn"
+  },
+  "entry": [
+    "src/main/index.ts",
+    "src/preload/index.ts",
+    "src/renderer/src/main.tsx",
+    "src/renderer/index.html",
+    "src/renderer/src/routes/**/*.{ts,tsx}",
+    "electron.vite.config.ts",
+    "forge.config.js",
+    "panda.config.ts",
+    "postcss.config.cjs",
+    "vite.config.ts"
+  ],
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": [
+    "src/renderer/src/styled/**",
+    "src/renderer/src/routeTree.gen.ts",
+    "**/*.d.ts"
+  ],
+  "ignoreDependencies": [
+    "@electron-toolkit/preload",
+    "@electron-toolkit/utils",
+    "electron-squirrel-startup",
+    "@electron-forge/maker-deb",
+    "@electron-forge/maker-rpm",
+    "@electron-forge/maker-squirrel",
+    "@electron-forge/maker-zip",
+    "concurrently",
+    "electron",
+    "electron-debug",
+    "electron-devtools-installer",
+    "markdownlint-cli",
+    "nodemon",
+    "prettier",
+    "wait-on",
+    "postcss"
+  ]
 }
