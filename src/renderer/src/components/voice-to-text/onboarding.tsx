@@ -13,6 +13,7 @@ import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import Button from "@/components/ui/button";
+import { AUDIO_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
 import { addFiles } from "@/reducers/file/actions";
@@ -125,7 +126,12 @@ export default function VoiceOnboarding() {
           </Button>
         </HStack>
       </Footer>
-      <HiddenInput ref={inputRef} onChange={handleInputChange} multiple />
+      <HiddenInput
+        ref={inputRef}
+        onChange={handleInputChange}
+        extensions={AUDIO_EXTENSIONS}
+        multiple
+      />
     </>
   );
 }

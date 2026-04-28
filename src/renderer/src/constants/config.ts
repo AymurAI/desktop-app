@@ -6,17 +6,16 @@ export const DATAGENERO_URL = "https://www.datagenero.org/";
 /** AI Predict port */
 export const PREDICT_PORT = 8899;
 
-/** Only allow these extensions to be analyzed */
+/** Document extensions accepted by the dataset/anonymizer flows. */
+export const DOCUMENT_EXTENSIONS = ["doc", "docx", "pdf"];
+
+/** Audio extensions accepted by the voice-to-text flow. */
+export const AUDIO_EXTENSIONS = ["mp3", "wav", "m4a", "webm", "ogg", "flac"];
+
+/** Union — kept for any consumer that needs to know "is this analyzable at all". */
 export const WHITELISTED_EXTENSIONS = [
-  "doc",
-  "docx",
-  "pdf",
-  "mp3",
-  "wav",
-  "m4a",
-  "webm",
-  "ogg",
-  "flac",
+  ...DOCUMENT_EXTENSIONS,
+  ...AUDIO_EXTENSIONS,
 ];
 
 /** Dataset Spreadsheet */

@@ -10,6 +10,7 @@ import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
+import { AUDIO_EXTENSIONS } from "@/constants/config";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
@@ -132,7 +133,12 @@ export default function VoicePreview() {
           </Button>
         </HStack>
       </Footer>
-      <HiddenInput ref={inputRef} onChange={handleAddedFiles} multiple />
+      <HiddenInput
+        ref={inputRef}
+        onChange={handleAddedFiles}
+        extensions={AUDIO_EXTENSIONS}
+        multiple
+      />
     </RequireFile>
   );
 }

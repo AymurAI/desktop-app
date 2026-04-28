@@ -55,6 +55,25 @@ export async function transcribeStream(
       },
       onmessage(ev) {
         if (!ev.data) return;
+
+        // The backend signals failures with a named SSE event:
+        //   event: error
+        //   data: {"detail": "...", "code": "..."}
+        // Throwing inside onmessage aborts the stream and propagates to the
+        // outer catch with the server-provided message.
+        if (ev.event === "error") {
+          let detail = "Unexpected error during transcription";
+          let code: string | undefined;
+          try {
+            const payload = JSON.parse(ev.data);
+            if (typeof payload?.detail === "string") detail = payload.detail;
+            if (typeof payload?.code === "string") code = payload.code;
+          } catch {
+            // fall through with the default message
+          }
+          throw new FatalStreamError(code ? `${detail} (${code})` : detail);
+        }
+
         const parsed = ASRStreamEventSchema.safeParse(JSON.parse(ev.data));
         if (!parsed.success) return;
 
@@ -93,6 +112,10 @@ export async function transcribeStream(
       },
     });
   } catch (err) {
+    // A FatalStreamError originates from us (server-side `event: error` or a
+    // non-2xx response) — surface its message verbatim, even if the library
+    // also aborted the underlying request as a side-effect.
+    if (err instanceof FatalStreamError) throw err;
     if (signal?.aborted || (err as { name?: string })?.name === "AbortError") {
       throw new CanceledError();
     }

@@ -64,25 +64,32 @@ export function useTranscribe(
     setProgress(0);
     setPartialText("");
 
+    let active = true;
     const controller = new AbortController();
     controllerRef.current = controller;
 
-    mutate(
-      { files, signal: controller.signal },
-      {
-        onSuccess: (results) => {
-          for (const result of results) {
-            onTranscriptionRef.current?.(result);
-            dispatchRef.current?.(addTranscription(result));
-          }
+    // Defer the actual fire by one microtask. In React StrictMode dev, the
+    // mount → cleanup → remount pair runs synchronously: the cleanup below
+    // flips `active = false` before the microtask resolves, so the first
+    // mount's mutate is skipped and only the surviving mount issues the SSE
+    // request. In production (no double-mount), this is a no-op delay.
+    Promise.resolve().then(() => {
+      if (!active) return;
+      mutate(
+        { files, signal: controller.signal },
+        {
+          onSuccess: (results) => {
+            for (const result of results) {
+              onTranscriptionRef.current?.(result);
+              dispatchRef.current?.(addTranscription(result));
+            }
+          },
         },
-      },
-    );
+      );
+    });
 
     return () => {
-      // StrictMode cleanup or files change: abort silently. The mutation's
-      // CanceledError will be reflected as `error` status, but we treat it as
-      // a stop only if the user clicked stop (userAbortedRef).
+      active = false;
       controller.abort();
       if (controllerRef.current === controller) {
         controllerRef.current = null;
