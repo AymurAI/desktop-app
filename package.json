@@ -1,6 +1,6 @@
 {
   "name": "aymurai",
-  "version": "1.24.0",
+  "version": "1.25.0",
   "private": true,
   "main": "./out/main/index.js",
   "scripts": {
