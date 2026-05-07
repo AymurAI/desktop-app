@@ -69,7 +69,7 @@ function RouteComponent() {
       <Stack width="screen" height="screen" gap="0">
         <Header
           right={
-            <HStack gap="2">
+            <HStack gap="4">
               <Button
                 size="icon-sm"
                 style={{ padding: 2 }}
