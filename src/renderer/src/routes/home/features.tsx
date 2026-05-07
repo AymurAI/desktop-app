@@ -3,10 +3,11 @@ import FeatureIcon from "@/components/feature-icon";
 import FeaturesMenu from "@/components/features-menu";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
+import BackButton from "@/components/ui/back-button";
 import Card from "@/components/ui/card";
 import APIProtected from "@/features/APIProtected";
 import { css } from "@/styled/css";
-import { Grid, Stack, styled } from "@/styled/jsx";
+import { Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { FEATURE_ICON } from "@/utils/config";
 import {
@@ -67,9 +68,12 @@ function RouteComponent() {
         <Header right={<FeaturesMenu />} />
         <MainContent>
           <Stack gap="6">
-            <styled.h1 textStyle="title.md.strong">
-              {t("home.features.greeting")}
-            </styled.h1>
+            <HStack alignItems="center" gap="4">
+              <BackButton to="/home/host" aria-label="Volver al inicio" />
+              <styled.h1 textStyle="title.md.strong">
+                {t("home.features.greeting")}
+              </styled.h1>
+            </HStack>
             <Grid columns={2} rowGap="6" columnGap="6">
               {/* FIXME: fix the text wrapping on smaller screens */}
               <CardTool
