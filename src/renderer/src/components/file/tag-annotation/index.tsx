@@ -12,6 +12,7 @@ import { showToast } from "@/features/showToast";
 import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 import AnnotationPopover from "../annotation-popover";
 import SuggestionLabel from "../suggestion-label";
+import RemoveDialog from "./remove-dialog";
 import ReplaceDialog from "./replace-dialog";
 
 interface TagAnnotationProps {
@@ -27,7 +28,8 @@ export default function TagAnnotation({
       `Annotation of type "tag" expected but got: ${annotation.type}`,
     );
 
-  const { updateLabel, updateByText, updateByCanonicalId, isAnnotable } = useAnnotation();
+  const { updateLabel, updateByText, updateByCanonicalId, remove, removeByText, isAnnotable } = useAnnotation();
+  const [removeAllOpen, setRemoveAllOpen] = useState(false);
   const [replaceAllLabelWithSuffix, setReplaceAllLabelWithSuffix] = useState<
     AllLabels | AllLabelsWithSufix | null
   >(null);
@@ -68,6 +70,8 @@ export default function TagAnnotation({
       <AnnotationPopover
         onClickOne={handleReplaceOne}
         onClickAll={handleReplaceAll}
+        onDeleteOne={handleDeleteOne}
+        onDeleteAll={handleDeleteAll}
       >
         <SuggestionLabel isClickable label={tag} {...metadata}>
           {children}
@@ -78,6 +82,12 @@ export default function TagAnnotation({
         label={replaceAllLabelWithSuffix ?? ""}
         onClose={(open) => !open && setReplaceAllLabelWithSuffix(null)}
         onConfirm={confirmReplaceAll}
+      />
+      <RemoveDialog
+        isOpen={removeAllOpen}
+        label={tag ?? ""}
+        onClose={(open) => !open && setRemoveAllOpen(false)}
+        onConfirm={confirmRemoveAll}
       />
     </>
   );
@@ -94,6 +104,23 @@ export default function TagAnnotation({
   function handleReplaceAll(label: AllLabels, suffix: number | null) {
     const labelWithSuffix = suffix ? (`${label}_${suffix}` as const) : label;
     setReplaceAllLabelWithSuffix(labelWithSuffix);
+  }
+
+  function handleDeleteOne() {
+    if (!annotationData) return;
+    remove(annotationData);
+    showToast("Se eliminó la anotación.", "success", Check);
+  }
+
+  function handleDeleteAll() {
+    setRemoveAllOpen(true);
+  }
+
+  function confirmRemoveAll() {
+    if (!annotationData) return;
+    removeByText(annotationData);
+    setRemoveAllOpen(false);
+    showToast("Se eliminaron todas las ocurrencias.", "success", Check);
   }
 
   function confirmReplaceAll() {
