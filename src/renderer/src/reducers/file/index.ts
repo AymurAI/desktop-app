@@ -16,6 +16,8 @@ import {
   type RemovePredictionsByCanonicalId,
   type RemovePredictionValueByCanonicalId,
   type UpdatePredictionsByCanonicalId,
+  type RestoreCheckpointAction,
+  type SetPredictionsAction,
   type ReplaceFileAction,
   type ToggleSelectedAction,
   type UpdatePredictionLabel,
@@ -55,7 +57,9 @@ export type Action =
   | UpdatePredictionsByText
   | RemovePredictionsByCanonicalId
   | RemovePredictionValueByCanonicalId
-  | UpdatePredictionsByCanonicalId;
+  | UpdatePredictionsByCanonicalId
+  | RestoreCheckpointAction
+  | SetPredictionsAction;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -320,9 +324,24 @@ export default function reducer(state: State, action: Action): State {
       }));
     }
 
-    // ----------------
-    // ADD PARAGRAPHS
-    // ----------------
+    case ActionTypes.RESTORE_CHECKPOINT: {
+      const { fileName, predictions, validationObject, validated } = payload;
+      return update(fileName, (cur) => ({
+        ...cur,
+        predictions,
+        validationObject,
+        validated,
+      }));
+    }
+
+    case ActionTypes.SET_PREDICTIONS: {
+      const { fileName, predictions } = payload;
+      return update(fileName, (cur) => ({
+        ...cur,
+        predictions,
+      }));
+    }
+
     default:
       return state;
   }

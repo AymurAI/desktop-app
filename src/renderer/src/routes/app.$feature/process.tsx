@@ -12,7 +12,8 @@ import { useDisambiguate } from "@/hooks/useDisambiguate";
 import { useFileParse } from "@/hooks/useFileParse";
 import { type PredictStatus, usePredict } from "@/hooks/usePredict";
 import { SectionTitle } from "@/layout/section-title";
-import { filterUnprocessed } from "@/reducers/file/actions";
+import { filterUnprocessed, setPredictions } from "@/reducers/file/actions";
+import { useCheckpoint } from "@/hooks/useCheckpoint";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import type { Workflows } from "@/types/aymurai";
@@ -45,6 +46,8 @@ function RouteComponent() {
 
   const [isDismissed, setIsDismissed] = useState(false);
   const hasNotified = useRef(false);
+  const { mergeCheckpoint, clearCheckpoint } = useCheckpoint();
+  const hasMerged = useRef<Set<string>>(new Set());
 
   const workflow: Workflows =
     feature === FeatureFlowEnum.Anonymizer ? "anonymizer" : "datapublic";
@@ -70,6 +73,25 @@ function RouteComponent() {
       fileStatuses[f.data.name]?.status === "processing" ||
       disambiguateStatuses[f.data.name]?.status === "processing",
   );
+
+  useEffect(() => {
+    for (const file of files) {
+      const name = file.data.name;
+      const status = getCombinedStatus(name);
+      if (
+        status === "completed" &&
+        file.predictions &&
+        !hasMerged.current.has(name)
+      ) {
+        hasMerged.current.add(name);
+        const merged = mergeCheckpoint(name, file.predictions);
+        if (merged !== file.predictions) {
+          dispatch(setPredictions(name, merged));
+        }
+        clearCheckpoint(name);
+      }
+    }
+  }, [files, fileStatuses, disambiguateStatuses, mergeCheckpoint, clearCheckpoint, dispatch]);
 
   useEffect(() => {
     if (files.length > 0 && !isProcessing && !hasNotified.current) {

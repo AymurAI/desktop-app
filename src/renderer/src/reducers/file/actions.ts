@@ -31,6 +31,8 @@ export enum ActionTypes {
   REMOVE_PREDICTIONS_BY_CANONICAL_ID = "REMOVE_PREDICTIONS_BY_CANONICAL_ID",
   REMOVE_PREDICTION_VALUE_BY_CANONICAL_ID = "REMOVE_PREDICTION_VALUE_BY_CANONICAL_ID",
   UPDATE_PREDICTIONS_BY_CANONICAL_ID = "UPDATE_PREDICTIONS_BY_CANONICAL_ID",
+  RESTORE_CHECKPOINT = "RESTORE_CHECKPOINT",
+  SET_PREDICTIONS = "SET_PREDICTIONS",
 }
 
 /**
@@ -399,5 +401,40 @@ export function updatePredictionsByCanonicalId(
   return {
     type: ActionTypes.UPDATE_PREDICTIONS_BY_CANONICAL_ID,
     payload: { canonicalId, newLabel },
+  };
+}
+
+export type RestoreCheckpointAction = Action<
+  ActionTypes.RESTORE_CHECKPOINT,
+  {
+    fileName: string;
+    predictions: PredictLabel[];
+    validationObject: FormData;
+    validated: boolean;
+  }
+>;
+export function restoreCheckpoint(
+  fileName: string,
+  predictions: PredictLabel[],
+  validationObject: FormData,
+  validated: boolean,
+): RestoreCheckpointAction {
+  return {
+    type: ActionTypes.RESTORE_CHECKPOINT,
+    payload: { fileName, predictions, validationObject, validated },
+  };
+}
+
+export type SetPredictionsAction = Action<
+  ActionTypes.SET_PREDICTIONS,
+  { fileName: string; predictions: PredictLabel[] }
+>;
+export function setPredictions(
+  fileName: string,
+  predictions: PredictLabel[],
+): SetPredictionsAction {
+  return {
+    type: ActionTypes.SET_PREDICTIONS,
+    payload: { fileName, predictions },
   };
 }

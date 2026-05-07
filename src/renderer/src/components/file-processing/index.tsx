@@ -3,7 +3,8 @@ import { type ChangeEventHandler, type MouseEventHandler, useRef } from "react";
 
 import HiddenInput from "@/components/hidden-input";
 import Button from "@/components/ui/button";
-import { useFileDispatch } from "@/hooks";
+import { useFileDispatch, useFiles } from "@/hooks";
+import { useCheckpoint } from "@/hooks/useCheckpoint";
 import type { PredictStatus } from "@/hooks/usePredict";
 import { removeFile, replaceFile } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
@@ -46,6 +47,8 @@ export default function FileProcessing({
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useFileDispatch();
+  const files = useFiles();
+  const { saveCheckpoint } = useCheckpoint();
   const queryClient = useQueryClient();
 
   const handleOpenFinder = () => {
@@ -56,8 +59,17 @@ export default function FileProcessing({
     const rawFiles = e.target.files;
 
     if (rawFiles) {
-      const files = Array.from(rawFiles);
-      if (files.length > 0) {
+      const fileList = Array.from(rawFiles);
+      if (fileList.length > 0) {
+        const currentFile = files.find((f) => f.data.name === fileName);
+        if (currentFile?.predictions) {
+          saveCheckpoint(fileName, {
+            predictions: currentFile.predictions,
+            validationObject: currentFile.validationObject,
+            validated: currentFile.validated ?? false,
+            savedAt: Date.now(),
+          });
+        }
         queryClient.removeQueries({ queryKey: ["file-parser", fileName], exact: false });
         queryClient.removeQueries({ queryKey: ["disambiguate", fileName], exact: false });
         queryClient.removeQueries({
@@ -66,7 +78,7 @@ export default function FileProcessing({
             return key[0] === "predict" && key[2] === fileName;
           },
         });
-        dispatch(replaceFile(fileName, files[0]));
+        dispatch(replaceFile(fileName, fileList[0]));
       }
     }
   };
