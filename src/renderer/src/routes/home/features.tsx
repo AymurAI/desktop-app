@@ -3,7 +3,7 @@ import FeatureIcon from "@/components/feature-icon";
 import FeaturesMenu from "@/components/features-menu";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
-import BackButton from "@/components/ui/back-button";
+import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import APIProtected from "@/features/APIProtected";
 import { css } from "@/styled/css";
@@ -14,8 +14,9 @@ import {
   Link,
   type LinkComponentProps,
   createFileRoute,
+  useNavigate,
 } from "@tanstack/react-router";
-import type { Icon } from "phosphor-react";
+import { House, type Icon } from "phosphor-react";
 import { useTranslation } from "react-i18next";
 
 const builtBy = css({
@@ -61,19 +62,31 @@ export const Route = createFileRoute("/home/features")({
 
 function RouteComponent() {
   const { t } = useTranslation(["common", "dataset", "anonymizer"]);
+  const navigate = useNavigate();
 
   return (
     <APIProtected>
       <Stack width="screen" height="screen" gap="0">
-        <Header right={<FeaturesMenu />} />
+        <Header
+          right={
+            <HStack gap="2">
+              <Button
+                size="icon-sm"
+                style={{ padding: 2 }}
+                aria-label="Volver al inicio"
+                onClick={() => navigate({ to: "/home/host" })}
+              >
+                <House size={32} />
+              </Button>
+              <FeaturesMenu />
+            </HStack>
+          }
+        />
         <MainContent>
           <Stack gap="6">
-            <HStack alignItems="center" gap="4">
-              <BackButton to="/home/host" aria-label="Volver al inicio" />
-              <styled.h1 textStyle="title.md.strong">
-                {t("home.features.greeting")}
-              </styled.h1>
-            </HStack>
+            <styled.h1 textStyle="title.md.strong">
+              {t("home.features.greeting")}
+            </styled.h1>
             <Grid columns={2} rowGap="6" columnGap="6">
               {/* FIXME: fix the text wrapping on smaller screens */}
               <CardTool
