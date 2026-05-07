@@ -35,6 +35,8 @@ const closeButton = css({
 
 const content = css({
   minWidth: "[900px]",
+  maxWidth: "[min(900px,90vw)]",
+  overflowY: "auto",
 });
 
 interface HowItWorksModalProps {
