@@ -2,7 +2,7 @@ import { WHITELISTED_EXTENSIONS } from "@/constants/config";
 
 const dataset = {
   title: "Set de datos",
-  subtitle: "Convertí resoluciones judiciales en set de datos estructurados",
+  subtitle: "Convierte resoluciones judiciales en set de datos estructurados",
   onboarding: {
     sectionTitle: "1. Selección de Archivos",
     validFormats: "Formatos válidos: .doc y .docx",
