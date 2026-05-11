@@ -27,7 +27,7 @@ const anonymizer = {
       alt: "Barra de búsqueda con cursor",
       title: "La inteligencia artificial analiza el documento",
       subtitle:
-        "Reconoce automáticamente la información sensible o identificable que debe protegerse.",
+        "Reconoce automáticamente la información a anonimizar.",
     },
     step3: {
       alt: "Visor de documentos con controles de revisión",
