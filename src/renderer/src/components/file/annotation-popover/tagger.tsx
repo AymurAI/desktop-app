@@ -39,8 +39,10 @@ const tagger = sva({
 interface MarkTaggerProps {
   onClickOne: (label: AllLabels, suffix: number | null) => void;
   onClickAll: (label: AllLabels, suffix: number | null) => void;
+  onDeleteOne?: () => void;
+  onDeleteAll?: () => void;
 }
-export default function Tagger({ onClickAll, onClickOne }: MarkTaggerProps) {
+export default function Tagger({ onClickAll, onClickOne, onDeleteOne, onDeleteAll }: MarkTaggerProps) {
   const { label: initialLabel, suffix: initialSuffix } = useAnnotation();
 
   const [label, setLabel] = useState<AllLabels | null>(initialLabel);
@@ -111,6 +113,38 @@ export default function Tagger({ onClickAll, onClickOne }: MarkTaggerProps) {
           height={IMG_SIZE}
         />
       </TaggerButton>
+      {onDeleteOne && (
+        <>
+          <div className={classes.divider} />
+          <TaggerButton
+            tooltip="Eliminar esta ocurrencia"
+            onClick={onDeleteOne}
+          >
+            <img
+              src={`${import.meta.env.BASE_URL}button-icons/delete-one.svg`}
+              alt="Eliminar esta ocurrencia"
+              width={IMG_SIZE}
+              height={IMG_SIZE}
+            />
+          </TaggerButton>
+        </>
+      )}
+      {onDeleteAll && (
+        <>
+          <div className={classes.divider} />
+          <TaggerButton
+            tooltip="Eliminar todas las ocurrencias"
+            onClick={onDeleteAll}
+          >
+            <img
+              src={`${import.meta.env.BASE_URL}button-icons/delete-all.svg`}
+              alt="Eliminar todas las ocurrencias"
+              width={IMG_SIZE}
+              height={IMG_SIZE}
+            />
+          </TaggerButton>
+        </>
+      )}
     </div>
   );
 }
