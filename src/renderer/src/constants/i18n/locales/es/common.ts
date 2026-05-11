@@ -7,13 +7,13 @@ const common = {
       greeting: "¡Hola! Selecciona la herramienta a utilizar",
     },
     host: {
-      howToConnect: "¿Como deseas conectarte a Aymurai?",
+      howToConnect: "¿Cómo deseas conectarte a Aymurai?",
       optionLocal: "Local",
       optionServer: "Servidor",
       optionOr: "o",
       connectServerExplanation:
         "Ingresa la dirección del servidor al que deseas conectarte",
-      connectServerLabel: "Direccion del servidor",
+      connectServerLabel: "Dirección del servidor",
       connectServerSubmit: "Guardar y conectar",
       errors: {
         network: "No se pudo conectar al servidor",

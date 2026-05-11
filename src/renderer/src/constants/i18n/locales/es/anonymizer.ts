@@ -39,7 +39,7 @@ const anonymizer = {
       alt: "Binoculares con globo terráqueo",
       title: "Generación del documento anonimizado",
       subtitle:
-        "Proceso terminado. El documento esta listo para ser exportado.",
+        "Proceso terminado. El documento está listo para ser exportado.",
     },
   },
   process: {
