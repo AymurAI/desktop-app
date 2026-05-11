@@ -10,12 +10,19 @@ import Select, { type SelectOption } from "@/components/ui/select";
 import { useAnnotation } from "@/context/Annotation";
 import { type AllLabels, anonymizerLabels } from "@/types/aymurai";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import TaggerButton from "./tagger-button";
 
 const IMG_SIZE = 24;
 
 const tagger = sva({
-  slots: ["container", "button", "divider"],
+  slots: ["container", "button", "divider", "tooltipContent"],
   base: {
     container: {
       ...hstack.raw({ alignItems: "center", gap: "1" }),
@@ -33,6 +40,13 @@ const tagger = sva({
 
       my: "1",
     },
+    tooltipContent: {
+      bg: "action.hover",
+      color: "white",
+      px: "1",
+      py: "0.5",
+      rounded: "sm",
+    },
   },
 });
 
@@ -45,6 +59,7 @@ export default function Tagger({ onClickAll, onClickOne }: MarkTaggerProps) {
 
   const [label, setLabel] = useState<AllLabels | null>(initialLabel);
   const [suffix, setSuffix] = useState<number | null>(initialSuffix);
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   const handleClickOne = () => {
     if (!label) return;
@@ -69,23 +84,49 @@ export default function Tagger({ onClickAll, onClickOne }: MarkTaggerProps) {
   const classes = tagger();
   return (
     <div className={classes.container}>
-      <Select
-        placeholder="Entidad"
-        size="sm"
-        value={label ?? undefined}
-        options={anonymizerLabels}
-        onChange={handleLabelChange}
-      />
+      <TooltipProvider delayDuration={0}>
+        <Tooltip open={isSelectOpen ? false : undefined}>
+          <TooltipTrigger asChild>
+            <div>
+              <Select
+                placeholder="Etiqueta"
+                size="sm"
+                value={label ?? undefined}
+                options={anonymizerLabels}
+                onChange={handleLabelChange}
+                onOpenChange={setIsSelectOpen}
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent showArrow={false} sideOffset={12}>
+            <div className={classes.tooltipContent}>
+              <styled.p textStyle="label.sm.default">Selecciona tipo de etiqueta</styled.p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <div className={classes.divider} />
-      <styled.div maxWidth="16">
-        <Input
-          value={suffix ? suffix.toString() : undefined}
-          size="sm"
-          onChange={handleSuffixChange}
-          type="number"
-          min="1"
-        />
-      </styled.div>
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <styled.div maxWidth="16">
+              <Input
+                placeholder="Sufijo"
+                value={suffix ? suffix.toString() : undefined}
+                size="sm"
+                onChange={handleSuffixChange}
+                type="number"
+                min="1"
+              />
+            </styled.div>
+          </TooltipTrigger>
+          <TooltipContent showArrow={false} sideOffset={12}>
+            <div className={classes.tooltipContent}>
+              <styled.p textStyle="label.sm.default">Agrega sufijo si es necesario</styled.p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <div className={classes.divider} />
       <TaggerButton
         tooltip="Afectar una ocurrencia"
