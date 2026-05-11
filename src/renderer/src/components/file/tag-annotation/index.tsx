@@ -28,14 +28,14 @@ export default function TagAnnotation({
       `Annotation of type "tag" expected but got: ${annotation.type}`,
     );
 
-  const { updateLabel, updateByText, updateByCanonicalId, remove, removeByText, isAnnotable } = useAnnotation();
+  const { updateLabel, updateByText, remove, removeByText, isAnnotable } = useAnnotation();
   const [removeAllOpen, setRemoveAllOpen] = useState(false);
   const [replaceAllLabelWithSuffix, setReplaceAllLabelWithSuffix] = useState<
     AllLabels | AllLabelsWithSufix | null
   >(null);
   const tag = annotation.tag;
 
-  const { start, end, paragraphId, canonical_entity_id } = annotation as LabelAnnotation;
+  const { start, end, paragraphId } = annotation as LabelAnnotation;
   const annotationData = annotation.tag
     ? {
         text: children,
@@ -79,13 +79,14 @@ export default function TagAnnotation({
       </AnnotationPopover>
       <ReplaceDialog
         isOpen={!!replaceAllLabelWithSuffix}
+        text={children}
         label={replaceAllLabelWithSuffix ?? ""}
         onClose={(open) => !open && setReplaceAllLabelWithSuffix(null)}
         onConfirm={confirmReplaceAll}
       />
       <RemoveDialog
         isOpen={removeAllOpen}
-        label={tag ?? ""}
+        text={children}
         onClose={(open) => !open && setRemoveAllOpen(false)}
         onConfirm={confirmRemoveAll}
       />
@@ -125,12 +126,7 @@ export default function TagAnnotation({
 
   function confirmReplaceAll() {
     if (!annotationData || !replaceAllLabelWithSuffix) return;
-
-    if (canonical_entity_id) {
-      updateByCanonicalId(canonical_entity_id, replaceAllLabelWithSuffix);
-    } else {
-      updateByText(annotationData, replaceAllLabelWithSuffix);
-    }
+    updateByText(annotationData, replaceAllLabelWithSuffix);
     setReplaceAllLabelWithSuffix(null);
     showToast(
       "Se reemplazó la etiqueta en todas las ocurrencias.",
