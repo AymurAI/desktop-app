@@ -23,7 +23,7 @@ const semaphore = (() => {
     release() {
       const next = queue.shift();
       if (next) next();
-      else running--;
+      else running = Math.max(0, running - 1);
     },
   };
 })();
