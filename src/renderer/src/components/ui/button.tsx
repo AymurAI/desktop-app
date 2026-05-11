@@ -2,7 +2,7 @@ import { type RecipeVariantProps, css, cva, cx } from "@/styled/css";
 import { CircleNotch } from "phosphor-react";
 import type { ButtonHTMLAttributes } from "react";
 
-const button = cva({
+export const button = cva({
   base: {
     display: "flex",
     flexDir: "row",
@@ -124,7 +124,7 @@ type ButtonProps = RecipeVariantProps<typeof button> &
     isLoading?: boolean;
   };
 
-function Button({
+export default function Button({
   size,
   variant,
   isLoading,
@@ -148,5 +148,3 @@ function Button({
     </button>
   );
 }
-
-export default Button;
