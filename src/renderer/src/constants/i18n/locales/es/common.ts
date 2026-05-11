@@ -30,25 +30,6 @@ const common = {
     validation: "Validación",
     finalization: "Finalización",
   },
-  howItWorksSteps: {
-    step1: {
-      alt: "Interfaz web con selector y cursor",
-      title: "Selecciona las resoluciones judiciales",
-      subtitle: "Sube los documentos que querés incorporar al set de datos.",
-    },
-    step2: {
-      alt: "Barra de búsqueda con cursor",
-      title: "La inteligencia artificial analiza los documentos",
-      subtitle:
-        "Extrae automáticamente la información relevante de cada documento.",
-    },
-    step3: {
-      alt: "Visor de documentos con controles de revisión",
-      title: "Revisión y validación humana",
-      subtitle:
-        "Es importante que verifiques que los datos sean correctos antes de exportar el archivo",
-    },
-  },
   filePreview: {
     loadError: "No se pudo cargar el archivo",
   },

@@ -18,6 +18,23 @@ const dataset = {
     continue: "Continuar",
   },
   howItWorks: {
+    step1: {
+      alt: "Interfaz web con selector y cursor",
+      title: "Selecciona las resoluciones judiciales",
+      subtitle: "Sube los documentos que quieres incorporar al set de datos.",
+    },
+    step2: {
+      alt: "Barra de búsqueda con cursor",
+      title: "La inteligencia artificial analiza los documentos",
+      subtitle:
+        "Extrae automáticamente la información relevante de cada documento.",
+    },
+    step3: {
+      alt: "Visor de documentos con controles de revisión",
+      title: "Revisión y validación humana",
+      subtitle:
+        "Es importante que verifiques que los datos sean correctos antes de exportar el archivo.",
+    },
     step4: {
       alt: "Binoculares con globo terráqueo",
       title: "Generación del set de datos",
