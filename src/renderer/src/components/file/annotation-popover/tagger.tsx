@@ -70,6 +70,7 @@ export default function Tagger({ onClickAll, onClickOne }: MarkTaggerProps) {
   return (
     <div className={classes.container}>
       <Select
+        placeholder="Entidad"
         size="sm"
         value={label ?? undefined}
         options={anonymizerLabels}
