@@ -14,6 +14,13 @@ const card = css({
 
   px: "4",
   py: "6",
+
+  "& > img": {
+    width: "[200px]",
+    height: "[130px]",
+    objectFit: "contain",
+    flexShrink: "0",
+  },
 });
 
 const stepStyle = css({
@@ -38,7 +45,7 @@ interface CardProps {
 function Card({ img, imgAlt, step, title, subtitle }: CardProps) {
   return (
     <div className={card}>
-      <img src={img} alt={imgAlt} height="130" />
+      <img src={img} alt={imgAlt} />
       <Stack gap="4">
         <p className={stepStyle}>{step}</p>
         <Stack>
