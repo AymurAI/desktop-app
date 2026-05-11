@@ -46,6 +46,7 @@ const anonymizer = {
     restart: "Cargar un nuevo documento",
     viewResult: "Descargar ODT",
     viewResultPDF: "Descargar PDF",
+    downloadError: "Ocurrió un error al generar el archivo. Por favor, intente nuevamente.",
   },
 };
 

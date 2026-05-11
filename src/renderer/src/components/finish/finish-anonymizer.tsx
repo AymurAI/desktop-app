@@ -3,6 +3,7 @@ import { aymuraiService } from "@/services/aymurai";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import { HStack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import { showToast } from "@/features/showToast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import FileCheck from "../file-check";
@@ -37,6 +38,11 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
     aymuraiService.pdfToOdt(),
   );
 
+  const onConversionError = (error: Error) => {
+    console.error("Conversion failed:", error);
+    showToast(t("finish.downloadError"), "error");
+  };
+
   const downloadDocument = () => {
     if (!anonymizedFile) {
       console.error("Tried to download a file that is not ready.");
@@ -48,6 +54,7 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
         onSuccess: (odtBlob) => {
           triggerDownload(odtBlob, changeExtension(file.data.name));
         },
+        onError: onConversionError,
       });
     } else {
       triggerDownload(anonymizedFile, changeExtension(file.data.name));
@@ -67,6 +74,7 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
         onSuccess: (pdfBlob) => {
           triggerDownload(pdfBlob, changeExtension(file.data.name, "pdf"));
         },
+        onError: onConversionError,
       });
     }
   };
