@@ -1,22 +1,19 @@
 import BuiltBy from "@/components/brand/built-by";
 import FeatureIcon from "@/components/feature-icon";
-import FeaturesMenu from "@/components/features-menu";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
-import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import APIProtected from "@/features/APIProtected";
 import { css } from "@/styled/css";
-import { Grid, HStack, Stack, styled } from "@/styled/jsx";
+import { Grid, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { FEATURE_ICON } from "@/utils/config";
 import {
   Link,
   type LinkComponentProps,
   createFileRoute,
-  useNavigate,
 } from "@tanstack/react-router";
-import { House, type Icon } from "phosphor-react";
+import type { Icon } from "phosphor-react";
 import { useTranslation } from "react-i18next";
 
 const builtBy = css({
@@ -62,33 +59,17 @@ export const Route = createFileRoute("/home/features")({
 
 function RouteComponent() {
   const { t } = useTranslation(["common", "dataset", "anonymizer"]);
-  const navigate = useNavigate();
 
   return (
     <APIProtected>
       <Stack width="screen" height="screen" gap="0">
-        <Header
-          right={
-            <HStack gap="4">
-              <Button
-                size="icon-sm"
-                style={{ padding: 2 }}
-                aria-label="Volver al inicio"
-                onClick={() => navigate({ to: "/home/host" })}
-              >
-                <House size={32} />
-              </Button>
-              <FeaturesMenu />
-            </HStack>
-          }
-        />
+        <Header />
         <MainContent>
           <Stack gap="6">
             <styled.h1 textStyle="title.md.strong">
               {t("home.features.greeting")}
             </styled.h1>
             <Grid columns={2} rowGap="6" columnGap="6">
-              {/* FIXME: fix the text wrapping on smaller screens */}
               <CardTool
                 to="/app/$feature"
                 params={{ feature: FeatureFlowEnum.Dataset }}
