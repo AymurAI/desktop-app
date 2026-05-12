@@ -1,32 +1,32 @@
-import Button from "@/components/ui/button";
-import Select from "@/components/ui/select";
-import { useFiles } from "@/hooks";
-import { css } from "@/styled/css";
-import { HStack, Stack, styled } from "@/styled/jsx";
-import { anonymizerLabels } from "@/types/aymurai";
+import Button from '@/components/ui/button';
+import Select from '@/components/ui/select';
+import { useFiles } from '@/hooks';
+import { css } from '@/styled/css';
+import { HStack, Stack, styled } from '@/styled/jsx';
+import { anonymizerLabels } from '@/types/aymurai';
 import {
   DndContext,
   KeyboardSensor,
   PointerSensor,
   closestCenter,
-  type DragEndEvent,
   useSensor,
   useSensors,
-} from "@dnd-kit/core";
+  type DragEndEvent,
+} from '@dnd-kit/core';
 import {
   SortableContext,
   arrayMove,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { PencilSimple, Trash, XCircle } from "phosphor-react";
-import { useMemo, useState } from "react";
+} from '@dnd-kit/sortable';
+import { PencilSimple, Trash, XCircle } from 'phosphor-react';
+import { useMemo, useState } from 'react';
 
-import { useGroupOrder, useGroupOrderActions } from "@/store/useLocal";
-import { Label } from "./label";
-import RemoveDialog from "./remove-dialog";
-import LabelManagerSection from "./section";
-import SortableGroup from "./sortable-group";
+import { useGroupOrder, useGroupOrderActions } from '@/store/useLocal';
+import { Label } from './label';
+import RemoveDialog from './remove-dialog';
+import LabelManagerSection from './section';
+import SortableGroup from './sortable-group';
 
 // ─── Category config ────────────────────────────────────────────────────────
 
@@ -35,50 +35,50 @@ const categoryConfig: Record<
   { labelIds: string[]; placeholder: string }
 > = {
   Roles: {
-    placeholder: "Seleccionar Rol",
+    placeholder: 'Seleccionar Rol',
     labelIds: [
-      "PER",
-      "USUARIX",
-      "DENUNCIANTE",
-      "ACUSADO/A",
-      "TESTIGO/A",
-      "NINO/A_ADOSLECENTE",
+      'PER',
+      'USUARIX',
+      'DENUNCIANTE',
+      'ACUSADO/A',
+      'TESTIGO/A',
+      'NIÑO/A_ADOSLECENTE',
     ],
   },
   Lugares: {
-    placeholder: "Seleccionar Lugar",
-    labelIds: ["DIRECCION", "LOC"],
+    placeholder: 'Seleccionar Lugar',
+    labelIds: ['DIRECCION', 'LOC'],
   },
   Documentos: {
-    placeholder: "Seleccionar Tipo de Documento",
+    placeholder: 'Seleccionar Tipo de Documento',
     labelIds: [
-      "DNI",
-      "AFILIADO",
-      "CAUSA",
-      "CUIJ",
-      "CUIT_CUIL",
-      "CBU",
-      "NUM_ACTUACION",
-      "NUM_CAJA_AHORRO",
-      "NUM_EXPEDIENTE",
-      "NUM_MATRICULA",
-      "PATENTE_DOMINIO",
+      'DNI',
+      'AFILIADO',
+      'CAUSA',
+      'CUIJ',
+      'CUIT_CUIL',
+      'CBU',
+      'NUM_ACTUACION',
+      'NUM_CAJA_AHORRO',
+      'NUM_EXPEDIENTE',
+      'NUM_MATRICULA',
+      'PATENTE_DOMINIO',
     ],
   },
-  "Otra entidad": {
-    placeholder: "Seleccionar",
+  'Otra entidad': {
+    placeholder: 'Seleccionar',
     labelIds: [
-      "TEL",
-      "CORREO_ELECTRÓNICO",
-      "BANCO",
-      "INSTITUCION",
-      "EDAD",
-      "ESTUDIOS",
-      "FECHA",
-      "LINK",
-      "MARCA_AUTOMOVIL",
-      "NACIONALIDAD",
-      "TEXTO_ANONIMIZAR",
+      'TEL',
+      'CORREO_ELECTRÓNICO',
+      'BANCO',
+      'INSTITUCION',
+      'EDAD',
+      'ESTUDIOS',
+      'FECHA',
+      'LINK',
+      'MARCA_AUTOMOVIL',
+      'NACIONALIDAD',
+      'TEXTO_ANONIMIZAR',
     ],
   },
 };
@@ -114,27 +114,27 @@ const initialManualGroups = (): ManualCategoryGroups =>
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 const valueItem = css({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  px: "3",
-  py: "2",
-  bg: "bg.primary-alternative",
-  p: "1",
-  rounded: "sm",
-  textStyle: "label.md.default",
-  color: "text.default",
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  px: '3',
+  py: '2',
+  bg: 'bg.primary-alternative',
+  p: '1',
+  rounded: 'sm',
+  textStyle: 'label.md.default',
+  color: 'text.default',
 });
 
 const iconButton = css({
-  cursor: "pointer",
-  color: "text.lighter",
-  bg: "transparent",
-  border: "none",
-  display: "flex",
-  alignItems: "center",
-  p: "0",
-  "&:hover": { color: "text.default" },
+  cursor: 'pointer',
+  color: 'text.lighter',
+  bg: 'transparent',
+  border: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  p: '0',
+  '&:hover': { color: 'text.default' },
 });
 
 interface LabelEntityTabProps {
@@ -142,7 +142,7 @@ interface LabelEntityTabProps {
   onDerivedValueRemove: (canonicalId: string, value: string) => void;
   onDerivedLabelChange: (
     canonicalId: string,
-    labelId: string | undefined,
+    labelId: string | undefined
   ) => void;
 }
 export default function LabelEntityTab({
@@ -162,8 +162,8 @@ export default function LabelEntityTab({
   >({});
 
   const [pendingRemoval, setPendingRemoval] = useState<
-    | { kind: "derived"; canonicalId: string; label: string }
-    | { kind: "manual"; category: string; groupId: string; label: string }
+    | { kind: 'derived'; canonicalId: string; label: string }
+    | { kind: 'manual'; category: string; groupId: string; label: string }
     | null
   >(null);
 
@@ -174,16 +174,16 @@ export default function LabelEntityTab({
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   const [renamingId, setRenamingId] = useState<string | null>(null);
-  const [renameValue, setRenameValue] = useState("");
+  const [renameValue, setRenameValue] = useState('');
   const [groupNames, setGroupNames] = useState<Record<string, string>>({});
 
   const derivedGroups = useMemo(() => {
     const result: Record<string, DerivedGroup[]> = Object.fromEntries(
-      categories.map((cat) => [cat, []]),
+      categories.map((cat) => [cat, []])
     );
     const byCanonicalId = new Map<string, DerivedGroup>();
 
@@ -192,7 +192,7 @@ export default function LabelEntityTab({
         const { canonical_entity_id, aymurai_label } = pred.attrs;
         if (!canonical_entity_id) continue;
 
-        const baseLabel = aymurai_label.replace(/_\d+$/, "");
+        const baseLabel = aymurai_label.replace(/_\d+$/, '');
         const category = labelToCategory[baseLabel];
         if (!category) continue;
 
@@ -212,7 +212,6 @@ export default function LabelEntityTab({
         }
       }
     }
-
     return result;
   }, [files]);
 
@@ -229,12 +228,12 @@ export default function LabelEntityTab({
 
   const getOrderedGroups = (
     category: string,
-    groups: DerivedGroup[],
+    groups: DerivedGroup[]
   ): DerivedGroup[] => {
     const effectiveGroups = groups.filter(
       (g) =>
         (groupCategoryMap[g.canonicalId] ?? labelToCategory[g.labelId]) ===
-        category,
+        category
     );
     const order = groupOrder?.[category];
     if (!order) return effectiveGroups;
@@ -262,7 +261,7 @@ export default function LabelEntityTab({
     const categoryGroups = allDerived.filter(
       (g) =>
         (groupCategoryMap[g.canonicalId] ?? labelToCategory[g.labelId]) ===
-        category,
+        category
     );
     const ids = categoryGroups.map((g) => g.canonicalId);
 
@@ -277,7 +276,10 @@ export default function LabelEntityTab({
   function GroupHeader({
     canonicalId,
     defaultLabel,
-  }: { canonicalId: string; defaultLabel: string }) {
+  }: {
+    canonicalId: string;
+    defaultLabel: string;
+  }) {
     const displayName = groupNames[canonicalId] ?? defaultLabel;
 
     if (renamingId === canonicalId) {
@@ -287,11 +289,14 @@ export default function LabelEntityTab({
           value={renameValue}
           onChange={(e) => setRenameValue(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              setGroupNames((prev) => ({ ...prev, [canonicalId]: renameValue }));
+            if (e.key === 'Enter') {
+              setGroupNames((prev) => ({
+                ...prev,
+                [canonicalId]: renameValue,
+              }));
               setRenamingId(null);
             }
-            if (e.key === "Escape") {
+            if (e.key === 'Escape') {
               setRenamingId(null);
             }
           }}
@@ -300,13 +305,13 @@ export default function LabelEntityTab({
             setRenamingId(null);
           }}
           className={css({
-            border: "primary",
-            rounded: "sm",
-            px: "2",
-            py: "1",
-            textStyle: "label.md.default",
-            outline: "none",
-            "&:focus": { borderColor: "action.focus" },
+            border: 'primary',
+            rounded: 'sm',
+            px: '2',
+            py: '1',
+            textStyle: 'label.md.default',
+            outline: 'none',
+            '&:focus': { borderColor: 'action.focus' },
           })}
         />
       );
@@ -314,7 +319,7 @@ export default function LabelEntityTab({
 
     return (
       <HStack gap="1" alignItems="center">
-        <span className={css({ textStyle: "label.md.default" })}>
+        <span className={css({ textStyle: 'label.md.default' })}>
           {displayName}
         </span>
         <button
@@ -334,7 +339,7 @@ export default function LabelEntityTab({
 
   const confirmRemoval = () => {
     if (!pendingRemoval) return;
-    if (pendingRemoval.kind === "derived") {
+    if (pendingRemoval.kind === 'derived') {
       setRemovedDerivedIds((prev) => [...prev, pendingRemoval.canonicalId]);
       onDerivedGroupRemove?.(pendingRemoval.canonicalId);
     } else {
@@ -353,7 +358,7 @@ export default function LabelEntityTab({
 
   const changeDerivedLabel = (
     canonicalId: string,
-    labelId: string | undefined,
+    labelId: string | undefined
   ) => {
     setOverriddenDerivedLabels((prev) => ({ ...prev, [canonicalId]: labelId }));
     onDerivedLabelChange?.(canonicalId, labelId);
@@ -379,12 +384,12 @@ export default function LabelEntityTab({
   const setManualGroupLabel = (
     category: string,
     groupId: string,
-    labelId: string | undefined,
+    labelId: string | undefined
   ) => {
     setManualGroups((prev) => ({
       ...prev,
       [category]: prev[category].map((g) =>
-        g.id === groupId ? { ...g, selectedLabelId: labelId } : g,
+        g.id === groupId ? { ...g, selectedLabelId: labelId } : g
       ),
     }));
   };
@@ -392,14 +397,14 @@ export default function LabelEntityTab({
   const removeManualValue = (
     category: string,
     groupId: string,
-    value: string,
+    value: string
   ) => {
     setManualGroups((prev) => ({
       ...prev,
       [category]: prev[category].map((g) =>
         g.id === groupId
           ? { ...g, values: g.values.filter((v) => v !== value) }
-          : g,
+          : g
       ),
     }));
   };
@@ -408,7 +413,7 @@ export default function LabelEntityTab({
     <>
       <RemoveDialog
         isOpen={pendingRemoval !== null}
-        label={pendingRemoval?.label ?? ""}
+        label={pendingRemoval?.label ?? ''}
         onClose={(open) => {
           if (!open) setPendingRemoval(null);
         }}
@@ -418,7 +423,7 @@ export default function LabelEntityTab({
         {categories.map((category, i) => {
           const { labelIds, placeholder } = categoryConfig[category];
           const options = anonymizerLabels.filter((l) =>
-            labelIds.includes(l.id),
+            labelIds.includes(l.id)
           );
           const categoryDerived = derivedGroups[category];
           const categoryManual = manualGroups[category];
@@ -438,21 +443,21 @@ export default function LabelEntityTab({
                     <SortableContext
                       items={getOrderedGroups(category, categoryDerived)
                         .filter(
-                          (g) => !removedDerivedIds.includes(g.canonicalId),
+                          (g) => !removedDerivedIds.includes(g.canonicalId)
                         )
                         .map((g) => g.canonicalId)}
                       strategy={verticalListSortingStrategy}
                     >
                       {getOrderedGroups(category, categoryDerived)
                         .filter(
-                          (g) => !removedDerivedIds.includes(g.canonicalId),
+                          (g) => !removedDerivedIds.includes(g.canonicalId)
                         )
                         .map((group) => {
                           const visibleValues = group.values.filter(
                             (v) =>
                               !(
                                 removedDerivedValues[group.canonicalId] ?? []
-                              ).includes(v),
+                              ).includes(v)
                           );
                           const selectedLabel =
                             overriddenDerivedLabels[group.canonicalId] ??
@@ -475,7 +480,7 @@ export default function LabelEntityTab({
                                     onChange={(opt) =>
                                       changeDerivedLabel(
                                         group.canonicalId,
-                                        opt.id,
+                                        opt.id
                                       )
                                     }
                                   />
@@ -484,7 +489,7 @@ export default function LabelEntityTab({
                                     className={iconButton}
                                     onClick={() =>
                                       setPendingRemoval({
-                                        kind: "derived",
+                                        kind: 'derived',
                                         canonicalId: group.canonicalId,
                                         label: selectedLabel,
                                       })
@@ -507,7 +512,7 @@ export default function LabelEntityTab({
                                       onRemove={() =>
                                         removeDerivedValue(
                                           group.canonicalId,
-                                          value,
+                                          value
                                         )
                                       }
                                     >
@@ -538,7 +543,7 @@ export default function LabelEntityTab({
                           className={iconButton}
                           onClick={() =>
                             setPendingRemoval({
-                              kind: "manual",
+                              kind: 'manual',
                               category,
                               groupId: group.id,
                               label: group.selectedLabelId ?? placeholder,
@@ -549,7 +554,51 @@ export default function LabelEntityTab({
                           <Trash size={20} />
                         </button>
                       </HStack>
+                      {categoryManual.map((group) => (
+                        <Stack key={group.id} gap="2">
+                          <HStack gap="2" alignItems="center">
+                            <Select
+                              options={options}
+                              placeholder={placeholder}
+                              value={group.selectedLabelId}
+                              onChange={(opt) =>
+                                setManualGroupLabel(category, group.id, opt.id)
+                              }
+                            />
+                            <button
+                              type="button"
+                              className={iconButton}
+                              onClick={() =>
+                                setPendingRemoval({
+                                  kind: 'manual',
+                                  category,
+                                  groupId: group.id,
+                                  label: group.selectedLabelId ?? placeholder,
+                                })
+                              }
+                              aria-label="Eliminar grupo"
+                            >
+                              <Trash size={20} />
+                            </button>
+                          </HStack>
 
+                          {group.values.map((value) => (
+                            <div key={value} className={valueItem}>
+                              <span>{value}</span>
+                              <button
+                                type="button"
+                                className={iconButton}
+                                onClick={() =>
+                                  removeManualValue(category, group.id, value)
+                                }
+                                aria-label={`Eliminar ${value}`}
+                              >
+                                <XCircle size={18} />
+                              </button>
+                            </div>
+                          ))}
+                        </Stack>
+                      ))}
                       {group.values.map((value) => (
                         <div key={value} className={valueItem}>
                           <span>{value}</span>
