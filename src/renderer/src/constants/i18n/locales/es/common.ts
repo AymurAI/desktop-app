@@ -2,6 +2,7 @@ const common = {
   back: "Volver",
   howItWorks: "¿Cómo funciona?",
   platformBuiltBy: "Plataforma hecha por",
+  settings: "Configuración",
   home: {
     features: {
       greeting: "¡Hola! Selecciona la herramienta a utilizar",
