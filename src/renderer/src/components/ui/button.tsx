@@ -30,17 +30,17 @@ export const button = cva({
         bg: "action.default",
         color: "text.onbutton-default",
 
-        "&:hover:enabled": {
+        "&:hover:not(:disabled)": {
           bg: "action.hover",
           color: "text.onbutton-alternative",
         },
 
-        "&:active:enabled": {
+        "&:active:not(:disabled)": {
           bg: "action.pressed",
           color: "text.onbutton-alternative",
         },
 
-        "&:focus:enabled": {
+        "&:focus:not(:disabled)": {
           bg: "action.focus",
           outline: "primary-alt",
           outlineWidth: "[2px]",
@@ -60,19 +60,19 @@ export const button = cva({
         borderStyle: "solid",
         borderColor: "action.alt-default",
 
-        "&:hover:enabled": {
+        "&:hover:not(:disabled)": {
           color: "text.onbutton-default",
           bg: "bg.secondary",
           borderColor: "action.hover",
         },
 
-        "&:active:enabled": {
+        "&:active:not(:disabled)": {
           color: "text.onbutton-alternative",
           bg: "action.pressed",
           borderColor: "action.pressed",
         },
 
-        "&:focus:enabled": {
+        "&:focus:not(:disabled)": {
           boxShadow: "[0px 0px 10px rgba(17, 0, 65, 0.2)]",
           outline: "primary-alt",
           outlineWidth: "[2px]",
