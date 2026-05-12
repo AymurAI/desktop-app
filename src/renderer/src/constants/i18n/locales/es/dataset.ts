@@ -1,19 +1,21 @@
 import { WHITELISTED_EXTENSIONS } from "@/constants/config";
 
+const validExtensions = WHITELISTED_EXTENSIONS.map((e) => `.${e}`).join(", ");
+
 const dataset = {
   title: "Set de datos",
   subtitle: "Convierte resoluciones judiciales en set de datos estructurados",
   onboarding: {
     sectionTitle: "1. Selección de Archivos",
-    validFormats: "Formatos válidos: .doc y .docx",
+    validFormats: `Formatos válidos: ${validExtensions}`,
     loadDocuments: "Cargar documentos",
     dropAreaTitle: "Selecciona el archivo para\nagregar a la base de datos",
-    dropAreaFormats: `Formatos válidos: ${WHITELISTED_EXTENSIONS.map((e) => `.${e}`).join(", ")}`,
+    dropAreaFormats: `Formatos válidos: ${validExtensions}`,
   },
   preview: {
     sectionTitle: "1. Selección de Archivos",
     filesLabel: "Archivos seleccionados",
-    validFormats: "Formatos válidos: .doc y .docx",
+    validFormats: `Formatos válidos: ${validExtensions}`,
     loadMore: "Cargar más documentos",
     continue: "Continuar",
   },

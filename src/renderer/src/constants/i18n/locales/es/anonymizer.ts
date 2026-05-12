@@ -1,19 +1,21 @@
 import { WHITELISTED_EXTENSIONS } from "@/constants/config";
 
+const validExtensions = WHITELISTED_EXTENSIONS.map((e) => `.${e}`).join(", ");
+
 const anonymizer = {
   title: "Anonimizador",
   subtitle: "Anonimiza resoluciones judiciales de manera automática y editable",
   onboarding: {
     sectionTitle: "1. Selección de Archivo",
-    validFormats: "Formatos válidos: .doc y .docx",
+    validFormats: `Formatos válidos: ${validExtensions}`,
     loadDocuments: "Cargar documentos",
     dropAreaTitle: "Selecciona el archivo para anonimizar",
-    dropAreaFormats: `Formatos válidos: ${WHITELISTED_EXTENSIONS.map((e) => `.${e}`).join(", ")}`,
+    dropAreaFormats: `Formatos válidos: ${validExtensions}`,
   },
   preview: {
     sectionTitle: "1. Selección de Archivo",
     filesLabel: "Archivos seleccionados",
-    validFormats: "Formatos válidos: .doc y .docx",
+    validFormats: `Formatos válidos: ${validExtensions}`,
     loadMore: "Cargar más documentos",
     continue: "Continuar",
   },
@@ -63,7 +65,8 @@ const anonymizer = {
     restart: "Cargar un nuevo documento",
     viewResult: "Descargar ODT",
     viewResultPDF: "Descargar PDF",
-    downloadError: "Ocurrió un error al generar el archivo. Por favor, intente nuevamente.",
+    downloadError:
+      "Ocurrió un error al generar el archivo. Por favor, intente nuevamente.",
   },
 };
 
