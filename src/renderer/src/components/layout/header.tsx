@@ -25,14 +25,12 @@ const centerSlot = css({
   transform: "translateX(-50%)",
 });
 
-type HeaderProps = {
+interface HeaderProps {
   title?: string;
   center?: React.ReactNode;
-} & (
-  | { feature: FeatureFlowEnum; right?: never }
-  | { right: React.ReactNode; feature?: never }
-  | { right?: never; feature?: never }
-);
+  feature?: FeatureFlowEnum;
+  right?: React.ReactNode;
+}
 
 export default function Header({ title, center, feature, right }: HeaderProps) {
   const tutorialSeen = useTutorialSeen(feature!);
@@ -40,15 +38,6 @@ export default function Header({ title, center, feature, right }: HeaderProps) {
   const img = title
     ? `${import.meta.env.BASE_URL}brand/aymurai-iso-darkpurple.svg`
     : `${import.meta.env.BASE_URL}brand/aymurai-hor-darkpurple.svg`;
-
-  const rightSlot = feature ? (
-    <HStack>
-      {tutorialSeen && <HowItWorksModal feature={feature} />}
-      <FeaturesMenu />
-    </HStack>
-  ) : (
-    right
-  );
 
   return (
     <header className={header}>
@@ -69,7 +58,11 @@ export default function Header({ title, center, feature, right }: HeaderProps) {
         </Stack>
       </Link>
       {center && <div className={centerSlot}>{center}</div>}
-      {rightSlot}
+      <HStack>
+        {tutorialSeen && feature && <HowItWorksModal feature={feature} />}
+        {right}
+        <FeaturesMenu />
+      </HStack>
     </header>
   );
 }
