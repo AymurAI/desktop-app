@@ -1,245 +1,382 @@
-import Button from '@/components/ui/button';
-import Select from '@/components/ui/select';
-import { useFiles } from '@/hooks';
-import { css } from '@/styled/css';
-import { HStack, Stack, styled } from '@/styled/jsx';
-import { anonymizerLabels } from '@/types/aymurai';
+import Select from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  ANONYMIZER_CATEGORY_NAMES,
+  getAnonymizerCategoryForLabel,
+  getLabelsPrioritizingCategory,
+} from "@/constants/anonymizer-categories";
+import { useFileDispatch, useFiles } from "@/hooks";
+import { useEntityGroups } from "@/hooks/useEntityGroups";
+import {
+  mergeGroups,
+  moveMentionToGroup,
+  removePredictionValueByCanonicalId,
+  removePredictionsByCanonicalId,
+  updatePredictionsByCanonicalId,
+} from "@/reducers/file/actions";
+import { useHoverState } from "@/store/useHoverState";
+import { css } from "@/styled/css";
+import { HStack, Stack, styled } from "@/styled/jsx";
+import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 import {
   DndContext,
+  type DragEndEvent,
+  type DragOverEvent,
+  DragOverlay,
+  type DragStartEvent,
   KeyboardSensor,
   PointerSensor,
   closestCenter,
+  useDraggable,
   useSensor,
   useSensors,
-  type DragEndEvent,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { PencilSimple, Trash, XCircle } from 'phosphor-react';
-import { useMemo, useState } from 'react';
+} from "@dnd-kit/sortable";
+import {
+  ArrowsLeftRight,
+  DotsSixVertical,
+  Trash,
+  Warning,
+  XCircle,
+} from "phosphor-react";
+import { useMemo, useState } from "react";
 
-import { useGroupOrder, useGroupOrderActions } from '@/store/useLocal';
-import { Label } from './label';
-import RemoveDialog from './remove-dialog';
-import LabelManagerSection from './section';
-import SortableGroup from './sortable-group';
+import type { EntityGroup } from "@/hooks/useEntityGroups";
+import {
+  useExcludedTagsConfig,
+  useGroupOrder,
+  useGroupOrderActions,
+} from "@/store/useLocal";
+import { filterActivePredictions } from "@/utils/anonymizer/predictions";
+import MergeDialog from "./merge-dialog";
+import RemoveDialog from "./remove-dialog";
+import LabelManagerSection from "./section";
+import SortableGroup from "./sortable-group";
 
-// ─── Category config ────────────────────────────────────────────────────────
-
-const categoryConfig: Record<
-  string,
-  { labelIds: string[]; placeholder: string }
-> = {
-  Roles: {
-    placeholder: 'Seleccionar Rol',
-    labelIds: [
-      'PER',
-      'USUARIX',
-      'DENUNCIANTE',
-      'ACUSADO/A',
-      'TESTIGO/A',
-      'NIÑO/A_ADOSLECENTE',
-    ],
-  },
-  Lugares: {
-    placeholder: 'Seleccionar Lugar',
-    labelIds: ['DIRECCION', 'LOC'],
-  },
-  Documentos: {
-    placeholder: 'Seleccionar Tipo de Documento',
-    labelIds: [
-      'DNI',
-      'AFILIADO',
-      'CAUSA',
-      'CUIJ',
-      'CUIT_CUIL',
-      'CBU',
-      'NUM_ACTUACION',
-      'NUM_CAJA_AHORRO',
-      'NUM_EXPEDIENTE',
-      'NUM_MATRICULA',
-      'PATENTE_DOMINIO',
-    ],
-  },
-  'Otra entidad': {
-    placeholder: 'Seleccionar',
-    labelIds: [
-      'TEL',
-      'CORREO_ELECTRÓNICO',
-      'BANCO',
-      'INSTITUCION',
-      'EDAD',
-      'ESTUDIOS',
-      'FECHA',
-      'LINK',
-      'MARCA_AUTOMOVIL',
-      'NACIONALIDAD',
-      'TEXTO_ANONIMIZAR',
-    ],
-  },
-};
-
-const categories = Object.keys(categoryConfig);
-
-const labelToCategory: Record<string, string> = {};
-for (const [cat, { labelIds }] of Object.entries(categoryConfig)) {
-  for (const id of labelIds) {
-    labelToCategory[id] = cat;
-  }
+function normalizeText(t: string) {
+  return t.trim().toLowerCase();
 }
 
-// ─── State types ─────────────────────────────────────────────────────────────
+const GROUP_PREFIX = "group:";
+const TEXT_PREFIX = "text:";
 
-interface DerivedGroup {
-  canonicalId: string;
-  labelId: string;
-  values: string[];
+function groupDndId(id: string) {
+  return `${GROUP_PREFIX}${id}`;
 }
-
-interface ManualGroup {
-  id: string;
-  selectedLabelId: string | undefined;
-  values: string[];
+function textDndId(canonicalId: string, normText: string) {
+  return `${TEXT_PREFIX}${canonicalId}:::${normText}`;
 }
-
-type ManualCategoryGroups = Record<string, ManualGroup[]>;
-
-const initialManualGroups = (): ManualCategoryGroups =>
-  Object.fromEntries(categories.map((cat) => [cat, []]));
-
-// ─── Styles ──────────────────────────────────────────────────────────────────
-
-const valueItem = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  px: '3',
-  py: '2',
-  bg: 'bg.primary-alternative',
-  p: '1',
-  rounded: 'sm',
-  textStyle: 'label.md.default',
-  color: 'text.default',
-});
+function parseGroupDndId(id: string): string | null {
+  return id.startsWith(GROUP_PREFIX) ? id.slice(GROUP_PREFIX.length) : null;
+}
+function parseTextDndId(
+  id: string,
+): { canonicalId: string; text: string } | null {
+  if (!id.startsWith(TEXT_PREFIX)) return null;
+  const rest = id.slice(TEXT_PREFIX.length);
+  const sep = rest.indexOf(":::");
+  if (sep === -1) return null;
+  return { canonicalId: rest.slice(0, sep), text: rest.slice(sep + 3) };
+}
 
 const iconButton = css({
-  cursor: 'pointer',
-  color: 'text.lighter',
-  bg: 'transparent',
-  border: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  p: '0',
-  '&:hover': { color: 'text.default' },
+  cursor: "pointer",
+  color: "text.lighter",
+  bg: "transparent",
+  border: "[1px solid #BCBAB8]",
+  rounded: "sm",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  p: "1.5",
+  flexShrink: "0",
+  "&:hover": {
+    color: "white",
+    bg: "action.hover",
+    borderColor: "action.hover",
+  },
 });
 
+const suffixBadge = css({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  px: "1.5",
+  py: "0.5",
+  bg: "[#E6E8FF]",
+  color: "[#3F479D]",
+  rounded: "xs",
+  fontVariantNumeric: "tabular-nums",
+  userSelect: "none",
+  flexShrink: "0",
+  maxW: "[150px]",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  fontSize: "[11px]",
+  fontWeight: "bold",
+  letterSpacing: "wide",
+});
+
+const textItemStyle = css({
+  display: "flex",
+  alignItems: "flex-start",
+  gap: "1",
+  px: "1.5",
+  py: "0.5",
+  bg: "bg.primary-alternative",
+  rounded: "xs",
+  minW: "0",
+  w: "full",
+  boxSizing: "border-box",
+});
+
+const textItemDraggingStyle = css({ opacity: "0.35" });
+
+const groupCardStyle = css({
+  bg: "bg.primary",
+  border: "[1px solid #BCBAB8]",
+  rounded: "sm",
+  minW: "0",
+  w: "full",
+});
+
+// Used for both drag-over drop target and hover — same inset outline + violet bg
+const groupHoverStyle = css({
+  bg: "bg.primary-alternative",
+  boxShadow: "[inset 0 0 0 2px #3F479D]",
+});
+
+const duplicateBadge = css({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "1",
+  px: "1.5",
+  py: "0.5",
+  bg: "[#ECEEFF]",
+  color: "[#3F479D]",
+  border: "[1px solid #7B84D4]",
+  rounded: "xs",
+  fontSize: "[11px]",
+  fontWeight: "semibold",
+  cursor: "pointer",
+  maxW: "full",
+  minW: "0",
+  overflow: "hidden",
+  "& > span": {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  "&:hover": { bg: "[#D8DBFF]" },
+});
+
+const groupHeader = css({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: "1",
+  minW: "0",
+});
+
+const groupHeaderLeft = css({
+  display: "flex",
+  alignItems: "center",
+  minW: "0",
+  flex: "1",
+  overflow: "hidden",
+});
+
+interface DraggableTextChipProps {
+  canonicalId: string;
+  normalizedText: string;
+  displayText: string;
+  onRemove: () => void;
+}
+
+function DraggableTextChip({
+  canonicalId,
+  normalizedText,
+  displayText,
+  onRemove,
+}: DraggableTextChipProps) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: textDndId(canonicalId, normalizedText),
+    data: { type: "text", canonicalId, text: normalizedText, displayText },
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`${textItemStyle}${isDragging ? ` ${textItemDraggingStyle}` : ""}`}
+    >
+      <button
+        type="button"
+        className={css({
+          cursor: "grab",
+          color: "text.lighter",
+          bg: "transparent",
+          border: "none",
+          display: "flex",
+          flexShrink: "0",
+          mt: "0.5",
+          p: "0",
+          "&:active": { cursor: "grabbing" },
+          "&:hover": { color: "text.default" },
+        })}
+        aria-label="Arrastrar mención a otro grupo"
+        {...attributes}
+        {...listeners}
+      >
+        <DotsSixVertical size={14} />
+      </button>
+      <styled.span
+        textStyle="label.md.default"
+        flex="1"
+        minW="0"
+        wordBreak="break-word"
+        overflowWrap="anywhere"
+        whiteSpace="pre-wrap"
+      >
+        {displayText}
+      </styled.span>
+      <button
+        type="button"
+        className={css({
+          cursor: "pointer",
+          color: "text.lighter",
+          bg: "transparent",
+          border: "none",
+          display: "flex",
+          flexShrink: "0",
+          alignSelf: "center",
+          p: "0",
+          "&:hover": { color: "text.default" },
+        })}
+        onClick={onRemove}
+        aria-label={`Eliminar ${displayText}`}
+      >
+        <XCircle size={14} />
+      </button>
+    </div>
+  );
+}
+
+function TextChipOverlay({ text }: { text: string }) {
+  return (
+    <div
+      className={css({
+        display: "flex",
+        alignItems: "center",
+        gap: "1",
+        px: "2",
+        py: "1",
+        bg: "bg.primary-alternative",
+        rounded: "xs",
+        boxShadow: "[0_4px_12px_rgba(17,0,65,0.18)]",
+        opacity: "0.92",
+        cursor: "grabbing",
+        pointerEvents: "none",
+      })}
+    >
+      <DotsSixVertical size={14} />
+      <styled.span textStyle="label.md.default">{text}</styled.span>
+    </div>
+  );
+}
+
 interface LabelEntityTabProps {
+  expandedGroups: Record<string, boolean>;
+  expandedSections: Record<string, boolean>;
   onDerivedGroupRemove: (canonicalId: string) => void;
   onDerivedValueRemove: (canonicalId: string, value: string) => void;
   onDerivedLabelChange: (
     canonicalId: string,
-    labelId: string | undefined
+    labelId: string | undefined,
   ) => void;
+  onGroupOpenChange: (canonicalId: string, open: boolean) => void;
+  onSectionOpenChange: (section: string, open: boolean) => void;
 }
+
 export default function LabelEntityTab({
+  expandedGroups,
+  expandedSections,
   onDerivedGroupRemove,
   onDerivedValueRemove,
   onDerivedLabelChange,
+  onGroupOpenChange,
+  onSectionOpenChange,
 }: LabelEntityTabProps) {
   const files = useFiles();
-  const [manualGroups, setManualGroups] =
-    useState<ManualCategoryGroups>(initialManualGroups);
-  const [removedDerivedIds, setRemovedDerivedIds] = useState<string[]>([]);
-  const [removedDerivedValues, setRemovedDerivedValues] = useState<
-    Record<string, string[]>
-  >({});
-  const [overriddenDerivedLabels, setOverriddenDerivedLabels] = useState<
-    Record<string, string | undefined>
-  >({});
+  const dispatch = useFileDispatch();
+  const { tags, words } = useExcludedTagsConfig();
+  const activeFiles = useMemo(
+    () =>
+      files.map((file) => ({
+        ...file,
+        predictions: filterActivePredictions(file.predictions, tags, words),
+      })),
+    [files, tags, words],
+  );
+  const groups = useEntityGroups(activeFiles);
+  const { hoveredCanonicalId, setHoveredCanonicalId } = useHoverState();
 
-  const [pendingRemoval, setPendingRemoval] = useState<
-    | { kind: 'derived'; canonicalId: string; label: string }
-    | { kind: 'manual'; category: string; groupId: string; label: string }
-    | null
-  >(null);
-
-  const { groupOrder, categoryAssignments } = useGroupOrder();
+  const { groupOrder } = useGroupOrder();
   const { setGroupOrder } = useGroupOrderActions();
 
+  const [pendingRemoval, setPendingRemoval] = useState<{
+    canonicalId: string;
+    label: string;
+  } | null>(null);
+  const [pendingMerge, setPendingMerge] = useState<{
+    source: EntityGroup;
+    target: EntityGroup;
+  } | null>(null);
+  // Tracks the most recently user-edited group so the merge badge appears on it.
+  const [lastEditedId, setLastEditedId] = useState<string | null>(null);
+
+  const [activeTextDrag, setActiveTextDrag] = useState<{
+    normalizedText: string;
+    displayText: string;
+    fromCanonicalId: string;
+  } | null>(null);
+  const [overGroupId, setOverGroupId] = useState<string | null>(null);
+
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
-  const [renamingId, setRenamingId] = useState<string | null>(null);
-  const [renameValue, setRenameValue] = useState('');
-  const [groupNames, setGroupNames] = useState<Record<string, string>>({});
-
-  const derivedGroups = useMemo(() => {
-    const result: Record<string, DerivedGroup[]> = Object.fromEntries(
-      categories.map((cat) => [cat, []])
+  const groupsByCategory = useMemo(() => {
+    const result: Record<string, EntityGroup[]> = Object.fromEntries(
+      ANONYMIZER_CATEGORY_NAMES.map((c) => [c, []]),
     );
-    const byCanonicalId = new Map<string, DerivedGroup>();
-
-    for (const file of files) {
-      for (const pred of file.predictions ?? []) {
-        const { canonical_entity_id, aymurai_label } = pred.attrs;
-        if (!canonical_entity_id) continue;
-
-        const baseLabel = aymurai_label.replace(/_\d+$/, '');
-        const category = labelToCategory[baseLabel];
-        if (!category) continue;
-
-        if (byCanonicalId.has(canonical_entity_id)) {
-          const group = byCanonicalId.get(canonical_entity_id)!;
-          if (!group.values.includes(pred.text)) {
-            group.values.push(pred.text);
-          }
-        } else {
-          const group: DerivedGroup = {
-            canonicalId: canonical_entity_id,
-            labelId: baseLabel,
-            values: [pred.text],
-          };
-          byCanonicalId.set(canonical_entity_id, group);
-          result[category].push(group);
-        }
-      }
+    for (const g of groups) {
+      const cat = getAnonymizerCategoryForLabel(g.renderBase);
+      result[cat] ??= [];
+      result[cat].push(g);
     }
     return result;
-  }, [files]);
+  }, [groups]);
 
-  const groupCategoryMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const [category, groups] of Object.entries(derivedGroups)) {
-      for (const group of groups) {
-        map[group.canonicalId] =
-          categoryAssignments?.[group.canonicalId] ?? category;
-      }
-    }
-    return map;
-  }, [derivedGroups, categoryAssignments]);
-
-  const getOrderedGroups = (
-    category: string,
-    groups: DerivedGroup[]
-  ): DerivedGroup[] => {
-    const effectiveGroups = groups.filter(
-      (g) =>
-        (groupCategoryMap[g.canonicalId] ?? labelToCategory[g.labelId]) ===
-        category
-    );
+  function getOrderedGroups(category: string): EntityGroup[] {
+    const catGroups = groupsByCategory[category] ?? [];
     const order = groupOrder?.[category];
-    if (!order) return effectiveGroups;
-
-    const byId = new Map(effectiveGroups.map((g) => [g.canonicalId, g]));
-    const ordered: DerivedGroup[] = [];
+    if (!order) return catGroups;
+    const byId = new Map(catGroups.map((g) => [g.canonicalId, g]));
+    const ordered: EntityGroup[] = [];
     for (const id of order) {
       const g = byId.get(id);
       if (g) {
@@ -247,388 +384,373 @@ export default function LabelEntityTab({
         byId.delete(id);
       }
     }
-    for (const g of byId.values()) {
-      ordered.push(g);
-    }
+    for (const g of byId.values()) ordered.push(g);
     return ordered;
-  };
-
-  const handleDragEnd = (category: string) => (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    const allDerived = Object.values(derivedGroups).flat();
-    const categoryGroups = allDerived.filter(
-      (g) =>
-        (groupCategoryMap[g.canonicalId] ?? labelToCategory[g.labelId]) ===
-        category
-    );
-    const ids = categoryGroups.map((g) => g.canonicalId);
-
-    const oldIndex = ids.indexOf(active.id as string);
-    const newIndex = ids.indexOf(over.id as string);
-    if (oldIndex === -1 || newIndex === -1) return;
-
-    const newIds = arrayMove(ids, oldIndex, newIndex);
-    setGroupOrder({ ...groupOrder, [category]: newIds });
-  };
-
-  function GroupHeader({
-    canonicalId,
-    defaultLabel,
-  }: {
-    canonicalId: string;
-    defaultLabel: string;
-  }) {
-    const displayName = groupNames[canonicalId] ?? defaultLabel;
-
-    if (renamingId === canonicalId) {
-      return (
-        <input
-          autoFocus
-          value={renameValue}
-          onChange={(e) => setRenameValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              setGroupNames((prev) => ({
-                ...prev,
-                [canonicalId]: renameValue,
-              }));
-              setRenamingId(null);
-            }
-            if (e.key === 'Escape') {
-              setRenamingId(null);
-            }
-          }}
-          onBlur={() => {
-            setGroupNames((prev) => ({ ...prev, [canonicalId]: renameValue }));
-            setRenamingId(null);
-          }}
-          className={css({
-            border: 'primary',
-            rounded: 'sm',
-            px: '2',
-            py: '1',
-            textStyle: 'label.md.default',
-            outline: 'none',
-            '&:focus': { borderColor: 'action.focus' },
-          })}
-        />
-      );
-    }
-
-    return (
-      <HStack gap="1" alignItems="center">
-        <span className={css({ textStyle: 'label.md.default' })}>
-          {displayName}
-        </span>
-        <button
-          type="button"
-          className={iconButton}
-          onClick={() => {
-            setRenamingId(canonicalId);
-            setRenameValue(displayName);
-          }}
-          aria-label="Renombrar grupo"
-        >
-          <PencilSimple size={16} />
-        </button>
-      </HStack>
-    );
   }
 
-  const confirmRemoval = () => {
-    if (!pendingRemoval) return;
-    if (pendingRemoval.kind === 'derived') {
-      setRemovedDerivedIds((prev) => [...prev, pendingRemoval.canonicalId]);
-      onDerivedGroupRemove?.(pendingRemoval.canonicalId);
-    } else {
-      removeManualGroup(pendingRemoval.category, pendingRemoval.groupId);
+  function handleDragStart(event: DragStartEvent) {
+    const data = event.active.data.current;
+    if (data?.type === "text") {
+      setActiveTextDrag({
+        normalizedText: data.text,
+        displayText: data.displayText ?? data.text,
+        fromCanonicalId: data.canonicalId,
+      });
     }
+  }
+
+  function handleDragOver(event: DragOverEvent) {
+    if (!activeTextDrag) {
+      setOverGroupId(null);
+      return;
+    }
+    const overId = event.over?.id as string | undefined;
+    if (!overId) {
+      setOverGroupId(null);
+      return;
+    }
+    const groupId =
+      parseGroupDndId(overId) ?? parseTextDndId(overId)?.canonicalId ?? null;
+    setOverGroupId(groupId);
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    setActiveTextDrag(null);
+    setOverGroupId(null);
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+    const textParsed = parseTextDndId(activeId);
+
+    if (textParsed) {
+      const targetCanonicalId =
+        parseGroupDndId(overId) ?? parseTextDndId(overId)?.canonicalId ?? null;
+      if (!targetCanonicalId || targetCanonicalId === textParsed.canonicalId)
+        return;
+      const sourceGroup = groups.find(
+        (g) => g.canonicalId === textParsed.canonicalId,
+      );
+      const targetGroup = groups.find(
+        (g) => g.canonicalId === targetCanonicalId,
+      );
+      if (!sourceGroup || !targetGroup) return;
+      for (const mention of sourceGroup.mentions.filter(
+        (m) => normalizeText(m.text) === normalizeText(textParsed.text),
+      )) {
+        dispatch(
+          moveMentionToGroup(
+            mention.mentionId,
+            targetGroup.canonicalId,
+            targetGroup.renderBase as AllLabels | AllLabelsWithSufix,
+          ),
+        );
+      }
+      return;
+    }
+
+    const groupParsed = parseGroupDndId(activeId);
+    if (groupParsed) {
+      const targetCanonicalId = parseGroupDndId(overId);
+      if (!targetCanonicalId || targetCanonicalId === groupParsed) return;
+      const sourceGroup = groups.find((g) => g.canonicalId === groupParsed);
+      if (!sourceGroup) return;
+      const category = getAnonymizerCategoryForLabel(sourceGroup.renderBase);
+      if (!category) return;
+      const orderedGroups = getOrderedGroups(category);
+      const ids = orderedGroups.map((g) => g.canonicalId);
+      const oldIdx = ids.indexOf(groupParsed);
+      const newIdx = ids.indexOf(targetCanonicalId);
+      if (oldIdx === -1 || newIdx === -1) return;
+      setGroupOrder({
+        ...groupOrder,
+        [category]: arrayMove(ids, oldIdx, newIdx),
+      });
+    }
+  }
+
+  function handleLabelChange(canonicalId: string, labelId: string | undefined) {
+    if (!labelId) return;
+    dispatch(
+      updatePredictionsByCanonicalId(
+        canonicalId,
+        labelId as AllLabels | AllLabelsWithSufix,
+      ),
+    );
+    onDerivedLabelChange(canonicalId, labelId);
+    setLastEditedId(canonicalId);
+  }
+
+  function handleRemoveValue(canonicalId: string, normalizedText: string) {
+    dispatch(removePredictionValueByCanonicalId(canonicalId, normalizedText));
+    onDerivedValueRemove(canonicalId, normalizedText);
+  }
+
+  function confirmRemoval() {
+    if (!pendingRemoval) return;
+    dispatch(removePredictionsByCanonicalId(pendingRemoval.canonicalId));
+    onDerivedGroupRemove(pendingRemoval.canonicalId);
     setPendingRemoval(null);
-  };
+  }
 
-  const removeDerivedValue = (canonicalId: string, value: string) => {
-    setRemovedDerivedValues((prev) => ({
-      ...prev,
-      [canonicalId]: [...(prev[canonicalId] ?? []), value],
-    }));
-    onDerivedValueRemove?.(canonicalId, value);
-  };
-
-  const changeDerivedLabel = (
-    canonicalId: string,
-    labelId: string | undefined
-  ) => {
-    setOverriddenDerivedLabels((prev) => ({ ...prev, [canonicalId]: labelId }));
-    onDerivedLabelChange?.(canonicalId, labelId);
-  };
-
-  const addManualGroup = (category: string) => {
-    setManualGroups((prev) => ({
-      ...prev,
-      [category]: [
-        ...prev[category],
-        { id: crypto.randomUUID(), selectedLabelId: undefined, values: [] },
-      ],
-    }));
-  };
-
-  const removeManualGroup = (category: string, groupId: string) => {
-    setManualGroups((prev) => ({
-      ...prev,
-      [category]: prev[category].filter((g) => g.id !== groupId),
-    }));
-  };
-
-  const setManualGroupLabel = (
-    category: string,
-    groupId: string,
-    labelId: string | undefined
-  ) => {
-    setManualGroups((prev) => ({
-      ...prev,
-      [category]: prev[category].map((g) =>
-        g.id === groupId ? { ...g, selectedLabelId: labelId } : g
+  function confirmMerge() {
+    if (!pendingMerge) return;
+    dispatch(
+      mergeGroups(
+        pendingMerge.source.canonicalId,
+        pendingMerge.target.canonicalId,
+        pendingMerge.target.renderBase as AllLabels | AllLabelsWithSufix,
       ),
-    }));
-  };
-
-  const removeManualValue = (
-    category: string,
-    groupId: string,
-    value: string
-  ) => {
-    setManualGroups((prev) => ({
-      ...prev,
-      [category]: prev[category].map((g) =>
-        g.id === groupId
-          ? { ...g, values: g.values.filter((v) => v !== value) }
-          : g
-      ),
-    }));
-  };
+    );
+    setPendingMerge(null);
+    setLastEditedId(null);
+  }
 
   return (
     <>
       <RemoveDialog
         isOpen={pendingRemoval !== null}
-        label={pendingRemoval?.label ?? ''}
+        label={pendingRemoval?.label ?? ""}
         onClose={(open) => {
           if (!open) setPendingRemoval(null);
         }}
         onConfirm={confirmRemoval}
       />
-      <Stack gap="6">
-        {categories.map((category, i) => {
-          const { labelIds, placeholder } = categoryConfig[category];
-          const options = anonymizerLabels.filter((l) =>
-            labelIds.includes(l.id)
-          );
-          const categoryDerived = derivedGroups[category];
-          const categoryManual = manualGroups[category];
+      <MergeDialog
+        source={pendingMerge?.source ?? null}
+        target={pendingMerge?.target ?? null}
+        onClose={() => setPendingMerge(null)}
+        onConfirm={confirmMerge}
+      />
 
-          return (
-            <>
-              {i > 0 && (
-                <styled.hr borderColor="[#BCBAB8]" key={`hr-${category}`} />
-              )}
-              <LabelManagerSection key={category} title={category}>
-                <Stack gap="4">
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd(category)}
-                  >
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+        <Stack gap="4">
+          {ANONYMIZER_CATEGORY_NAMES.map((category, i) => {
+            const orderedGroups = getOrderedGroups(category);
+            if (orderedGroups.length === 0) return null;
+            const labelOptions = getLabelsPrioritizingCategory(category);
+
+            return (
+              <Stack key={category} gap="4">
+                {i > 0 && <styled.hr borderColor="[#BCBAB8]" />}
+                <LabelManagerSection
+                  title={category}
+                  open={expandedSections[category] ?? true}
+                  onOpenChange={(open) => onSectionOpenChange(category, open)}
+                >
+                  <Stack gap="2">
                     <SortableContext
-                      items={getOrderedGroups(category, categoryDerived)
-                        .filter(
-                          (g) => !removedDerivedIds.includes(g.canonicalId)
-                        )
-                        .map((g) => g.canonicalId)}
+                      items={orderedGroups.map((g) =>
+                        groupDndId(g.canonicalId),
+                      )}
                       strategy={verticalListSortingStrategy}
                     >
-                      {getOrderedGroups(category, categoryDerived)
-                        .filter(
-                          (g) => !removedDerivedIds.includes(g.canonicalId)
-                        )
-                        .map((group) => {
-                          const visibleValues = group.values.filter(
-                            (v) =>
-                              !(
-                                removedDerivedValues[group.canonicalId] ?? []
-                              ).includes(v)
-                          );
-                          const selectedLabel =
-                            overriddenDerivedLabels[group.canonicalId] ??
-                            group.labelId;
-                          return (
-                            <SortableGroup
-                              key={group.canonicalId}
-                              id={group.canonicalId}
+                      {orderedGroups.map((group) => {
+                        const isDropTarget =
+                          activeTextDrag !== null &&
+                          overGroupId === group.canonicalId;
+                        const duplicatePrimary = group.duplicateOf
+                          ? groups.find(
+                              (g) => g.canonicalId === group.duplicateOf,
+                            )
+                          : null;
+
+                        // When the user recently edited THIS group and it became a primary with a
+                        // duplicate pointing to it, show the badge on this group instead.
+                        const reverseDuplicate =
+                          !group.isDuplicate &&
+                          group.canonicalId === lastEditedId
+                            ? (groups.find(
+                                (g) =>
+                                  g.isDuplicate &&
+                                  g.duplicateOf === group.canonicalId,
+                              ) ?? null)
+                            : null;
+                        const badgeTarget =
+                          reverseDuplicate ?? duplicatePrimary;
+                        const isGroupOpen =
+                          expandedGroups[group.canonicalId] ?? true;
+
+                        return (
+                          <SortableGroup
+                            key={group.canonicalId}
+                            id={groupDndId(group.canonicalId)}
+                            isOpen={isGroupOpen}
+                            onToggleOpen={() =>
+                              onGroupOpenChange(group.canonicalId, !isGroupOpen)
+                            }
+                            toggleLabel={
+                              isGroupOpen
+                                ? `Colapsar ${group.renderToken}`
+                                : `Expandir ${group.renderToken}`
+                            }
+                          >
+                            <Stack
+                              gap="1.5"
+                              p="2"
+                              className={`${groupCardStyle}${isDropTarget || hoveredCanonicalId === group.canonicalId ? ` ${groupHoverStyle}` : ""}`}
+                              onMouseEnter={() =>
+                                setHoveredCanonicalId(group.canonicalId)
+                              }
+                              onMouseLeave={() => setHoveredCanonicalId(null)}
                             >
-                              <Stack gap="2">
-                                <GroupHeader
-                                  canonicalId={group.canonicalId}
-                                  defaultLabel={selectedLabel}
-                                />
-                                <HStack gap="2" alignItems="center">
+                              <div className={groupHeader}>
+                                <div className={groupHeaderLeft}>
+                                  {badgeTarget && (
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <button
+                                            type="button"
+                                            className={duplicateBadge}
+                                            onClick={() => {
+                                              if (reverseDuplicate) {
+                                                setPendingMerge({
+                                                  source: reverseDuplicate,
+                                                  target: group,
+                                                });
+                                              } else if (duplicatePrimary) {
+                                                setPendingMerge({
+                                                  source: group,
+                                                  target: duplicatePrimary,
+                                                });
+                                              }
+                                            }}
+                                          >
+                                            <Warning size={11} weight="bold" />
+                                            <ArrowsLeftRight size={10} />
+                                            <span>
+                                              {badgeTarget.renderToken}
+                                            </span>
+                                          </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent
+                                          showArrow={false}
+                                          className={css({
+                                            bg: "action.hover",
+                                            color: "white",
+                                            px: "1.5",
+                                            py: "0.5",
+                                            rounded: "sm",
+                                            fontSize: "[12px]",
+                                            boxShadow: "[none]",
+                                          })}
+                                        >
+                                          Grupo idéntico a{" "}
+                                          {badgeTarget.renderToken}. Clic para
+                                          unificar.
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  )}
+                                </div>
+                                <span
+                                  className={suffixBadge}
+                                  title={`Token: ${group.renderToken}`}
+                                >
+                                  {group.renderToken}
+                                </span>
+                              </div>
+
+                              <HStack gap="1" alignItems="center" minW="0">
+                                <div
+                                  className={css({
+                                    flex: "1",
+                                    minW: "0",
+                                    overflow: "hidden",
+                                  })}
+                                >
                                   <Select
-                                    options={options}
-                                    placeholder={placeholder}
-                                    value={selectedLabel}
+                                    size="sm"
+                                    options={labelOptions}
+                                    placeholder="Seleccionar entidad"
+                                    value={group.renderBase}
                                     onChange={(opt) =>
-                                      changeDerivedLabel(
+                                      handleLabelChange(
                                         group.canonicalId,
-                                        opt.id
+                                        opt.id,
                                       )
                                     }
                                   />
-                                  <button
-                                    type="button"
-                                    className={iconButton}
-                                    onClick={() =>
-                                      setPendingRemoval({
-                                        kind: 'derived',
-                                        canonicalId: group.canonicalId,
-                                        label: selectedLabel,
-                                      })
-                                    }
-                                    aria-label="Eliminar grupo"
-                                  >
-                                    <Trash size={20} />
-                                  </button>
-                                </HStack>
+                                </div>
+                                <button
+                                  type="button"
+                                  className={iconButton}
+                                  onClick={() =>
+                                    setPendingRemoval({
+                                      canonicalId: group.canonicalId,
+                                      label: group.renderBase,
+                                    })
+                                  }
+                                  aria-label="Eliminar grupo"
+                                >
+                                  <Trash size={16} />
+                                </button>
+                              </HStack>
+
+                              {isGroupOpen && (
                                 <Stack
                                   gap="1"
                                   align="stretch"
-                                  bg="white"
+                                  bg="bg.secondary"
                                   p="1"
-                                  rounded="sm"
+                                  rounded="xs"
+                                  minH="6"
                                 >
-                                  {visibleValues.map((value) => (
-                                    <Label
-                                      key={value}
-                                      onRemove={() =>
-                                        removeDerivedValue(
-                                          group.canonicalId,
-                                          value
-                                        )
-                                      }
+                                  {group.uniqueTexts.flatMap((normText, idx) =>
+                                    group.displayTexts[idx].map((verbatim) => (
+                                      <DraggableTextChip
+                                        key={`${normText}:${verbatim}`}
+                                        canonicalId={group.canonicalId}
+                                        normalizedText={normText}
+                                        displayText={verbatim}
+                                        onRemove={() =>
+                                          handleRemoveValue(
+                                            group.canonicalId,
+                                            normText,
+                                          )
+                                        }
+                                      />
+                                    )),
+                                  )}
+                                  {group.uniqueTexts.length === 0 && (
+                                    <styled.p
+                                      textStyle="label.sm.default"
+                                      color="text.lighter"
+                                      px="1"
+                                      py="0.5"
+                                      fontStyle="italic"
                                     >
-                                      {value}
-                                    </Label>
-                                  ))}
+                                      Sin menciones
+                                    </styled.p>
+                                  )}
                                 </Stack>
-                              </Stack>
-                            </SortableGroup>
-                          );
-                        })}
+                              )}
+                            </Stack>
+                          </SortableGroup>
+                        );
+                      })}
                     </SortableContext>
-                  </DndContext>
+                  </Stack>
+                </LabelManagerSection>
+              </Stack>
+            );
+          })}
+        </Stack>
 
-                  {categoryManual.map((group) => (
-                    <Stack key={group.id} gap="2">
-                      <HStack gap="2" alignItems="center">
-                        <Select
-                          options={options}
-                          placeholder={placeholder}
-                          value={group.selectedLabelId}
-                          onChange={(opt) =>
-                            setManualGroupLabel(category, group.id, opt.id)
-                          }
-                        />
-                        <button
-                          type="button"
-                          className={iconButton}
-                          onClick={() =>
-                            setPendingRemoval({
-                              kind: 'manual',
-                              category,
-                              groupId: group.id,
-                              label: group.selectedLabelId ?? placeholder,
-                            })
-                          }
-                          aria-label="Eliminar grupo"
-                        >
-                          <Trash size={20} />
-                        </button>
-                      </HStack>
-                      {categoryManual.map((group) => (
-                        <Stack key={group.id} gap="2">
-                          <HStack gap="2" alignItems="center">
-                            <Select
-                              options={options}
-                              placeholder={placeholder}
-                              value={group.selectedLabelId}
-                              onChange={(opt) =>
-                                setManualGroupLabel(category, group.id, opt.id)
-                              }
-                            />
-                            <button
-                              type="button"
-                              className={iconButton}
-                              onClick={() =>
-                                setPendingRemoval({
-                                  kind: 'manual',
-                                  category,
-                                  groupId: group.id,
-                                  label: group.selectedLabelId ?? placeholder,
-                                })
-                              }
-                              aria-label="Eliminar grupo"
-                            >
-                              <Trash size={20} />
-                            </button>
-                          </HStack>
-
-                          {group.values.map((value) => (
-                            <div key={value} className={valueItem}>
-                              <span>{value}</span>
-                              <button
-                                type="button"
-                                className={iconButton}
-                                onClick={() =>
-                                  removeManualValue(category, group.id, value)
-                                }
-                                aria-label={`Eliminar ${value}`}
-                              >
-                                <XCircle size={18} />
-                              </button>
-                            </div>
-                          ))}
-                        </Stack>
-                      ))}
-                      {group.values.map((value) => (
-                        <div key={value} className={valueItem}>
-                          <span>{value}</span>
-                          <button
-                            type="button"
-                            className={iconButton}
-                            onClick={() =>
-                              removeManualValue(category, group.id, value)
-                            }
-                            aria-label={`Eliminar ${value}`}
-                          >
-                            <XCircle size={18} />
-                          </button>
-                        </div>
-                      ))}
-                    </Stack>
-                  ))}
-
-                  <Button
-                    variant="secondary"
-                    onClick={() => addManualGroup(category)}
-                  >
-                    Añadir
-                  </Button>
-                </Stack>
-              </LabelManagerSection>
-            </>
-          );
-        })}
-      </Stack>
+        <DragOverlay dropAnimation={null}>
+          {activeTextDrag && (
+            <TextChipOverlay text={activeTextDrag.displayText} />
+          )}
+        </DragOverlay>
+      </DndContext>
     </>
   );
 }
