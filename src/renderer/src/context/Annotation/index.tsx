@@ -210,7 +210,7 @@ export default function AnnotationProvider({
         addBySearch,
       }}
     >
-      <div onClick={selectHandler}>{children}</div>
+      <div onMouseUp={selectHandler}>{children}</div>
     </AnnotationContext.Provider>
   );
 }

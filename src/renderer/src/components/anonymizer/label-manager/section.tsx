@@ -28,21 +28,28 @@ const contentInner = css({
 
 interface SectionProps {
   children: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   title: string;
 }
 export default function LabelManagerSection({
+  open: controlledOpen,
+  onOpenChange,
   title: sectionTitle,
   children,
 }: SectionProps) {
-  const [open, setOpen] = useState(true);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(true);
+  const open = controlledOpen ?? uncontrolledOpen;
+
+  function toggleOpen() {
+    const nextOpen = !open;
+    onOpenChange?.(nextOpen);
+    if (controlledOpen === undefined) setUncontrolledOpen(nextOpen);
+  }
 
   return (
     <Stack gap="6">
-      <HStack
-        gap="2"
-        className={header}
-        onClick={() => setOpen((prev) => !prev)}
-      >
+      <HStack gap="2" className={header} onClick={toggleOpen}>
         <div
           className={caret}
           style={{ transform: open ? "rotate(0deg)" : "rotate(180deg)" }}

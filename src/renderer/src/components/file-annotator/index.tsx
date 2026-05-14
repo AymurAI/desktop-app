@@ -3,23 +3,33 @@ import { memo, useMemo, useState, useTransition } from "react";
 import { SearchBar } from "./SearchBar";
 
 import type { SelectOption } from "@/components/ui/select";
-import { EXCLUDED_TAGS } from "@/constants/excluded-tags";
 import AnnotationProvider, { useAnnotation } from "@/context/Annotation";
 import { useExcludedTagsConfig } from "@/store/useLocal";
+import { css } from "@/styled/css";
 import { HStack } from "@/styled/jsx";
 import type {
   AllLabels,
   AllLabelsWithSufix,
-  AnonymizerLabels,
   PredictLabel,
 } from "@/types/aymurai";
 import type { DocFile, Paragraph as ParagraphType } from "@/types/file";
+import { filterActivePredictions } from "@/utils/anonymizer/predictions";
 import LabelManager from "../anonymizer/label-manager";
 import SearchAnnotation from "../file/search-annotation";
 import TagAnnotation from "../file/tag-annotation";
 import * as S from "./FileAnnotator.styles";
 import { createAnnotationsWithSearch, predictionsToMap } from "./annotations";
 import { generateSplits } from "./generateSplits";
+
+const labelManagerWrapper = css({
+  display: "flex",
+  h: "full",
+  minH: "0",
+  flexShrink: "0",
+  "&[hidden]": {
+    display: "none",
+  },
+});
 
 interface ParagraphProps {
   children: string;
@@ -68,7 +78,11 @@ const Paragraph = memo(
               );
             case "text":
             default:
-              return <span key={key}>{content}</span>;
+              return (
+                <span key={key} data-start={s.start}>
+                  {content}
+                </span>
+              );
           }
         })}
       </S.Paragraph>
@@ -88,20 +102,12 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
   const [suffix, setSuffix] = useState<number | null>(0);
   const [labelManagerOpen, setLabelManagerOpen] = useState(false);
 
-  const paragraphs = file.paragraphs!;
+  const paragraphs = file.paragraphs ?? [];
   const { tags, words } = useExcludedTagsConfig();
-  const effectiveTags = tags ?? EXCLUDED_TAGS;
 
   const filteredPredictions = useMemo(
-    () =>
-      (file.predictions ?? []).filter((label) => {
-        const tag = label.attrs.aymurai_label as AnonymizerLabels;
-        if (effectiveTags[tag] === false) return false;
-        if (words.some((w) => label.text.toLowerCase() === w.toLowerCase()))
-          return false;
-        return true;
-      }),
-    [file.predictions, effectiveTags, words],
+    () => filterActivePredictions(file.predictions, tags, words),
+    [file.predictions, tags, words],
   );
 
   const predictionsMap = useMemo(
@@ -152,7 +158,9 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
           </AnnotationProvider>
         </S.File>
       </S.Container>
-      {labelManagerOpen && <LabelManager onClose={toggleManagerLabel} />}
+      <div hidden={!labelManagerOpen} className={labelManagerWrapper}>
+        <LabelManager onClose={toggleManagerLabel} />
+      </div>
     </HStack>
   );
 }

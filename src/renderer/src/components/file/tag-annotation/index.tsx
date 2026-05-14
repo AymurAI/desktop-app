@@ -8,6 +8,7 @@ import type {
 } from "@/components/file-annotator/types";
 import { useAnnotation } from "@/context/Annotation";
 import { showToast } from "@/features/showToast";
+import { useHoverState } from "@/store/useHoverState";
 
 import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 import AnnotationPopover from "../annotation-popover";
@@ -28,7 +29,21 @@ export default function TagAnnotation({
       `Annotation of type "tag" expected but got: ${annotation.type}`,
     );
 
-  const { updateLabel, updateByText, remove, removeByText, isAnnotable } = useAnnotation();
+  const { updateLabel, updateByText, remove, removeByText, isAnnotable } =
+    useAnnotation();
+  const hoveredCanonicalId = useHoverState((s) => s.hoveredCanonicalId);
+  const { setHoveredCanonicalId } = useHoverState();
+  const canonicalId =
+    (annotation as LabelAnnotation).canonical_entity_id ?? null;
+  const isHighlighted =
+    hoveredCanonicalId !== null && canonicalId === hoveredCanonicalId;
+
+  const spanHoverProps = canonicalId
+    ? {
+        onMouseEnter: () => setHoveredCanonicalId(canonicalId),
+        onMouseLeave: () => setHoveredCanonicalId(null),
+      }
+    : {};
   const [removeAllOpen, setRemoveAllOpen] = useState(false);
   const [replaceAllLabelWithSuffix, setReplaceAllLabelWithSuffix] = useState<
     AllLabels | AllLabelsWithSufix | null
@@ -38,6 +53,7 @@ export default function TagAnnotation({
   const { start, end, paragraphId } = annotation as LabelAnnotation;
   const annotationData = annotation.tag
     ? {
+        mentionId: (annotation as LabelAnnotation).mentionId ?? "",
         text: children,
         start_char: start,
         end_char: end,
@@ -60,7 +76,12 @@ export default function TagAnnotation({
 
   if (!isAnnotable)
     return (
-      <SuggestionLabel label={tag} {...metadata}>
+      <SuggestionLabel
+        label={tag}
+        isHighlighted={isHighlighted}
+        {...spanHoverProps}
+        {...metadata}
+      >
         {children}
       </SuggestionLabel>
     );
@@ -73,7 +94,13 @@ export default function TagAnnotation({
         onDeleteOne={handleDeleteOne}
         onDeleteAll={handleDeleteAll}
       >
-        <SuggestionLabel isClickable label={tag} {...metadata}>
+        <SuggestionLabel
+          isClickable
+          label={tag}
+          isHighlighted={isHighlighted}
+          {...spanHoverProps}
+          {...metadata}
+        >
           {children}
         </SuggestionLabel>
       </AnnotationPopover>
