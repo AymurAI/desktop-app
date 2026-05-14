@@ -7,18 +7,20 @@ import {
   type AppendValidationAction,
   type FilterUnprocessedAction,
   type FilterUnselectedAction,
+  type MergeGroupsAction,
+  type MoveMentionToGroupAction,
   type RemoveAllFilesAction,
   type RemoveAllPredictionsAction,
   type RemoveFileAction,
   type RemovePrediction,
   type RemovePredictionsAction,
-  type RemovePredictionsByText,
   type RemovePredictionsByCanonicalId,
+  type RemovePredictionsByText,
   type RemovePredictionValueByCanonicalId,
-  type UpdatePredictionsByCanonicalId,
   type ReplaceFileAction,
   type ToggleSelectedAction,
   type UpdatePredictionLabel,
+  type UpdatePredictionsByCanonicalId,
   type UpdatePredictionsByText,
   type ValidateAction,
 } from "./actions";
@@ -55,7 +57,9 @@ export type Action =
   | UpdatePredictionsByText
   | RemovePredictionsByCanonicalId
   | RemovePredictionValueByCanonicalId
-  | UpdatePredictionsByCanonicalId;
+  | UpdatePredictionsByCanonicalId
+  | MoveMentionToGroupAction
+  | MergeGroupsAction;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -296,11 +300,15 @@ export default function reducer(state: State, action: Action): State {
     // ------------------------------------------------
     case ActionTypes.REMOVE_PREDICTION_VALUE_BY_CANONICAL_ID: {
       const { canonicalId, value } = action.payload;
+      const norm = value.trim().toLowerCase();
       return state.map((file) => ({
         ...file,
         predictions: file.predictions?.filter(
           (p) =>
-            !(p.attrs.canonical_entity_id === canonicalId && p.text === value),
+            !(
+              p.attrs.canonical_entity_id === canonicalId &&
+              p.text.trim().toLowerCase() === norm
+            ),
         ),
       }));
     }
@@ -315,6 +323,51 @@ export default function reducer(state: State, action: Action): State {
         predictions: file.predictions?.map((p) =>
           p.attrs.canonical_entity_id === canonicalId
             ? { ...p, attrs: { ...p.attrs, aymurai_label: newLabel } }
+            : p,
+        ),
+      }));
+    }
+
+    // ----------------------------------------
+    // MOVE MENTION TO GROUP
+    // ----------------------------------------
+    case ActionTypes.MOVE_MENTION_TO_GROUP: {
+      const { mentionId, targetCanonicalId, targetLabel } = action.payload;
+      return state.map((file) => ({
+        ...file,
+        predictions: file.predictions?.map((p) =>
+          p.mentionId === mentionId
+            ? {
+                ...p,
+                attrs: {
+                  ...p.attrs,
+                  canonical_entity_id: targetCanonicalId,
+                  aymurai_label: targetLabel,
+                },
+              }
+            : p,
+        ),
+      }));
+    }
+
+    // ----------------------------------------
+    // MERGE GROUPS
+    // ----------------------------------------
+    case ActionTypes.MERGE_GROUPS: {
+      const { sourceCanonicalId, targetCanonicalId, targetLabel } =
+        action.payload;
+      return state.map((file) => ({
+        ...file,
+        predictions: file.predictions?.map((p) =>
+          p.attrs.canonical_entity_id === sourceCanonicalId
+            ? {
+                ...p,
+                attrs: {
+                  ...p.attrs,
+                  canonical_entity_id: targetCanonicalId,
+                  aymurai_label: targetLabel,
+                },
+              }
             : p,
         ),
       }));

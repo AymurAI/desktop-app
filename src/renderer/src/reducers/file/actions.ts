@@ -31,6 +31,8 @@ export enum ActionTypes {
   REMOVE_PREDICTIONS_BY_CANONICAL_ID = "REMOVE_PREDICTIONS_BY_CANONICAL_ID",
   REMOVE_PREDICTION_VALUE_BY_CANONICAL_ID = "REMOVE_PREDICTION_VALUE_BY_CANONICAL_ID",
   UPDATE_PREDICTIONS_BY_CANONICAL_ID = "UPDATE_PREDICTIONS_BY_CANONICAL_ID",
+  MOVE_MENTION_TO_GROUP = "MOVE_MENTION_TO_GROUP",
+  MERGE_GROUPS = "MERGE_GROUPS",
 }
 
 /**
@@ -399,5 +401,52 @@ export function updatePredictionsByCanonicalId(
   return {
     type: ActionTypes.UPDATE_PREDICTIONS_BY_CANONICAL_ID,
     payload: { canonicalId, newLabel },
+  };
+}
+
+export type MoveMentionToGroupAction = Action<
+  ActionTypes.MOVE_MENTION_TO_GROUP,
+  {
+    mentionId: string;
+    targetCanonicalId: string;
+    targetLabel: AllLabels | AllLabelsWithSufix;
+  }
+>;
+/**
+ * Moves a single mention (identified by its stable mentionId) to a different
+ * canonical entity group, updating both `canonical_entity_id` and `aymurai_label`.
+ */
+export function moveMentionToGroup(
+  mentionId: string,
+  targetCanonicalId: string,
+  targetLabel: AllLabels | AllLabelsWithSufix,
+): MoveMentionToGroupAction {
+  return {
+    type: ActionTypes.MOVE_MENTION_TO_GROUP,
+    payload: { mentionId, targetCanonicalId, targetLabel },
+  };
+}
+
+export type MergeGroupsAction = Action<
+  ActionTypes.MERGE_GROUPS,
+  {
+    sourceCanonicalId: string;
+    targetCanonicalId: string;
+    targetLabel: AllLabels | AllLabelsWithSufix;
+  }
+>;
+/**
+ * Moves all mentions from `sourceCanonicalId` into `targetCanonicalId`,
+ * updating their label to `targetLabel`. The source group disappears naturally
+ * once it has no more mentions.
+ */
+export function mergeGroups(
+  sourceCanonicalId: string,
+  targetCanonicalId: string,
+  targetLabel: AllLabels | AllLabelsWithSufix,
+): MergeGroupsAction {
+  return {
+    type: ActionTypes.MERGE_GROUPS,
+    payload: { sourceCanonicalId, targetCanonicalId, targetLabel },
   };
 }
