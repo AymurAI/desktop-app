@@ -137,6 +137,7 @@ export default function AnnotationProvider({
         const indexes = findSearchIndexes(paragraph.value, search);
         indexes.forEach((start: number) => {
           const prediction: PredictLabel = {
+            mentionId: crypto.randomUUID(),
             start_char: start,
             end_char: start + search.length,
             paragraphId: paragraph.id,
@@ -179,6 +180,7 @@ export default function AnnotationProvider({
     const aymurayLabel: AllLabels | AllLabelsWithSufix = searchTag;
 
     add({
+      mentionId: crypto.randomUUID(),
       start_char: start + offset,
       end_char: end + offset,
       paragraphId: paragraphIdFromSelection(selection),
@@ -236,6 +238,7 @@ export const useAnnotation = () => {
     const resolvedTag = labelOverride ?? tag;
     if (!resolvedTag) return null;
     return {
+      mentionId: crypto.randomUUID(),
       text,
       start_char: start,
       end_char: end,

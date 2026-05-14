@@ -108,6 +108,15 @@ export const disambiguate = (file: DocFile) =>
 
       const { paragraphs, predictions } = file;
 
+      // Build a lookup from paragraphId → list of original predictions so we
+      // can reuse the stable mentionId even after the backend round-trip.
+      const byParagraphId = new Map<string, PredictLabel[]>();
+      for (const p of predictions) {
+        const list = byParagraphId.get(p.paragraphId) ?? [];
+        list.push(p);
+        byParagraphId.set(p.paragraphId, list);
+      }
+
       const response = await api.post("/anonymizer/disambiguate", {
         paragraphs: paragraphs.map((p) => ({
           document: p.value,
@@ -117,28 +126,46 @@ export const disambiguate = (file: DocFile) =>
 
       const parsed = disambiguateSchema.parse(response.data);
 
-      // Flatten all paragraph labels into a single PredictLabel[] and map back
-      // to the internal paragraphId (paragraph.id) using document_id as the key
-      return parsed.data.flatMap((item) => {
-        const paragraph = paragraphs.find(
-          (p) => p.document_id === item.document,
-        );
+      // Map response items back to paragraphs by **index** — the backend
+      // echoes the array in the same order we sent it.
+      return parsed.data.flatMap((item, i) => {
+        const paragraph = paragraphs[i];
 
-        return item.labels.map((l) => ({
-          text: l.attrs.aymurai_alt_text ?? l.text,
-          start_char: l.attrs.aymurai_alt_start_char ?? l.start_char,
-          end_char: l.attrs.aymurai_alt_end_char ?? l.end_char,
-          attrs: {
-            aymurai_label: l.attrs
-              .aymurai_label as PredictLabel["attrs"]["aymurai_label"],
-            aymurai_label_subclass: l.attrs.aymurai_label_subclass,
-            aymurai_alt_text: l.attrs.aymurai_alt_text ?? null,
-            aymurai_alt_start_char: l.attrs.aymurai_alt_start_char ?? null,
-            aymurai_alt_end_char: l.attrs.aymurai_alt_end_char ?? null,
-            canonical_entity_id: l.attrs.canonical_entity_id ?? null,
-          },
-          paragraphId: paragraph?.id ?? item.document,
-        }));
+        // Build a lookup from (start_char, end_char) → original mention so we
+        // can reuse the stable mentionId.
+        const origByPos = new Map<string, PredictLabel>();
+        for (const orig of byParagraphId.get(paragraph?.id ?? "") ?? []) {
+          origByPos.set(`${orig.start_char}:${orig.end_char}`, orig);
+        }
+
+        return item.labels.map((l) => {
+          const resolvedText = l.attrs.aymurai_alt_text ?? l.text;
+          const resolvedStart = l.attrs.aymurai_alt_start_char ?? l.start_char;
+          const resolvedEnd = l.attrs.aymurai_alt_end_char ?? l.end_char;
+
+          // Prefer original mentionId so downstream D&D state stays stable.
+          const orig = origByPos.get(`${l.start_char}:${l.end_char}`);
+
+          return {
+            mentionId: orig?.mentionId ?? crypto.randomUUID(),
+            text: resolvedText,
+            start_char: resolvedStart,
+            end_char: resolvedEnd,
+            attrs: {
+              aymurai_label: l.attrs
+                .aymurai_label as PredictLabel["attrs"]["aymurai_label"],
+              aymurai_label_subclass: l.attrs.aymurai_label_subclass,
+              aymurai_alt_text: l.attrs.aymurai_alt_text ?? null,
+              aymurai_alt_start_char: l.attrs.aymurai_alt_start_char ?? null,
+              aymurai_alt_end_char: l.attrs.aymurai_alt_end_char ?? null,
+              canonical_entity_id: l.attrs.canonical_entity_id ?? null,
+              aymurai_anonymize: l.attrs.aymurai_anonymize ?? null,
+              aymurai_label_instance: l.attrs.aymurai_label_instance ?? null,
+              aymurai_disambiguation: l.attrs.aymurai_disambiguation ?? null,
+            },
+            paragraphId: paragraph?.id ?? item.document,
+          } satisfies PredictLabel;
+        });
       });
     },
   });

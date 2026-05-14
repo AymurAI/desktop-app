@@ -15,14 +15,17 @@ export const SEARCH_MIN_LENGTH = 3;
  * @returns List of annotations
  */
 const labelToAnnotation = (labels: PredictLabel[]): Annotation[] => {
-  return labels.map(({ start_char, end_char, attrs, paragraphId }) => ({
-    start: start_char,
-    end: end_char,
-    type: "tag",
-    tag: attrs.aymurai_label!,
-    paragraphId,
-    canonical_entity_id: attrs.canonical_entity_id,
-  }));
+  return labels.map(
+    ({ start_char, end_char, attrs, paragraphId, mentionId }) => ({
+      start: start_char,
+      end: end_char,
+      type: "tag",
+      tag: attrs.aymurai_label!,
+      paragraphId,
+      canonical_entity_id: attrs.canonical_entity_id,
+      mentionId,
+    }),
+  );
 };
 
 /**

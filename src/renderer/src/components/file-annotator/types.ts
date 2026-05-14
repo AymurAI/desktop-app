@@ -10,6 +10,7 @@ export interface LabelAnnotation extends BaseAnnotation {
   paragraphId: string;
   tag?: AllLabels | AllLabelsWithSufix;
   canonical_entity_id?: string | null;
+  mentionId?: string;
 }
 export interface TextAnnotation extends BaseAnnotation {
   type: "text";

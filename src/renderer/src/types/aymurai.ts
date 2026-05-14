@@ -14,9 +14,13 @@ type LabelAttributes = {
   aymurai_alt_end_char: number | null;
   canonical_entity_id?: string | null;
   aymurai_anonymize?: boolean | null;
+  aymurai_label_instance?: number | null;
+  aymurai_disambiguation?: string | null;
 };
 
 export type PredictLabel = {
+  /** Stable unique identifier assigned when the prediction is first created. */
+  mentionId: string;
   text: string;
   aymurai_alt_text?: string;
   start_char: number;
