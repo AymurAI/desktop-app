@@ -1,11 +1,21 @@
+import { EXCLUDED_TAGS } from "@/constants/excluded-tags";
 import { disambiguateSchema } from "@/schema/disambiguate";
 import { documentExtractSchema } from "@/schema/extract";
-import type { AnonymizerLabels, PredictLabel, Workflows } from "@/types/aymurai";
+import type {
+  AnonymizerLabels,
+  PredictLabel,
+  Workflows,
+} from "@/types/aymurai";
 import type { DocFile, Paragraph } from "@/types/file";
-import { EXCLUDED_TAGS } from "@/constants/excluded-tags";
+import {
+  anonymizeQuerySignature,
+  filterActivePredictions,
+} from "@/utils/anonymizer/predictions";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import api from "../api";
 import predict from "./predict";
+
+export type SuffixMode = "always" | "when_multiple" | "never";
 
 interface Body {
   data: {
@@ -13,6 +23,7 @@ interface Body {
     labels: PredictLabel[];
   }[];
   label_policies?: Record<string, { anonymize: boolean }>;
+  render_policy?: { suffix_mode: SuffixMode };
 }
 
 /**
@@ -39,10 +50,15 @@ const body = (
   file: DocFile,
   excludedTags: Record<AnonymizerLabels, boolean> | null,
   excludedWords: string[],
+  suffixMode: SuffixMode = "always",
 ): Body => {
   const effectiveTags = excludedTags ?? EXCLUDED_TAGS;
   const paragraphs = file.paragraphs ?? [];
-  const labels = file.predictions ?? [];
+  const labels = filterActivePredictions(
+    file.predictions,
+    excludedTags,
+    excludedWords,
+  );
 
   const label_policies = Object.fromEntries(
     Object.entries(effectiveTags)
@@ -53,18 +69,10 @@ const body = (
   return {
     data: paragraphs.map((p) => ({
       document: p.value,
-      labels: labels
-        .filter((l) => l.paragraphId === p.id)
-        .map((l) => {
-          const isExcluded = excludedWords.some(
-            (w) => l.text.toLowerCase() === w.toLowerCase(),
-          );
-          return isExcluded
-            ? { ...l, attrs: { ...l.attrs, aymurai_anonymize: false } }
-            : l;
-        }),
+      labels: labels.filter((l) => l.paragraphId === p.id),
     })),
     ...(Object.keys(label_policies).length > 0 && { label_policies }),
+    render_policy: { suffix_mode: suffixMode },
   };
 };
 
@@ -72,13 +80,28 @@ export const anonymize = (
   file: DocFile,
   excludedTags: Record<AnonymizerLabels, boolean> | null,
   excludedWords: string[],
+  suffixMode: SuffixMode = "always",
 ) =>
   queryOptions({
-    queryKey: ["anonymize", file.data.name],
+    // Normalise null → EXCLUDED_TAGS so the key is stable when the user hasn't
+    // touched the config (both resolve to "all tags enabled").
+    queryKey: [
+      "anonymize",
+      file.data.name,
+      file.data.size,
+      (file.paragraphs ?? []).map((p) => [p.id, p.value].join("\u001f")),
+      anonymizeQuerySignature(file.predictions, excludedTags, excludedWords),
+      excludedTags ?? EXCLUDED_TAGS,
+      excludedWords,
+      suffixMode,
+    ],
     queryFn: async () => {
       const formData = new FormData();
       formData.append("file", file.data);
-      formData.append("annotations", JSON.stringify(body(file, excludedTags, excludedWords)));
+      formData.append(
+        "annotations",
+        JSON.stringify(body(file, excludedTags, excludedWords, suffixMode)),
+      );
 
       const response = await api.post<Blob>(
         "/anonymizer/anonymize-document",
@@ -191,17 +214,13 @@ export const odtToPdf = () =>
       const formData = new FormData();
       formData.append("file", file, "document.odt");
 
-      const response = await api.post<Blob>(
-        "/convert/odt/pdf",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Accept: "application/octet-stream",
-          },
-          responseType: "blob",
+      const response = await api.post<Blob>("/convert/odt/pdf", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "application/octet-stream",
         },
-      );
+        responseType: "blob",
+      });
 
       return response.data;
     },
@@ -213,17 +232,13 @@ export const pdfToOdt = () =>
       const formData = new FormData();
       formData.append("file", file, "document.pdf");
 
-      const response = await api.post<Blob>(
-        "/convert/pdf/odt",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Accept: "application/octet-stream",
-          },
-          responseType: "blob",
+      const response = await api.post<Blob>("/convert/pdf/odt", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "application/octet-stream",
         },
-      );
+        responseType: "blob",
+      });
 
       return response.data;
     },
