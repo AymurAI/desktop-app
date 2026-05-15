@@ -53,6 +53,9 @@ export default function TagAnnotation({
     AllLabels | AllLabelsWithSufix | null
   >(null);
   const tag = annotation.tag;
+  const searchMatchId = (annotation as LabelAnnotation).searchMatchId;
+  const isSearchActive = (annotation as LabelAnnotation).isActive ?? false;
+  const isSearchMatch = searchMatchId !== undefined;
 
   const { start, end, paragraphId } = annotation as LabelAnnotation;
   const annotationData = annotation.tag
@@ -76,6 +79,12 @@ export default function TagAnnotation({
     "data-start": annotation.start,
     "data-end": annotation.end,
     "data-tag": annotation.tag,
+    "data-search-match-id": searchMatchId,
+    "data-search-active": isSearchMatch
+      ? isSearchActive
+        ? "true"
+        : "false"
+      : undefined,
   };
 
   if (!isAnnotable)
@@ -83,6 +92,8 @@ export default function TagAnnotation({
       <SuggestionLabel
         label={tag}
         isHighlighted={isHighlighted}
+        isSearchMatch={isSearchMatch}
+        isSearchActive={isSearchActive}
         {...spanHoverProps}
         {...metadata}
       >
@@ -103,6 +114,8 @@ export default function TagAnnotation({
           isClickable
           label={tag}
           isHighlighted={isHighlighted}
+          isSearchMatch={isSearchMatch}
+          isSearchActive={isSearchActive}
           {...metadata}
         >
           {children}
