@@ -141,8 +141,8 @@ export default function ManualEntityResolutionDialog({
     >
       <DialogContent
         className={css({
-          w: "[min(92vw, 560px)]",
-          maxW: "[560px]",
+          w: "[min(92vw, 520px)]",
+          maxW: "[520px]",
           bg: "bg.secondary",
         })}
       >
