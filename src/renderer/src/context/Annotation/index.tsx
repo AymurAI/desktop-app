@@ -47,13 +47,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import {
-  findSearchIndexes,
-  getBoundaries,
-  isValidNode,
-  paragraphIdFromSelection,
-  selectionHasNodes,
-} from "./utils";
+import { findSearchIndexes, getSelectionAnnotationRange } from "./utils";
 
 interface AnnotationContextValues {
   isAnnotable: boolean;
@@ -520,32 +514,22 @@ export default function AnnotationProvider({
     if (!label) return;
 
     const selection = window.getSelection();
-    if (!selection || selection.type !== "Range") return;
-    const text = selection.getRangeAt(0).toString();
-
-    if (selectionHasNodes(selection)) return;
-    const node = selection.anchorNode;
-
-    if (!isValidNode(node)) return;
-    const span = node.parentElement as HTMLSpanElement;
-
-    const offset = Number(
-      span.attributes.getNamedItem("data-start")?.value ?? 0,
-    );
-    const [start, end] = getBoundaries(selection);
+    if (!selection) return;
+    const selectedRange = getSelectionAnnotationRange(selection);
+    if (!selectedRange) return;
 
     add({
       mentionId: crypto.randomUUID(),
-      start_char: start + offset,
-      end_char: end + offset,
-      paragraphId: paragraphIdFromSelection(selection),
-      text,
+      start_char: selectedRange.start,
+      end_char: selectedRange.end,
+      paragraphId: selectedRange.paragraphId,
+      text: selectedRange.text,
       attrs: {
         aymurai_label: label,
         aymurai_label_subclass: null,
         aymurai_alt_text: null,
-        aymurai_alt_start_char: start + offset,
-        aymurai_alt_end_char: end + offset,
+        aymurai_alt_start_char: selectedRange.start,
+        aymurai_alt_end_char: selectedRange.end,
       },
     });
   };
