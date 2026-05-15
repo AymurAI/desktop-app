@@ -2,7 +2,9 @@ import { create } from "zustand";
 
 interface HoverState {
   hoveredCanonicalId: string | null;
+  lastEditedCanonicalId: string | null;
   setHoveredCanonicalId: (id: string | null) => void;
+  setLastEditedCanonicalId: (id: string | null) => void;
 }
 
 /**
@@ -12,5 +14,8 @@ interface HoverState {
  */
 export const useHoverState = create<HoverState>()((set) => ({
   hoveredCanonicalId: null,
+  lastEditedCanonicalId: null,
   setHoveredCanonicalId: (hoveredCanonicalId) => set({ hoveredCanonicalId }),
+  setLastEditedCanonicalId: (lastEditedCanonicalId) =>
+    set({ lastEditedCanonicalId }),
 }));

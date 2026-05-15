@@ -45,11 +45,12 @@ import {
 import {
   ArrowsLeftRight,
   DotsSixVertical,
+  PlusCircle,
   Trash,
   Warning,
   XCircle,
 } from "phosphor-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { EntityGroup } from "@/hooks/useEntityGroups";
 import {
@@ -57,6 +58,7 @@ import {
   useGroupOrder,
   useGroupOrderActions,
 } from "@/store/useLocal";
+import { normalizeEntityText } from "@/utils/anonymizer/entity-similarity";
 import { filterActivePredictions } from "@/utils/anonymizer/predictions";
 import MergeDialog from "./merge-dialog";
 import RemoveDialog from "./remove-dialog";
@@ -64,7 +66,7 @@ import LabelManagerSection from "./section";
 import SortableGroup from "./sortable-group";
 
 function normalizeText(t: string) {
-  return t.trim().toLowerCase();
+  return normalizeEntityText(t);
 }
 
 const GROUP_PREFIX = "group:";
@@ -118,11 +120,13 @@ const suffixBadge = css({
   rounded: "xs",
   fontVariantNumeric: "tabular-nums",
   userSelect: "none",
-  flexShrink: "0",
-  maxW: "[150px]",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  flexShrink: "1",
+  minW: "0",
+  maxW: "full",
+  overflowWrap: "anywhere",
+  wordBreak: "break-word",
+  whiteSpace: "normal",
+  textAlign: "right",
   fontSize: "[11px]",
   fontWeight: "bold",
   letterSpacing: "wide",
@@ -142,6 +146,49 @@ const textItemStyle = css({
 });
 
 const textItemDraggingStyle = css({ opacity: "0.35" });
+const textItemPendingSplitStyle = css({
+  bg: "[#D9DCFF]",
+  boxShadow: "[inset 0 0 0 1px #8A92D8]",
+});
+const textItemConfirmingSplitStyle = css({
+  bg: "[#C8CDF8]",
+  boxShadow: "[inset 0 0 0 2px #6F78CE]",
+});
+
+const textContextMenu = css({
+  position: "fixed",
+  zIndex: "60",
+  minW: "[150px]",
+  bg: "bg.primary",
+  border: "[1px solid #BCBAB8]",
+  rounded: "sm",
+  boxShadow: "[0_8px_20px_rgba(17,0,65,0.14)]",
+  p: "1",
+});
+
+const textContextMenuButton = css({
+  display: "flex",
+  alignItems: "center",
+  gap: "1.5",
+  w: "full",
+  px: "2",
+  py: "1.5",
+  bg: "transparent",
+  border: "none",
+  rounded: "xs",
+  cursor: "pointer",
+  color: "text.default",
+  textStyle: "label.md.default",
+  textAlign: "left",
+  "&:hover": {
+    bg: "[#D9DCFF]",
+    color: "[#1B0D58]",
+  },
+  "&:focus-visible": {
+    outline: "[2px solid #3F479D]",
+    outlineOffset: "[1px]",
+  },
+});
 
 const groupCardStyle = css({
   bg: "bg.primary",
@@ -202,6 +249,9 @@ interface DraggableTextChipProps {
   normalizedText: string;
   displayText: string;
   onRemove: () => void;
+  onCreateGroup: (position: { x: number; y: number }) => void;
+  isSplitTarget: boolean;
+  isSplitActionHovered: boolean;
 }
 
 function DraggableTextChip({
@@ -209,6 +259,9 @@ function DraggableTextChip({
   normalizedText,
   displayText,
   onRemove,
+  onCreateGroup,
+  isSplitTarget,
+  isSplitActionHovered,
 }: DraggableTextChipProps) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: textDndId(canonicalId, normalizedText),
@@ -218,7 +271,20 @@ function DraggableTextChip({
   return (
     <div
       ref={setNodeRef}
-      className={`${textItemStyle}${isDragging ? ` ${textItemDraggingStyle}` : ""}`}
+      className={`${textItemStyle}${isDragging ? ` ${textItemDraggingStyle}` : ""}${
+        isSplitTarget
+          ? ` ${
+              isSplitActionHovered
+                ? textItemConfirmingSplitStyle
+                : textItemPendingSplitStyle
+            }`
+          : ""
+      }`}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onCreateGroup({ x: event.clientX, y: event.clientY });
+      }}
     >
       <button
         type="button"
@@ -329,7 +395,12 @@ export default function LabelEntityTab({
     [files, tags, words],
   );
   const groups = useEntityGroups(activeFiles);
-  const { hoveredCanonicalId, setHoveredCanonicalId } = useHoverState();
+  const {
+    hoveredCanonicalId,
+    lastEditedCanonicalId,
+    setHoveredCanonicalId,
+    setLastEditedCanonicalId,
+  } = useHoverState();
 
   const { groupOrder } = useGroupOrder();
   const { setGroupOrder } = useGroupOrderActions();
@@ -342,15 +413,19 @@ export default function LabelEntityTab({
     source: EntityGroup;
     target: EntityGroup;
   } | null>(null);
-  // Tracks the most recently user-edited group so the merge badge appears on it.
-  const [lastEditedId, setLastEditedId] = useState<string | null>(null);
-
   const [activeTextDrag, setActiveTextDrag] = useState<{
     normalizedText: string;
     displayText: string;
     fromCanonicalId: string;
   } | null>(null);
   const [overGroupId, setOverGroupId] = useState<string | null>(null);
+  const [textMenu, setTextMenu] = useState<{
+    x: number;
+    y: number;
+    canonicalId: string;
+    normalizedText: string;
+  } | null>(null);
+  const [textMenuActionHovered, setTextMenuActionHovered] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -370,6 +445,30 @@ export default function LabelEntityTab({
     }
     return result;
   }, [groups]);
+
+  useEffect(() => {
+    if (!textMenu) return;
+
+    const close = () => {
+      setTextMenu(null);
+      setTextMenuActionHovered(false);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+
+    window.addEventListener("click", close);
+    window.addEventListener("contextmenu", close);
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("scroll", close, true);
+
+    return () => {
+      window.removeEventListener("click", close);
+      window.removeEventListener("contextmenu", close);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("scroll", close, true);
+    };
+  }, [textMenu]);
 
   function getOrderedGroups(category: string): EntityGroup[] {
     const catGroups = groupsByCategory[category] ?? [];
@@ -447,6 +546,7 @@ export default function LabelEntityTab({
           ),
         );
       }
+      setLastEditedCanonicalId(targetGroup.canonicalId);
       return;
     }
 
@@ -479,12 +579,61 @@ export default function LabelEntityTab({
       ),
     );
     onDerivedLabelChange(canonicalId, labelId);
-    setLastEditedId(canonicalId);
+    setLastEditedCanonicalId(canonicalId);
   }
 
   function handleRemoveValue(canonicalId: string, normalizedText: string) {
     dispatch(removePredictionValueByCanonicalId(canonicalId, normalizedText));
     onDerivedValueRemove(canonicalId, normalizedText);
+  }
+
+  function handleCreateGroupFromText() {
+    if (!textMenu) return;
+
+    const sourceGroup = groups.find(
+      (group) => group.canonicalId === textMenu.canonicalId,
+    );
+    if (!sourceGroup) {
+      setTextMenu(null);
+      setTextMenuActionHovered(false);
+      return;
+    }
+
+    const targetCanonicalId = crypto.randomUUID();
+    const targetLabel = sourceGroup.renderBase as
+      | AllLabels
+      | AllLabelsWithSufix;
+    const mentionsToSplit = sourceGroup.mentions.filter(
+      (mention) => normalizeText(mention.text) === textMenu.normalizedText,
+    );
+    if (mentionsToSplit.length === 0) {
+      setTextMenu(null);
+      setTextMenuActionHovered(false);
+      return;
+    }
+
+    for (const mention of mentionsToSplit) {
+      dispatch(
+        moveMentionToGroup(mention.mentionId, targetCanonicalId, targetLabel),
+      );
+    }
+
+    const category = getAnonymizerCategoryForLabel(sourceGroup.renderBase);
+    const existingOrder = groupOrder?.[category];
+    if (existingOrder) {
+      const sourceIndex = existingOrder.indexOf(sourceGroup.canonicalId);
+      const nextOrder = existingOrder.filter((id) => id !== targetCanonicalId);
+      nextOrder.splice(
+        sourceIndex === -1 ? nextOrder.length : sourceIndex + 1,
+        0,
+        targetCanonicalId,
+      );
+      setGroupOrder({ ...groupOrder, [category]: nextOrder });
+    }
+
+    setLastEditedCanonicalId(targetCanonicalId);
+    setTextMenu(null);
+    setTextMenuActionHovered(false);
   }
 
   function confirmRemoval() {
@@ -504,7 +653,7 @@ export default function LabelEntityTab({
       ),
     );
     setPendingMerge(null);
-    setLastEditedId(null);
+    setLastEditedCanonicalId(null);
   }
 
   return (
@@ -531,6 +680,29 @@ export default function LabelEntityTab({
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
+        {textMenu && (
+          <div
+            className={textContextMenu}
+            style={{ left: textMenu.x, top: textMenu.y }}
+            onClick={(event) => event.stopPropagation()}
+            onContextMenu={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }}
+          >
+            <button
+              type="button"
+              className={textContextMenuButton}
+              onClick={handleCreateGroupFromText}
+              onMouseEnter={() => setTextMenuActionHovered(true)}
+              onMouseLeave={() => setTextMenuActionHovered(false)}
+            >
+              <PlusCircle size={14} />
+              Crear nuevo grupo
+            </button>
+          </div>
+        )}
+
         <Stack gap="4">
           {ANONYMIZER_CATEGORY_NAMES.map((category, i) => {
             const orderedGroups = getOrderedGroups(category);
@@ -566,7 +738,7 @@ export default function LabelEntityTab({
                         // duplicate pointing to it, show the badge on this group instead.
                         const reverseDuplicate =
                           !group.isDuplicate &&
-                          group.canonicalId === lastEditedId
+                          group.canonicalId === lastEditedCanonicalId
                             ? (groups.find(
                                 (g) =>
                                   g.isDuplicate &&
@@ -716,6 +888,22 @@ export default function LabelEntityTab({
                                             group.canonicalId,
                                             normText,
                                           )
+                                        }
+                                        onCreateGroup={(position) => {
+                                          setTextMenu({
+                                            ...position,
+                                            canonicalId: group.canonicalId,
+                                            normalizedText: normText,
+                                          });
+                                          setTextMenuActionHovered(false);
+                                        }}
+                                        isSplitTarget={
+                                          textMenu?.canonicalId ===
+                                            group.canonicalId &&
+                                          textMenu.normalizedText === normText
+                                        }
+                                        isSplitActionHovered={
+                                          textMenuActionHovered
                                         }
                                       />
                                     )),
