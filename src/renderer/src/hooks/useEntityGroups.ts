@@ -2,6 +2,10 @@ import { useMemo } from "react";
 
 import type { PredictLabel } from "@/types/aymurai";
 import type { DocFile } from "@/types/file";
+import {
+  normalizeEntityText,
+  stripEntityLabelSuffix,
+} from "@/utils/anonymizer/entity-similarity";
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -17,7 +21,7 @@ export interface EntityGroup {
   renderToken: string;
   /** All individual mention predictions belonging to this group. */
   mentions: PredictLabel[];
-  /** Deduplicated normalised (lowercased) texts, sorted alphabetically. Used internally for matching. */
+  /** Deduplicated normalised texts, sorted alphabetically. Used internally for matching. */
   uniqueTexts: string[];
   /** Verbatim texts corresponding 1-to-1 with {@link uniqueTexts}. Each inner array holds all distinct
    * surface forms that share the same normalised text (e.g. ["PUERTO BELGRANO", "Puerto Belgrano"]).
@@ -37,11 +41,7 @@ export interface EntityGroup {
 
 /** Strip a numeric suffix like `_1`, `_12` from a label string. */
 export function stripSuffix(label: string): string {
-  return label.replace(/_\d+$/, "");
-}
-
-function normalizeText(t: string): string {
-  return t.trim().toLowerCase();
+  return stripEntityLabelSuffix(label);
 }
 
 // ─── Main hook ────────────────────────────────────────────────────────────────
@@ -100,7 +100,8 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
           });
         }
 
-        const entry = byCanonicalId.get(canonical_entity_id)!;
+        const entry = byCanonicalId.get(canonical_entity_id);
+        if (!entry) continue;
         entry.mentions.push(pred);
 
         // Keep the earliest appearance
@@ -140,7 +141,8 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
         // Build normalised → set of all distinct verbatim forms (order: first occurrence first).
         const normalizedToVerbatims = new Map<string, string[]>();
         for (const m of mentions) {
-          const norm = normalizeText(m.text);
+          const norm = normalizeEntityText(m.text);
+          if (!norm) continue;
           const existing = normalizedToVerbatims.get(norm);
           if (!existing) {
             normalizedToVerbatims.set(norm, [m.text]);
@@ -150,7 +152,7 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
         }
         const uniqueTexts = [...normalizedToVerbatims.keys()].sort();
         const displayTexts = uniqueTexts.map(
-          (t) => normalizedToVerbatims.get(t)!,
+          (t) => normalizedToVerbatims.get(t) ?? [],
         );
 
         const anonymizeCount = mentions.filter(
@@ -200,7 +202,8 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
       }
 
       if (conflictPrimaryId !== null) {
-        const primaryGroup = groupById.get(conflictPrimaryId)!;
+        const primaryGroup = groupById.get(conflictPrimaryId);
+        if (!primaryGroup) continue;
 
         if (group.uniqueTexts.length > primaryGroup.uniqueTexts.length) {
           // Current group has more texts → it becomes the new primary;

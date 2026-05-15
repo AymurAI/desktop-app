@@ -4,17 +4,17 @@ import {
   type PredictLabel,
   anonymizerLabels,
 } from "@/types/aymurai";
+import {
+  normalizeEntityText,
+  stripEntityLabelSuffix,
+} from "./entity-similarity";
 
 const ANONYMIZER_LABEL_IDS = new Set<string>(
   anonymizerLabels.map((label) => label.id),
 );
 
 export function stripLabelSuffix(label: string): string {
-  return label.replace(/_\d+$/, "");
-}
-
-function normalizeText(text: string): string {
-  return text.trim().toLowerCase();
+  return stripEntityLabelSuffix(label);
 }
 
 function getAnonymizerLabelId(label: string): AnonymizerLabels | null {
@@ -34,8 +34,10 @@ export function isPredictionActive(
 
   if (labelId !== null && effectiveTags[labelId] === false) return false;
 
-  const predictionText = normalizeText(prediction.text);
-  return !excludedWords.some((word) => normalizeText(word) === predictionText);
+  const predictionText = normalizeEntityText(prediction.text);
+  return !excludedWords.some(
+    (word) => normalizeEntityText(word) === predictionText,
+  );
 }
 
 export function filterActivePredictions(
