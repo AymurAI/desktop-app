@@ -7,6 +7,7 @@ import type {
   Workflows,
 } from "@/types/aymurai";
 import type { DocFile, Paragraph } from "@/types/file";
+import { assertValidAnonymizerExportState } from "@/utils/anonymizer/export-validation";
 import {
   anonymizeQuerySignature,
   filterActivePredictions,
@@ -59,6 +60,7 @@ const body = (
     excludedTags,
     excludedWords,
   );
+  assertValidAnonymizerExportState(file, labels);
 
   const label_policies = Object.fromEntries(
     Object.entries(effectiveTags)
