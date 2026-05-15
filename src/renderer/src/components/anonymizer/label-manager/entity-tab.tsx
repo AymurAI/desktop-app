@@ -1,4 +1,4 @@
-import Select from "@/components/ui/select";
+import AnonymizerLabelSelect from "@/components/anonymizer/anonymizer-label-select";
 import {
   Tooltip,
   TooltipContent,
@@ -839,11 +839,12 @@ export default function LabelEntityTab({
                                     overflow: "hidden",
                                   })}
                                 >
-                                  <Select
+                                  <AnonymizerLabelSelect
                                     size="sm"
                                     options={labelOptions}
                                     placeholder="Seleccionar entidad"
                                     value={group.renderBase}
+                                    currentCategory={category}
                                     onChange={(opt) =>
                                       handleLabelChange(
                                         group.canonicalId,

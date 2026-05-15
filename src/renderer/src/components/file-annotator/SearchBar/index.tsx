@@ -1,7 +1,8 @@
 import { type ChangeEvent, useRef, useState } from "react";
 
+import AnonymizerLabelSelect from "@/components/anonymizer/anonymizer-label-select";
 import Button from "@/components/ui/button";
-import Select, { type SelectOption } from "@/components/ui/select";
+import type { SelectOption } from "@/components/ui/select";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import { sva } from "@/styled/css";
 import { Grid, HStack, styled } from "@/styled/jsx";
@@ -122,7 +123,7 @@ export const SearchBar = ({
             Aplicar&#10;etiquetas
           </styled.p>
           <div style={{ minWidth: 150 }}>
-            <Select
+            <AnonymizerLabelSelect
               placeholder="Etiqueta"
               value={labelValue}
               options={labelOptions}

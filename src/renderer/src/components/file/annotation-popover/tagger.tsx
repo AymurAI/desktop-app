@@ -4,7 +4,8 @@ import { sva } from "@/styled/css";
 import { styled } from "@/styled/jsx";
 import { hstack } from "@/styled/patterns";
 
-import Select, { type SelectOption } from "@/components/ui/select";
+import AnonymizerLabelSelect from "@/components/anonymizer/anonymizer-label-select";
+import type { SelectOption } from "@/components/ui/select";
 import { useAnnotation } from "@/context/Annotation";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import type { AllLabels } from "@/types/aymurai";
@@ -91,7 +92,7 @@ export default function Tagger({
         <Tooltip open={isSelectOpen ? false : undefined}>
           <TooltipTrigger asChild>
             <div>
-              <Select
+              <AnonymizerLabelSelect
                 placeholder="Etiqueta"
                 size="sm"
                 value={activeLabel ?? undefined}
