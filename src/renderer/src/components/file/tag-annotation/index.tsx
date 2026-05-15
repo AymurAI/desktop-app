@@ -44,6 +44,10 @@ export default function TagAnnotation({
         onMouseLeave: () => setHoveredCanonicalId(null),
       }
     : {};
+  const handlePopoverHoverChange = (hovered: boolean) => {
+    if (!canonicalId) return;
+    setHoveredCanonicalId(hovered ? canonicalId : null);
+  };
   const [removeAllOpen, setRemoveAllOpen] = useState(false);
   const [replaceAllLabelWithSuffix, setReplaceAllLabelWithSuffix] = useState<
     AllLabels | AllLabelsWithSufix | null
@@ -93,12 +97,12 @@ export default function TagAnnotation({
         onClickAll={handleReplaceAll}
         onDeleteOne={handleDeleteOne}
         onDeleteAll={handleDeleteAll}
+        onHoverChange={handlePopoverHoverChange}
       >
         <SuggestionLabel
           isClickable
           label={tag}
           isHighlighted={isHighlighted}
-          {...spanHoverProps}
           {...metadata}
         >
           {children}
