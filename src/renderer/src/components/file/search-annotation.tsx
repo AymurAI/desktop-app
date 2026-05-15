@@ -5,10 +5,8 @@ import type {
 } from "@/components/file-annotator/types";
 import AnnotationPopover from "@/components/file/annotation-popover";
 import { useAnnotation } from "@/context/Annotation";
-import { showToast } from "@/features/showToast";
 import { cva } from "@/styled/css";
 import type { AllLabels } from "@/types/aymurai";
-import { Check } from "phosphor-react";
 
 const search = cva({
   base: {
@@ -66,25 +64,17 @@ export default function SearchAnnotation({
     </AnnotationPopover>
   );
 
-  function handleAddOne(label: AllLabels, suffix: number | null) {
-    const labelWithSuffix = suffix ? (`${label}_${suffix}` as const) : label;
+  function handleAddOne(label: AllLabels) {
     const annotationData = createAnnotationData(
       children,
       annotation as LabelAnnotation,
-      labelWithSuffix,
+      label,
     );
     if (annotationData) {
       add(annotationData);
-      showToast("Se agregó la etiqueta en esta ocurrencia.", "success", Check);
     }
   }
-  function handleAddAll(label: AllLabels, suffix: number | null) {
-    const labelWithSuffix = suffix ? (`${label}_${suffix}` as const) : label;
-    addBySearch(children, labelWithSuffix);
-    showToast(
-      "Se agregó la etiqueta en todas las ocurrencias.",
-      "success",
-      Check,
-    );
+  function handleAddAll(label: AllLabels) {
+    addBySearch(children, label);
   }
 }

@@ -1,4 +1,4 @@
-import { memo, useMemo, useState, useTransition } from "react";
+import { memo, useEffect, useMemo, useState, useTransition } from "react";
 
 import { SearchBar } from "./SearchBar";
 
@@ -7,12 +7,9 @@ import AnnotationProvider, { useAnnotation } from "@/context/Annotation";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import { css } from "@/styled/css";
 import { HStack } from "@/styled/jsx";
-import type {
-  AllLabels,
-  AllLabelsWithSufix,
-  PredictLabel,
-} from "@/types/aymurai";
+import type { AllLabels, PredictLabel } from "@/types/aymurai";
 import type { DocFile, Paragraph as ParagraphType } from "@/types/file";
+import { getActiveAnonymizerLabelOptions } from "@/utils/anonymizer/labels";
 import { filterActivePredictions } from "@/utils/anonymizer/predictions";
 import LabelManager from "../anonymizer/label-manager";
 import SearchAnnotation from "../file/search-annotation";
@@ -39,21 +36,11 @@ interface ParagraphProps {
 }
 const Paragraph = memo(
   ({ children, search, paragraph, predictions }: ParagraphProps) => {
-    const { label, suffix } = useAnnotation();
-    const searchTag = label
-      ? suffix
-        ? (`${label}_${suffix}` as AllLabelsWithSufix)
-        : label
-      : null;
+    const { label } = useAnnotation();
 
     const annotations = useMemo(() => {
-      return createAnnotationsWithSearch(
-        predictions,
-        search,
-        paragraph,
-        searchTag,
-      );
-    }, [predictions, search, paragraph, searchTag]);
+      return createAnnotationsWithSearch(predictions, search, paragraph, label);
+    }, [predictions, search, paragraph, label]);
 
     const splits = generateSplits(children, annotations);
 
@@ -99,11 +86,20 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
   const [, startTransition] = useTransition();
 
   const [label, setLabel] = useState<AllLabels | null>(null);
-  const [suffix, setSuffix] = useState<number | null>(0);
   const [labelManagerOpen, setLabelManagerOpen] = useState(false);
 
   const paragraphs = file.paragraphs ?? [];
   const { tags, words } = useExcludedTagsConfig();
+  const activeLabelOptions = useMemo(
+    () => getActiveAnonymizerLabelOptions(tags),
+    [tags],
+  );
+
+  useEffect(() => {
+    if (label && !activeLabelOptions.some((option) => option.id === label)) {
+      setLabel(null);
+    }
+  }, [activeLabelOptions, label]);
 
   const filteredPredictions = useMemo(
     () => filterActivePredictions(file.predictions, tags, words),
@@ -133,7 +129,7 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
         <SearchBar
           onSearchChange={handleSearchChange}
           onLabelChange={selectChangeHandler}
-          onLabelSufixChange={setSuffix}
+          labelValue={label ?? undefined}
           onLabelManagerToggle={toggleManagerLabel}
           isAnnotable={isAnnotable}
           isLabelManagerOpen={labelManagerOpen}
@@ -143,7 +139,6 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
             file={file}
             isAnnotable={isAnnotable}
             label={label}
-            suffix={suffix}
           >
             {paragraphs.map((p) => (
               <Paragraph

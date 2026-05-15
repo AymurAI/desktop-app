@@ -120,18 +120,15 @@ export default function TagAnnotation({
     </>
   );
 
-  function handleReplaceOne(label: AllLabels, suffix: number | null) {
-    console.log({ annotationData, label });
+  function handleReplaceOne(label: AllLabels) {
     if (!annotationData || !label) return;
 
-    const labelWithSuffix = suffix ? (`${label}_${suffix}` as const) : label;
-    updateLabel(annotationData, labelWithSuffix);
+    updateLabel(annotationData, label);
     showToast("Se reemplazó la etiqueta en esta ocurrencia.", "success", Check);
   }
 
-  function handleReplaceAll(label: AllLabels, suffix: number | null) {
-    const labelWithSuffix = suffix ? (`${label}_${suffix}` as const) : label;
-    setReplaceAllLabelWithSuffix(labelWithSuffix);
+  function handleReplaceAll(label: AllLabels) {
+    setReplaceAllLabelWithSuffix(label);
   }
 
   function handleDeleteOne() {

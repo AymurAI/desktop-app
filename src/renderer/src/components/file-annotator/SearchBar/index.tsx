@@ -1,12 +1,12 @@
 import { type ChangeEvent, useRef, useState } from "react";
 
 import Button from "@/components/ui/button";
-import Input from "@/components/ui/input";
 import Select, { type SelectOption } from "@/components/ui/select";
+import { useExcludedTagsConfig } from "@/store/useLocal";
 import { sva } from "@/styled/css";
 import { Grid, HStack, styled } from "@/styled/jsx";
 import { hstack } from "@/styled/patterns";
-import { anonymizerLabels } from "@/types/aymurai";
+import { getActiveAnonymizerLabelOptions } from "@/utils/anonymizer/labels";
 import { MagnifyingGlass } from "phosphor-react";
 import { Counter } from "./Counter";
 import { useScroll } from "./useScroll";
@@ -42,7 +42,7 @@ interface Props {
   isLabelManagerOpen: boolean;
   onSearchChange?: (value: string) => void;
   onLabelChange?: (object: SelectOption | undefined) => void;
-  onLabelSufixChange?: (value: number | null) => void;
+  labelValue?: string;
   onLabelManagerToggle: () => void;
 }
 
@@ -51,17 +51,18 @@ export const SearchBar = ({
   isLabelManagerOpen,
   onSearchChange,
   onLabelChange,
-  onLabelSufixChange,
+  labelValue,
   onLabelManagerToggle,
 }: Props) => {
   const [search, setSearch] = useState("");
-  const [labelSufix, setLabelSufix] = useState("");
+  const { tags } = useExcludedTagsConfig();
 
   const inputSearchRef = useRef<HTMLInputElement>(null);
 
   const { next, previous, count, matchesCount } = useScroll(search);
 
   const classes = searchClasses();
+  const labelOptions = getActiveAnonymizerLabelOptions(tags);
 
   const changeSearchHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
@@ -82,16 +83,8 @@ export const SearchBar = ({
 
   const searchFocus = () => inputSearchRef.current?.focus();
 
-  // biome-ignore lint/suspicious/noExplicitAny: we should add a type in the future
-  const changeLabelSelectHandler = (e: any | undefined) => {
+  const changeLabelSelectHandler = (e: SelectOption | undefined) => {
     onLabelChange?.(e);
-    onLabelSufixChange?.(null);
-    setLabelSufix("");
-  };
-
-  const changeLabelSufixHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setLabelSufix(e.target.value);
-    onLabelSufixChange?.(Number(e.target.value));
   };
 
   return (
@@ -131,17 +124,9 @@ export const SearchBar = ({
           <div style={{ minWidth: 150 }}>
             <Select
               placeholder="Etiqueta"
-              options={anonymizerLabels}
+              value={labelValue}
+              options={labelOptions}
               onChange={changeLabelSelectHandler}
-            />
-          </div>
-          <div style={{ width: 100 }}>
-            <Input
-              placeholder="Sufijo"
-              value={labelSufix}
-              onChange={changeLabelSufixHandler}
-              type="number"
-              min={1}
             />
           </div>
           {!isLabelManagerOpen && (
@@ -160,49 +145,4 @@ export const SearchBar = ({
       )}
     </Grid>
   );
-  // return (
-  //   <Grid
-  //     columns={isAnnotable ? 2 : 1}
-  //     spacing="m"
-  //     justify="stretch"
-  //     align="stretch"
-  //   >
-  //     <S.WrapperSearch onClick={searchFocus}>
-  //       <MagnifyingGlass size={24} />
-  //       <S.InputContainer>
-  //         <S.Input
-  //           ref={inputSearchRef}
-  //           placeholder="Buscar"
-  //           onChange={changeSearchHandler}
-  //           onClick={clickSearchHandler}
-  //         />
-  //       </S.InputContainer>
-
-  //       <Counter {...{ next, previous, matchesCount, count }} />
-  //     </S.WrapperSearch>
-
-  //     {isAnnotable && (
-  //       <S.ContainerLabel>
-  //         <S.WrapperLabel>
-  //           <Select
-  //             placeholder="Seleccione una opción"
-  //             options={anonymizerLabels}
-  //             onChange={changeLabelSelectHandler}
-  //           />
-  //         </S.WrapperLabel>
-  //         <S.WrapperSufixLabel>
-  //           <S.InputContainer>
-  //             <S.Input
-  //               ref={inputLabelSufixRef}
-  //               placeholder="Sufijo"
-  //               onChange={changeLabelSufixHandler}
-  //               type="number"
-  //               min="1"
-  //             />
-  //           </S.InputContainer>
-  //         </S.WrapperSufixLabel>
-  //       </S.ContainerLabel>
-  //     )}
-  //   </Grid>
-  // );
 };

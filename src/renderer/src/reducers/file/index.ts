@@ -13,10 +13,10 @@ import {
   type RemoveAllPredictionsAction,
   type RemoveFileAction,
   type RemovePrediction,
+  type RemovePredictionValueByCanonicalId,
   type RemovePredictionsAction,
   type RemovePredictionsByCanonicalId,
   type RemovePredictionsByText,
-  type RemovePredictionValueByCanonicalId,
   type ReplaceFileAction,
   type ToggleSelectedAction,
   type UpdatePredictionLabel,
@@ -33,6 +33,10 @@ import {
 
 import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
 import type { DocFile } from "@/types/file";
+import {
+  normalizeEntityText,
+  stripEntityLabelSuffix,
+} from "@/utils/anonymizer/entity-similarity";
 
 type State = DocFile[];
 
@@ -237,16 +241,29 @@ export default function reducer(state: State, action: Action): State {
         return {
           ...file,
           predictions: file.predictions?.map((p) => {
-            if (
-              p.text === prediction.text &&
-              p.start_char === prediction.start_char &&
-              p.end_char === prediction.end_char
-            ) {
+            const isSamePrediction = prediction.mentionId
+              ? p.mentionId === prediction.mentionId
+              : p.paragraphId === prediction.paragraphId &&
+                p.text === prediction.text &&
+                p.start_char === prediction.start_char &&
+                p.end_char === prediction.end_char;
+
+            if (isSamePrediction) {
+              const currentBaseLabel = stripEntityLabelSuffix(
+                String(p.attrs.aymurai_label),
+              );
+              const nextBaseLabel = stripEntityLabelSuffix(String(newLabel));
+              const canonicalPatch =
+                currentBaseLabel === nextBaseLabel
+                  ? {}
+                  : { canonical_entity_id: crypto.randomUUID() };
+
               return {
                 ...p,
                 attrs: {
                   ...p.attrs,
                   aymurai_label: newLabel as AllLabels | AllLabelsWithSufix,
+                  ...canonicalPatch,
                 },
               };
             }
@@ -261,6 +278,9 @@ export default function reducer(state: State, action: Action): State {
     // ----------------
     case ActionTypes.UPDATE_PREDICTIONS_BY_TEXT: {
       const { fileName, text, newLabel } = action.payload;
+      const targetCanonicalId = crypto.randomUUID();
+      const nextBaseLabel = stripEntityLabelSuffix(String(newLabel));
+
       return state.map((file) => {
         if (file.data.name !== fileName) return file;
 
@@ -268,11 +288,20 @@ export default function reducer(state: State, action: Action): State {
           ...file,
           predictions: file.predictions?.map((p) => {
             if (p.text.toLowerCase() === text.toLowerCase()) {
+              const currentBaseLabel = stripEntityLabelSuffix(
+                String(p.attrs.aymurai_label),
+              );
+              const canonicalPatch =
+                currentBaseLabel === nextBaseLabel
+                  ? {}
+                  : { canonical_entity_id: targetCanonicalId };
+
               return {
                 ...p,
                 attrs: {
                   ...p.attrs,
                   aymurai_label: newLabel,
+                  ...canonicalPatch,
                 },
               };
             }
@@ -300,14 +329,14 @@ export default function reducer(state: State, action: Action): State {
     // ------------------------------------------------
     case ActionTypes.REMOVE_PREDICTION_VALUE_BY_CANONICAL_ID: {
       const { canonicalId, value } = action.payload;
-      const norm = value.trim().toLowerCase();
+      const norm = normalizeEntityText(value);
       return state.map((file) => ({
         ...file,
         predictions: file.predictions?.filter(
           (p) =>
             !(
               p.attrs.canonical_entity_id === canonicalId &&
-              p.text.trim().toLowerCase() === norm
+              normalizeEntityText(p.text) === norm
             ),
         ),
       }));

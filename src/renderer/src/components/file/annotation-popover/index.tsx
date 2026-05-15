@@ -24,8 +24,8 @@ const triggerReset = css({
 
 interface AnnotationPopoverProps {
   children: ReactNode;
-  onClickOne: (label: AllLabels, suffix: number | null) => void;
-  onClickAll: (label: AllLabels, suffix: number | null) => void;
+  onClickOne: (label: AllLabels) => void;
+  onClickAll: (label: AllLabels) => void;
   onDeleteOne?: () => void;
   onDeleteAll?: () => void;
 }
@@ -95,7 +95,12 @@ export default function AnnotationPopover({
         }}
         onBlur={handleBlur}
       >
-        <Tagger onClickOne={onClickOne} onClickAll={onClickAll} onDeleteOne={onDeleteOne} onDeleteAll={onDeleteAll} />
+        <Tagger
+          onClickOne={onClickOne}
+          onClickAll={onClickAll}
+          onDeleteOne={onDeleteOne}
+          onDeleteAll={onDeleteAll}
+        />
       </PopoverContent>
     </Popover>
   );
