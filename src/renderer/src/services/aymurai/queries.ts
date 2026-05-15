@@ -37,7 +37,7 @@ export const predictParagraph = (
   fileName: string,
 ) =>
   queryOptions({
-    queryKey: ["predict", workflow, fileName, paragraph.id],
+    queryKey: ["predict", api.defaults.baseURL, workflow, fileName, paragraph.id],
     queryFn: ({ signal }) => {
       const controller = new AbortController();
       signal?.addEventListener("abort", () => controller.abort());
@@ -124,7 +124,7 @@ export const anonymize = (
 
 export const disambiguate = (file: DocFile) =>
   queryOptions({
-    queryKey: ["disambiguate", file.data.name],
+    queryKey: ["disambiguate", api.defaults.baseURL, file.data.name],
     queryFn: async (): Promise<PredictLabel[]> => {
       if (!file.paragraphs)
         throw new Error("File with no paragraphs tried to disambiguate");
