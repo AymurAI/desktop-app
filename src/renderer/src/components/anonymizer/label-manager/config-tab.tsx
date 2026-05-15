@@ -3,6 +3,15 @@ import type { AnonymizerLabels } from "@/types/aymurai";
 import { useState } from "react";
 
 import Button from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import Input from "@/components/ui/input";
 import BaseSwitch from "@/components/ui/switch";
 import {
@@ -21,8 +30,27 @@ import {
   useExcludedTagsConfigActions,
 } from "@/store/useLocal";
 import { css } from "@/styled/css";
+import { Trash } from "phosphor-react";
 import { Label } from "./label";
 import LabelManagerSection from "./section";
+
+const iconButton = css({
+  cursor: "pointer",
+  color: "text.lighter",
+  bg: "transparent",
+  border: "[1px solid #BCBAB8]",
+  rounded: "sm",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  p: "1.5",
+  flexShrink: "0",
+  "&:hover": {
+    color: "white",
+    bg: "action.hover",
+    borderColor: "action.hover",
+  },
+});
 
 const tooltipContent = css({
   bg: "action.hover",
@@ -76,6 +104,7 @@ export default function LabelConfigTab({
   );
   const [excludedWords, setExcludedWords] = useState<string[]>(storedWords);
   const [inputValue, setInputValue] = useState("");
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
 
   function handleToggle(id: string, value: boolean) {
     const next = { ...toggles, [id]: value };
@@ -96,6 +125,11 @@ export default function LabelConfigTab({
     const next = excludedWords.filter((w) => w !== word);
     setExcludedWords(next);
     setWords(next);
+  }
+
+  function handleClearAllWords() {
+    setExcludedWords([]);
+    setWords([]);
   }
 
   return (
@@ -129,6 +163,18 @@ export default function LabelConfigTab({
           onOpenChange={(open) =>
             onSectionOpenChange(EXCLUDED_TERMS_SECTION, open)
           }
+          headerAction={
+            excludedWords.length > 0 ? (
+              <button
+                type="button"
+                className={iconButton}
+                onClick={() => setClearDialogOpen(true)}
+                aria-label="Borrar todos los términos excluidos"
+              >
+                <Trash size={16} />
+              </button>
+            ) : undefined
+          }
         >
           <Stack align="stretch" gap="6">
             <Stack align="stretch" gap="2">
@@ -154,6 +200,32 @@ export default function LabelConfigTab({
             )}
           </Stack>
         </LabelManagerSection>
+        <Dialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Borrar términos excluidos</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>
+              Esta acción no se puede deshacer. ¿Deseas continuar?
+            </DialogDescription>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="secondary" size="sm">
+                  Cancelar
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleClearAllWords}
+                >
+                  Borrar todos
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </Stack>
     </TooltipProvider>
   );

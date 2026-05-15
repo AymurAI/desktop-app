@@ -31,12 +31,14 @@ interface SectionProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   title: string;
+  headerAction?: React.ReactNode;
 }
 export default function LabelManagerSection({
   open: controlledOpen,
   onOpenChange,
   title: sectionTitle,
   children,
+  headerAction,
 }: SectionProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(true);
   const open = controlledOpen ?? uncontrolledOpen;
@@ -49,16 +51,19 @@ export default function LabelManagerSection({
 
   return (
     <Stack gap="6">
-      <HStack gap="2" className={header} onClick={toggleOpen}>
-        <div
-          className={caret}
-          style={{ transform: open ? "rotate(0deg)" : "rotate(180deg)" }}
-        >
-          <CaretUp size={24} />
-        </div>
-        <styled.p textStyle="subtitle.md.strong" color="text.default">
-          {sectionTitle}
-        </styled.p>
+      <HStack gap="2" justify="space-between">
+        <HStack gap="2" className={header} onClick={toggleOpen} flex="1">
+          <div
+            className={caret}
+            style={{ transform: open ? "rotate(0deg)" : "rotate(180deg)" }}
+          >
+            <CaretUp size={24} />
+          </div>
+          <styled.p textStyle="subtitle.md.strong" color="text.default">
+            {sectionTitle}
+          </styled.p>
+        </HStack>
+        {headerAction}
       </HStack>
       <div
         className={contentOuter}
