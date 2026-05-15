@@ -5,7 +5,6 @@ export const FALLBACK_ANONYMIZER_CATEGORY = "Otros datos sensibles";
 export const ANONYMIZER_CATEGORY_LABEL_IDS = {
   Roles: [
     "PER",
-    "USUARIX",
     "DENUNCIANTE",
     "ACUSADO/A",
     "TESTIGO/A",
@@ -16,6 +15,7 @@ export const ANONYMIZER_CATEGORY_LABEL_IDS = {
   "Contacto e identificadores digitales": [
     "TELEFONO",
     "CORREO_ELECTRONICO",
+    "USUARIX",
     "IP",
     "LINK",
     "NOMBRE_ARCHIVO",
