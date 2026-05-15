@@ -1,4 +1,12 @@
-import { memo, useEffect, useMemo, useState, useTransition } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 
 import { SearchBar } from "./SearchBar";
 
@@ -15,7 +23,13 @@ import LabelManager from "../anonymizer/label-manager";
 import SearchAnnotation from "../file/search-annotation";
 import TagAnnotation from "../file/tag-annotation";
 import * as S from "./FileAnnotator.styles";
-import { createAnnotationsWithSearch, predictionsToMap } from "./annotations";
+import {
+  type SearchMatch,
+  createAnnotationsWithSearch,
+  createSearchMatches,
+  predictionsToMap,
+  searchMatchesToMap,
+} from "./annotations";
 import { generateSplits } from "./generateSplits";
 
 const labelManagerWrapper = css({
@@ -30,17 +44,29 @@ const labelManagerWrapper = css({
 
 interface ParagraphProps {
   children: string;
-  search: string;
   paragraph: ParagraphType;
   predictions: PredictLabel[];
+  searchMatches: SearchMatch[];
+  activeSearchMatchId: string | null;
 }
 const Paragraph = memo(
-  ({ children, search, paragraph, predictions }: ParagraphProps) => {
+  ({
+    children,
+    paragraph,
+    predictions,
+    searchMatches,
+    activeSearchMatchId,
+  }: ParagraphProps) => {
     const { label } = useAnnotation();
 
     const annotations = useMemo(() => {
-      return createAnnotationsWithSearch(predictions, search, paragraph, label);
-    }, [predictions, search, paragraph, label]);
+      return createAnnotationsWithSearch(
+        predictions,
+        searchMatches,
+        label,
+        activeSearchMatchId,
+      );
+    }, [predictions, searchMatches, label, activeSearchMatchId]);
 
     const splits = generateSplits(children, annotations);
 
@@ -48,7 +74,7 @@ const Paragraph = memo(
       <S.Paragraph id={paragraph.id}>
         {splits.map((s) => {
           const content = children.slice(s.start, s.end);
-          const key = `${s.start}-${s.end}`;
+          const key = `${s.type}-${s.start}-${s.end}`;
 
           switch (s.type) {
             case "search":
@@ -83,7 +109,11 @@ interface Props {
 }
 export default function FileAnnotator({ file, isAnnotable = false }: Props) {
   const [search, setSearch] = useState("");
+  const [activeSearchIndex, setActiveSearchIndex] = useState<number | null>(
+    null,
+  );
   const [, startTransition] = useTransition();
+  const fileRef = useRef<HTMLDivElement>(null);
 
   const [label, setLabel] = useState<AllLabels | null>(null);
   const [labelManagerOpen, setLabelManagerOpen] = useState(false);
@@ -111,6 +141,48 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
     [filteredPredictions],
   );
 
+  const searchMatches = useMemo(
+    () => createSearchMatches(paragraphs, search),
+    [paragraphs, search],
+  );
+
+  const searchMatchesMap = useMemo(
+    () => searchMatchesToMap(searchMatches),
+    [searchMatches],
+  );
+
+  const activeSearchMatch =
+    activeSearchIndex === null
+      ? null
+      : (searchMatches[activeSearchIndex] ?? null);
+  const activeSearchMatchId = activeSearchMatch?.id ?? null;
+
+  useEffect(() => {
+    if (searchMatches.length === 0) {
+      setActiveSearchIndex(null);
+      return;
+    }
+
+    setActiveSearchIndex(0);
+  }, [searchMatches]);
+
+  useEffect(() => {
+    if (!activeSearchMatchId) return;
+
+    const timer = window.setTimeout(() => {
+      const element = document.querySelector<HTMLElement>(
+        `[data-search-match-id="${activeSearchMatchId}"]`,
+      );
+      element?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+    }, 50);
+
+    return () => window.clearTimeout(timer);
+  }, [activeSearchMatchId]);
+
   const selectChangeHandler = (option?: SelectOption) => {
     setLabel((option?.id as AllLabels) ?? null);
   };
@@ -123,6 +195,26 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
     startTransition(() => setSearch(value));
   };
 
+  const handleSearchNext = useCallback(() => {
+    setActiveSearchIndex((current) => {
+      if (searchMatches.length === 0) return null;
+      if (current === null) return 0;
+      return Math.min(current + 1, searchMatches.length - 1);
+    });
+  }, [searchMatches.length]);
+
+  const handleSearchPrevious = useCallback(() => {
+    setActiveSearchIndex((current) => {
+      if (searchMatches.length === 0) return null;
+      if (current === null) return 0;
+      return Math.max(current - 1, 0);
+    });
+  }, [searchMatches.length]);
+
+  const focusDocument = useCallback(() => {
+    fileRef.current?.focus();
+  }, []);
+
   return (
     <HStack w="full" h="full" alignItems="unset" overflow="hidden">
       <S.Container>
@@ -133,8 +225,13 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
           onLabelManagerToggle={toggleManagerLabel}
           isAnnotable={isAnnotable}
           isLabelManagerOpen={labelManagerOpen}
+          matchesCount={searchMatches.length}
+          activeIndex={activeSearchIndex}
+          onNext={handleSearchNext}
+          onPrevious={handleSearchPrevious}
+          onFocusDocument={focusDocument}
         />
-        <S.File>
+        <S.File ref={fileRef} tabIndex={-1}>
           <AnnotationProvider
             file={file}
             isAnnotable={isAnnotable}
@@ -143,9 +240,10 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
             {paragraphs.map((p) => (
               <Paragraph
                 key={p.id}
-                search={search}
                 paragraph={p}
                 predictions={predictionsMap.get(p.id) ?? []}
+                searchMatches={searchMatchesMap.get(p.id) ?? []}
+                activeSearchMatchId={activeSearchMatchId}
               >
                 {p.value}
               </Paragraph>

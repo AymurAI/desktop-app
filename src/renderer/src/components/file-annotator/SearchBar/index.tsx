@@ -1,4 +1,10 @@
-import { type ChangeEvent, useRef, useState } from "react";
+import {
+  type ChangeEvent,
+  type KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import AnonymizerLabelSelect from "@/components/anonymizer/anonymizer-label-select";
 import Button from "@/components/ui/button";
@@ -9,8 +15,8 @@ import { Grid, HStack, styled } from "@/styled/jsx";
 import { hstack } from "@/styled/patterns";
 import { getActiveAnonymizerLabelOptions } from "@/utils/anonymizer/labels";
 import { MagnifyingGlass } from "phosphor-react";
+import { SEARCH_MIN_LENGTH } from "../annotations";
 import { Counter } from "./Counter";
-import { useScroll } from "./useScroll";
 
 const searchClasses = sva({
   slots: ["searchBar", "input", "verticalHr"],
@@ -45,6 +51,11 @@ interface Props {
   onLabelChange?: (object: SelectOption | undefined) => void;
   labelValue?: string;
   onLabelManagerToggle: () => void;
+  matchesCount: number;
+  activeIndex: number | null;
+  onNext: () => void;
+  onPrevious: () => void;
+  onFocusDocument: () => void;
 }
 
 export const SearchBar = ({
@@ -54,16 +65,45 @@ export const SearchBar = ({
   onLabelChange,
   labelValue,
   onLabelManagerToggle,
+  matchesCount,
+  activeIndex,
+  onNext,
+  onPrevious,
+  onFocusDocument,
 }: Props) => {
   const [search, setSearch] = useState("");
   const { tags } = useExcludedTagsConfig();
 
   const inputSearchRef = useRef<HTMLInputElement>(null);
 
-  const { next, previous, count, matchesCount } = useScroll(search);
-
   const classes = searchClasses();
   const labelOptions = getActiveAnonymizerLabelOptions(tags);
+
+  useEffect(() => {
+    const isEditableTarget = (target: EventTarget | null) => {
+      if (!(target instanceof HTMLElement)) return false;
+      if (target === inputSearchRef.current) return false;
+      if (target.isContentEditable) return true;
+      return ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName);
+    };
+
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      const isSearchShortcut =
+        (event.ctrlKey || event.metaKey) &&
+        !event.altKey &&
+        !event.shiftKey &&
+        event.key.toLowerCase() === "b";
+
+      if (!isSearchShortcut || isEditableTarget(event.target)) return;
+
+      event.preventDefault();
+      inputSearchRef.current?.focus();
+      inputSearchRef.current?.select();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const changeSearchHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
@@ -80,6 +120,13 @@ export const SearchBar = ({
   const handleClear = () => {
     setSearch("");
     onSearchChange?.("");
+  };
+
+  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Escape") return;
+    event.preventDefault();
+    handleClear();
+    onFocusDocument();
   };
 
   const searchFocus = () => inputSearchRef.current?.focus();
@@ -107,13 +154,15 @@ export const SearchBar = ({
           className={classes.input}
           onChange={changeSearchHandler}
           onClick={clickSearchHandler}
+          onKeyDown={handleInputKeyDown}
         />
         <Counter
           clear={handleClear}
-          next={next}
-          previous={previous}
+          next={onNext}
+          previous={onPrevious}
           count={matchesCount}
-          cursor={count}
+          cursor={activeIndex === null ? 0 : activeIndex + 1}
+          isSearching={search.length >= SEARCH_MIN_LENGTH}
         />
       </div>
       {isAnnotable && (

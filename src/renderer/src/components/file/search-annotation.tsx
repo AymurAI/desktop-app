@@ -1,29 +1,38 @@
 import type {
   Annotation,
-  LabelAnnotation,
   Metadata,
+  SearchAnnotation as SearchAnnotationType,
 } from "@/components/file-annotator/types";
 import AnnotationPopover from "@/components/file/annotation-popover";
 import { useAnnotation } from "@/context/Annotation";
-import { cva } from "@/styled/css";
+import { cva, cx } from "@/styled/css";
 import type { AllLabels } from "@/types/aymurai";
 
 const search = cva({
   base: {
-    bg: "[#FCFC02]",
+    bg: "[#FFF2A8]",
     fontFamily: '["Times New Roman", Times, serif]',
-    fontWeight: "bold",
     textStyle: "label.md.default",
     m: "0",
+    userSelect: "text",
+    boxDecorationBreak: "clone",
   },
   variants: {
     clickable: {
       true: { cursor: "pointer" },
       false: { cursor: "unset" },
     },
+    active: {
+      true: {
+        bg: "[#FFE066]",
+        boxShadow: "[inset 0 -2px 0 #D89B00]",
+      },
+      false: {},
+    },
   },
   defaultVariants: {
     clickable: false,
+    active: false,
   },
 });
 
@@ -48,17 +57,32 @@ export default function SearchAnnotation({
     "data-end": annotation.end,
     "data-tag": annotation.tag,
   };
+  const searchAnnotation = annotation as SearchAnnotationType;
+  const searchMetadata =
+    searchAnnotation.searchMatchId !== undefined
+      ? {
+          "data-search-match-id": searchAnnotation.searchMatchId,
+          "data-search-active": searchAnnotation.isActive ? "true" : "false",
+        }
+      : {};
+  const className = cx(
+    "search",
+    search({
+      clickable: isAnnotable,
+      active: searchAnnotation.isActive ?? false,
+    }),
+  );
 
   if (!isAnnotable)
     return (
-      <mark className={search({ clickable: false })} {...metadata}>
+      <mark className={className} {...metadata} {...searchMetadata}>
         {children}
       </mark>
     );
 
   return (
     <AnnotationPopover onClickOne={handleAddOne} onClickAll={handleAddAll}>
-      <mark className={search({ clickable: true })} {...metadata}>
+      <mark className={className} {...metadata} {...searchMetadata}>
         {children}
       </mark>
     </AnnotationPopover>
@@ -67,7 +91,7 @@ export default function SearchAnnotation({
   function handleAddOne(label: AllLabels) {
     const annotationData = createAnnotationData(
       children,
-      annotation as LabelAnnotation,
+      searchAnnotation,
       label,
     );
     if (annotationData) {

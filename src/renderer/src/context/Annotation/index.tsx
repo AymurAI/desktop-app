@@ -1,4 +1,7 @@
-import type { LabelAnnotation } from "@/components/file-annotator/types";
+import type {
+  LabelAnnotation,
+  SearchAnnotation,
+} from "@/components/file-annotator/types";
 import ManualEntityResolutionDialog, {
   type ManualEntityResolutionRequest,
 } from "@/components/file/manual-entity-resolution-dialog";
@@ -605,7 +608,7 @@ export const useAnnotation = () => {
 
   const createAnnotationData = (
     text: string,
-    annotation: LabelAnnotation,
+    annotation: LabelAnnotation | SearchAnnotation,
     labelOverride?: AllLabels | AllLabelsWithSufix,
   ) => {
     const { start, end, paragraphId, tag } = annotation;
