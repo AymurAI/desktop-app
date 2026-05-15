@@ -138,7 +138,12 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
     // Build EntityGroup objects.
     const groups: EntityGroup[] = sorted.map(
       ([canonicalId, { mentions, renderBase, firstAppearance }]) => {
-        // Build normalised → set of all distinct verbatim forms (order: first occurrence first).
+        // Build normalised → first distinct verbatim form seen for that normalisation.
+        // We intentionally keep only ONE display representative per normalised bucket:
+        // multiple document spans may share the same alias and we don't want to show
+        // the same alias chip multiple times. Verbatim comparison uses NFC so that
+        // Unicode-composed and decomposed forms of the same visible character are
+        // treated as identical.
         const normalizedToVerbatims = new Map<string, string[]>();
         for (const m of mentions) {
           const norm = normalizeEntityText(m.text);
@@ -146,7 +151,12 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
           const existing = normalizedToVerbatims.get(norm);
           if (!existing) {
             normalizedToVerbatims.set(norm, [m.text]);
-          } else if (!existing.includes(m.text)) {
+          } else if (
+            !existing.some(
+              (v) =>
+                v.normalize("NFC") === m.text.normalize("NFC"),
+            )
+          ) {
             existing.push(m.text);
           }
         }
@@ -182,10 +192,20 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
     // that share at least one normalised mention text are flagged as merge
     // candidates.
     //
+    // The detection key uses a SORTED-TOKEN fingerprint of the normalised text
+    // so that name variants differing only in token order
+    // (e.g. "Pérez, Laura Beatriz" vs "Laura Beatriz Pérez") are recognised as
+    // the same alias and trigger a merge suggestion.
+    //
     // Primary rule: the group with MORE unique texts is primary (it's more
     // "established"). Ties are broken by first-appearance order (already the
     // iteration order). When a later group turns out to have more texts than
     // the registered primary, they swap roles.
+
+    /** Sorted-token fingerprint — collapses token-order variants of a name. */
+    const sortedFingerprint = (normText: string): string =>
+      [...new Set(normText.split(" "))].sort().join(" ");
+
     const textToGroup = new Map<string, string>(); // key → primary canonicalId
     const groupById = new Map(groups.map((g) => [g.canonicalId, g]));
 
@@ -193,7 +213,7 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
       let conflictPrimaryId: string | null = null;
 
       for (const normText of group.uniqueTexts) {
-        const key = `${group.renderBase}\x01${normText}`;
+        const key = `${group.renderBase}\x01${sortedFingerprint(normText)}`;
         const existing = textToGroup.get(key);
         if (existing && existing !== group.canonicalId) {
           conflictPrimaryId = existing;
@@ -213,13 +233,13 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
           // Re-register all previously-registered keys under new primary.
           for (const normText of primaryGroup.uniqueTexts) {
             textToGroup.set(
-              `${primaryGroup.renderBase}\x01${normText}`,
+              `${primaryGroup.renderBase}\x01${sortedFingerprint(normText)}`,
               group.canonicalId,
             );
           }
           for (const normText of group.uniqueTexts) {
             textToGroup.set(
-              `${group.renderBase}\x01${normText}`,
+              `${group.renderBase}\x01${sortedFingerprint(normText)}`,
               group.canonicalId,
             );
           }
@@ -229,7 +249,7 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
           group.duplicateOf = conflictPrimaryId;
           // Register any new texts under the existing primary.
           for (const normText of group.uniqueTexts) {
-            const key = `${group.renderBase}\x01${normText}`;
+            const key = `${group.renderBase}\x01${sortedFingerprint(normText)}`;
             if (!textToGroup.has(key)) textToGroup.set(key, conflictPrimaryId);
           }
         }
@@ -237,7 +257,7 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
         // No conflict — register all own texts as primary.
         for (const normText of group.uniqueTexts) {
           textToGroup.set(
-            `${group.renderBase}\x01${normText}`,
+            `${group.renderBase}\x01${sortedFingerprint(normText)}`,
             group.canonicalId,
           );
         }
