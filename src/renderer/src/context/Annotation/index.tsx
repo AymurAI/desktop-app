@@ -37,6 +37,7 @@ import {
   normalizeEntityText,
   stripEntityLabelSuffix,
 } from "@/utils/anonymizer/entity-similarity";
+import { findNormalizedOccurrenceRanges } from "@/utils/anonymizer/occurrences";
 import { filterActivePredictions } from "@/utils/anonymizer/predictions";
 import { Check, WarningCircle } from "phosphor-react";
 import {
@@ -438,11 +439,110 @@ export default function AnnotationProvider({
 
   const updateByText = useCallback(
     (prediction: PredictLabel, newLabel: AllLabels | AllLabelsWithSufix) => {
+      const normalizedText = normalizeEntityText(prediction.text);
+      if (!normalizedText) return;
+
+      const sourceBaseLabel = toBaseLabel(prediction.attrs.aymurai_label);
+      const nextBaseLabel = toBaseLabel(newLabel);
+      const sourceCanonicalId = prediction.attrs.canonical_entity_id ?? null;
+      const targetCanonicalId =
+        sourceCanonicalId && sourceBaseLabel === nextBaseLabel
+          ? sourceCanonicalId
+          : crypto.randomUUID();
+      const missingPredictions: PredictLabel[] = [];
+      let skippedOverlaps = 0;
+
+      file.paragraphs?.forEach((paragraph: Paragraph) => {
+        const ranges = findNormalizedOccurrenceRanges(
+          paragraph.value,
+          prediction.text,
+        );
+
+        ranges.forEach((range) => {
+          const draftRange = {
+            start_char: range.start,
+            end_char: range.end,
+          };
+          const activeOverlaps = (
+            activePredictionsByParagraph.get(paragraph.id) ?? []
+          ).filter((activePrediction) =>
+            rangesOverlap(draftRange, activePrediction),
+          );
+          const hasEquivalentActiveOverlap = activeOverlaps.some(
+            (activePrediction) =>
+              normalizeEntityText(activePrediction.text) === normalizedText,
+          );
+
+          if (hasEquivalentActiveOverlap) return;
+
+          if (activeOverlaps.length > 0) {
+            skippedOverlaps += 1;
+            return;
+          }
+
+          missingPredictions.push({
+            mentionId: crypto.randomUUID(),
+            start_char: range.start,
+            end_char: range.end,
+            paragraphId: paragraph.id,
+            text: range.text,
+            attrs: {
+              aymurai_label: newLabel,
+              aymurai_label_subclass: null,
+              aymurai_alt_text: null,
+              aymurai_alt_start_char: range.start,
+              aymurai_alt_end_char: range.end,
+            },
+          });
+        });
+      });
+
       dispatch(
-        updatePredictionsByText(file.data.name, prediction.text, newLabel),
+        updatePredictionsByText(
+          file.data.name,
+          prediction.text,
+          newLabel,
+          targetCanonicalId,
+        ),
       );
+
+      for (const missingPrediction of missingPredictions) {
+        dispatch(
+          appendPrediction(
+            file.data.name,
+            withCanonicalEntity(missingPrediction, targetCanonicalId, newLabel),
+          ),
+        );
+      }
+
+      const createdNewGroup =
+        !sourceCanonicalId || sourceBaseLabel !== nextBaseLabel;
+      if (createdNewGroup) {
+        updateGroupOrderForNewGroup(
+          targetCanonicalId,
+          nextBaseLabel,
+          missingPredictions.length > 0 ? missingPredictions : [prediction],
+        );
+      }
+
+      setLastEditedCanonicalId(targetCanonicalId);
+
+      if (skippedOverlaps > 0) {
+        showToast(
+          "Algunas ocurrencias no se agregaron porque se solapan con entidades activas.",
+          "error",
+          WarningCircle,
+        );
+      }
     },
-    [dispatch, file.data.name],
+    [
+      activePredictionsByParagraph,
+      dispatch,
+      file.data.name,
+      file.paragraphs,
+      setLastEditedCanonicalId,
+      updateGroupOrderForNewGroup,
+    ],
   );
 
   const updateByCanonicalId = useCallback(
@@ -456,39 +556,65 @@ export default function AnnotationProvider({
     (search: string, label: AllLabels) => {
       if (!search || search.length < 3) return;
 
+      const normalizedSearch = normalizeEntityText(search);
       const predictions: PredictLabel[] = [];
       let skippedOverlaps = 0;
+      const reusableCanonicalId = [...activePredictionsByParagraph.values()]
+        .flat()
+        .find(
+          (prediction) =>
+            normalizeEntityText(prediction.text) === normalizedSearch &&
+            prediction.attrs.canonical_entity_id,
+        )?.attrs.canonical_entity_id;
 
       file.paragraphs?.forEach((paragraph: Paragraph) => {
-        const indexes = findSearchIndexes(paragraph.value, search);
-        indexes.forEach((start: number) => {
-          const text = paragraph.value.slice(start, start + search.length);
+        const normalizedRanges = findNormalizedOccurrenceRanges(
+          paragraph.value,
+          search,
+        );
+        const ranges =
+          normalizedRanges.length > 0
+            ? normalizedRanges
+            : findSearchIndexes(paragraph.value, search).map((start) => ({
+                start,
+                end: start + search.length,
+                text: paragraph.value.slice(start, start + search.length),
+                normalizedText: normalizeEntityText(search),
+              }));
+        ranges.forEach((range) => {
           const draftRange = {
-            start_char: start,
-            end_char: start + search.length,
+            start_char: range.start,
+            end_char: range.end,
           };
-          const hasActiveOverlap = (
+          const activeOverlaps = (
             activePredictionsByParagraph.get(paragraph.id) ?? []
-          ).some((activePrediction) =>
+          ).filter((activePrediction) =>
             rangesOverlap(draftRange, activePrediction),
           );
-          if (hasActiveOverlap) {
+          const hasEquivalentActiveOverlap = activeOverlaps.some(
+            (activePrediction) =>
+              normalizeEntityText(activePrediction.text) === normalizedSearch,
+          );
+
+          if (hasEquivalentActiveOverlap) return;
+
+          if (activeOverlaps.length > 0) {
             skippedOverlaps += 1;
             return;
           }
 
           const prediction: PredictLabel = {
             mentionId: crypto.randomUUID(),
-            start_char: start,
-            end_char: start + search.length,
+            start_char: range.start,
+            end_char: range.end,
             paragraphId: paragraph.id,
-            text,
+            text: range.text,
             attrs: {
               aymurai_label: label,
               aymurai_label_subclass: null,
               aymurai_alt_text: null,
-              aymurai_alt_start_char: start,
-              aymurai_alt_end_char: start + search.length,
+              aymurai_alt_start_char: range.start,
+              aymurai_alt_end_char: range.end,
             },
           };
           predictions.push(prediction);
@@ -504,9 +630,46 @@ export default function AnnotationProvider({
         return;
       }
 
+      if (reusableCanonicalId) {
+        dispatch(
+          updatePredictionsByText(
+            file.data.name,
+            search,
+            label,
+            reusableCanonicalId,
+          ),
+        );
+
+        for (const prediction of predictions) {
+          dispatch(
+            appendPrediction(
+              file.data.name,
+              withCanonicalEntity(prediction, reusableCanonicalId, label),
+            ),
+          );
+        }
+
+        setLastEditedCanonicalId(reusableCanonicalId);
+        if (skippedOverlaps > 0) {
+          showToast(
+            "Algunas ocurrencias no se agregaron porque se solapan con entidades activas.",
+            "error",
+            WarningCircle,
+          );
+        }
+        return;
+      }
+
       queueManualPredictions(predictions, label);
     },
-    [activePredictionsByParagraph, file.paragraphs, queueManualPredictions],
+    [
+      activePredictionsByParagraph,
+      dispatch,
+      file.data.name,
+      file.paragraphs,
+      queueManualPredictions,
+      setLastEditedCanonicalId,
+    ],
   );
 
   const selectHandler = () => {

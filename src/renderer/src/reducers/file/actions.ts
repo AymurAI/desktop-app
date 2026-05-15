@@ -38,7 +38,7 @@ export enum ActionTypes {
 /**
  * Generic action
  */
-type Action<Type, Payload = {}> = {
+type Action<Type, Payload = Record<string, never>> = {
   type: Type;
   payload: Payload;
 };
@@ -329,6 +329,7 @@ export type UpdatePredictionsByText = Action<
     text: string;
     fileName: string;
     newLabel: AllLabels | AllLabelsWithSufix;
+    canonicalId?: string;
   }
 >;
 
@@ -342,10 +343,11 @@ export function updatePredictionsByText(
   fileName: string,
   text: string,
   newLabel: AllLabels | AllLabelsWithSufix,
+  canonicalId?: string,
 ): UpdatePredictionsByText {
   return {
     type: ActionTypes.UPDATE_PREDICTIONS_BY_TEXT,
-    payload: { fileName, text, newLabel },
+    payload: { fileName, text, newLabel, canonicalId },
   };
 }
 

@@ -221,11 +221,12 @@ export default function reducer(state: State, action: Action): State {
     // ----------------
     case ActionTypes.REMOVE_PREDICTIONS_BY_TEXT: {
       const { fileName, text } = payload;
+      const normalizedText = normalizeEntityText(text);
 
       return update(fileName, (cur) => ({
         ...cur,
         predictions: cur.predictions?.filter(
-          (p) => p.text.toLowerCase() !== text.toLowerCase(),
+          (p) => normalizeEntityText(p.text) !== normalizedText,
         ),
       }));
     }
@@ -277,8 +278,9 @@ export default function reducer(state: State, action: Action): State {
     // UPDATE PREDICTIONS BY TEXT
     // ----------------
     case ActionTypes.UPDATE_PREDICTIONS_BY_TEXT: {
-      const { fileName, text, newLabel } = action.payload;
-      const targetCanonicalId = crypto.randomUUID();
+      const { fileName, text, newLabel, canonicalId } = action.payload;
+      const normalizedText = normalizeEntityText(text);
+      const fallbackCanonicalId = crypto.randomUUID();
       const nextBaseLabel = stripEntityLabelSuffix(String(newLabel));
 
       return state.map((file) => {
@@ -287,14 +289,16 @@ export default function reducer(state: State, action: Action): State {
         return {
           ...file,
           predictions: file.predictions?.map((p) => {
-            if (p.text.toLowerCase() === text.toLowerCase()) {
+            if (normalizeEntityText(p.text) === normalizedText) {
               const currentBaseLabel = stripEntityLabelSuffix(
                 String(p.attrs.aymurai_label),
               );
               const canonicalPatch =
-                currentBaseLabel === nextBaseLabel
-                  ? {}
-                  : { canonical_entity_id: targetCanonicalId };
+                canonicalId !== undefined
+                  ? { canonical_entity_id: canonicalId }
+                  : currentBaseLabel === nextBaseLabel
+                    ? {}
+                    : { canonical_entity_id: fallbackCanonicalId };
 
               return {
                 ...p,

@@ -71,6 +71,7 @@ export default function TagAnnotation({
           aymurai_alt_text: null,
           aymurai_alt_start_char: start,
           aymurai_alt_end_char: end,
+          canonical_entity_id: canonicalId,
         },
       }
     : null;
