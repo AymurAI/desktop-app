@@ -55,17 +55,19 @@ export function anonymizeQuerySignature(
   excludedTags: Record<AnonymizerLabels, boolean> | null,
   excludedWords: string[],
 ): string[] {
-  return filterActivePredictions(predictions, excludedTags, excludedWords).map(
-    (prediction) =>
-      [
-        prediction.mentionId,
-        prediction.paragraphId,
-        prediction.start_char,
-        prediction.end_char,
-        prediction.text,
-        prediction.attrs.aymurai_label,
-        prediction.attrs.canonical_entity_id ?? "",
-        prediction.attrs.aymurai_anonymize ?? "",
-      ].join("\u001f"),
+  // Include ALL predictions (active and excluded) so the cache key changes
+  // whenever an exclusion is toggled, and excluded entities appear in the key
+  // with aymurai_anonymize: false rather than being silently omitted.
+  return (predictions ?? []).map((prediction) =>
+    [
+      prediction.mentionId,
+      prediction.paragraphId,
+      prediction.start_char,
+      prediction.end_char,
+      prediction.text,
+      prediction.attrs.aymurai_label,
+      prediction.attrs.canonical_entity_id ?? "",
+      isPredictionActive(prediction, excludedTags, excludedWords),
+    ].join("\u001f"),
   );
 }
