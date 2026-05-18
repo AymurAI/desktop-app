@@ -28,7 +28,9 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "cross-env VITE_APP_MODE=electron electron-vite build && electron-builder --mac",
     "build:linux": "cross-env VITE_APP_MODE=electron electron-vite build && electron-builder --linux",
-    "knip": "knip"
+    "knip": "knip",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
@@ -87,6 +89,7 @@
     "regex-escape": "^3.4.10",
     "typescript": "^5.9.2",
     "vite": "^6.3.5",
+    "vitest": "^4.1.6",
     "wait-on": "^6.0.1",
     "zod": "^4.0.14",
     "zustand": "^5.0.7"
