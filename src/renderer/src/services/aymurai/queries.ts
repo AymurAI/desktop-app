@@ -11,6 +11,7 @@ import { assertValidAnonymizerExportState } from "@/utils/anonymizer/export-vali
 import {
   anonymizeQuerySignature,
   filterActivePredictions,
+  isPredictionActive,
 } from "@/utils/anonymizer/predictions";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import api from "../api";
@@ -55,12 +56,27 @@ const body = (
 ): Body => {
   const effectiveTags = excludedTags ?? EXCLUDED_TAGS;
   const paragraphs = file.paragraphs ?? [];
-  const labels = filterActivePredictions(
+
+  // Run the pre-flight validation only on active (to-be-anonymized) predictions
+  // so the validator doesn't complain about excluded entities.
+  const activeLabels = filterActivePredictions(
     file.predictions,
     excludedTags,
     excludedWords,
   );
-  assertValidAnonymizerExportState(file, labels);
+  assertValidAnonymizerExportState(file, activeLabels);
+
+  // Send ALL predictions to the backend — excluded ones are marked with
+  // aymurai_anonymize: false so they are persisted in
+  // anonymization_paragraph.validation and can be recovered if the exclusion
+  // is reversed in a future session.
+  const allLabels = (file.predictions ?? []).map((l) => ({
+    ...l,
+    attrs: {
+      ...l.attrs,
+      aymurai_anonymize: isPredictionActive(l, excludedTags, excludedWords),
+    },
+  }));
 
   const label_policies = Object.fromEntries(
     Object.entries(effectiveTags)
@@ -71,7 +87,7 @@ const body = (
   return {
     data: paragraphs.map((p) => ({
       document: p.value,
-      labels: labels.filter((l) => l.paragraphId === p.id),
+      labels: allLabels.filter((l) => l.paragraphId === p.id),
     })),
     ...(Object.keys(label_policies).length > 0 && { label_policies }),
     render_policy: { suffix_mode: suffixMode },
