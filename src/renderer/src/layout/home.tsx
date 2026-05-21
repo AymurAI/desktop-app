@@ -25,6 +25,7 @@ const inner = css({
   height: "full",
 
   overflowY: "auto",
+  pb: "8",
 });
 
 const childrenArea = css({
