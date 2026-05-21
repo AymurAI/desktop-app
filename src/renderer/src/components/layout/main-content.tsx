@@ -6,6 +6,7 @@ const content = cva({
     flex: "1",
 
     width: "full",
+    overflowY: "auto",
 
     bg: "bg.primary",
   },
