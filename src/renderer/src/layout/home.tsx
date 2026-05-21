@@ -1,6 +1,5 @@
 import BuiltBy from "@/components/brand/built-by";
 import { css } from "@/styled/css";
-import { stack } from "@/styled/patterns";
 
 const background = css({
   display: "flex",
@@ -11,22 +10,27 @@ const background = css({
 
   p: "8",
 });
-const inner = css(
-  stack.raw({ justify: "center", align: "center", gap: "12" }),
-  {
-    pos: "relative",
 
-    bg: "bg.secondary",
-    border: "primary",
+const inner = css({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
 
-    width: "full",
-    height: "full",
-  },
-);
+  bg: "bg.secondary",
+  border: "primary",
 
-const builtBy = css({
-  pos: "absolute",
-  bottom: "16", // 64px
+  width: "full",
+  height: "full",
+
+  overflowY: "auto",
+  p: "8",
+});
+
+const childrenArea = css({
+  flex: "1",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 });
 
 interface HomeLayoutProps {
@@ -36,12 +40,8 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
   return (
     <main className={background}>
       <div className={inner}>
-        {children}
-
-        {/* Floating content below */}
-        <div className={builtBy}>
-          <BuiltBy />
-        </div>
+        <div className={childrenArea}>{children}</div>
+        <BuiltBy />
       </div>
     </main>
   );
