@@ -16,6 +16,8 @@ const inner = css({
   flexDirection: "column",
   alignItems: "center",
 
+  pos: "relative",
+
   bg: "bg.secondary",
   border: "primary",
 
@@ -23,7 +25,6 @@ const inner = css({
   height: "full",
 
   overflowY: "auto",
-  p: "8",
 });
 
 const childrenArea = css({

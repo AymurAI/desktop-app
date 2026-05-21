@@ -4,6 +4,7 @@ import { stack } from "@/styled/patterns";
 const content = cva({
   base: {
     flex: "1",
+    minH: "0",
 
     width: "full",
     overflowY: "auto",
