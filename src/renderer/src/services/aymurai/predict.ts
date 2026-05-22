@@ -41,7 +41,7 @@ export default async function predict(
       // The NER pipeline can emit inverted alt offsets (altStart > altEnd) for
       // non-alphanumeric entities like "∙" — using them would produce an
       // invalid_range error at export time.
-      const useAlt = altStart !== null && altEnd !== null && altStart < altEnd;
+      const useAlt = altStart != null && altEnd != null && altStart < altEnd;
       return {
         ...l,
         mentionId: crypto.randomUUID(),
