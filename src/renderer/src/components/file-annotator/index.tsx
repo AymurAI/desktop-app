@@ -116,7 +116,7 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
   const fileRef = useRef<HTMLDivElement>(null);
 
   const [label, setLabel] = useState<AllLabels | null>(null);
-  const [labelManagerOpen, setLabelManagerOpen] = useState(false);
+  const [labelManagerOpen, setLabelManagerOpen] = useState(isAnnotable);
 
   const paragraphs = file.paragraphs ?? [];
   const { tags, words } = useExcludedTagsConfig();
