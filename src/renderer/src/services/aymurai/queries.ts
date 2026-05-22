@@ -180,9 +180,12 @@ export const disambiguate = (file: DocFile) =>
         }
 
         return item.labels.map((l) => {
-          const resolvedText = l.attrs.aymurai_alt_text ?? l.text;
-          const resolvedStart = l.attrs.aymurai_alt_start_char ?? l.start_char;
-          const resolvedEnd = l.attrs.aymurai_alt_end_char ?? l.end_char;
+          const altStart = l.attrs.aymurai_alt_start_char;
+          const altEnd = l.attrs.aymurai_alt_end_char;
+          const useAlt = altStart !== null && altEnd !== null && altStart < altEnd;
+          const resolvedText = useAlt && l.attrs.aymurai_alt_text ? l.attrs.aymurai_alt_text : l.text;
+          const resolvedStart = useAlt ? altStart : l.start_char;
+          const resolvedEnd = useAlt ? altEnd : l.end_char;
 
           // Prefer original mentionId so downstream D&D state stays stable.
           const orig = origByPos.get(`${l.start_char}:${l.end_char}`);
