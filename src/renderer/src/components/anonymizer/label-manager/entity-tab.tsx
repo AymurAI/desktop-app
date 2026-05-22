@@ -291,9 +291,9 @@ function DraggableTextChip({
           : ""
       }`}
       onContextMenu={(event) => {
+        if (!canCreateGroup) return;
         event.preventDefault();
         event.stopPropagation();
-        if (!canCreateGroup) return;
         onCreateGroup({ x: event.clientX, y: event.clientY });
       }}
     >
