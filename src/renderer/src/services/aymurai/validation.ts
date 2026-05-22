@@ -77,11 +77,11 @@ export default async function getStoredValidation(
     const isValid = active.every(
       (l) =>
         Number.isFinite(l.start_char) &&
-      Number.isFinite(l.end_char) &&
-      l.start_char >= 0 &&
-      l.end_char <= paragraph.value.length &&
-      l.start_char < l.end_char &&
-      paragraph.value.slice(l.start_char, l.end_char) === l.text,
+        Number.isFinite(l.end_char) &&
+        l.start_char >= 0 &&
+        l.end_char <= paragraph.value.length &&
+        l.start_char < l.end_char &&
+        paragraph.value.slice(l.start_char, l.end_char) === l.text,
     );
     // If any active label fails basic offset checks, discard the stored data
     // and fall back to fresh model predict + disambiguation.
