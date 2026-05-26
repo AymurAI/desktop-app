@@ -31,10 +31,10 @@ export function useFileParse(
         return;
       dispatch(
         addParagraphs(
-          query.data.document.map((p) => ({
+          query.data.document.map((p, i) => ({
             value: p,
             document_id: query.data.document_id,
-            id: p,
+            id: `${query.data.document_id}:${i}`,
           })),
           file.data.name,
         ),
