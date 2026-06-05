@@ -285,6 +285,8 @@ export default function TurnBlock({
             type="button"
             onClick={handleHeaderClick}
             className={avatarButton}
+            tabIndex={-1}
+            aria-hidden="true"
           >
             <SpeakerAvatar speaker={speaker} size="sm" />
           </button>
