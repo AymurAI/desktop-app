@@ -1,9 +1,4 @@
-import type {
-  Speaker,
-  SuggestedSpeaker,
-  Transcription,
-  Turn,
-} from "@/types/transcription";
+import type { Speaker, Transcription, Turn } from "@/types/transcription";
 
 /**
  * List of action types.
@@ -19,7 +14,6 @@ export enum ActionTypes {
   INSERT_TURN = "INSERT_TURN",
   REMOVE_TURN = "REMOVE_TURN",
   ADD_SPEAKER = "ADD_SPEAKER",
-  ASSIGN_SUGGESTED_SPEAKER_TO_TURN = "ASSIGN_SUGGESTED_SPEAKER_TO_TURN",
   SPLIT_TURN = "SPLIT_TURN",
   MERGE_TURN_WITH_PREVIOUS = "MERGE_TURN_WITH_PREVIOUS",
 }
@@ -221,28 +215,6 @@ export function renameTranscription(
   return {
     type: ActionTypes.RENAME_TRANSCRIPTION,
     payload: { transcriptionId, title },
-  };
-}
-
-export type AssignSuggestedSpeakerToTurnAction = Action<
-  ActionTypes.ASSIGN_SUGGESTED_SPEAKER_TO_TURN,
-  { transcriptionId: string; turnId: string; suggested: SuggestedSpeaker }
->;
-/**
- * Finds or creates the speaker in the transcription from a suggested speaker,
- * then reassigns the turn to it
- * @param transcriptionId ID of the transcription to modify
- * @param turnId ID of the turn to reassign
- * @param suggested The suggested speaker data
- */
-export function assignSuggestedSpeakerToTurn(
-  transcriptionId: string,
-  turnId: string,
-  suggested: SuggestedSpeaker,
-): AssignSuggestedSpeakerToTurnAction {
-  return {
-    type: ActionTypes.ASSIGN_SUGGESTED_SPEAKER_TO_TURN,
-    payload: { transcriptionId, turnId, suggested },
   };
 }
 

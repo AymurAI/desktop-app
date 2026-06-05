@@ -1,10 +1,9 @@
-import type { Speaker, Transcription } from "@/types/transcription";
+import type { Transcription } from "@/types/transcription";
 
 import {
   ActionTypes,
   type AddSpeakerAction,
   type AddTranscriptionAction,
-  type AssignSuggestedSpeakerToTurnAction,
   type InsertTurnAction,
   type MergeTurnWithPreviousAction,
   type ReassignTurnSpeakerAction,
@@ -30,7 +29,6 @@ export type TranscriptionAction =
   | InsertTurnAction
   | RemoveTurnAction
   | AddSpeakerAction
-  | AssignSuggestedSpeakerToTurnAction
   | SplitTurnAction
   | MergeTurnWithPreviousAction;
 
@@ -211,42 +209,6 @@ export default function reducer(
         ...t,
         speakers: [...t.speakers, speaker],
       }));
-    }
-
-    // ----------------
-    // ASSIGN SUGGESTED SPEAKER TO TURN
-    // ----------------
-    case ActionTypes.ASSIGN_SUGGESTED_SPEAKER_TO_TURN: {
-      const { transcriptionId, turnId, suggested } = payload;
-      return updateTranscription(state, transcriptionId, (t) => {
-        const existing = t.speakers.find((s) => s.label === suggested.label);
-
-        if (existing) {
-          // Speaker with same label already exists — reassign turn to it
-          return {
-            ...t,
-            turns: t.turns.map((turn) =>
-              turn.id === turnId ? { ...turn, speakerId: existing.id } : turn,
-            ),
-          };
-        }
-
-        // Create a new speaker from the suggested data
-        const newSpeaker: Speaker = {
-          id: suggested.id,
-          label: suggested.label,
-          initials: suggested.initials,
-          color: suggested.color,
-        };
-
-        return {
-          ...t,
-          speakers: [...t.speakers, newSpeaker],
-          turns: t.turns.map((turn) =>
-            turn.id === turnId ? { ...turn, speakerId: newSpeaker.id } : turn,
-          ),
-        };
-      });
     }
 
     // ----------------
