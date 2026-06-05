@@ -109,14 +109,39 @@ export default function reducer(
     // ----------------
     case ActionTypes.RENAME_SPEAKER_GLOBAL: {
       const { transcriptionId, speakerId, newLabel } = payload;
-      return updateTranscription(state, transcriptionId, (t) => ({
-        ...t,
-        speakers: t.speakers.map((s) =>
-          s.id === speakerId
-            ? { ...s, label: newLabel, initials: computeInitials(newLabel) }
-            : s,
-        ),
-      }));
+      return updateTranscription(state, transcriptionId, (t) => {
+        const trimmed = newLabel.trim();
+        if (!trimmed) return t;
+
+        // If another speaker already uses this label (case-insensitive), merge
+        // into it: reassign this speaker's turns to the existing one and drop
+        // this speaker — avoids two distinct speakers sharing the same label.
+        const existing = t.speakers.find(
+          (s) =>
+            s.id !== speakerId &&
+            s.label.toLowerCase() === trimmed.toLowerCase(),
+        );
+        if (existing) {
+          return {
+            ...t,
+            speakers: t.speakers.filter((s) => s.id !== speakerId),
+            turns: t.turns.map((turn) =>
+              turn.speakerId === speakerId
+                ? { ...turn, speakerId: existing.id }
+                : turn,
+            ),
+          };
+        }
+
+        return {
+          ...t,
+          speakers: t.speakers.map((s) =>
+            s.id === speakerId
+              ? { ...s, label: trimmed, initials: computeInitials(trimmed) }
+              : s,
+          ),
+        };
+      });
     }
 
     // ----------------

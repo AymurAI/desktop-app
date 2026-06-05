@@ -2,6 +2,7 @@ import type { Transcription } from "@/types/transcription";
 import { describe, expect, it } from "vitest";
 import {
   mergeTurnWithPrevious,
+  renameSpeakerGlobal,
   renameTranscription,
   splitTurn,
 } from "./actions";
@@ -138,5 +139,63 @@ describe("mergeTurnWithPrevious", () => {
     expect(
       reducer(base(), mergeTurnWithPrevious("t1", "a"))[0].turns,
     ).toHaveLength(2);
+  });
+});
+
+describe("renameSpeakerGlobal", () => {
+  const base = () => [
+    {
+      id: "t1",
+      title: "T",
+      audioFileName: "a",
+      audioDurationMs: 9,
+      audioObjectUrl: "b",
+      createdAt: "c",
+      speakers: [
+        {
+          id: "s1",
+          label: "Locutor 1",
+          initials: "L1",
+          color: "primary" as const,
+        },
+        {
+          id: "s2",
+          label: "Locutor 2",
+          initials: "L2",
+          color: "secondary" as const,
+        },
+      ],
+      turns: [
+        { id: "a", speakerId: "s1", text: "x", startMs: 0, endMs: 1 },
+        { id: "b", speakerId: "s2", text: "y", startMs: 1, endMs: 2 },
+        { id: "c", speakerId: "s2", text: "z", startMs: 2, endMs: 3 },
+      ],
+    },
+  ];
+
+  it("renames in place and recomputes initials when no other speaker has that label", () => {
+    const next = reducer(base(), renameSpeakerGlobal("t1", "s2", "Juez"));
+    expect(next[0].speakers).toHaveLength(2);
+    const s2 = next[0].speakers.find((s) => s.id === "s2");
+    expect(s2?.label).toBe("Juez");
+    expect(s2?.initials).toBe("JU");
+  });
+
+  it("merges into the existing speaker when the new label already exists (case-insensitive)", () => {
+    // s1 -> "Juez"
+    let st = reducer(base(), renameSpeakerGlobal("t1", "s1", "Juez"));
+    // s2 -> "juez" collides with s1's "Juez" => merge s2 into s1
+    st = reducer(st, renameSpeakerGlobal("t1", "s2", "juez"));
+    expect(st[0].speakers).toHaveLength(1);
+    expect(st[0].speakers[0].id).toBe("s1");
+    expect(st[0].turns.every((t) => t.speakerId === "s1")).toBe(true);
+  });
+
+  it("does not merge or drop the speaker when renaming to its own label (case change)", () => {
+    const next = reducer(base(), renameSpeakerGlobal("t1", "s1", "LOCUTOR 1"));
+    expect(next[0].speakers).toHaveLength(2);
+    expect(next[0].speakers.find((s) => s.id === "s1")?.label).toBe(
+      "LOCUTOR 1",
+    );
   });
 });
