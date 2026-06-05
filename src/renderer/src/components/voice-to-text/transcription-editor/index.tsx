@@ -153,7 +153,14 @@ const titleRow = css({
   display: "flex",
   alignItems: "center",
   gap: "3",
-  mt: "4",
+  mt: "0",
+});
+
+const titleSection = css({
+  bg: "bg.primary",
+  px: "12",
+  pt: "6",
+  flexShrink: "0",
 });
 
 const titleInput = css({
@@ -420,7 +427,9 @@ export default function TranscriptionEditor({
             <span>{t("editor.editMode")}</span>
           </label>
         </div>
+      </div>
 
+      <div className={titleSection}>
         <EditableTitle
           title={transcription.title}
           onRename={(value) =>
