@@ -1,4 +1,4 @@
-import { ArrowLineUp, Plus, Trash } from "phosphor-react";
+import { ArrowLineUp, PencilSimple, Plus, Trash } from "phosphor-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -12,6 +12,7 @@ import {
   mergeTurnWithPrevious,
   reassignTurnSpeaker,
   removeTurn,
+  renameSpeakerGlobal,
   updateTurnStartMs,
 } from "@/reducers/transcription/actions";
 import { SUGGESTED_SPEAKERS } from "@/services/aymurai/fixtures/suggestedSpeakers";
@@ -79,6 +80,43 @@ const speakerLabel = css({
   fontWeight: "[700]",
   color: "text.default",
   lineHeight: "[1.2]",
+});
+
+const nameRow = css({
+  display: "flex",
+  flexDir: "row",
+  alignItems: "center",
+  gap: "2",
+});
+
+const renameIconBtn = css({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  border: "[none]",
+  bg: "transparent",
+  cursor: "pointer",
+  color: "text.lighter",
+  p: "1",
+  rounded: "[4px]",
+  flexShrink: "0",
+  "&:hover": { color: "brand.primary" },
+});
+
+const nameInput = css({
+  fontSize: "[18px]",
+  fontWeight: "[700]",
+  color: "text.default",
+  lineHeight: "[1.2]",
+  border: "[none]",
+  borderBottomWidth: "[2px]",
+  borderBottomStyle: "solid",
+  borderBottomColor: "brand.primary",
+  outline: "none",
+  bg: "transparent",
+  p: "[0]",
+  width: "full",
+  minWidth: "0",
 });
 
 const startsAtLabel = css({
@@ -289,6 +327,11 @@ export default function TurnSidePanel({
   );
   const [timeInvalid, setTimeInvalid] = useState(false);
 
+  // ---- Global speaker rename state (renames the speaker across all turns) ----
+  const [renaming, setRenaming] = useState(false);
+  const [nameValue, setNameValue] = useState("");
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
   // Re-seed when the active turn id changes.
   // We read activeTurn inside but biome needs us to list it;
   // listing activeTurnId (the stable primitive) is semantically equivalent
@@ -297,7 +340,33 @@ export default function TurnSidePanel({
   useEffect(() => {
     setTimeValue(activeTurn ? formatTime(activeTurn.startMs) : "");
     setTimeInvalid(false);
+    setRenaming(false);
   }, [activeTurnId]);
+
+  // ---- Global speaker rename (renames the speaker across all their turns) ----
+  useEffect(() => {
+    if (renaming) nameInputRef.current?.focus();
+  }, [renaming]);
+
+  const startRename = () => {
+    if (!currentSpeaker) return;
+    setNameValue(currentSpeaker.label);
+    setRenaming(true);
+  };
+
+  const commitRename = () => {
+    if (!currentSpeaker) {
+      setRenaming(false);
+      return;
+    }
+    const trimmed = nameValue.trim();
+    if (trimmed && trimmed !== currentSpeaker.label) {
+      dispatch(
+        renameSpeakerGlobal(transcription.id, currentSpeaker.id, trimmed),
+      );
+    }
+    setRenaming(false);
+  };
 
   const commitTime = () => {
     if (!activeTurn) return;
@@ -375,8 +444,38 @@ export default function TurnSidePanel({
           {currentSpeaker && (
             <SpeakerAvatar speaker={currentSpeaker} size="md" />
           )}
-          <Stack gap="0">
-            <span className={speakerLabel}>{currentSpeaker?.label ?? "—"}</span>
+          <Stack gap="0" flex="1" minWidth="0">
+            {renaming && currentSpeaker ? (
+              <input
+                ref={nameInputRef}
+                className={nameInput}
+                value={nameValue}
+                aria-label={t("sidePanel.renameAria")}
+                placeholder={t("sidePanel.renamePlaceholder")}
+                onChange={(e) => setNameValue(e.target.value)}
+                onBlur={commitRename}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") commitRename();
+                  if (e.key === "Escape") setRenaming(false);
+                }}
+              />
+            ) : (
+              <div className={nameRow}>
+                <span className={speakerLabel}>
+                  {currentSpeaker?.label ?? "—"}
+                </span>
+                {currentSpeaker && (
+                  <button
+                    type="button"
+                    className={renameIconBtn}
+                    onClick={startRename}
+                    aria-label={t("sidePanel.renameAria")}
+                  >
+                    <PencilSimple size={16} />
+                  </button>
+                )}
+              </div>
+            )}
             <span className={startsAtLabel}>
               {t("sidePanel.startsAt", {
                 time: formatTime(activeTurn.startMs),

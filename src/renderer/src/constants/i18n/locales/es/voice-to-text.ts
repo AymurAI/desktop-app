@@ -118,6 +118,8 @@ const voiceToText = {
     empty: "Seleccioná un turno para editar sus propiedades.",
     selectedTurn: "Turno seleccionado",
     startsAt: "Inicia en {{time}}",
+    renameAria: "Renombrar locutor en todos los turnos",
+    renamePlaceholder: "Nombre del locutor",
     personSection: "Locutor",
     newPerson: "Nuevo",
     newPersonPlaceholder: "Nombre de la persona",
