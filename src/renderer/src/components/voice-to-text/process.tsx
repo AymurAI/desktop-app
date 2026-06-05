@@ -85,8 +85,9 @@ const barProcessing = css({
   height: "full",
   rounded: "full",
   transition: "[width 200ms ease]",
+  backgroundSize: "[32px 32px]",
   backgroundImage:
-    "[repeating-linear-gradient(45deg, #3F479D, #3F479D 8px, #6B73C9 8px, #6B73C9 16px)]",
+    "[linear-gradient(135deg, #3F479D 37.5%, #C5CAFF 37.5%, #C5CAFF 50%, #3F479D 50%, #3F479D 87.5%, #C5CAFF 87.5%, #C5CAFF 100%)]",
 });
 
 const barError = css({
@@ -261,7 +262,11 @@ export default function VoiceProcess() {
                       </styled.span>
                     ) : isCompleted ? (
                       <HStack gap="2" alignItems="center">
-                        <CheckCircle size={20} color="#3F479D" weight="fill" />
+                        <CheckCircle
+                          size={20}
+                          color="#3F479D"
+                          weight="regular"
+                        />
                         <styled.span
                           textStyle="label.md.default"
                           color="brand.primary"
