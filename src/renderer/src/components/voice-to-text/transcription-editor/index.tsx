@@ -468,7 +468,10 @@ export default function TranscriptionEditor({
           <SelectionToolbar
             sel={sa.sel}
             transcription={transcription}
-            onAssign={sa.assign}
+            onAssign={(speakerId) => {
+              sa.assign(speakerId);
+              setSelectedTurnId(null);
+            }}
             onClose={sa.clear}
           />
         )}

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { updateTurnText } from "@/reducers/transcription/actions";
@@ -162,6 +163,7 @@ export default function TurnBlock({
   onTextSelect,
   turnRef,
 }: TurnBlockProps) {
+  const { t } = useTranslation("voice-to-text");
   const dispatch = useTranscriptionDispatch();
 
   const handleHeaderClick = () => {
@@ -213,6 +215,10 @@ export default function TurnBlock({
             <EditableTurnText
               turnId={turn.id}
               text={turn.text}
+              ariaLabel={t("editor.turnTextAria", {
+                speaker: speaker.label,
+                time: formatTime(turn.startMs),
+              })}
               onCommit={(id, value) =>
                 dispatch(updateTurnText(transcription.id, id, value))
               }

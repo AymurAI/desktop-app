@@ -28,6 +28,7 @@ const editable = css({
 interface EditableTurnTextProps {
   turnId: string;
   text: string;
+  ariaLabel: string;
   onCommit: (turnId: string, value: string) => void;
   onSelect: () => void;
 }
@@ -36,6 +37,7 @@ export const EditableTurnText = memo(
   function EditableTurnText({
     turnId,
     text,
+    ariaLabel,
     onCommit,
     onSelect,
   }: EditableTurnTextProps) {
@@ -51,7 +53,7 @@ export const EditableTurnText = memo(
         // biome-ignore lint/a11y/useSemanticElements: contentEditable div is intentionally uncontrolled to preserve caret position; role="textbox" is correct ARIA for this pattern
         role="textbox"
         tabIndex={0}
-        aria-label="Texto del turno"
+        aria-label={ariaLabel}
         onBlur={(e) => onCommit(turnId, e.currentTarget.textContent ?? "")}
         onMouseUp={onSelect}
         onKeyUp={onSelect}
@@ -60,5 +62,6 @@ export const EditableTurnText = memo(
       </div>
     );
   },
-  (a, b) => a.text === b.text && a.turnId === b.turnId,
+  (a, b) =>
+    a.text === b.text && a.turnId === b.turnId && a.ariaLabel === b.ariaLabel,
 );

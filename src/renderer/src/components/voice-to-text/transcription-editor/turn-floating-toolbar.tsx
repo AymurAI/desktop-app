@@ -17,8 +17,7 @@ import type { Transcription, Turn } from "@/types/transcription";
 import SpeakerPicker from "./speaker-picker";
 
 // ---------------------------------------------------------------------------
-// Timestamp parser (ported from speaker-dialog.tsx — that file will be removed
-// in a later task; keeping a local copy here avoids cross-component coupling).
+// mm:ss / hh:mm:ss timestamp parser (previously shared with the removed speaker dialog).
 // Parses "mm:ss" or "hh:mm:ss" into milliseconds. Returns null on invalid input.
 // ---------------------------------------------------------------------------
 function parseTimestampToMs(input: string): number | null {
