@@ -56,6 +56,8 @@ const voiceToText = {
     progressLabel: "{{percent}}%",
     completedLabel: "Carga finalizada 100%",
     errorLabel: "Error en la transcripción del archivo. Volvelo a intentar",
+    stoppedLabel:
+      "Transcripción detenida. Reemplazá el archivo para volver a intentar",
     stop: "Detener",
     replace: "Reemplazar",
     waitingForWords: "Esperando las primeras palabras…",

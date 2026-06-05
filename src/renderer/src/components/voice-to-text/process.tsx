@@ -150,6 +150,7 @@ export default function VoiceProcess() {
   const isCompleted = status === "completed";
   const isError = status === "error";
   const isProcessing = status === "processing";
+  const isStopped = status === "stopped";
   const progressPercent = Math.round(progress * 100);
 
   // Show the latest partial text in the preview, but only swap it in once the
@@ -260,6 +261,14 @@ export default function VoiceProcess() {
                       >
                         {t("process.errorLabel")}
                       </styled.span>
+                    ) : isStopped ? (
+                      <styled.span
+                        textStyle="label.md.default"
+                        color="text.lighter"
+                        fontStyle="italic"
+                      >
+                        {t("process.stoppedLabel")}
+                      </styled.span>
                     ) : isCompleted ? (
                       <HStack gap="2" alignItems="center">
                         <CheckCircle
@@ -302,7 +311,7 @@ export default function VoiceProcess() {
                         {t("process.stop")}
                       </button>
                     )}
-                    {isError && (
+                    {(isError || isStopped) && (
                       <button
                         type="button"
                         className={stopButton}
@@ -356,7 +365,7 @@ export default function VoiceProcess() {
                   </div>
                 )}
 
-                {!isError && (
+                {!isError && !isStopped && (
                   <div className={calloutBox}>
                     <Info size={20} color="#3F479D" />
                     <styled.span textStyle="paragraph.sm.default">
