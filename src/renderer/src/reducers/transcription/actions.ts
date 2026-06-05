@@ -20,6 +20,8 @@ export enum ActionTypes {
   REMOVE_TURN = "REMOVE_TURN",
   ADD_SPEAKER = "ADD_SPEAKER",
   ASSIGN_SUGGESTED_SPEAKER_TO_TURN = "ASSIGN_SUGGESTED_SPEAKER_TO_TURN",
+  SPLIT_TURN = "SPLIT_TURN",
+  MERGE_TURN_WITH_PREVIOUS = "MERGE_TURN_WITH_PREVIOUS",
 }
 
 /**
@@ -241,5 +243,52 @@ export function assignSuggestedSpeakerToTurn(
   return {
     type: ActionTypes.ASSIGN_SUGGESTED_SPEAKER_TO_TURN,
     payload: { transcriptionId, turnId, suggested },
+  };
+}
+
+export type SplitTurnAction = Action<
+  ActionTypes.SPLIT_TURN,
+  {
+    transcriptionId: string;
+    turnId: string;
+    startChar: number;
+    endChar: number;
+    newSpeakerId: string;
+  }
+>;
+/**
+ * Splits a turn's [startChar,endChar) text range into a new speaker. Text before
+ * and after the range stays with the original speaker. If the range covers the
+ * whole (trimmed) text, the turn is just reassigned. No-op if the trimmed range
+ * is empty.
+ */
+export function splitTurn(
+  transcriptionId: string,
+  turnId: string,
+  startChar: number,
+  endChar: number,
+  newSpeakerId: string,
+): SplitTurnAction {
+  return {
+    type: ActionTypes.SPLIT_TURN,
+    payload: { transcriptionId, turnId, startChar, endChar, newSpeakerId },
+  };
+}
+
+export type MergeTurnWithPreviousAction = Action<
+  ActionTypes.MERGE_TURN_WITH_PREVIOUS,
+  { transcriptionId: string; turnId: string }
+>;
+/**
+ * Merges the turn into the turn immediately before it (text joined by a space,
+ * endMs extended). No-op if it is the first turn.
+ */
+export function mergeTurnWithPrevious(
+  transcriptionId: string,
+  turnId: string,
+): MergeTurnWithPreviousAction {
+  return {
+    type: ActionTypes.MERGE_TURN_WITH_PREVIOUS,
+    payload: { transcriptionId, turnId },
   };
 }

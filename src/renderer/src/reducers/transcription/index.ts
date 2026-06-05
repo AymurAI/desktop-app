@@ -6,11 +6,13 @@ import {
   type AddTranscriptionAction,
   type AssignSuggestedSpeakerToTurnAction,
   type InsertTurnAction,
+  type MergeTurnWithPreviousAction,
   type ReassignTurnSpeakerAction,
   type RemoveTranscriptionAction,
   type RemoveTurnAction,
   type RenameSpeakerGlobalAction,
   type RenameTranscriptionAction,
+  type SplitTurnAction,
   type UpdateTurnStartMsAction,
   type UpdateTurnTextAction,
 } from "./actions";
@@ -28,7 +30,9 @@ export type TranscriptionAction =
   | InsertTurnAction
   | RemoveTurnAction
   | AddSpeakerAction
-  | AssignSuggestedSpeakerToTurnAction;
+  | AssignSuggestedSpeakerToTurnAction
+  | SplitTurnAction
+  | MergeTurnWithPreviousAction;
 
 /**
  * Computes speaker initials from a label.
@@ -241,6 +245,74 @@ export default function reducer(
           turns: t.turns.map((turn) =>
             turn.id === turnId ? { ...turn, speakerId: newSpeaker.id } : turn,
           ),
+        };
+      });
+    }
+
+    // ----------------
+    // SPLIT TURN
+    // ----------------
+    case ActionTypes.SPLIT_TURN: {
+      const { transcriptionId, turnId, startChar, endChar, newSpeakerId } =
+        payload;
+      return updateTranscription(state, transcriptionId, (tr) => {
+        const idx = tr.turns.findIndex((t) => t.id === turnId);
+        if (idx < 0) return tr;
+        const turn = tr.turns[idx];
+        const pre = turn.text.slice(0, startChar).trim();
+        const mid = turn.text.slice(startChar, endChar).trim();
+        const post = turn.text.slice(endChar).trim();
+        if (!mid) return tr;
+        if (!pre && !post) {
+          return {
+            ...tr,
+            turns: tr.turns.map((t) =>
+              t.id === turnId ? { ...t, speakerId: newSpeakerId } : t,
+            ),
+          };
+        }
+        const pieces: typeof tr.turns = [];
+        if (pre) pieces.push({ ...turn, text: pre });
+        pieces.push({
+          ...turn,
+          id: crypto.randomUUID(),
+          speakerId: newSpeakerId,
+          text: mid,
+        });
+        if (post) pieces.push({ ...turn, id: crypto.randomUUID(), text: post });
+        return {
+          ...tr,
+          turns: [
+            ...tr.turns.slice(0, idx),
+            ...pieces,
+            ...tr.turns.slice(idx + 1),
+          ],
+        };
+      });
+    }
+
+    // ----------------
+    // MERGE TURN WITH PREVIOUS
+    // ----------------
+    case ActionTypes.MERGE_TURN_WITH_PREVIOUS: {
+      const { transcriptionId, turnId } = payload;
+      return updateTranscription(state, transcriptionId, (tr) => {
+        const i = tr.turns.findIndex((t) => t.id === turnId);
+        if (i <= 0) return tr;
+        const prev = tr.turns[i - 1];
+        const cur = tr.turns[i];
+        const merged = {
+          ...prev,
+          text: `${prev.text.replace(/\s+$/, "")} ${cur.text.replace(/^\s+/, "")}`.trim(),
+          endMs: Math.max(prev.endMs, cur.endMs),
+        };
+        return {
+          ...tr,
+          turns: [
+            ...tr.turns.slice(0, i - 1),
+            merged,
+            ...tr.turns.slice(i + 1),
+          ],
         };
       });
     }
