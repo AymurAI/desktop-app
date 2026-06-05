@@ -1,28 +1,26 @@
 import { useTranslation } from "react-i18next";
 
-import { css } from "@/styled/css";
+import { cva } from "@/styled/css";
 import { HStack, styled } from "@/styled/jsx";
 
-const circle = css({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "8",
-  height: "8",
-  rounded: "full",
-  fontWeight: "[600]",
-  fontSize: "[14px]",
-  flexShrink: "0",
-});
-
-const activeCircle = css({
-  bg: "brand.primary",
-  color: "text.onbutton-default",
-});
-
-const inactiveCircle = css({
-  bg: "bg.secondary-highlight",
-  color: "text.lighter",
+const stepCircle = cva({
+  base: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "8",
+    height: "8",
+    rounded: "full",
+    textStyle: "label.md.strong",
+    flexShrink: "0",
+  },
+  variants: {
+    active: {
+      true: { bg: "brand.primary", color: "text.onbutton-default" },
+      false: { bg: "bg.secondary-highlight", color: "text.lighter" },
+    },
+  },
+  defaultVariants: { active: false },
 });
 
 interface VoiceStepperProps {
@@ -44,12 +42,8 @@ export default function VoiceStepper({ current }: VoiceStepperProps) {
         const step = (i + 1) as 1 | 2 | 3 | 4;
         const isActive = step === current;
         return (
-          <HStack key={label} gap="2" alignItems="center">
-            <span
-              className={`${circle} ${isActive ? activeCircle : inactiveCircle}`}
-            >
-              {step}
-            </span>
+          <HStack key={step} gap="2" alignItems="center">
+            <span className={stepCircle({ active: isActive })}>{step}</span>
             {isActive && (
               <styled.span textStyle="label.md.strong" color="text.default">
                 {label}
