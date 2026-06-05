@@ -44,9 +44,14 @@ const helpButton = css({
   cursor: "pointer",
   transition: "colors",
   "&:hover": { bg: "action.hover", color: "text.onbutton-alternative" },
+  "&:focus": { outline: "none" },
+  "&:focus-visible": {
+    outline: "[2px solid token(colors.brand.primary)]",
+    outlineOffset: "[2px]",
+  },
 });
 
-const modalContent = css({ minWidth: "[900px]" });
+const modalContent = css({ width: "[90vw]", maxWidth: "[920px]" });
 const closeButton = css({ cursor: "pointer", color: "text.lighter" });
 
 const CARD_KEYS = ["card1", "card2", "card3", "card4"] as const;
@@ -68,9 +73,9 @@ export function VoiceHowItWorksGrid() {
             alt={t(`howItWorks.cards.${key}.title`)}
             className={cardImg}
           />
-          <HStack gap="4" alignItems="flex-start">
+          <HStack gap="4" alignItems="flex-start" flex="1" minWidth="0">
             <span className={stepBadge}>{i + 1}</span>
-            <Stack gap="1">
+            <Stack gap="1" minWidth="0">
               <styled.h3 textStyle="paragraph.sm.strong">
                 {t(`howItWorks.cards.${key}.title`)}
               </styled.h3>
