@@ -139,6 +139,16 @@ const voiceToText = {
   selectionToolbar: {
     assignTo: "Asignar a…",
   },
+  floatingToolbar: {
+    changeSpeaker: "Cambiar persona",
+    editTime: "Editar marca de tiempo",
+    addBelow: "Agregar turno debajo",
+    mergePrev: "Unir con el turno anterior",
+    delete: "Eliminar turno",
+    timePlaceholder: "mm:ss",
+    timeSave: "Guardar",
+    timeInvalid: "Formato inválido. Usá mm:ss o hh:mm:ss.",
+  },
 };
 
 export default voiceToText;
