@@ -31,8 +31,7 @@ const stepBadge = css({
   rounded: "full",
   bg: "brand.primary",
   color: "text.onbutton-default",
-  fontWeight: "[600]",
-  fontSize: "[14px]",
+  textStyle: "label.md.strong",
   flexShrink: "0",
 });
 
