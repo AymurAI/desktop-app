@@ -117,7 +117,7 @@ const voiceToText = {
     selectedTurn: "Turno seleccionado",
     startsAt: "Inicia en {{time}}",
     personSection: "Locutor",
-    newPerson: "+ Nuevo",
+    newPerson: "Nuevo",
     newPersonPlaceholder: "Nombre de la persona",
     create: "Crear",
     timeSection: "Marca de tiempo",
