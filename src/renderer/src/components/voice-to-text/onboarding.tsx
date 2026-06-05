@@ -32,11 +32,11 @@ export default function VoiceOnboarding() {
 
   const handleAddFiles = async (files: File[]) => {
     dispatch(addFiles(files));
+    toggleTutorialSeen(FeatureFlowEnum.VoiceToText);
     await navigate({
       to: "/app/$feature/preview",
       params: { feature: FeatureFlowEnum.VoiceToText },
     });
-    toggleTutorialSeen(FeatureFlowEnum.VoiceToText);
   };
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -65,7 +65,10 @@ export default function VoiceOnboarding() {
               <BackButton to="/home/features" />
               <SectionTitle>{t("onboarding.sectionTitle")}</SectionTitle>
             </HStack>
-            <VoiceFileDrop onDropFiles={handleAddFiles} />
+            <VoiceFileDrop
+              onDropFiles={handleAddFiles}
+              onClickZone={handleOpenInput}
+            />
           </Stack>
         ) : (
           <Stack gap="8">
