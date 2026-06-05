@@ -6,7 +6,6 @@ import {
   PencilSimple,
 } from "phosphor-react";
 import {
-  Fragment,
   type ReactNode,
   useCallback,
   useEffect,
@@ -23,8 +22,7 @@ import { css } from "@/styled/css";
 import type { Transcription } from "@/types/transcription";
 import AudioPlayer, { type AudioPlayerHandle } from "../audio-player";
 import { useActiveTurn } from "../use-active-turn";
-import AddTurnButton from "./add-turn-button";
-import SuggestedSpeakersPanel from "./suggested-speakers-panel";
+import { SelectionToolbar, useSelectionAssign } from "./selection-toolbar";
 import TurnBlock from "./turn-block";
 
 const wrap = css({
@@ -132,13 +130,6 @@ const switchLabel = css({
   cursor: "pointer",
 });
 
-const content = css({
-  flex: "[1]",
-  display: "flex",
-  flexDir: "row",
-  overflow: "hidden",
-});
-
 const body = css({
   flex: "[1]",
   overflowY: "auto",
@@ -147,6 +138,7 @@ const body = css({
   flexDir: "column",
   gap: "6",
   bg: "bg.primary",
+  position: "relative",
 });
 
 const titleRow = css({
@@ -313,6 +305,7 @@ export default function TranscriptionEditor({
 
   const [currentMs, setCurrentMs] = useState(0);
   const playerRef = useRef<AudioPlayerHandle>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [matchIndex, setMatchIndex] = useState(0);
@@ -333,6 +326,8 @@ export default function TranscriptionEditor({
   );
 
   const activeTurnId = useActiveTurn(transcription.turns, currentMs);
+
+  const sa = useSelectionAssign(scrollRef, transcription);
 
   const handleSeekTo = (ms: number) => {
     playerRef.current?.seekTo(ms);
@@ -445,48 +440,36 @@ export default function TranscriptionEditor({
         )}
       </div>
 
-      <div className={content}>
-        <div className={body}>
-          {transcription.turns.map((turn, index) => {
-            const speaker = speakerMap[turn.speakerId];
-            if (!speaker) return null;
+      <div ref={scrollRef} className={body}>
+        {transcription.turns.map((turn, index) => {
+          const speaker = speakerMap[turn.speakerId];
+          if (!speaker) return null;
 
-            return (
-              <Fragment key={turn.id}>
-                <TurnBlock
-                  turn={turn}
-                  speaker={speaker}
-                  transcription={transcription}
-                  isActive={turn.id === activeTurnId}
-                  isEditMode={isEditMode}
-                  isSelected={turn.id === selectedTurnId}
-                  searchQuery={searchQuery}
-                  onSeekTo={handleSeekTo}
-                  onSelect={handleTurnSelect}
-                  turnRef={setTurnRef(turn.id)}
-                />
-                {isEditMode && index < transcription.turns.length - 1 && (
-                  <AddTurnButton
-                    transcriptionId={transcription.id}
-                    afterTurn={turn}
-                  />
-                )}
-              </Fragment>
-            );
-          })}
-
-          {isEditMode && transcription.turns.length > 0 && (
-            <AddTurnButton
-              transcriptionId={transcription.id}
-              afterTurn={transcription.turns[transcription.turns.length - 1]}
+          return (
+            <TurnBlock
+              key={turn.id}
+              turn={turn}
+              speaker={speaker}
+              transcription={transcription}
+              isActive={turn.id === activeTurnId}
+              isEditMode={isEditMode}
+              isSelected={turn.id === selectedTurnId}
+              index={index}
+              searchQuery={searchQuery}
+              onSeekTo={handleSeekTo}
+              onSelect={handleTurnSelect}
+              onTextSelect={sa.onSelect}
+              turnRef={setTurnRef(turn.id)}
             />
-          )}
-        </div>
+          );
+        })}
 
         {isEditMode && (
-          <SuggestedSpeakersPanel
+          <SelectionToolbar
+            sel={sa.sel}
             transcription={transcription}
-            selectedTurnId={selectedTurnId}
+            onAssign={sa.assign}
+            onClose={sa.clear}
           />
         )}
       </div>

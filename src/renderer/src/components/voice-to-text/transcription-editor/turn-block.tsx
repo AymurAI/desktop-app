@@ -1,21 +1,13 @@
-import { Trash } from "phosphor-react";
-import {
-  type FormEvent,
-  type MouseEvent,
-  type ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { useTranslation } from "react-i18next";
+import type { ReactNode } from "react";
 
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
-import { removeTurn, updateTurnText } from "@/reducers/transcription/actions";
+import { updateTurnText } from "@/reducers/transcription/actions";
 import { css, cva } from "@/styled/css";
 import type { Speaker, Transcription, Turn } from "@/types/transcription";
 import { formatTime } from "../format-time";
 import SpeakerAvatar from "../speaker-avatar";
-import SpeakerDialog from "./speaker-dialog";
+import { EditableTurnText } from "./editable-turn-text";
+import TurnFloatingToolbar from "./turn-floating-toolbar";
 
 const wrap = cva({
   base: {
@@ -115,52 +107,6 @@ const text = css({
   p: "[0]",
 });
 
-const textarea = css({
-  fontSize: "[16px]",
-  lineHeight: "[26px]",
-  fontWeight: "[300]",
-  color: "text.default",
-  m: "[0]",
-  p: "[0]",
-  borderWidth: "[1px]",
-  borderStyle: "solid",
-  borderColor: "transparent",
-  outline: "none",
-  resize: "none",
-  width: "full",
-  bg: "transparent",
-  boxSizing: "border-box",
-  overflow: "hidden",
-  "&:focus": {
-    borderColor: "[#BCBAB8]",
-    rounded: "[4px]",
-    px: "[4px]",
-    py: "[2px]",
-    bg: "bg.secondary",
-  },
-});
-
-const trashButton = css({
-  position: "absolute",
-  top: "2",
-  right: "2",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "7",
-  height: "7",
-  border: "[none]",
-  rounded: "md",
-  bg: "transparent",
-  cursor: "pointer",
-  color: "[#9F99A5]",
-  p: "[0]",
-  "&:hover": {
-    bg: "[rgba(220, 53, 69, 0.1)]",
-    color: "[#DC3545]",
-  },
-});
-
 const highlightMark = css({
   bg: "[#FFE066]",
   color: "[currentColor]",
@@ -194,9 +140,11 @@ interface TurnBlockProps {
   isActive: boolean;
   isEditMode: boolean;
   isSelected: boolean;
+  index: number;
   searchQuery: string;
   onSeekTo: (ms: number) => void;
   onSelect: (turnId: string) => void;
+  onTextSelect: () => void;
   turnRef?: (el: HTMLDivElement | null) => void;
 }
 
@@ -207,25 +155,17 @@ export default function TurnBlock({
   isActive,
   isEditMode,
   isSelected,
+  index,
   searchQuery,
   onSeekTo,
   onSelect,
+  onTextSelect,
   turnRef,
 }: TurnBlockProps) {
-  const { t } = useTranslation("voice-to-text");
   const dispatch = useTranscriptionDispatch();
-  const [textValue, setTextValue] = useState(turn.text);
-  const [speakerDialogOpen, setSpeakerDialogOpen] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const prevTurnText = useRef(turn.text);
-  if (prevTurnText.current !== turn.text) {
-    prevTurnText.current = turn.text;
-    setTextValue(turn.text);
-  }
 
   const handleHeaderClick = () => {
-    if (isEditMode) setSpeakerDialogOpen(true);
+    if (isEditMode) onSelect(turn.id);
     else onSeekTo(turn.startMs);
   };
 
@@ -233,103 +173,58 @@ export default function TurnBlock({
     if (isEditMode) onSelect(turn.id);
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: textValue needed to re-measure after external reducer updates
-  useEffect(() => {
-    if (isEditMode && textareaRef.current) {
-      const el = textareaRef.current;
-      el.style.height = "auto";
-      el.style.height = `${el.scrollHeight}px`;
-    }
-  }, [isEditMode, textValue]);
-
-  const handleTextBlur = () => {
-    if (textValue !== turn.text) {
-      dispatch(updateTurnText(transcription.id, turn.id, textValue));
-    }
-  };
-
-  const handleTextInput = (e: FormEvent<HTMLTextAreaElement>) => {
-    const target = e.target as HTMLTextAreaElement;
-    target.style.height = "auto";
-    target.style.height = `${target.scrollHeight}px`;
-  };
-
-  const handleRemove = (e: MouseEvent) => {
-    e.stopPropagation();
-    dispatch(removeTurn(transcription.id, turn.id));
-  };
-
   return (
-    <>
-      <div
-        ref={turnRef}
-        onClick={handleWrapClick}
-        className={wrap({
-          active: isActive,
-          selected: isEditMode && isSelected,
-        })}
-      >
-        {isEditMode && (
-          <button
-            type="button"
-            onClick={handleRemove}
-            aria-label={t("editor.removeTurnAria")}
-            className={trashButton}
-          >
-            <Trash size={20} />
-          </button>
-        )}
+    <div
+      ref={turnRef}
+      onClick={handleWrapClick}
+      className={wrap({
+        active: isActive,
+        selected: isEditMode && isSelected,
+      })}
+    >
+      {isEditMode && isSelected && (
+        <TurnFloatingToolbar
+          transcription={transcription}
+          turn={turn}
+          index={index}
+        />
+      )}
 
-        <div className={row}>
+      <div className={row}>
+        <button
+          type="button"
+          onClick={handleHeaderClick}
+          className={avatarButton}
+          tabIndex={-1}
+          aria-hidden="true"
+        >
+          <SpeakerAvatar speaker={speaker} size="sm" />
+        </button>
+        <div className={rightCol}>
           <button
             type="button"
             onClick={handleHeaderClick}
-            className={avatarButton}
-            tabIndex={-1}
-            aria-hidden="true"
+            className={labelRow}
           >
-            <SpeakerAvatar speaker={speaker} size="sm" />
+            <span className={speakerLabel}>{speaker.label}</span>
+            <span className={timestamp}>{formatTime(turn.startMs)}</span>
           </button>
-          <div className={rightCol}>
-            <button
-              type="button"
-              onClick={handleHeaderClick}
-              className={labelRow}
-            >
-              <span className={speakerLabel}>{speaker.label}</span>
-              <span className={timestamp}>{formatTime(turn.startMs)}</span>
-            </button>
-            {isEditMode ? (
-              <textarea
-                ref={textareaRef}
-                value={textValue}
-                onChange={(e) => setTextValue(e.target.value)}
-                onBlur={handleTextBlur}
-                onInput={handleTextInput}
-                rows={1}
-                aria-label={t("editor.turnTextAria")}
-                className={textarea}
-              />
-            ) : (
-              <p className={text}>
-                {searchQuery
-                  ? highlightText(turn.text, searchQuery)
-                  : turn.text}
-              </p>
-            )}
-          </div>
+          {isEditMode ? (
+            <EditableTurnText
+              turnId={turn.id}
+              text={turn.text}
+              onCommit={(id, value) =>
+                dispatch(updateTurnText(transcription.id, id, value))
+              }
+              onSelect={onTextSelect}
+            />
+          ) : (
+            <p className={text}>
+              {searchQuery ? highlightText(turn.text, searchQuery) : turn.text}
+            </p>
+          )}
         </div>
       </div>
-
-      {speakerDialogOpen && (
-        <SpeakerDialog
-          open={speakerDialogOpen}
-          onOpenChange={setSpeakerDialogOpen}
-          transcription={transcription}
-          turn={turn}
-          speaker={speaker}
-        />
-      )}
-    </>
+    </div>
   );
 }
