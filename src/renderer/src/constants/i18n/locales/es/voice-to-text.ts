@@ -43,7 +43,6 @@ const voiceToText = {
     sectionTitle: "1. Selección de archivo",
     selectedCount_one: "{{count}} archivo seleccionado",
     selectedCount_other: "{{count}} archivos seleccionados",
-    loadMore: "Cargar más audios",
     continue: "Siguiente",
     removeAria: "Eliminar {{name}}",
     playAria: "Reproducir 10 segundos de {{name}}",

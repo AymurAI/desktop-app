@@ -1,9 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Pause, Play, Trash } from "phosphor-react";
-import { type ChangeEventHandler, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import HiddenInput from "@/components/hidden-input";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
@@ -14,11 +12,10 @@ import {
   formatDuration,
   useAudioSnippet,
 } from "@/components/voice-to-text/use-audio-snippet";
-import { AUDIO_EXTENSIONS } from "@/constants/config";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
-import { addFiles, removeFile } from "@/reducers/file/actions";
+import { removeFile } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
@@ -40,7 +37,7 @@ const fileRow = css({
   px: "4",
   py: "3",
   rounded: "md",
-  borderWidth: "[1px]",
+  borderWidth: "[2px]",
   borderStyle: "solid",
   borderColor: "[#BCBAB8]",
   bg: "bg.secondary",
@@ -121,17 +118,9 @@ function FileRow({ file, onRemove }: { file: File; onRemove: () => void }) {
 
 export default function VoicePreview() {
   const { t } = useTranslation("voice-to-text");
-  const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const files = useFiles();
   const dispatch = useFileDispatch();
-
-  const handleSelectFile = () => inputRef.current?.click();
-
-  const handleAddedFiles: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const rawFiles = e.target.files;
-    if (rawFiles) dispatch(addFiles(Array.from(rawFiles)));
-  };
 
   const handleRemoveFile = (fileName: string) => () => {
     dispatch(removeFile(fileName));
@@ -179,21 +168,10 @@ export default function VoicePreview() {
         </Stack>
       </MainContent>
       <Footer withBuiltBy>
-        <HStack gap="4">
-          <Button variant="secondary" onClick={handleSelectFile}>
-            {t("preview.loadMore")}
-          </Button>
-          <Button onClick={handleConfirmFiles} disabled={files.length === 0}>
-            {t("preview.continue")}
-          </Button>
-        </HStack>
+        <Button onClick={handleConfirmFiles} disabled={files.length === 0}>
+          {t("preview.continue")}
+        </Button>
       </Footer>
-      <HiddenInput
-        ref={inputRef}
-        onChange={handleAddedFiles}
-        extensions={AUDIO_EXTENSIONS}
-        multiple
-      />
     </RequireFile>
   );
 }
