@@ -122,6 +122,22 @@ const voiceToText = {
     timeSave: "Guardar",
     timeInvalid: "Formato inválido. Usá mm:ss o hh:mm:ss.",
   },
+  sidePanel: {
+    empty: "Seleccioná un turno para editar sus propiedades.",
+    selectedTurn: "Turno seleccionado",
+    startsAt: "Comienza en {{time}}",
+    personSection: "Locutor",
+    newPerson: "+ Nuevo",
+    newPersonPlaceholder: "Nombre de la persona",
+    create: "Crear",
+    timeSection: "Marca de tiempo",
+    timeInvalid: "Formato inválido. Usá mm:ss o hh:mm:ss.",
+    actionsSection: "Acciones",
+    mergePrev: "Unir con el turno anterior",
+    mergeNext: "Unir con el turno siguiente",
+    addBelow: "Agregar turno debajo",
+    delete: "Eliminar turno",
+  },
 };
 
 export default voiceToText;
