@@ -138,7 +138,6 @@ export default function VoiceProcess() {
   const transcriptionDispatch = useTranscriptionDispatch();
   const fileDispatch = useFileDispatch();
 
-  const [retryKey, setRetryKey] = useState(0);
   const replaceInputRef = useRef<HTMLInputElement>(null);
 
   const audioFiles = useMemo(() => files.map((f) => f.data), [files]);
@@ -190,7 +189,6 @@ export default function VoiceProcess() {
     if (!raw || raw.length === 0) return;
     fileDispatch(removeAllFiles());
     fileDispatch(addFiles(Array.from(raw)));
-    setRetryKey((k) => k + 1);
   };
 
   const handlePrevious = () =>
@@ -207,6 +205,7 @@ export default function VoiceProcess() {
 
   return (
     <RequireFile>
+      {/* TODO: move voice-to-text-preview-scroll keyframe to panda.config.ts theme.extend.keyframes */}
       <style>
         {
           "@keyframes voice-to-text-preview-scroll { 0% { transform: translateY(100%); } 100% { transform: translateY(-100%); } }"
@@ -226,7 +225,7 @@ export default function VoiceProcess() {
             />
             <SectionTitle>{t("process.sectionTitle")}</SectionTitle>
           </HStack>
-          <Card key={retryKey}>
+          <Card>
             <Stack gap="6">
               <Stack gap="1">
                 <styled.h2 textStyle="subtitle.md.default">
