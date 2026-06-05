@@ -1,8 +1,24 @@
-import { CaretLeft, CaretRight, MagnifyingGlass } from "phosphor-react";
-import { Fragment, useCallback, useMemo, useRef, useState } from "react";
+import {
+  CaretLeft,
+  CaretRight,
+  Info,
+  MagnifyingGlass,
+  PencilSimple,
+} from "phosphor-react";
+import {
+  Fragment,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 
 import Switch from "@/components/ui/switch";
+import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
+import { renameTranscription } from "@/reducers/transcription/actions";
 import { css } from "@/styled/css";
 import type { Transcription } from "@/types/transcription";
 import AudioPlayer, { type AudioPlayerHandle } from "../audio-player";
@@ -29,7 +45,7 @@ const header = css({
   flexShrink: "0",
 });
 
-const title = css({
+const titleText = css({
   fontSize: "[32px]",
   lineHeight: "[38px]",
   fontWeight: "[600]",
@@ -43,7 +59,6 @@ const toolBar = css({
   flexDir: "row",
   justifyContent: "space-between",
   alignItems: "center",
-  mt: "4",
   gap: "4",
 });
 
@@ -134,6 +149,54 @@ const body = css({
   bg: "bg.primary",
 });
 
+const titleRow = css({
+  display: "flex",
+  alignItems: "center",
+  gap: "3",
+  mt: "4",
+});
+
+const titleInput = css({
+  fontSize: "[32px]",
+  lineHeight: "[38px]",
+  fontWeight: "[600]",
+  color: "text.default",
+  border: "[none]",
+  borderBottomWidth: "[2px]",
+  borderBottomStyle: "solid",
+  borderBottomColor: "brand.primary",
+  outline: "none",
+  bg: "transparent",
+  m: "[0]",
+  p: "[0]",
+});
+
+const editIconButton = css({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  border: "[none]",
+  bg: "transparent",
+  cursor: "pointer",
+  color: "text.lighter",
+  p: "1",
+  rounded: "[4px]",
+  "&:hover": { color: "brand.primary" },
+});
+
+const editBanner = css({
+  display: "flex",
+  alignItems: "center",
+  gap: "3",
+  mt: "4",
+  px: "4",
+  py: "3",
+  rounded: "md",
+  bg: "bg.secondary-highlight",
+  color: "text.default",
+  fontSize: "[14px]",
+});
+
 interface SearchMatch {
   turnId: string;
   index: number;
@@ -157,18 +220,89 @@ function findMatches(
   return matches;
 }
 
+function EditableTitle({
+  title,
+  onRename,
+}: {
+  title: string;
+  onRename: (value: string) => void;
+}) {
+  const { t } = useTranslation("voice-to-text");
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(title);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const prevTitle = useRef(title);
+  if (prevTitle.current !== title) {
+    prevTitle.current = title;
+    setValue(title);
+  }
+
+  const commit = () => {
+    const trimmed = value.trim();
+    if (trimmed && trimmed !== title) onRename(trimmed);
+    else setValue(title);
+    setEditing(false);
+  };
+
+  useEffect(() => {
+    if (editing) {
+      inputRef.current?.focus();
+    }
+  }, [editing]);
+
+  if (editing) {
+    return (
+      <div className={titleRow}>
+        <input
+          ref={inputRef}
+          className={titleInput}
+          value={value}
+          aria-label={t("editor.titleInputAria")}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") commit();
+            if (e.key === "Escape") {
+              setValue(title);
+              setEditing(false);
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={titleRow}>
+      <h1 className={titleText}>{title}</h1>
+      <button
+        type="button"
+        className={editIconButton}
+        onClick={() => setEditing(true)}
+        aria-label={t("editor.editTitleAria")}
+      >
+        <PencilSimple size={20} />
+      </button>
+    </div>
+  );
+}
+
 interface TranscriptionEditorProps {
   transcription: Transcription;
   isEditMode: boolean;
   onEditModeChange: (val: boolean) => void;
+  footerActions?: ReactNode;
 }
 
 export default function TranscriptionEditor({
   transcription,
   isEditMode,
   onEditModeChange,
+  footerActions,
 }: TranscriptionEditorProps) {
   const { t } = useTranslation("voice-to-text");
+  const dispatch = useTranscriptionDispatch();
 
   const [currentMs, setCurrentMs] = useState(0);
   const playerRef = useRef<AudioPlayerHandle>(null);
@@ -234,7 +368,6 @@ export default function TranscriptionEditor({
   return (
     <div className={wrap}>
       <div className={header}>
-        <h1 className={title}>{transcription.title}</h1>
         <div className={toolBar}>
           <div className={searchWrapper}>
             <MagnifyingGlass size={20} color="#9F99A5" weight="bold" />
@@ -287,6 +420,20 @@ export default function TranscriptionEditor({
             <span>{t("editor.editMode")}</span>
           </label>
         </div>
+
+        <EditableTitle
+          title={transcription.title}
+          onRename={(value) =>
+            dispatch(renameTranscription(transcription.id, value))
+          }
+        />
+
+        {isEditMode && (
+          <div className={editBanner}>
+            <Info size={20} color="#3F479D" />
+            <span>{t("editor.editModeBanner")}</span>
+          </div>
+        )}
       </div>
 
       <div className={content}>
@@ -340,6 +487,7 @@ export default function TranscriptionEditor({
         src={transcription.audioObjectUrl}
         durationMs={transcription.audioDurationMs}
         onTimeUpdate={(ms) => setCurrentMs(ms)}
+        rightSlot={footerActions}
       />
     </div>
   );

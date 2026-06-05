@@ -54,17 +54,40 @@ const wrap = cva({
   defaultVariants: { active: false, selected: false },
 });
 
-const header = css({
+const row = css({
+  display: "flex",
+  flexDir: "row",
+  alignItems: "flex-start",
+  gap: "2",
+  width: "full",
+});
+
+const avatarButton = css({
+  border: "[none]",
+  bg: "transparent",
+  p: "[0]",
+  cursor: "pointer",
+  flexShrink: "0",
+  mt: "[2px]",
+});
+
+const rightCol = css({
+  display: "flex",
+  flexDir: "column",
+  gap: "2",
+  flex: "[1]",
+  minWidth: "0",
+});
+
+const labelRow = css({
   display: "flex",
   flexDir: "row",
   alignItems: "center",
   gap: "2",
-  mb: "2",
   bg: "transparent",
   border: "[none]",
   p: "[0]",
   textAlign: "left",
-  width: "full",
   cursor: "pointer",
   "&:hover": { opacity: "0.8" },
 });
@@ -257,28 +280,43 @@ export default function TurnBlock({
           </button>
         )}
 
-        <button type="button" onClick={handleHeaderClick} className={header}>
-          <SpeakerAvatar speaker={speaker} size="sm" />
-          <span className={speakerLabel}>{speaker.label}</span>
-          <span className={timestamp}>{formatTime(turn.startMs)}</span>
-        </button>
-
-        {isEditMode ? (
-          <textarea
-            ref={textareaRef}
-            value={textValue}
-            onChange={(e) => setTextValue(e.target.value)}
-            onBlur={handleTextBlur}
-            onInput={handleTextInput}
-            rows={1}
-            aria-label={t("editor.turnTextAria")}
-            className={textarea}
-          />
-        ) : (
-          <p className={text}>
-            {searchQuery ? highlightText(turn.text, searchQuery) : turn.text}
-          </p>
-        )}
+        <div className={row}>
+          <button
+            type="button"
+            onClick={handleHeaderClick}
+            className={avatarButton}
+          >
+            <SpeakerAvatar speaker={speaker} size="sm" />
+          </button>
+          <div className={rightCol}>
+            <button
+              type="button"
+              onClick={handleHeaderClick}
+              className={labelRow}
+            >
+              <span className={speakerLabel}>{speaker.label}</span>
+              <span className={timestamp}>{formatTime(turn.startMs)}</span>
+            </button>
+            {isEditMode ? (
+              <textarea
+                ref={textareaRef}
+                value={textValue}
+                onChange={(e) => setTextValue(e.target.value)}
+                onBlur={handleTextBlur}
+                onInput={handleTextInput}
+                rows={1}
+                aria-label={t("editor.turnTextAria")}
+                className={textarea}
+              />
+            ) : (
+              <p className={text}>
+                {searchQuery
+                  ? highlightText(turn.text, searchQuery)
+                  : turn.text}
+              </p>
+            )}
+          </div>
+        </div>
       </div>
 
       {speakerDialogOpen && (

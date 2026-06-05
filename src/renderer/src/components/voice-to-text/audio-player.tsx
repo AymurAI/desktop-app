@@ -6,6 +6,7 @@ import {
 } from "phosphor-react";
 import {
   type MouseEvent,
+  type ReactNode,
   forwardRef,
   useCallback,
   useImperativeHandle,
@@ -134,6 +135,7 @@ interface AudioPlayerProps {
   durationMs: number;
   onTimeUpdate?: (currentMs: number) => void;
   onEnded?: () => void;
+  rightSlot?: ReactNode;
 }
 
 export interface AudioPlayerHandle {
@@ -146,7 +148,10 @@ export interface AudioPlayerHandle {
 const PLAYBACK_RATES = [1, 1.5, 2, 0.75];
 
 const AudioPlayer = forwardRef<AudioPlayerHandle, AudioPlayerProps>(
-  function AudioPlayer({ src, durationMs, onTimeUpdate, onEnded }, ref) {
+  function AudioPlayer(
+    { src, durationMs, onTimeUpdate, onEnded, rightSlot },
+    ref,
+  ) {
     const { t } = useTranslation("voice-to-text");
     const audioRef = useRef<HTMLAudioElement>(null);
     const barRef = useRef<HTMLDivElement>(null);
@@ -300,6 +305,8 @@ const AudioPlayer = forwardRef<AudioPlayerHandle, AudioPlayerProps>(
             {formatTime(currentMs)} / {formatTime(durationMs)}
           </span>
         </div>
+
+        {rightSlot}
       </div>
     );
   },

@@ -81,28 +81,15 @@ export default function VoiceValidation() {
             transcription={transcription}
             isEditMode={isEditMode}
             onEditModeChange={setIsEditMode}
+            footerActions={
+              <Button onClick={handleFinish} disabled={saveMutation.isPending}>
+                {saveMutation.isPending
+                  ? t("validation.saving")
+                  : t("editor.finish")}
+              </Button>
+            }
           />
         </div>
-        <Footer>
-          <HStack gap="4">
-            <Button
-              variant="secondary"
-              onClick={() =>
-                navigate({
-                  to: "/app/$feature/process",
-                  params: { feature: FeatureFlowEnum.VoiceToText },
-                })
-              }
-            >
-              {t("validation.back")}
-            </Button>
-            <Button onClick={handleFinish} disabled={saveMutation.isPending}>
-              {saveMutation.isPending
-                ? t("validation.saving")
-                : t("validation.finish")}
-            </Button>
-          </HStack>
-        </Footer>
       </Stack>
     </RequireFile>
   );
