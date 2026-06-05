@@ -24,7 +24,7 @@ const voiceToText = {
       card3: {
         title: "Revisión y validación humana",
         subtitle:
-          "Revisá la transcripción, editá el texto y renombrá a los locutores antes de exportar el archivo.",
+          "Revisá la transcripción, editá el texto y renombrá a las personas antes de exportar el archivo.",
       },
       card4: {
         title: "Descargá la transcripción",
@@ -79,7 +79,7 @@ const voiceToText = {
     summaryTitle: "Resumen de la transcripción",
     titleLabel: "Título",
     fileLabel: "Archivo",
-    speakersLabel: "Locutores",
+    speakersLabel: "Personas",
     turnsLabel: "Turnos",
     download: "Descargar .txt",
     back: "Volver",
@@ -107,10 +107,10 @@ const voiceToText = {
     speedAria: "Cambiar velocidad de reproducción",
   },
   speakerDialog: {
-    title: "Editar locutor",
+    title: "Editar persona",
     renameSection: "Renombrar globalmente",
-    renamePlaceholder: "Nombre del locutor",
-    renameAria: "Nuevo nombre del locutor",
+    renamePlaceholder: "Nombre de la persona",
+    renameAria: "Nuevo nombre de la persona",
     renameButton: "Renombrar",
     renameHelper: "Cambia el nombre en todos los turnos",
     timestampSection: "Marca de tiempo",
@@ -121,14 +121,14 @@ const voiceToText = {
     timestampHelper:
       "Formato mm:ss o hh:mm:ss. Cambia el inicio de este turno.",
     changeSection: "Cambiar este turno",
-    newSpeaker: "Nuevo locutor",
-    newSpeakerPlaceholder: "Nombre del nuevo locutor",
-    newSpeakerAria: "Nombre del nuevo locutor",
+    newSpeaker: "Nueva persona",
+    newSpeakerPlaceholder: "Nombre de la nueva persona",
+    newSpeakerAria: "Nombre de la nueva persona",
     newSpeakerAdd: "Agregar",
   },
   suggestedPanel: {
-    title: "Speakers sugeridos",
-    empty: "Seleccioná un turno para asignar un speaker sugerido.",
+    title: "Roles sugeridos",
+    empty: "Seleccioná un turno para asignar un rol sugerido.",
   },
 };
 

@@ -59,8 +59,8 @@ export function mapASRDocumentToTranscription(
 
   const speakers: Speaker[] = speakerNos.map((no, idx) => ({
     id: `s${no}`,
-    label: `Locutor ${no}`,
-    initials: `L${no}`.slice(0, 2),
+    label: `Persona ${no}`,
+    initials: `P${no}`.slice(0, 2),
     color: SPEAKER_COLORS[idx % SPEAKER_COLORS.length],
   }));
 

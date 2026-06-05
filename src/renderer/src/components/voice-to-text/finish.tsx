@@ -29,7 +29,7 @@ export default function VoiceFinish() {
         (s) => s.id === turn.speakerId,
       );
       const time = formatTime(turn.startMs);
-      return `[${time}] ${speaker?.label ?? "Locutor"}: ${turn.text}`;
+      return `[${time}] ${speaker?.label ?? "Persona"}: ${turn.text}`;
     });
 
     const content = lines.join("\n\n");
