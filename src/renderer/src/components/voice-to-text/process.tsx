@@ -1,18 +1,28 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowsClockwise, CheckCircle, Info } from "phosphor-react";
+import {
+  type ChangeEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 
+import HiddenInput from "@/components/hidden-input";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
+import { AUDIO_EXTENSIONS } from "@/constants/config";
 import RequireFile from "@/features/RequireFile";
-import { useFiles } from "@/hooks";
+import { useFileDispatch, useFiles } from "@/hooks";
 import { useTranscribe } from "@/hooks/useTranscribe";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { SectionTitle } from "@/layout/section-title";
+import { addFiles, removeAllFiles } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
@@ -65,17 +75,53 @@ const previewPlaceholder = css({
 
 const barContainer = css({
   width: "full",
-  height: "2",
+  height: "[10px]",
   bg: "bg.secondary-highlight",
   rounded: "full",
   overflow: "hidden",
 });
 
-const bar = css({
+const barProcessing = css({
   height: "full",
-  bg: "brand.primary",
   rounded: "full",
   transition: "[width 200ms ease]",
+  backgroundImage:
+    "[repeating-linear-gradient(45deg, #3F479D, #3F479D 8px, #6B73C9 8px, #6B73C9 16px)]",
+});
+
+const barError = css({
+  height: "full",
+  width: "full",
+  rounded: "full",
+  bg: "system.error-secondary",
+});
+
+const calloutBox = css({
+  display: "flex",
+  alignItems: "center",
+  gap: "3",
+  px: "4",
+  py: "3",
+  rounded: "md",
+  bg: "bg.secondary-highlight",
+  color: "text.default",
+});
+
+const stopButton = css({
+  display: "flex",
+  alignItems: "center",
+  gap: "2",
+  px: "4",
+  py: "2",
+  rounded: "md",
+  borderWidth: "[1px]",
+  borderStyle: "solid",
+  borderColor: "brand.primary",
+  bg: "bg.secondary",
+  color: "brand.primary",
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+  "&:hover": { bg: "bg.secondary-highlight" },
 });
 
 // ~25ms per character so the preview scrolls at a brisk but readable pace,
@@ -90,10 +136,14 @@ export default function VoiceProcess() {
   const navigate = useNavigate();
   const files = useFiles();
   const transcriptionDispatch = useTranscriptionDispatch();
+  const fileDispatch = useFileDispatch();
+
+  const [retryKey, setRetryKey] = useState(0);
+  const replaceInputRef = useRef<HTMLInputElement>(null);
 
   const audioFiles = useMemo(() => files.map((f) => f.data), [files]);
 
-  const { progress, status, partialText } = useTranscribe(audioFiles, {
+  const { progress, status, partialText, abort } = useTranscribe(audioFiles, {
     dispatch: transcriptionDispatch,
   });
 
@@ -114,11 +164,11 @@ export default function VoiceProcess() {
   }, [partialText, displayedText]);
 
   useEffect(() => {
-    if (!isProcessing) {
+    if (status === "idle" || status === "stopped" || status === "error") {
       setDisplayedText("");
       pendingTextRef.current = "";
     }
-  }, [isProcessing]);
+  }, [status]);
 
   const previewDuration = useMemo(
     () => estimateScrollDuration(displayedText),
@@ -129,6 +179,18 @@ export default function VoiceProcess() {
     if (pendingTextRef.current && pendingTextRef.current !== displayedText) {
       setDisplayedText(pendingTextRef.current);
     }
+  };
+
+  const handleStop = () => abort();
+
+  const handleReplaceClick = () => replaceInputRef.current?.click();
+
+  const handleReplaceFiles: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const raw = e.target.files;
+    if (!raw || raw.length === 0) return;
+    fileDispatch(removeAllFiles());
+    fileDispatch(addFiles(Array.from(raw)));
+    setRetryKey((k) => k + 1);
   };
 
   const handlePrevious = () =>
@@ -164,7 +226,7 @@ export default function VoiceProcess() {
             />
             <SectionTitle>{t("process.sectionTitle")}</SectionTitle>
           </HStack>
-          <Card>
+          <Card key={retryKey}>
             <Stack gap="6">
               <Stack gap="1">
                 <styled.h2 textStyle="subtitle.md.default">
@@ -175,37 +237,94 @@ export default function VoiceProcess() {
                 </styled.p>
               </Stack>
 
-              <Stack gap="2">
-                <HStack justifyContent="space-between">
+              <Stack gap="3">
+                <HStack
+                  justifyContent="space-between"
+                  alignItems="center"
+                  gap="4"
+                >
                   <styled.span
                     textStyle="label.md.default"
                     color={isError ? "system.error" : "text.default"}
+                    truncate
                   >
-                    {files.length === 1
-                      ? files[0]?.data.name
-                      : t("process.nFiles", { count: files.length })}
+                    {files[0]?.data.name}
                   </styled.span>
-                  <styled.span
-                    textStyle="label.md.default"
-                    color={isError ? "system.error" : "text.default"}
-                  >
-                    {isError
-                      ? t("process.errorLabel")
-                      : isCompleted
-                        ? t("process.completedLabel")
-                        : t("process.progressLabel", {
-                            percent: progressPercent,
-                          })}
-                  </styled.span>
+
+                  <HStack gap="3" alignItems="center" flexShrink="0">
+                    {isError ? (
+                      <styled.span
+                        textStyle="label.md.default"
+                        color="system.error"
+                        fontStyle="italic"
+                      >
+                        {t("process.errorLabel")}
+                      </styled.span>
+                    ) : isCompleted ? (
+                      <HStack gap="2" alignItems="center">
+                        <CheckCircle size={20} color="#3F479D" weight="fill" />
+                        <styled.span
+                          textStyle="label.md.default"
+                          color="brand.primary"
+                        >
+                          {t("process.completedLabel")}
+                        </styled.span>
+                      </HStack>
+                    ) : (
+                      <styled.span
+                        textStyle="label.md.default"
+                        color="text.default"
+                      >
+                        {t("process.progressLabel", {
+                          percent: progressPercent,
+                        })}
+                      </styled.span>
+                    )}
+
+                    {isProcessing && (
+                      <button
+                        type="button"
+                        className={stopButton}
+                        onClick={handleStop}
+                      >
+                        <styled.span
+                          width="[14px]"
+                          height="[14px]"
+                          borderWidth="[2px]"
+                          borderStyle="solid"
+                          borderColor="brand.primary"
+                          rounded="[2px]"
+                        />
+                        {t("process.stop")}
+                      </button>
+                    )}
+                    {isError && (
+                      <button
+                        type="button"
+                        className={stopButton}
+                        onClick={handleReplaceClick}
+                      >
+                        <ArrowsClockwise size={16} />
+                        {t("process.replace")}
+                      </button>
+                    )}
+                  </HStack>
                 </HStack>
+
                 <div className={barContainer}>
-                  <div
-                    className={bar}
-                    style={{ width: `${isCompleted ? 100 : progressPercent}%` }}
-                  />
+                  {isError ? (
+                    <div className={barError} />
+                  ) : (
+                    <div
+                      className={barProcessing}
+                      style={{
+                        width: `${isCompleted ? 100 : progressPercent}%`,
+                      }}
+                    />
+                  )}
                 </div>
 
-                {isProcessing && (
+                {!isError ? (
                   <div
                     className={previewViewport}
                     aria-live="polite"
@@ -225,6 +344,21 @@ export default function VoiceProcess() {
                       </span>
                     )}
                   </div>
+                ) : (
+                  <div className={previewViewport}>
+                    <span className={previewPlaceholder}>
+                      {t("process.waitingForWords")}
+                    </span>
+                  </div>
+                )}
+
+                {!isError && (
+                  <div className={calloutBox}>
+                    <Info size={20} color="#3F479D" />
+                    <styled.span textStyle="paragraph.sm.default">
+                      {t("process.callout")}
+                    </styled.span>
+                  </div>
                 )}
               </Stack>
             </Stack>
@@ -241,6 +375,11 @@ export default function VoiceProcess() {
           </Button>
         </HStack>
       </Footer>
+      <HiddenInput
+        ref={replaceInputRef}
+        onChange={handleReplaceFiles}
+        extensions={AUDIO_EXTENSIONS}
+      />
     </RequireFile>
   );
 }
