@@ -50,6 +50,7 @@
     "nodemon",
     "prettier",
     "wait-on",
-    "postcss"
+    "postcss",
+    "@testing-library/react"
   ]
 }
