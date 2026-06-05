@@ -112,20 +112,10 @@ const voiceToText = {
   selectionToolbar: {
     assignTo: "Asignar a…",
   },
-  floatingToolbar: {
-    changeSpeaker: "Cambiar persona",
-    editTime: "Editar marca de tiempo",
-    addBelow: "Agregar turno debajo",
-    mergePrev: "Unir con el turno anterior",
-    delete: "Eliminar turno",
-    timePlaceholder: "mm:ss",
-    timeSave: "Guardar",
-    timeInvalid: "Formato inválido. Usá mm:ss o hh:mm:ss.",
-  },
   sidePanel: {
     empty: "Seleccioná un turno para editar sus propiedades.",
     selectedTurn: "Turno seleccionado",
-    startsAt: "Comienza en {{time}}",
+    startsAt: "Inicia en {{time}}",
     personSection: "Locutor",
     newPerson: "+ Nuevo",
     newPersonPlaceholder: "Nombre de la persona",
