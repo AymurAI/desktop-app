@@ -13,6 +13,7 @@ import { SectionTitle } from "@/layout/section-title";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { formatTime } from "./format-time";
+import VoiceStepper from "./stepper";
 
 export default function VoiceFinish() {
   const { t } = useTranslation("voice-to-text");
@@ -43,7 +44,11 @@ export default function VoiceFinish() {
 
   return (
     <RequireFile>
-      <Header title={t("title")} right={<FeaturesMenu />} />
+      <Header
+        title={t("title")}
+        right={<FeaturesMenu />}
+        center={<VoiceStepper current={4} />}
+      />
       <MainContent>
         <Stack gap="6">
           <SectionTitle>{t("finish.sectionTitle")}</SectionTitle>

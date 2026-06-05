@@ -16,6 +16,7 @@ import { SectionTitle } from "@/layout/section-title";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import VoiceStepper from "./stepper";
 
 const previewViewport = css({
   position: "relative",
@@ -149,7 +150,11 @@ export default function VoiceProcess() {
           "@keyframes voice-to-text-preview-scroll { 0% { transform: translateY(100%); } 100% { transform: translateY(-100%); } }"
         }
       </style>
-      <Header title={t("title")} feature={FeatureFlowEnum.VoiceToText} />
+      <Header
+        title={t("title")}
+        feature={FeatureFlowEnum.VoiceToText}
+        center={<VoiceStepper current={2} />}
+      />
       <MainContent>
         <Stack gap="10">
           <HStack alignItems="center" gap="6">

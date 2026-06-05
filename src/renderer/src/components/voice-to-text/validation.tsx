@@ -14,6 +14,7 @@ import { saveValidation } from "@/services/aymurai/queries";
 import { css } from "@/styled/css";
 import { HStack, Stack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import VoiceStepper from "./stepper";
 import TranscriptionEditor from "./transcription-editor";
 
 const editorWrap = css({
@@ -50,7 +51,11 @@ export default function VoiceValidation() {
   if (!transcription) {
     return (
       <RequireFile>
-        <Header title={t("title")} feature={FeatureFlowEnum.VoiceToText} />
+        <Header
+          title={t("title")}
+          feature={FeatureFlowEnum.VoiceToText}
+          center={<VoiceStepper current={3} />}
+        />
         <Footer>
           <HStack gap="4">
             <BackButton
@@ -66,7 +71,11 @@ export default function VoiceValidation() {
   return (
     <RequireFile>
       <Stack gap="0" height="screen" overflow="hidden">
-        <Header title={t("title")} feature={FeatureFlowEnum.VoiceToText} />
+        <Header
+          title={t("title")}
+          feature={FeatureFlowEnum.VoiceToText}
+          center={<VoiceStepper current={3} />}
+        />
         <div className={editorWrap}>
           <TranscriptionEditor
             transcription={transcription}

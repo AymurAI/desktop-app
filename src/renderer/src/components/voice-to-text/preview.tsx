@@ -18,6 +18,7 @@ import { addFiles, removeFile } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import VoiceStepper from "./stepper";
 
 function formatFileSize(bytes: number): string {
   if (bytes >= 1024 * 1024) {
@@ -71,7 +72,11 @@ export default function VoicePreview() {
 
   return (
     <RequireFile>
-      <Header title={t("title")} feature={FeatureFlowEnum.VoiceToText} />
+      <Header
+        title={t("title")}
+        feature={FeatureFlowEnum.VoiceToText}
+        center={<VoiceStepper current={1} />}
+      />
       <MainContent>
         <Stack gap="8">
           <HStack alignItems="center" gap="6">
