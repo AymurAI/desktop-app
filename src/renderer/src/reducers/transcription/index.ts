@@ -10,6 +10,7 @@ import {
   type RemoveTranscriptionAction,
   type RemoveTurnAction,
   type RenameSpeakerGlobalAction,
+  type RenameTranscriptionAction,
   type UpdateTurnStartMsAction,
   type UpdateTurnTextAction,
 } from "./actions";
@@ -19,6 +20,7 @@ type State = Transcription[];
 export type TranscriptionAction =
   | AddTranscriptionAction
   | RemoveTranscriptionAction
+  | RenameTranscriptionAction
   | RenameSpeakerGlobalAction
   | ReassignTurnSpeakerAction
   | UpdateTurnTextAction
@@ -87,6 +89,17 @@ export default function reducer(
     case ActionTypes.REMOVE_TRANSCRIPTION: {
       const { id } = payload;
       return state.filter((t) => t.id !== id);
+    }
+
+    // ----------------
+    // RENAME TRANSCRIPTION
+    // ----------------
+    case ActionTypes.RENAME_TRANSCRIPTION: {
+      const { transcriptionId, title } = payload;
+      return updateTranscription(state, transcriptionId, (t) => ({
+        ...t,
+        title,
+      }));
     }
 
     // ----------------

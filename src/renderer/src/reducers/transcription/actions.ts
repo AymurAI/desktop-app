@@ -11,6 +11,7 @@ import type {
 export enum ActionTypes {
   ADD_TRANSCRIPTION = "ADD_TRANSCRIPTION",
   REMOVE_TRANSCRIPTION = "REMOVE_TRANSCRIPTION",
+  RENAME_TRANSCRIPTION = "RENAME_TRANSCRIPTION",
   RENAME_SPEAKER_GLOBAL = "RENAME_SPEAKER_GLOBAL",
   REASSIGN_TURN_SPEAKER = "REASSIGN_TURN_SPEAKER",
   UPDATE_TURN_TEXT = "UPDATE_TURN_TEXT",
@@ -199,6 +200,25 @@ export function addSpeaker(
   return {
     type: ActionTypes.ADD_SPEAKER,
     payload: { transcriptionId, speaker },
+  };
+}
+
+export type RenameTranscriptionAction = Action<
+  ActionTypes.RENAME_TRANSCRIPTION,
+  { transcriptionId: string; title: string }
+>;
+/**
+ * Renames a transcription's title
+ * @param transcriptionId ID of the transcription to rename
+ * @param title New title
+ */
+export function renameTranscription(
+  transcriptionId: string,
+  title: string,
+): RenameTranscriptionAction {
+  return {
+    type: ActionTypes.RENAME_TRANSCRIPTION,
+    payload: { transcriptionId, title },
   };
 }
 
