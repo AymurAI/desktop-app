@@ -140,7 +140,6 @@ interface TurnBlockProps {
   isActive: boolean;
   isEditMode: boolean;
   isSelected: boolean;
-  index: number;
   searchQuery: string;
   onSeekTo: (ms: number) => void;
   onSelect: (turnId: string) => void;
@@ -155,7 +154,6 @@ export default function TurnBlock({
   isActive,
   isEditMode,
   isSelected,
-  // index is kept in the interface (callers pass it) but unused post-toolbar removal
   searchQuery,
   onSeekTo,
   onSelect,

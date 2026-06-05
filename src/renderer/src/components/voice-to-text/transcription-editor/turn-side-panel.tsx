@@ -15,7 +15,7 @@ import {
   updateTurnStartMs,
 } from "@/reducers/transcription/actions";
 import { SUGGESTED_SPEAKERS } from "@/services/aymurai/fixtures/suggestedSpeakers";
-import { css } from "@/styled/css";
+import { css, cva } from "@/styled/css";
 import { HStack, Stack } from "@/styled/jsx";
 import type {
   Speaker,
@@ -94,38 +94,37 @@ const chipsWrap = css({
   gap: "2",
 });
 
-const chipBase = css({
-  display: "flex",
-  alignItems: "center",
-  gap: "2",
-  // NOTE: bracketed border-radius — pill shape, no token at 999px
-  borderRadius: "[999px]",
-  // NOTE: bracketed padding — no 6px/13px/6px/6px token combo
-  padding: "[6px 13px 6px 6px]",
-  border: "[1px solid #BCBAB8]",
-  bg: "bg.secondary",
-  cursor: "pointer",
-  fontSize: "[14px]",
-  fontWeight: "[500]",
-  color: "text.default",
-  "&:hover": { bg: "bg.primary-highlight" },
-  transition: "[background 0.12s]",
-});
-
-const chipActive = css({
-  display: "flex",
-  alignItems: "center",
-  gap: "2",
-  borderRadius: "[999px]",
-  padding: "[6px 13px 6px 6px]",
-  border: "[1.5px solid]",
-  borderColor: "brand.primary",
-  bg: "bg.primary-alternative",
-  cursor: "pointer",
-  fontSize: "[14px]",
-  fontWeight: "[600]",
-  color: "text.default",
-  transition: "[background 0.12s]",
+const chip = cva({
+  base: {
+    display: "flex",
+    alignItems: "center",
+    gap: "2",
+    // NOTE: bracketed border-radius — pill shape, no token at 999px
+    borderRadius: "[999px]",
+    // NOTE: bracketed padding — no 6px/13px/6px/6px token combo
+    padding: "[6px 13px 6px 6px]",
+    cursor: "pointer",
+    fontSize: "[14px]",
+    color: "text.default",
+    transition: "[background 0.12s]",
+  },
+  variants: {
+    active: {
+      true: {
+        border: "[1.5px solid]",
+        borderColor: "brand.primary",
+        bg: "bg.primary-alternative",
+        fontWeight: "[600]",
+      },
+      false: {
+        border: "[1px solid #BCBAB8]",
+        bg: "bg.secondary",
+        fontWeight: "[500]",
+        "&:hover": { bg: "bg.primary-highlight" },
+      },
+    },
+  },
+  defaultVariants: { active: false },
 });
 
 const newPersonChip = css({
@@ -210,43 +209,42 @@ const timeInvalidHint = css({
 });
 
 // Action buttons
-const actionBtn = css({
-  display: "flex",
-  alignItems: "center",
-  gap: "2",
-  width: "full",
-  textAlign: "left",
-  bg: "bg.secondary",
-  border: "[1px solid #BCBAB8]",
-  // NOTE: bracketed border-radius — no 11px token
-  borderRadius: "[11px]",
-  // NOTE: bracketed padding — no 11px/13px token combo
-  padding: "[11px 13px]",
-  fontSize: "[14px]",
-  fontWeight: "[500]",
-  color: "text.default",
-  cursor: "pointer",
-  "&:hover": { bg: "bg.primary" },
-  "&:disabled": { opacity: "[.4]", cursor: "default", pointerEvents: "none" },
-  transition: "[background 0.12s]",
-});
-
-const actionBtnDanger = css({
-  display: "flex",
-  alignItems: "center",
-  gap: "2",
-  width: "full",
-  textAlign: "left",
-  bg: "bg.secondary",
-  border: "[1px solid #BCBAB8]",
-  borderRadius: "[11px]",
-  padding: "[11px 13px]",
-  fontSize: "[14px]",
-  fontWeight: "[500]",
-  color: "system.error",
-  cursor: "pointer",
-  "&:hover": { bg: "system.error-secondary" },
-  transition: "[background 0.12s]",
+const actionButton = cva({
+  base: {
+    display: "flex",
+    alignItems: "center",
+    gap: "2",
+    width: "full",
+    textAlign: "left",
+    bg: "bg.secondary",
+    border: "[1px solid #BCBAB8]",
+    // NOTE: bracketed border-radius — no 11px token
+    borderRadius: "[11px]",
+    // NOTE: bracketed padding — no 11px/13px token combo
+    padding: "[11px 13px]",
+    fontSize: "[14px]",
+    fontWeight: "[500]",
+    cursor: "pointer",
+    transition: "[background 0.12s]",
+  },
+  variants: {
+    danger: {
+      true: {
+        color: "system.error",
+        "&:hover": { bg: "system.error-secondary" },
+      },
+      false: {
+        color: "text.default",
+        "&:hover": { bg: "bg.primary" },
+        "&:disabled": {
+          opacity: "[.4]",
+          cursor: "default",
+          pointerEvents: "none",
+        },
+      },
+    },
+  },
+  defaultVariants: { danger: false },
 });
 
 // ---------------------------------------------------------------------------
@@ -399,7 +397,7 @@ export default function TurnSidePanel({
               <button
                 key={spk.id}
                 type="button"
-                className={isActive ? chipActive : chipBase}
+                className={chip({ active: isActive })}
                 onClick={() =>
                   dispatch(
                     reassignTurnSpeaker(
@@ -421,7 +419,7 @@ export default function TurnSidePanel({
             <button
               key={sg.id}
               type="button"
-              className={chipBase}
+              className={chip({ active: false })}
               onClick={() => {
                 const newSpeaker: Speaker = {
                   id: crypto.randomUUID(),
@@ -520,7 +518,7 @@ export default function TurnSidePanel({
           {/* Merge with previous */}
           <button
             type="button"
-            className={actionBtn}
+            className={actionButton({ danger: false })}
             disabled={!samePrev}
             aria-label={t("sidePanel.mergePrev")}
             onClick={() =>
@@ -534,7 +532,7 @@ export default function TurnSidePanel({
           {/* Merge with next (merge the next turn into its predecessor = this turn) */}
           <button
             type="button"
-            className={actionBtn}
+            className={actionButton({ danger: false })}
             disabled={!sameNext}
             aria-label={t("sidePanel.mergeNext")}
             onClick={() => {
@@ -557,7 +555,7 @@ export default function TurnSidePanel({
           {/* Add turn below */}
           <button
             type="button"
-            className={actionBtn}
+            className={actionButton({ danger: false })}
             aria-label={t("sidePanel.addBelow")}
             onClick={() =>
               dispatch(
@@ -578,7 +576,7 @@ export default function TurnSidePanel({
           {/* Delete turn */}
           <button
             type="button"
-            className={actionBtnDanger}
+            className={actionButton({ danger: true })}
             aria-label={t("sidePanel.delete")}
             onClick={() =>
               dispatch(removeTurn(transcription.id, activeTurn.id))

@@ -373,6 +373,12 @@ export default function TranscriptionEditor({
     setSelectedTurnId(turnId);
   };
 
+  // Clear the selected turn when leaving edit mode so re-entering doesn't
+  // reopen the side panel on a stale turn.
+  useEffect(() => {
+    if (!isEditMode) setSelectedTurnId(null);
+  }, [isEditMode]);
+
   const switchId = "transcription-edit-mode";
 
   return (
@@ -450,7 +456,7 @@ export default function TranscriptionEditor({
 
       <div className={content}>
         <div ref={scrollRef} className={body}>
-          {transcription.turns.map((turn, index) => {
+          {transcription.turns.map((turn) => {
             const speaker = speakerMap[turn.speakerId];
             if (!speaker) return null;
 
@@ -463,7 +469,6 @@ export default function TranscriptionEditor({
                 isActive={turn.id === activeTurnId}
                 isEditMode={isEditMode}
                 isSelected={turn.id === selectedTurnId}
-                index={index}
                 searchQuery={searchQuery}
                 onSeekTo={handleSeekTo}
                 onSelect={handleTurnSelect}
