@@ -1,9 +1,10 @@
 import { useTutorialSeen } from "@/store/useLocal";
 import { css } from "@/styled/css";
 import { Divider, HStack, Stack, styled } from "@/styled/jsx";
-import type { FeatureFlowEnum } from "@/types/features";
+import { FeatureFlowEnum } from "@/types/features";
 import FeaturesMenu from "../features-menu";
 import HowItWorksModal from "../how-it-works-modal";
+import VoiceHowItWorksModal from "../voice-to-text/how-it-works";
 
 const header = css({
   position: "relative",
@@ -42,7 +43,11 @@ export default function Header({ title, center, feature, right }: HeaderProps) {
 
   const rightSlot = feature ? (
     <HStack>
-      {tutorialSeen && <HowItWorksModal feature={feature} />}
+      {feature === FeatureFlowEnum.VoiceToText ? (
+        <VoiceHowItWorksModal />
+      ) : (
+        tutorialSeen && <HowItWorksModal feature={feature} />
+      )}
       <FeaturesMenu />
     </HStack>
   ) : (
