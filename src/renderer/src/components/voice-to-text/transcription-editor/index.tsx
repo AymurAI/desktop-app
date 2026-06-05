@@ -24,6 +24,7 @@ import AudioPlayer, { type AudioPlayerHandle } from "../audio-player";
 import { useActiveTurn } from "../use-active-turn";
 import { SelectionToolbar, useSelectionAssign } from "./selection-toolbar";
 import TurnBlock from "./turn-block";
+import TurnSidePanel from "./turn-side-panel";
 
 const wrap = css({
   display: "flex",
@@ -139,6 +140,13 @@ const body = css({
   gap: "6",
   bg: "bg.primary",
   position: "relative",
+});
+
+const content = css({
+  flex: "[1]",
+  display: "flex",
+  flexDir: "row",
+  overflow: "hidden",
 });
 
 const titleRow = css({
@@ -440,39 +448,47 @@ export default function TranscriptionEditor({
         )}
       </div>
 
-      <div ref={scrollRef} className={body}>
-        {transcription.turns.map((turn, index) => {
-          const speaker = speakerMap[turn.speakerId];
-          if (!speaker) return null;
+      <div className={content}>
+        <div ref={scrollRef} className={body}>
+          {transcription.turns.map((turn, index) => {
+            const speaker = speakerMap[turn.speakerId];
+            if (!speaker) return null;
 
-          return (
-            <TurnBlock
-              key={turn.id}
-              turn={turn}
-              speaker={speaker}
+            return (
+              <TurnBlock
+                key={turn.id}
+                turn={turn}
+                speaker={speaker}
+                transcription={transcription}
+                isActive={turn.id === activeTurnId}
+                isEditMode={isEditMode}
+                isSelected={turn.id === selectedTurnId}
+                index={index}
+                searchQuery={searchQuery}
+                onSeekTo={handleSeekTo}
+                onSelect={handleTurnSelect}
+                onTextSelect={sa.onSelect}
+                turnRef={setTurnRef(turn.id)}
+              />
+            );
+          })}
+
+          {isEditMode && (
+            <SelectionToolbar
+              sel={sa.sel}
               transcription={transcription}
-              isActive={turn.id === activeTurnId}
-              isEditMode={isEditMode}
-              isSelected={turn.id === selectedTurnId}
-              index={index}
-              searchQuery={searchQuery}
-              onSeekTo={handleSeekTo}
-              onSelect={handleTurnSelect}
-              onTextSelect={sa.onSelect}
-              turnRef={setTurnRef(turn.id)}
+              onAssign={(speakerId) => {
+                sa.assign(speakerId);
+                setSelectedTurnId(null);
+              }}
+              onClose={sa.clear}
             />
-          );
-        })}
-
+          )}
+        </div>
         {isEditMode && (
-          <SelectionToolbar
-            sel={sa.sel}
+          <TurnSidePanel
             transcription={transcription}
-            onAssign={(speakerId) => {
-              sa.assign(speakerId);
-              setSelectedTurnId(null);
-            }}
-            onClose={sa.clear}
+            activeTurnId={selectedTurnId}
           />
         )}
       </div>

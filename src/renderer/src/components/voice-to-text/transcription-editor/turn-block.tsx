@@ -8,7 +8,6 @@ import type { Speaker, Transcription, Turn } from "@/types/transcription";
 import { formatTime } from "../format-time";
 import SpeakerAvatar from "../speaker-avatar";
 import { EditableTurnText } from "./editable-turn-text";
-import TurnFloatingToolbar from "./turn-floating-toolbar";
 
 const wrap = cva({
   base: {
@@ -156,7 +155,7 @@ export default function TurnBlock({
   isActive,
   isEditMode,
   isSelected,
-  index,
+  // index is kept in the interface (callers pass it) but unused post-toolbar removal
   searchQuery,
   onSeekTo,
   onSelect,
@@ -184,14 +183,6 @@ export default function TurnBlock({
         selected: isEditMode && isSelected,
       })}
     >
-      {isEditMode && isSelected && (
-        <TurnFloatingToolbar
-          transcription={transcription}
-          turn={turn}
-          index={index}
-        />
-      )}
-
       <div className={row}>
         <button
           type="button"
