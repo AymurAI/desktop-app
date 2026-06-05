@@ -129,6 +129,16 @@ const voiceToText = {
     title: "Roles sugeridos",
     empty: "Seleccioná un turno para asignar un rol sugerido.",
   },
+  speakerPicker: {
+    people: "Personas",
+    suggested: "Roles sugeridos",
+    newPerson: "Nueva persona",
+    newPersonPlaceholder: "Nombre de la persona",
+    create: "Crear",
+  },
+  selectionToolbar: {
+    assignTo: "Asignar a…",
+  },
 };
 
 export default voiceToText;

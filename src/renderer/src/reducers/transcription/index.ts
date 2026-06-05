@@ -39,7 +39,7 @@ export type TranscriptionAction =
  * Takes the first character of each word, max 2 characters, uppercased.
  * E.g. "Dra. Silva" → "DS", "Locutor 1" → "L1", "Jueza" → "JU"
  */
-function computeInitials(label: string): string {
+export function computeInitials(label: string): string {
   const words = label.trim().split(/\s+/);
 
   if (words.length === 1) {
