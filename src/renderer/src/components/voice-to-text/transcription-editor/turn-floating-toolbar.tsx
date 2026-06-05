@@ -192,7 +192,7 @@ const timeSaveBtn = css({
   fontSize: "[14px]",
   fontWeight: "[600]",
   cursor: "pointer",
-  "&:hover": { opacity: "[0.85]" },
+  "&:hover": { opacity: "0.85" },
   alignSelf: "flex-end",
 });
 
@@ -325,7 +325,11 @@ export default function TurnFloatingToolbar({
   const stopProp = (e: React.PointerEvent) => e.stopPropagation();
 
   return (
-    <div className={toolbarRoot} onPointerDown={stopProp}>
+    <div
+      className={toolbarRoot}
+      onPointerDown={stopProp}
+      onClick={(e) => e.stopPropagation()}
+    >
       {/* 1. Speaker control */}
       <div className={speakerBtnWrap}>
         <button

@@ -94,6 +94,17 @@ describe("splitTurn", () => {
     const next = reducer(base(), splitTurn("t1", "ta", 4, 5, "s2")); // a space
     expect(next[0].turns).toHaveLength(1);
   });
+
+  it("keeps the original turn id on pre (or on post when pre is empty)", () => {
+    // pre present -> original id stays on pre (first piece)
+    const a = reducer(base(), splitTurn("t1", "ta", 5, 10, "s2")); // "mundo"
+    expect(a[0].turns[0].id).toBe("ta");
+    // selection from char 0 -> no pre; original id moves to the post piece (last)
+    const b = reducer(base(), splitTurn("t1", "ta", 0, 4, "s2")); // "hola"
+    const ids = b[0].turns.map((x) => x.id);
+    expect(ids).toContain("ta");
+    expect(b[0].turns[b[0].turns.length - 1].id).toBe("ta");
+  });
 });
 
 describe("mergeTurnWithPrevious", () => {

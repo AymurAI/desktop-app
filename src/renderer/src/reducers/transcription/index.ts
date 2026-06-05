@@ -272,14 +272,19 @@ export default function reducer(
           };
         }
         const pieces: typeof tr.turns = [];
-        if (pre) pieces.push({ ...turn, text: pre });
+        if (pre) pieces.push({ ...turn, text: pre }); // keeps original id
         pieces.push({
           ...turn,
           id: crypto.randomUUID(),
           speakerId: newSpeakerId,
           text: mid,
         });
-        if (post) pieces.push({ ...turn, id: crypto.randomUUID(), text: post });
+        if (post)
+          pieces.push({
+            ...turn,
+            id: pre ? crypto.randomUUID() : turn.id,
+            text: post,
+          });
         return {
           ...tr,
           turns: [

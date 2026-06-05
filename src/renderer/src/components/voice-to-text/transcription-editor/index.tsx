@@ -362,7 +362,7 @@ export default function TranscriptionEditor({
   };
 
   const handleTurnSelect = (turnId: string) => {
-    setSelectedTurnId((prev) => (prev === turnId ? null : turnId));
+    setSelectedTurnId(turnId);
   };
 
   const switchId = "transcription-edit-mode";
