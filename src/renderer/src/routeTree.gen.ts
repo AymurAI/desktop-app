@@ -82,7 +82,7 @@ export interface FileRoutesByFullPath {
   '/app/$feature': typeof AppFeatureRouteRouteWithChildren
   '/home/features': typeof HomeFeaturesRoute
   '/home/host': typeof HomeHostRoute
-  '/home': typeof HomeIndexRoute
+  '/home/': typeof HomeIndexRoute
   '/app/$feature/finish': typeof AppFeatureFinishRoute
   '/app/$feature/onboarding': typeof AppFeatureOnboardingRoute
   '/app/$feature/preview': typeof AppFeaturePreviewRoute
@@ -123,7 +123,7 @@ export interface FileRouteTypes {
     | '/app/$feature'
     | '/home/features'
     | '/home/host'
-    | '/home'
+    | '/home/'
     | '/app/$feature/finish'
     | '/app/$feature/onboarding'
     | '/app/$feature/preview'
@@ -177,7 +177,7 @@ declare module '@tanstack/react-router' {
     '/home/': {
       id: '/home/'
       path: '/home'
-      fullPath: '/home'
+      fullPath: '/home/'
       preLoaderRoute: typeof HomeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
