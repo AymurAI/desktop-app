@@ -25,11 +25,10 @@ const anonymizer = {
       title: "Selecciona la resolución judicial",
       subtitle: "Sube el documento que quieres anonimizar.",
     },
-    step2: { 
+    step2: {
       alt: "Barra de búsqueda con cursor",
       title: "La inteligencia artificial analiza el documento",
-      subtitle:
-        "Reconoce automáticamente la información a anonimizar.",
+      subtitle: "Reconoce automáticamente la información a anonimizar.",
     },
     step3: {
       alt: "Visor de documentos con controles de revisión",

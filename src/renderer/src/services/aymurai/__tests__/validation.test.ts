@@ -1,7 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import getStoredValidation, {
-  normalizeValidationLabel,
-} from "../validation";
+import getStoredValidation, { normalizeValidationLabel } from "../validation";
 
 // ---------------------------------------------------------------------------
 // Shared helpers
@@ -185,9 +183,7 @@ describe("getStoredValidation — offset integrity guard", () => {
   });
 
   it("returns null when an active label has out-of-bounds end_char", async () => {
-    await setupApiResponse([
-      makeRawLabel({ end_char: PARA_TEXT.length + 5 }),
-    ]);
+    await setupApiResponse([makeRawLabel({ end_char: PARA_TEXT.length + 5 })]);
     const result = await getStoredValidation(paragraph, makeController());
     expect(result).toBeNull();
   });

@@ -1,9 +1,9 @@
 import type { AnonymizerLabels, PredictLabel } from "@/types/aymurai";
 import { describe, expect, it } from "vitest";
 import {
-    anonymizeQuerySignature,
-    filterActivePredictions,
-    isPredictionActive,
+  anonymizeQuerySignature,
+  filterActivePredictions,
+  isPredictionActive,
 } from "../predictions";
 
 // Minimal factory — only the fields the tested functions inspect
@@ -33,7 +33,9 @@ function makeLabel(
 }
 
 // A tag map where every label is enabled except FECHA
-function tagsWithout(...excluded: AnonymizerLabels[]): Record<AnonymizerLabels, boolean> {
+function tagsWithout(
+  ...excluded: AnonymizerLabels[]
+): Record<AnonymizerLabels, boolean> {
   // We only need to express the keys relevant to each test; cast is fine here
   return Object.fromEntries(
     excluded.map((tag) => [tag, false]),
@@ -46,23 +48,17 @@ function tagsWithout(...excluded: AnonymizerLabels[]): Record<AnonymizerLabels, 
 describe("isPredictionActive", () => {
   it("returns false when the prediction's label is excluded", () => {
     const label = makeLabel({ label: "FECHA" });
-    expect(
-      isPredictionActive(label, tagsWithout("FECHA"), []),
-    ).toBe(false);
+    expect(isPredictionActive(label, tagsWithout("FECHA"), [])).toBe(false);
   });
 
   it("returns true when the prediction's label is not excluded", () => {
     const label = makeLabel({ label: "PERSONA" });
-    expect(
-      isPredictionActive(label, tagsWithout("FECHA"), []),
-    ).toBe(true);
+    expect(isPredictionActive(label, tagsWithout("FECHA"), [])).toBe(true);
   });
 
   it("returns false when the prediction's text is in excludedWords", () => {
     const label = makeLabel({ text: "Juan" });
-    expect(
-      isPredictionActive(label, null, ["Juan"]),
-    ).toBe(false);
+    expect(isPredictionActive(label, null, ["Juan"])).toBe(false);
   });
 
   it("returns true when neither label nor text is excluded", () => {
@@ -75,7 +71,12 @@ describe("isPredictionActive", () => {
     // should be considered active once its tag is re-enabled.
     const label = makeLabel({
       label: "FECHA",
-      ...{ attrs: { ...makeLabel({ label: "FECHA" }).attrs, aymurai_anonymize: false } },
+      ...{
+        attrs: {
+          ...makeLabel({ label: "FECHA" }).attrs,
+          aymurai_anonymize: false,
+        },
+      },
     });
     // With FECHA now enabled (not in tagsWithout), the entity is active
     expect(isPredictionActive(label, null, [])).toBe(true);
@@ -163,7 +164,11 @@ describe("anonymizeQuerySignature", () => {
   });
 
   it("the signature changes when a tag is excluded vs enabled", () => {
-    const sigWithFechaEnabled = anonymizeQuerySignature([persona, fecha], null, []);
+    const sigWithFechaEnabled = anonymizeQuerySignature(
+      [persona, fecha],
+      null,
+      [],
+    );
     const sigWithFechaExcluded = anonymizeQuerySignature(
       [persona, fecha],
       tagsWithout("FECHA"),

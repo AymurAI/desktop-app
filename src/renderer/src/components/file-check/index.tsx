@@ -1,4 +1,4 @@
-import { Text } from "@/components";
+import Text from "../text";
 import ErrorText from "./ErrorText";
 import { Card, Wrapper } from "./FileCheck.styles";
 import Icon from "./Icon";

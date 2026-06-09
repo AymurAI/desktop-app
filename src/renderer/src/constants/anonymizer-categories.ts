@@ -3,13 +3,7 @@ import { type AnonymizerLabels, anonymizerLabels } from "@/types/aymurai";
 export const FALLBACK_ANONYMIZER_CATEGORY = "Otros datos sensibles";
 
 export const ANONYMIZER_CATEGORY_LABEL_IDS = {
-  Roles: [
-    "PER",
-    "DENUNCIANTE",
-    "ACUSADO/A",
-    "TESTIGO/A",
-    "NIÑO/A_ADOSLECENTE",
-  ],
+  Roles: ["PER", "DENUNCIANTE", "ACUSADO/A", "TESTIGO/A", "NIÑO/A_ADOSLECENTE"],
   Lugares: ["LOC", "DIRECCION"],
   "Datos personales": ["DNI", "EDAD", "NACIONALIDAD", "ESTUDIOS"],
   "Contacto e identificadores digitales": [

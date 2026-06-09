@@ -11,11 +11,11 @@ import {
   useState,
 } from "react";
 
-import { Button } from "@/components";
 import type { NativeComponent } from "@/types/component";
 
 import { css } from "@/styled/css";
 import { styled } from "@/styled/jsx";
+import Button from "../ui/button";
 import { Form } from "./ValidationForm.styles";
 
 interface Props extends NativeComponent<"form"> {
@@ -42,7 +42,9 @@ export default function ValidationForm({
   // Add the onChange handler to every children
   const childrenWithHandler = Children.map(children, (child) => {
     if (isValidElement(child)) {
-      return cloneElement(child as ReactElement<{ onChange: () => void }>, { onChange });
+      return cloneElement(child as ReactElement<{ onChange: () => void }>, {
+        onChange,
+      });
     }
     return child;
   });

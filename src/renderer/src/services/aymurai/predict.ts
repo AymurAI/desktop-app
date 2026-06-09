@@ -47,7 +47,10 @@ export default async function predict(
         mentionId: crypto.randomUUID(),
         start_char: useAlt ? altStart : l.start_char,
         end_char: useAlt ? altEnd : l.end_char,
-        text: useAlt && l.attrs.aymurai_alt_text ? l.attrs.aymurai_alt_text : l.text,
+        text:
+          useAlt && l.attrs.aymurai_alt_text
+            ? l.attrs.aymurai_alt_text
+            : l.text,
         paragraphId: paragraph.id,
       } as PredictLabel;
     });

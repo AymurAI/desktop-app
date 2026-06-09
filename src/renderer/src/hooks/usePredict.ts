@@ -98,9 +98,12 @@ export function usePredict(
                 dispatch(addPredictions(file.data.name, stored));
                 return stored;
               }
-              console.debug("[predict] No stored validation — running model predict", {
-                paragraphId: paragraph.id.slice(0, 60),
-              });
+              console.debug(
+                "[predict] No stored validation — running model predict",
+                {
+                  paragraphId: paragraph.id.slice(0, 60),
+                },
+              );
             }
             const predictions = await predict(paragraph, controller, workflow);
             dispatch(addPredictions(file.data.name, predictions));

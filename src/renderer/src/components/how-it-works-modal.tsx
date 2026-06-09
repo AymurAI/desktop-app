@@ -36,7 +36,7 @@ const closeButton = css({
 const content = css({
   overflowY: "auto",
   maxH: "[90vh]",
-  maxW: "5xl!",  
+  maxW: "5xl!",
 });
 
 interface HowItWorksModalProps {

@@ -1,6 +1,5 @@
 import { FileX } from "phosphor-react";
 
-import { Checkbox, Spinner, Text } from "@/components";
 import { useFileDispatch } from "@/hooks";
 import type { PredictStatus } from "@/hooks/usePredict";
 import { toggleSelected } from "@/reducers/file/actions";
@@ -9,6 +8,9 @@ import type { DocFile } from "@/types/file";
 import { FeatureFlowEnum } from "@/types/features";
 import { useParams } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+import { Checkbox } from "../checkbox";
+import Spinner from "../spinner";
+import Text from "../text";
 import * as S from "./FilePreview.styles";
 
 interface Props {

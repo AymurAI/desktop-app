@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { useShallow } from "zustand/react/shallow";
 import { devtools, persist } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 import type { AnonymizerLabels } from "../types/aymurai";
 import { FeatureFlowEnum } from "../types/features";
 
@@ -79,18 +79,26 @@ export const useSetTutorialSeen = () =>
   useLocalStore((state) => state.setTutorialSeen);
 
 export const useExcludedTagsConfig = () =>
-  useLocalStore(useShallow((s) => ({ tags: s.excludedTags, words: s.excludedWords })));
+  useLocalStore(
+    useShallow((s) => ({ tags: s.excludedTags, words: s.excludedWords })),
+  );
 export const useExcludedTagsConfigActions = () =>
-  useLocalStore(useShallow((s) => ({
-    setTags: s.setExcludedTags,
-    setWords: s.setExcludedWords,
-  })));
+  useLocalStore(
+    useShallow((s) => ({
+      setTags: s.setExcludedTags,
+      setWords: s.setExcludedWords,
+    })),
+  );
 
 export const useGroupOrder = () =>
-  useLocalStore(useShallow((s) => ({
-    groupOrder: s.groupOrder,
-  })));
+  useLocalStore(
+    useShallow((s) => ({
+      groupOrder: s.groupOrder,
+    })),
+  );
 export const useGroupOrderActions = () =>
-  useLocalStore(useShallow((s) => ({
-    setGroupOrder: s.setGroupOrder,
-  })));
+  useLocalStore(
+    useShallow((s) => ({
+      setGroupOrder: s.setGroupOrder,
+    })),
+  );

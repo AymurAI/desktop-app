@@ -26,8 +26,8 @@ export default function ReplaceDialog({
         <DialogTitle>Reemplazar todas las ocurrencias</DialogTitle>
         <p>
           Se reemplazará la etiqueta en todas las ocurrencias que coincidan
-          exactamente con el texto <b>{text}</b> por <b>{label}</b>.
-          ¿Deseas continuar?
+          exactamente con el texto <b>{text}</b> por <b>{label}</b>. ¿Deseas
+          continuar?
         </p>
         <DialogFooter>
           <Button onClick={onConfirm}>Aplicar</Button>

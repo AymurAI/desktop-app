@@ -1,5 +1,5 @@
-import * as RadixSwitch from "@radix-ui/react-switch";
 import { css } from "@/styled/css";
+import * as RadixSwitch from "@radix-ui/react-switch";
 
 const rootStyle = css({
   width: "[44px]",
