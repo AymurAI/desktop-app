@@ -10,6 +10,7 @@
     "ignore": [
       "node_modules",
       "build",
+      "dist",
       ".husky",
       "out",
       "routeTree.gen.ts",
