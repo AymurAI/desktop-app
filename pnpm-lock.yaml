@@ -112,8 +112,8 @@ importers:
         specifier: ^42.3.3
         version: 42.3.3
       electron-builder:
-        specifier: ^26.15.2
-        version: 26.15.2(electron-builder-squirrel-windows@26.15.2)
+        specifier: ^26.0.12
+        version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
       electron-debug:
         specifier: ^3.2.0
         version: 3.2.0
