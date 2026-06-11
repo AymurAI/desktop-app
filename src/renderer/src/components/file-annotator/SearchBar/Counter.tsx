@@ -6,7 +6,7 @@ import {
   XCircle,
 } from "phosphor-react";
 
-import { Button } from "@/components";
+import Button from "@/components/ui/button";
 
 const counterClass = css({
   display: "flex",

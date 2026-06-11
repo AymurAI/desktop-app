@@ -38,7 +38,13 @@ export const predictParagraph = (
   fileName: string,
 ) =>
   queryOptions({
-    queryKey: ["predict", api.defaults.baseURL, workflow, fileName, paragraph.id],
+    queryKey: [
+      "predict",
+      api.defaults.baseURL,
+      workflow,
+      fileName,
+      paragraph.id,
+    ],
     queryFn: ({ signal }) => {
       const controller = new AbortController();
       signal?.addEventListener("abort", () => controller.abort());
@@ -200,8 +206,12 @@ export const disambiguate = (file: DocFile) =>
         return item.labels.map((l) => {
           const altStart = l.attrs.aymurai_alt_start_char;
           const altEnd = l.attrs.aymurai_alt_end_char;
-          const useAlt = altStart !== null && altEnd !== null && altStart < altEnd;
-          const resolvedText = useAlt && l.attrs.aymurai_alt_text ? l.attrs.aymurai_alt_text : l.text;
+          const useAlt =
+            altStart !== null && altEnd !== null && altStart < altEnd;
+          const resolvedText =
+            useAlt && l.attrs.aymurai_alt_text
+              ? l.attrs.aymurai_alt_text
+              : l.text;
           const resolvedStart = useAlt ? altStart : l.start_char;
           const resolvedEnd = useAlt ? altEnd : l.end_char;
 

@@ -7,7 +7,14 @@ const link = css({
 });
 
 const BackButton = createLink(
-  ({ className, children: _, ref, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { ref?: React.Ref<HTMLAnchorElement> }) => (
+  ({
+    className,
+    children: _,
+    ref,
+    ...props
+  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+    ref?: React.Ref<HTMLAnchorElement>;
+  }) => (
     <a ref={ref} className={cx(className, link)} {...props}>
       <ArrowLeft size={32} />
     </a>

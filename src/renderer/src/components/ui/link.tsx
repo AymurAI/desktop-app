@@ -1,5 +1,8 @@
 import { type RecipeVariantProps, css, cx } from "@/styled/css";
-import { Link as TanstackLink, type LinkProps as TanstackLinkProps } from "@tanstack/react-router";
+import {
+  Link as TanstackLink,
+  type LinkProps as TanstackLinkProps,
+} from "@tanstack/react-router";
 import { CircleNotch } from "phosphor-react";
 import { button } from "./button";
 

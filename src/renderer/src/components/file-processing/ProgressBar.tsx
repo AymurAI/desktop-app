@@ -1,6 +1,7 @@
-import { Label, Stack } from "@/components";
 import type { PredictStatus } from "@/hooks/usePredict";
 import { CheckCircle } from "phosphor-react";
+import Label from "../label";
+import Stack from "../stack";
 import { Bar, BarContainer } from "./FileProcessing.styles";
 import { ProgressLabel } from "./ProgressLabel";
 

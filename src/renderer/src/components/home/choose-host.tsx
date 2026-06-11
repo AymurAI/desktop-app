@@ -1,10 +1,10 @@
-import { Button } from "@/components";
 import { useRunLocalServer } from "@/services/aymurai";
 import { css } from "@/styled/css";
 import { Stack, styled } from "@/styled/jsx";
 import { useNavigate } from "@tanstack/react-router";
 import { HardDrives, Monitor } from "phosphor-react";
 import { useTranslation } from "react-i18next";
+import Button from "../ui/button";
 
 interface ChooseHostProps {
   onRemoteClick: () => void;

@@ -172,8 +172,11 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
     const timer = window.setTimeout(() => {
       const container = fileRef.current;
       const element = Array.from(
-        container?.querySelectorAll<HTMLElement>("[data-search-match-id]") ?? [],
-      ).find((el) => el.getAttribute("data-search-match-id") === activeSearchMatchId);
+        container?.querySelectorAll<HTMLElement>("[data-search-match-id]") ??
+          [],
+      ).find(
+        (el) => el.getAttribute("data-search-match-id") === activeSearchMatchId,
+      );
       if (!element || !container) return;
 
       const containerRect = container.getBoundingClientRect();

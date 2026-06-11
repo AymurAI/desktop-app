@@ -69,11 +69,15 @@ export default async function getStoredValidation(
     // - []           → paragraph validated with no entities
     // - [...]        → restore stored annotations
     const labels = validationResponseSchema.parse(response.data);
-    const normalized = labels.map((l) => normalizeValidationLabel(l, paragraph.id));
+    const normalized = labels.map((l) =>
+      normalizeValidationLabel(l, paragraph.id),
+    );
 
     // Defensive: validate that stored offsets are still consistent with the
     // current paragraph text.
-    const active = normalized.filter((l) => l.attrs.aymurai_anonymize !== false);
+    const active = normalized.filter(
+      (l) => l.attrs.aymurai_anonymize !== false,
+    );
     const isValid = active.every(
       (l) =>
         Number.isFinite(l.start_char) &&

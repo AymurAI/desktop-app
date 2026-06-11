@@ -1,7 +1,7 @@
-import { Spinner } from "@/components";
 import { CheckCircle, XCircle } from "phosphor-react";
 
 import { colors } from "@/styles/tokens";
+import Spinner from "../spinner";
 
 interface Props {
   hasError: boolean;

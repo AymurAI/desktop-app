@@ -153,8 +153,7 @@ export function useEntityGroups(files: DocFile[]): EntityGroup[] {
             normalizedToVerbatims.set(norm, [m.text]);
           } else if (
             !existing.some(
-              (v) =>
-                v.normalize("NFC") === m.text.normalize("NFC"),
+              (v) => v.normalize("NFC") === m.text.normalize("NFC"),
             )
           ) {
             existing.push(m.text);
