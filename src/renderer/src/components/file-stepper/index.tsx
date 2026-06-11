@@ -1,6 +1,7 @@
-import { TabName as FileName, Tab as FileStep, Stack } from "@/components";
 import { useFiles } from "@/hooks";
 import type { DocFile } from "@/types/file";
+import Stack from "../stack";
+import { TabName as FileName, Tab as FileStep } from "../tabs";
 import { CaretButton, Carousel } from "./FileStepper.styles";
 import Icons from "./Icons";
 import { canMoveLeft as checkLeft, canMoveRight as checkRight } from "./utils";
@@ -30,15 +31,17 @@ export default function FileStepper({
   };
 
   return (
-    <Stack css={{ overflow: "scroll", p: "$s" }}>
+    <Stack css={{ overflow: "scroll" }}>
       {/* <- */}
-      <CaretButton
-        variant="tertiary"
-        disabled={isLeftDisabled || !canMoveLeft}
-        onClick={previousFile}
-      >
-        <Icons.ArrowLeft />
-      </CaretButton>
+      {canMoveLeft && (
+        <CaretButton
+          variant="tertiary"
+          disabled={isLeftDisabled}
+          onClick={previousFile}
+        >
+          <Icons.ArrowLeft />
+        </CaretButton>
+      )}
 
       {/* List of files */}
       <Carousel>
@@ -51,13 +54,15 @@ export default function FileStepper({
       </Carousel>
 
       {/* -> */}
-      <CaretButton
-        variant="tertiary"
-        disabled={isRightDisabled || !canMoveRight}
-        onClick={nextFile}
-      >
-        <Icons.ArrowRight />
-      </CaretButton>
+      {canMoveRight && (
+        <CaretButton
+          variant="tertiary"
+          disabled={isRightDisabled}
+          onClick={nextFile}
+        >
+          <Icons.ArrowRight />
+        </CaretButton>
+      )}
     </Stack>
   );
 }

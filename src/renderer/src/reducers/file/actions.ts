@@ -28,12 +28,17 @@ export enum ActionTypes {
   REMOVE_PREDICTIONS_BY_TEXT = "REMOVE_PREDICTIONS_BY_TEXT",
   UPDATE_PREDICTION_LABEL = "UPDATE_PREDICTION_LABEL",
   UPDATE_PREDICTIONS_BY_TEXT = "UPDATE_PREDICTIONS_BY_TEXT",
+  REMOVE_PREDICTIONS_BY_CANONICAL_ID = "REMOVE_PREDICTIONS_BY_CANONICAL_ID",
+  REMOVE_PREDICTION_VALUE_BY_CANONICAL_ID = "REMOVE_PREDICTION_VALUE_BY_CANONICAL_ID",
+  UPDATE_PREDICTIONS_BY_CANONICAL_ID = "UPDATE_PREDICTIONS_BY_CANONICAL_ID",
+  MOVE_MENTION_TO_GROUP = "MOVE_MENTION_TO_GROUP",
+  MERGE_GROUPS = "MERGE_GROUPS",
 }
 
 /**
  * Generic action
  */
-type Action<Type, Payload = {}> = {
+type Action<Type, Payload = Record<string, never>> = {
   type: Type;
   payload: Payload;
 };
@@ -324,6 +329,7 @@ export type UpdatePredictionsByText = Action<
     text: string;
     fileName: string;
     newLabel: AllLabels | AllLabelsWithSufix;
+    canonicalId?: string;
   }
 >;
 
@@ -337,9 +343,112 @@ export function updatePredictionsByText(
   fileName: string,
   text: string,
   newLabel: AllLabels | AllLabelsWithSufix,
+  canonicalId?: string,
 ): UpdatePredictionsByText {
   return {
     type: ActionTypes.UPDATE_PREDICTIONS_BY_TEXT,
-    payload: { fileName, text, newLabel },
+    payload: { fileName, text, newLabel, canonicalId },
+  };
+}
+
+export type RemovePredictionsByCanonicalId = Action<
+  ActionTypes.REMOVE_PREDICTIONS_BY_CANONICAL_ID,
+  { canonicalId: string }
+>;
+/**
+ * Removes all predictions across all files that share the given canonical_entity_id
+ * @param canonicalId The canonical entity id to match
+ */
+export function removePredictionsByCanonicalId(
+  canonicalId: string,
+): RemovePredictionsByCanonicalId {
+  return {
+    type: ActionTypes.REMOVE_PREDICTIONS_BY_CANONICAL_ID,
+    payload: { canonicalId },
+  };
+}
+
+export type RemovePredictionValueByCanonicalId = Action<
+  ActionTypes.REMOVE_PREDICTION_VALUE_BY_CANONICAL_ID,
+  { canonicalId: string; value: string }
+>;
+/**
+ * Removes predictions across all files matching the given canonical_entity_id and text value
+ * @param canonicalId The canonical entity id to match
+ * @param value The prediction text to remove
+ */
+export function removePredictionValueByCanonicalId(
+  canonicalId: string,
+  value: string,
+): RemovePredictionValueByCanonicalId {
+  return {
+    type: ActionTypes.REMOVE_PREDICTION_VALUE_BY_CANONICAL_ID,
+    payload: { canonicalId, value },
+  };
+}
+
+export type UpdatePredictionsByCanonicalId = Action<
+  ActionTypes.UPDATE_PREDICTIONS_BY_CANONICAL_ID,
+  { canonicalId: string; newLabel: AllLabels | AllLabelsWithSufix }
+>;
+/**
+ * Updates the label of all predictions across all files sharing the given canonical_entity_id
+ * @param canonicalId The canonical entity id to match
+ * @param newLabel The new label to set
+ */
+export function updatePredictionsByCanonicalId(
+  canonicalId: string,
+  newLabel: AllLabels | AllLabelsWithSufix,
+): UpdatePredictionsByCanonicalId {
+  return {
+    type: ActionTypes.UPDATE_PREDICTIONS_BY_CANONICAL_ID,
+    payload: { canonicalId, newLabel },
+  };
+}
+
+export type MoveMentionToGroupAction = Action<
+  ActionTypes.MOVE_MENTION_TO_GROUP,
+  {
+    mentionId: string;
+    targetCanonicalId: string;
+    targetLabel: AllLabels | AllLabelsWithSufix;
+  }
+>;
+/**
+ * Moves a single mention (identified by its stable mentionId) to a different
+ * canonical entity group, updating both `canonical_entity_id` and `aymurai_label`.
+ */
+export function moveMentionToGroup(
+  mentionId: string,
+  targetCanonicalId: string,
+  targetLabel: AllLabels | AllLabelsWithSufix,
+): MoveMentionToGroupAction {
+  return {
+    type: ActionTypes.MOVE_MENTION_TO_GROUP,
+    payload: { mentionId, targetCanonicalId, targetLabel },
+  };
+}
+
+export type MergeGroupsAction = Action<
+  ActionTypes.MERGE_GROUPS,
+  {
+    sourceCanonicalId: string;
+    targetCanonicalId: string;
+    targetLabel: AllLabels | AllLabelsWithSufix;
+  }
+>;
+/**
+ * Moves all mentions from `sourceCanonicalId` into `targetCanonicalId`,
+ * updating their label to `targetLabel`. The source group disappears naturally
+ * once it has no more mentions.
+ */
+export function mergeGroups(
+  sourceCanonicalId: string,
+  targetCanonicalId: string,
+  targetLabel: AllLabels | AllLabelsWithSufix,
+): MergeGroupsAction {
+  return {
+    type: ActionTypes.MERGE_GROUPS,
+    payload: { sourceCanonicalId, targetCanonicalId, targetLabel },
   };
 }

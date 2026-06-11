@@ -7,7 +7,15 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["node_modules", "build", ".husky", "out"]
+    "ignore": [
+      "node_modules",
+      "build",
+      "dist",
+      ".husky",
+      "out",
+      "routeTree.gen.ts",
+      "src/renderer/src/styled/**"
+    ]
   },
   "formatter": {
     "enabled": true,

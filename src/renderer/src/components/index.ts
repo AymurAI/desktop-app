@@ -1,66 +1,23 @@
-import Arrow from "./arrow";
-import Button from "./button";
-import Card from "./card";
-import { Checkbox, CheckboxGroup } from "./checkbox";
-import DecisionTabs from "./decision-tabs";
-import FileAnnotator from "./file-annotator";
-import FileCheck from "./file-check";
-import FilePreview from "./file-preview";
-import FileProcessing from "./file-processing";
-import FileStepper from "./file-stepper";
-import Grid from "./grid";
-import HiddenInput from "./hidden-input";
-import Input from "./input";
-import Label from "./label";
-import ProfileInfo from "./profile-info";
-import { Radio, RadioGroup } from "./radio";
-import SectionTitle from "./section-title";
-import Select from "./select";
-import Spinner from "./spinner";
-import Stack from "./stack";
-import Stepper from "./stepper";
-import Subtitle from "./subtitle";
-import Suggestion from "./suggestion";
-import { Tab, TabName } from "./tabs";
-import Text from "./text";
-import ThemeProvider from "./theme-provider";
-import Title from "./title";
-import Toast from "./toast";
-import Tooltip from "./tooltip";
-import ValidationForm from "./validation-form";
-
-export {
-  Arrow,
-  Button,
-  Card,
-  Checkbox,
-  CheckboxGroup,
-  DecisionTabs,
-  FileCheck,
-  FilePreview,
-  FileProcessing,
-  FileStepper,
-  Grid,
-  HiddenInput,
-  Input,
-  Label,
-  ProfileInfo,
-  Radio,
-  RadioGroup,
-  SectionTitle,
-  Select,
-  Stack,
-  Stepper,
-  Subtitle,
-  Suggestion,
-  Tab,
-  TabName,
-  Text,
-  ThemeProvider,
-  Title,
-  Tooltip,
-  ValidationForm,
-  Toast,
-  FileAnnotator,
-  Spinner,
-};
+export { default as Arrow } from "./arrow";
+export { Checkbox, CheckboxGroup } from "./checkbox";
+export { default as DecisionTabs } from "./decision-tabs";
+export { default as FileAnnotator } from "./file-annotator";
+export { default as FileCheck } from "./file-check";
+export { default as FilePreview } from "./file-preview";
+export { default as FileProcessing } from "./file-processing";
+export { default as FileStepper } from "./file-stepper";
+export { default as Grid } from "./grid";
+export { default as Label } from "./label";
+export { OnboardingGrid } from "./onboarding-grid";
+export { Radio, RadioGroup } from "./radio";
+export { default as Spinner } from "./spinner";
+export { default as Stack } from "./stack";
+export { default as Subtitle } from "./subtitle";
+export { Tab, TabName } from "./tabs";
+export { default as Text } from "./text";
+export { default as ThemeProvider } from "./theme-provider";
+export { default as Title } from "./title";
+export { default as Button } from "./ui/button";
+export { default as Input } from "./uncontrolled-input";
+export { ValidateDataset } from "./validate-dataset";
+export { default as ValidationForm } from "./validation-form";

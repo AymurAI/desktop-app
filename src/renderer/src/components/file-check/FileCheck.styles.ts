@@ -11,7 +11,7 @@ export const Wrapper = styled("div", {
   position: "relative",
 
   // Settings to enable ellipsis on file name
-  maxWidth: 175,
+  maxWidth: 150,
   "& p": {
     overflow: "hidden",
     textOverflow: "ellipsis",
