@@ -5,13 +5,12 @@ import FeaturesMenu from "@/components/features-menu";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
-import Button from "@/components/ui/button";
-import Card from "@/components/ui/card";
 import RequireFile from "@/features/RequireFile";
 import { useTranscriptions } from "@/hooks/useTranscriptions";
 import { SectionTitle } from "@/layout/section-title";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import { Button, Card } from "@aymurai/ui";
 import { formatTime } from "./format-time";
 import VoiceStepper from "./stepper";
 

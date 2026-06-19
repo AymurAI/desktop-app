@@ -6,8 +6,6 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
-import Button from "@/components/ui/button";
-import Card from "@/components/ui/card";
 import {
   formatDuration,
   useAudioSnippet,
@@ -19,6 +17,7 @@ import { removeFile } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import { Button, Card } from "@aymurai/ui";
 import VoiceStepper from "./stepper";
 
 function formatFileSize(bytes: number): string {

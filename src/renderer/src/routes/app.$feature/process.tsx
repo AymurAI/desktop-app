@@ -4,8 +4,6 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
-import Callout from "@/components/ui/callout";
-import Card from "@/components/ui/card";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { useDisambiguate } from "@/hooks/useDisambiguate";
@@ -19,6 +17,7 @@ import { HStack, Stack, styled } from "@/styled/jsx";
 import type { Workflows } from "@/types/aymurai";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import type { DocFile } from "@/types/file";
+import { Callout, Card } from "@aymurai/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   createFileRoute,

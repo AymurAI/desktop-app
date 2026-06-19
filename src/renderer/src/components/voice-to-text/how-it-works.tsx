@@ -1,16 +1,16 @@
 import { Question, X } from "phosphor-react";
 import { useTranslation } from "react-i18next";
 
-import Button from "@/components/ui/button";
+import { SectionTitle } from "@/layout/section-title";
+import { css } from "@/styled/css";
+import { Grid, HStack, Stack, styled } from "@/styled/jsx";
 import {
+  Button,
   Dialog,
   DialogClose,
   DialogContent,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { SectionTitle } from "@/layout/section-title";
-import { css } from "@/styled/css";
-import { Grid, HStack, Stack, styled } from "@/styled/jsx";
+} from "@aymurai/ui";
 
 const card = css({
   display: "flex",

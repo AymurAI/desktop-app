@@ -6,7 +6,7 @@ import {
   USE_MOCK_STT,
 } from "@/constants/config";
 import type { Transcription } from "@/types/transcription";
-import { buildFixture } from "./fixtures/transcription";
+import { MOCK_PREVIEW_CHUNKS, buildFixture } from "./fixtures/transcription";
 import { transcribeStream } from "./transcribeStream";
 
 export interface TranscribeOptions {
@@ -14,14 +14,6 @@ export interface TranscribeOptions {
   onProgress?: (ratio: number) => void;
   onPartialText?: (text: string) => void;
 }
-
-const MOCK_PREVIEW_CHUNKS = [
-  "Estamos aquí reunidos en virtud de un caso que tiene el número 78274.",
-  "La fiscalía está trabajando la investigación de ese caso, para lo cual estaba prevista la discusión de los hechos como corresponde en un juicio oral y público.",
-  "Nosotros lo que solicitamos es la suspensión del presente juicio a prueba en la primera parte del artículo 76 del código penal.",
-  "A los efectos de la suspensión lo que propuso mi cliente fue el pago de 100.000 pesos en cuatro cuotas de 25.000 pesos.",
-  "Tiene alguna propuesta más allá de que las pautas están supeditadas a que la fiscalía pueda fundar respecto de los hechos y los objetivos.",
-];
 
 export async function transcribe(
   file: File,

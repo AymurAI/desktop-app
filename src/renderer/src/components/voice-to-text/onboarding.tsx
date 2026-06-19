@@ -8,7 +8,6 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
-import Button from "@/components/ui/button";
 import VoiceFileDrop from "@/components/voice-to-text/file-drop";
 import { VoiceHowItWorksGrid } from "@/components/voice-to-text/how-it-works";
 import VoiceStepper from "@/components/voice-to-text/stepper";
@@ -19,6 +18,7 @@ import { addFiles } from "@/reducers/file/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
 import { HStack, Stack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import { Button } from "@aymurai/ui";
 
 export default function VoiceOnboarding() {
   const { t } = useTranslation("voice-to-text");

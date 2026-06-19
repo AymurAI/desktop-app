@@ -15,12 +15,26 @@ const stepCircle = cva({
     flexShrink: "0",
   },
   variants: {
-    active: {
-      true: { bg: "brand.primary", color: "text.onbutton-default" },
-      false: { bg: "bg.secondary-highlight", color: "text.lighter" },
+    // Figma-aligned states (same colours as @aymurai/ui Stepper):
+    //   complete → action.alt-default fill, white number
+    //   active   → action.default fill + primary-alt border, dark number
+    //   future   → action.disabled fill, dark number
+    state: {
+      complete: {
+        bg: "action.alt-default",
+        color: "text.onbutton-alternative",
+      },
+      active: {
+        bg: "action.default",
+        color: "text.default",
+        borderWidth: "[1px]",
+        borderStyle: "solid",
+        borderColor: "text.default",
+      },
+      future: { bg: "action.disabled", color: "text.default" },
     },
   },
-  defaultVariants: { active: false },
+  defaultVariants: { state: "future" },
 });
 
 interface VoiceStepperProps {
@@ -41,9 +55,11 @@ export default function VoiceStepper({ current }: VoiceStepperProps) {
       {labels.map((label, i) => {
         const step = (i + 1) as 1 | 2 | 3 | 4;
         const isActive = step === current;
+        const state =
+          step < current ? "complete" : isActive ? "active" : "future";
         return (
           <HStack key={step} gap="2" alignItems="center">
-            <span className={stepCircle({ active: isActive })}>{step}</span>
+            <span className={stepCircle({ state })}>{step}</span>
             {isActive && (
               <styled.span textStyle="label.md.strong" color="text.default">
                 {label}

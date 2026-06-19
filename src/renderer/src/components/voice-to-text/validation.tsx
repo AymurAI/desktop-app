@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import BackButton from "@/components/ui/back-button";
-import Button from "@/components/ui/button";
 import { USE_MOCK_STT } from "@/constants/config";
 import RequireFile from "@/features/RequireFile";
 import { useTranscriptions } from "@/hooks/useTranscriptions";
@@ -14,6 +13,7 @@ import { saveValidation } from "@/services/aymurai/queries";
 import { css } from "@/styled/css";
 import { HStack, Stack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import { Button } from "@aymurai/ui";
 import VoiceStepper from "./stepper";
 import TranscriptionEditor from "./transcription-editor";
 

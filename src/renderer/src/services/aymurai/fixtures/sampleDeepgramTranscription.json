@@ -1,0 +1,1262 @@
+{
+  "title": "Juicio oral - Robo y lesiones",
+  "audioDurationMs": 1503336,
+  "speakers": [
+    {
+      "id": "s0",
+      "label": "Locutor 0",
+      "initials": "L0",
+      "color": "primary"
+    },
+    {
+      "id": "s1",
+      "label": "Locutor 1",
+      "initials": "L1",
+      "color": "secondary"
+    },
+    {
+      "id": "s2",
+      "label": "Locutor 2",
+      "initials": "L2",
+      "color": "warning"
+    },
+    {
+      "id": "s3",
+      "label": "Locutor 3",
+      "initials": "L3",
+      "color": "success"
+    },
+    {
+      "id": "s4",
+      "label": "Locutor 4",
+      "initials": "L4",
+      "color": "primary"
+    },
+    {
+      "id": "s5",
+      "label": "Locutor 5",
+      "initials": "L5",
+      "color": "secondary"
+    },
+    {
+      "id": "s6",
+      "label": "Locutor 6",
+      "initials": "L6",
+      "color": "warning"
+    },
+    {
+      "id": "s7",
+      "label": "Locutor 7",
+      "initials": "L7",
+      "color": "success"
+    },
+    {
+      "id": "s8",
+      "label": "Locutor 8",
+      "initials": "L8",
+      "color": "primary"
+    },
+    {
+      "id": "s9",
+      "label": "Locutor 9",
+      "initials": "L9",
+      "color": "secondary"
+    },
+    {
+      "id": "s10",
+      "label": "Locutor 10",
+      "initials": "L1",
+      "color": "warning"
+    },
+    {
+      "id": "s11",
+      "label": "Locutor 11",
+      "initials": "L1",
+      "color": "success"
+    }
+  ],
+  "turns": [
+    {
+      "speakerId": "s0",
+      "text": "Este programa es actuado. Las situaciones mostradas son una dramatización inspirada en un caso de juicio oral y acontecimientos de la vida real. Sin embargo, los nombres de las personas o negocios han sido cambiados para proteger su privacidad.",
+      "startMs": 5520,
+      "endMs": 18505
+    },
+    {
+      "speakerId": "s1",
+      "text": "Bienvenidos a su programa juicios orales, justicia diferente. La señora Ramona Figueras recibió una llamada. Era su vecina, quien le informaba con la voz cortada que su marido, responsable de obra Francisco Barrientos, se encontraba tirado frente a su casa. La señora corrió al lugar y lo encontró tirado en el pavimento inmóvil y ensangrentado. Se presume que fue golpeado brutalmente.",
+      "startMs": 43865,
+      "endMs": 70335
+    },
+    {
+      "speakerId": "s1",
+      "text": "La señora Ramona denunció a los 2 albañiles que su esposo acababa de contratar. Este es un caso que pudo haberse resuelto a través de un procedimiento abreviado. No obstante, en las primeras etapas de la investigación e incluso ante el juez de control, los señores quisieron contravenir las pruebas presentadas por el agente del ministerio público al no estar de acuerdo con su culpabilidad. El proceso llegó, entonces, hasta esta etapa de juicio oral que se realizará a continuación. Comenzamos.",
+      "startMs": 70735,
+      "endMs": 98755
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿Se ponen de pie para recibir al señor juez?",
+      "startMs": 100035,
+      "endMs": 102515
+    },
+    {
+      "speakerId": "s3",
+      "text": "Tomen asiento, por",
+      "startMs": 106750,
+      "endMs": 107630
+    },
+    {
+      "speakerId": "s2",
+      "text": "favor. Señor juez, tenemos el caso del estado en contra de los señores Cayetano Méndez Lares y Rigoberto Méndez Lares por lesiones que ponen en riesgo la vida. Se le pide a la audiencia guardar el debido respeto. Gracias.",
+      "startMs": 107630,
+      "endMs": 124025
+    },
+    {
+      "speakerId": "s3",
+      "text": "Gracias. Declaro abierta la presente audiencia. Por parte de la fiscalía, ¿quién comparece?",
+      "startMs": 124185,
+      "endMs": 129145
+    },
+    {
+      "speakerId": "s4",
+      "text": "Hola, buenos días, señor juez. Es. Soy la abogada Mariana Gil Bartomeu, y me acompaña la ofendida, la señora Ramona Figueras Andrade.",
+      "startMs": 129145,
+      "endMs": 136185
+    },
+    {
+      "speakerId": "s3",
+      "text": "Gracias. Por parte de la defensa.",
+      "startMs": 136640,
+      "endMs": 138160
+    },
+    {
+      "speakerId": "s2",
+      "text": "Comparece la licenciada Tania Rojas García, defensora particular de los señores Cayetano Méndez Lares y el señor Rigoberto Méndez Lares, que se encuentran a mi lado.",
+      "startMs": 138240,
+      "endMs": 147520
+    },
+    {
+      "speakerId": "s3",
+      "text": "En vista que están las condiciones para llevar a cabo esta audiencia, se le concede el uso de la voz fiscal, para su alegato de apertura.",
+      "startMs": 147600,
+      "endMs": 153665
+    },
+    {
+      "speakerId": "s4",
+      "text": "Buenos días, su señoría. Hoy presento ante usted el caso de Francisco Barrientos Peña, que llevaba 20 años trabajando como maestro de obra. Dicha persona fue brutalmente golpeada la noche del 22 de marzo. Las únicas personas que se encontraban presentes en el momento y en el lugar de los hechos eran los hermanos Cayetano y Rigoberto Méndez Lares. Dichas personas llevaban menos de un mes trabajando con el señor Barrientos, y este señor les permitió vivir.",
+      "startMs": 154225,
+      "endMs": 180140
+    },
+    {
+      "speakerId": "s4",
+      "text": "En esa obra, pues, no tenían dónde dormir. A lo largo de la audiencia, usted verá testimonios en los que hablan del señor Barrientos, de durante 20 años, no había tenido ningún problema con ninguno de sus trabajadores. Durante esta audiencia, su señoría, usted verá 2 testimonios en los que aseguran que el señor Barrientos no tuvo ningún problema durante los 20 años que trabajó en esta obra. También verá a un policía de investigación, el cual hizo una inspección en el lugar de los hechos, donde se puede ver que había mucho tipo de armas que los hoy imputados pudieron haber utilizado para lastimar al señor Barrientos. Solicito que los imputados sean condenados por lesiones agravantes que ponen en riesgo la vida.",
+      "startMs": 180555,
+      "endMs": 216455
+    },
+    {
+      "speakerId": "s3",
+      "text": "Por parte de la defensa, su turno para presentar a sus alegatas.",
+      "startMs": 216775,
+      "endMs": 219575
+    },
+    {
+      "speakerId": "s2",
+      "text": "Gracias, señoría. El día de hoy le voy a demostrar que tristemente estamos ante un caso de discriminación. La señora Ramona, la ofendida en este juicio oral, ha acusado injustamente al señor Cayetano y al señor Rigoberto, por la única razón de ser albañiles, de ser gente humilde, de ser gente de provincia. Yo le voy a demostrar que la fiscal no tiene un solo móvil creíble para poder acusar a mis clientes. Le demostraré que tanto Cayetano como Rigoberto son personas trabajadoras, son gente honesta y no tendrían ninguna razón por la cual atacar al señor Barrientos.",
+      "startMs": 219575,
+      "endMs": 256010
+    },
+    {
+      "speakerId": "s2",
+      "text": "Todo esto lo voy a demostrar a través de una investigación privada, de un médico legista y de las propias declaraciones de mis clientes. Estoy segura que si ellos fueran un par de güeros ricos empresarios, no estaríamos aquí. Es todo su señoría.",
+      "startMs": 256010,
+      "endMs": 270525
+    },
+    {
+      "speakerId": "s3",
+      "text": "Gracias, abogada.",
+      "startMs": 270925,
+      "endMs": 272045
+    },
+    {
+      "speakerId": "s1",
+      "text": "Ambas partes presentaron ya su interpretación de los hechos. La fiscalía asegura que los hermanos Méndez golpearon brutalmente al señor Barrientos, mientras que la defensa asegura que los muchachos no tendrían ninguna razón para lastimar a quien les ayudó desde que llegaron a la ciudad. Continuamos.",
+      "startMs": 273085,
+      "endMs": 291500
+    },
+    {
+      "speakerId": "s3",
+      "text": "Pasamos ahora al de medios de prueba. Fiscal, ¿quién es su primer testigo?",
+      "startMs": 292460,
+      "endMs": 296025
+    },
+    {
+      "speakerId": "s4",
+      "text": "Sí, solicito que pase a declarar la ofendida, Ramona.",
+      "startMs": 296025,
+      "endMs": 298745
+    },
+    {
+      "speakerId": "s3",
+      "text": "Adelante. Adelante, abogada.",
+      "startMs": 298745,
+      "endMs": 303305
+    },
+    {
+      "speakerId": "s4",
+      "text": "Gracias. ¿Podría decirme qué fue lo que pasó la noche de los hechos, por favor?",
+      "startMs": 303305,
+      "endMs": 308105
+    },
+    {
+      "speakerId": "s5",
+      "text": "Estaba muy preocupada porque mi Pancho no me contestaba el teléfono, tenía más de una hora que le estaba marcando. En ese momento me marcó mi vecina y me dijo que encontró a mi esposo a un lado de su casa tirado en el pavimento, bañado en sangre, con un fuerte golpe en la cabeza. Entonces, pues, inmediatamente fui, pues, me hicieron todo todo tipo de preguntas, que si conocía a alguien que lo podía agredir, que si tenía algún enemigo. Solo que me acordé que estos 2 muchachos son nuevos en la obra y, pues, realmente no los conocemos y, pues, es de desconfiarse.",
+      "startMs": 308630,
+      "endMs": 348450
+    },
+    {
+      "speakerId": "s4",
+      "text": "Señora Ramona, ¿usted sabía o había escuchado por parte de su esposo que hubiera tenido algún otro problema con alguno de los trabajadores durante los 20 años que trabajó?",
+      "startMs": 348770,
+      "endMs": 359175
+    },
+    {
+      "speakerId": "s5",
+      "text": "No, nunca nunca tuvo ningún problema con con los demás trabajadores, de hecho, se llevaba muy bien con todos y lo respetaban.",
+      "startMs": 359495,
+      "endMs": 366775
+    },
+    {
+      "speakerId": "s4",
+      "text": "Señora Ramona, ¿podría ser usted más específica en relación a por qué usted acusó a los señores Cayetano y Rigoberto como a los posibles imputados en este caso?",
+      "startMs": 367120,
+      "endMs": 376320
+    },
+    {
+      "speakerId": "s5",
+      "text": "Tienen poco tiempo trabajando en la obra, de hecho, se quedan a dormir en la oficina de la obra. Entonces, tienen, pues, mucha cercanía con, pues, con los aparatos, con las herramientas, y no sé, yo creo que teniéndolas tan cerca, pues, sí hubo como esa facilidad para poder agredirlo o quitarle las llaves de de la caja, porque aparte mi marido, pues, manejaba lo que es la raya y tenía bajo llave también las herramientas, entonces, me imagino que ellos querían robarse la llave. Él siempre decía que debíamos de confiar en la gente, pero que si estaba a la mano la tentación, pues, tenía que tenerla bajo llave por cualquier situación.",
+      "startMs": 376640,
+      "endMs": 418985
+    },
+    {
+      "speakerId": "s4",
+      "text": "Gracias, señora Ramona, es todo su señoría.",
+      "startMs": 419545,
+      "endMs": 421465
+    },
+    {
+      "speakerId": "s3",
+      "text": "Abogada, ¿desea contrainterrogar?",
+      "startMs": 421930,
+      "endMs": 423770
+    },
+    {
+      "speakerId": "s2",
+      "text": "Sí, su señoría.",
+      "startMs": 423770,
+      "endMs": 424730
+    },
+    {
+      "speakerId": "s3",
+      "text": "Adelante.",
+      "startMs": 424730,
+      "endMs": 425370
+    },
+    {
+      "speakerId": "s2",
+      "text": "Gracias. Señora Ramona, ¿es verdad que la única razón por la que usted está acusando a mis clientes es porque son nuevos en la obra?",
+      "startMs": 425370,
+      "endMs": 433450
+    },
+    {
+      "speakerId": "s5",
+      "text": "Es que realmente no los conocemos.",
+      "startMs": 435210,
+      "endMs": 437370
+    },
+    {
+      "speakerId": "s2",
+      "text": "Y también es verdad que su esposo nunca le manifestó haber tenido un problema con ellos 2. No, incluso, los dejó vivir dentro de la bodega de la obra. Sí. Claro, son todas las preguntas, gracias.",
+      "startMs": 437450,
+      "endMs": 448865
+    },
+    {
+      "speakerId": "s3",
+      "text": "¿Alguna otra pregunta, fiscal?",
+      "startMs": 449425,
+      "endMs": 450705
+    },
+    {
+      "speakerId": "s4",
+      "text": "Ninguna, su señoría, gracias.",
+      "startMs": 451560,
+      "endMs": 453080
+    },
+    {
+      "speakerId": "s3",
+      "text": "Señora Ramona, pase, por favor, al lado de la fiscal. Muchas gracias. Sí, sí, señora. Fiscal, ¿su siguiente testigo?",
+      "startMs": 453080,
+      "endMs": 459240
+    },
+    {
+      "speakerId": "s4",
+      "text": "Señor juez, le pido que llame a la testigo Rosa María Méndez Sánchez.",
+      "startMs": 459240,
+      "endMs": 462680
+    },
+    {
+      "speakerId": "s3",
+      "text": "Déjenla pasar, por favor. Señora Rosa, ¿me dice su nombre completo, por favor?",
+      "startMs": 462680,
+      "endMs": 468625
+    },
+    {
+      "speakerId": "s6",
+      "text": "Sí, señor juez, mi nombre es Rosa María Méndez Sánchez.",
+      "startMs": 468625,
+      "endMs": 471905
+    },
+    {
+      "speakerId": "s3",
+      "text": "Adelante, mis hijas.",
+      "startMs": 471905,
+      "endMs": 473025
+    },
+    {
+      "speakerId": "s4",
+      "text": "Gracias. Buenos días, señora Rosa. Buenos días. ¿Podría decirme qué fue lo que sucedió la noche del 22 de marzo?",
+      "startMs": 473185,
+      "endMs": 478945
+    },
+    {
+      "speakerId": "s6",
+      "text": "Estaba yo regresando de trabajar cuando vi tirado sobre el pavimento lleno de sangre al señor Francisco Barrientos. Inmediatamente fui a avisarle a Ramona y cuando le di la noticia, pues ella se espantó mucho.",
+      "startMs": 479690,
+      "endMs": 495915
+    },
+    {
+      "speakerId": "s4",
+      "text": "Son todas las preguntas, su señoría.",
+      "startMs": 496635,
+      "endMs": 498475
+    },
+    {
+      "speakerId": "s3",
+      "text": "Gracias. Abogada, ¿desea contrainterrogar?",
+      "startMs": 498475,
+      "endMs": 502635
+    },
+    {
+      "speakerId": "s4",
+      "text": "No, su señoría, muchas gracias.",
+      "startMs": 502635,
+      "endMs": 504075
+    },
+    {
+      "speakerId": "s3",
+      "text": "Fiscal, ¿a quién llama como su siguiente testigo?",
+      "startMs": 515170,
+      "endMs": 517570
+    },
+    {
+      "speakerId": "s4",
+      "text": "Voy a llamar al policía de investigación Artemio Urrutia Martínez.",
+      "startMs": 517570,
+      "endMs": 521330
+    },
+    {
+      "speakerId": "s3",
+      "text": "Háganlo pasar. Señor Artemio, tome asiento, por favor. Señor, ¿me dice su nombre completo?",
+      "startMs": 521330,
+      "endMs": 529175
+    },
+    {
+      "speakerId": "s7",
+      "text": "Artemio Urrutia Martínez.",
+      "startMs": 529175,
+      "endMs": 530855
+    },
+    {
+      "speakerId": "s3",
+      "text": "Gracias, señor Artemio. Adelante.",
+      "startMs": 531015,
+      "endMs": 532935
+    },
+    {
+      "speakerId": "s4",
+      "text": "Sí, gracias, señor juez. Buenos días, señor Artemio.",
+      "startMs": 532935,
+      "endMs": 535735
+    },
+    {
+      "speakerId": "s7",
+      "text": "Buenos días.",
+      "startMs": 535735,
+      "endMs": 536055
+    },
+    {
+      "speakerId": "s4",
+      "text": "¿Podría decirme cuál fue su labor en el presente caso?",
+      "startMs": 536100,
+      "endMs": 539460
+    },
+    {
+      "speakerId": "s7",
+      "text": "Mi labor fue inspeccionar la oficina de la víctima por fuera, ya que se encontraba cerrada y no había llaves para abrirla.",
+      "startMs": 539540,
+      "endMs": 545140
+    },
+    {
+      "speakerId": "s4",
+      "text": "¿Usted pudo observar alguna otra cosa en la obra?",
+      "startMs": 545140,
+      "endMs": 547540
+    },
+    {
+      "speakerId": "s7",
+      "text": "Observé que había herramientas que pudieran dañar a la víctima y me percaté que había una pala, un pico y un mazo.",
+      "startMs": 547540,
+      "endMs": 554585
+    },
+    {
+      "speakerId": "s4",
+      "text": "¿Usted tomó alguna fotografía de lo que se está refiriendo? ¿Podríamos mostrarla a su señoría?",
+      "startMs": 554665,
+      "endMs": 559145
+    },
+    {
+      "speakerId": "s7",
+      "text": "Adelante. Como podrán ver, tenemos la primer fotografía tenemos un pico, la segunda tenemos una pala y la tercera tenemos un mazo, que yo consideré que son herramientas que pudieron dañar a la víctima.",
+      "startMs": 559705,
+      "endMs": 571180
+    },
+    {
+      "speakerId": "s4",
+      "text": "Gracias. ¿Usted pudo observar algo más?",
+      "startMs": 571180,
+      "endMs": 573100
+    },
+    {
+      "speakerId": "s7",
+      "text": "Sí, me percaté que al lado de la oficina de la víctima estaba la bodega donde se quedaban a dormir los acusados.",
+      "startMs": 573100,
+      "endMs": 577740
+    },
+    {
+      "speakerId": "s4",
+      "text": "Muchas gracias. Gracias, su señoría.",
+      "startMs": 577740,
+      "endMs": 580145
+    },
+    {
+      "speakerId": "s3",
+      "text": "Abogada, ¿desea contrainterrogar?",
+      "startMs": 580305,
+      "endMs": 582145
+    },
+    {
+      "speakerId": "s2",
+      "text": "Sí, gracias. Señor Artemio, ¿nos puede decir por qué no pudo entrar a las oficinas del señor Barrientos?",
+      "startMs": 582145,
+      "endMs": 587585
+    },
+    {
+      "speakerId": "s7",
+      "text": "Porque no había quién la abriera.",
+      "startMs": 587585,
+      "endMs": 589185
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿Y nos puede decir desde dónde realizó esas fotografías a la señora?",
+      "startMs": 589345,
+      "endMs": 592305
+    },
+    {
+      "speakerId": "s7",
+      "text": "La misma obra, yo tomé las fotografías, porque las herramientas se encontraban dentro de la obra y no dentro de la oficina.",
+      "startMs": 592545,
+      "endMs": 598870
+    },
+    {
+      "speakerId": "s2",
+      "text": "Perfecto, son todas las preguntas, gracias.",
+      "startMs": 598870,
+      "endMs": 601030
+    },
+    {
+      "speakerId": "s3",
+      "text": "¿Alguna otra petición, abogada?",
+      "startMs": 601190,
+      "endMs": 603110
+    },
+    {
+      "speakerId": "s4",
+      "text": "Ninguna, son todas mis pruebas.",
+      "startMs": 603110,
+      "endMs": 604630
+    },
+    {
+      "speakerId": "s3",
+      "text": "Muchas gracias, señor, puede retirarse.",
+      "startMs": 604630,
+      "endMs": 606470
+    },
+    {
+      "speakerId": "s7",
+      "text": "Gracias, señor juez.",
+      "startMs": 606470,
+      "endMs": 607190
+    },
+    {
+      "speakerId": "s3",
+      "text": "Fiscal, ¿algún otro testigo?",
+      "startMs": 608145,
+      "endMs": 609505
+    },
+    {
+      "speakerId": "s4",
+      "text": "Ninguno.",
+      "startMs": 609505,
+      "endMs": 610145
+    },
+    {
+      "speakerId": "s3",
+      "text": "Pasamos ahora con sus medios de prueba. Abogada, ¿a quién llama como su primer testigo?",
+      "startMs": 610545,
+      "endMs": 614945
+    },
+    {
+      "speakerId": "s2",
+      "text": "Sí, su señoría, llamo al investigador privado Andrés Luna Silva.",
+      "startMs": 614945,
+      "endMs": 619105
+    },
+    {
+      "speakerId": "s3",
+      "text": "Señor Andrés, ¿me dice su nombre completo, por favor?",
+      "startMs": 623170,
+      "endMs": 625650
+    },
+    {
+      "speakerId": "s8",
+      "text": "Andrés Luna Silva.",
+      "startMs": 625890,
+      "endMs": 627170
+    },
+    {
+      "speakerId": "s3",
+      "text": "Adelante, abogada.",
+      "startMs": 627170,
+      "endMs": 627970
+    },
+    {
+      "speakerId": "s2",
+      "text": "Gracias, su señoría. Señor Andrés, ¿nos puede decir a qué se dedica?",
+      "startMs": 627970,
+      "endMs": 631810
+    },
+    {
+      "speakerId": "s8",
+      "text": "Soy investigador privado.",
+      "startMs": 631810,
+      "endMs": 633250
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿Nos puede decir cuál fue la investigación que le solicitó esta defensa?",
+      "startMs": 633250,
+      "endMs": 636050
+    },
+    {
+      "speakerId": "s8",
+      "text": "Me constituí en la oficina del señor Francisco Barrientos Peña, para poder identificar las características de todos los elementos que pudieran constituir evidencias en el caso que investigaba la procuraduría.",
+      "startMs": 636225,
+      "endMs": 647985
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿De alguna manera usted pudo fijar lo que observó dentro de esa oficina?",
+      "startMs": 648065,
+      "endMs": 651745
+    },
+    {
+      "speakerId": "s8",
+      "text": "Al llegar, tomé fotografías del lugar para poder establecer una panorámica general y así poder fijar cada 1 de los elementos que consideré relevantes para el caso. Al ingresar a la oficina del señor Barrientos en compañía de la policía, nos encontramos diversos objetos. Como podemos observar en esta primera imagen, 3 botellas de tequila. En la tercera imagen, tenemos 2 botellas de brandy, una de whisky, así como latas de cerveza. En el lugar también encontramos latas de cemento abiertas, y es importante destacar respecto a este punto que en el momento que abrieron la oficina, el aroma era muy penetrante.",
+      "startMs": 651930,
+      "endMs": 689560
+    },
+    {
+      "speakerId": "s2",
+      "text": "Señor Andrés, ¿recuerda qué día acudió a la oficina del señor Barrientos?",
+      "startMs": 689800,
+      "endMs": 693880
+    },
+    {
+      "speakerId": "s8",
+      "text": "Sí, fue 2 días después del día de los hechos.",
+      "startMs": 694355,
+      "endMs": 696995
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿Y recuerda quién fue el que le abrió la puerta de la oficina?",
+      "startMs": 697155,
+      "endMs": 700995
+    },
+    {
+      "speakerId": "s8",
+      "text": "El oficial Rodríguez.",
+      "startMs": 701075,
+      "endMs": 702435
+    },
+    {
+      "speakerId": "s2",
+      "text": "Perfecto, su señoría, son todas las preguntas.",
+      "startMs": 702675,
+      "endMs": 704915
+    },
+    {
+      "speakerId": "s3",
+      "text": "Gracias, abogada. Fiscal, ¿desea contrainterrogar?",
+      "startMs": 704915,
+      "endMs": 707155
+    },
+    {
+      "speakerId": "s4",
+      "text": "Sí, por favor.",
+      "startMs": 707240,
+      "endMs": 708120
+    },
+    {
+      "speakerId": "s3",
+      "text": "Adelante.",
+      "startMs": 708440,
+      "endMs": 709240
+    },
+    {
+      "speakerId": "s4",
+      "text": "Buenos días. Buenos días. Respecto a lo que le dijo a la abogada de la defensa, sobre todo a las botellas que usted encontró, latas de cerveza, ¿usted podría asegurar que esas botellas y esas latas fueron consumidos el día de",
+      "startMs": 709240,
+      "endMs": 721240
+    },
+    {
+      "speakerId": "s2",
+      "text": "los hechos? Objeción, su señoría.",
+      "startMs": 721240,
+      "endMs": 722840
+    },
+    {
+      "speakerId": "s3",
+      "text": "Permítame, testigo, por favor, ahorita le le indico cuándo tiene que responder. ¿Motivo?",
+      "startMs": 723695,
+      "endMs": 728015
+    },
+    {
+      "speakerId": "s2",
+      "text": "Ya nos aclaró el testigo que él acudió 2 días después, él no puede saber lo que sucedió el día de los hechos",
+      "startMs": 728175,
+      "endMs": 734015
+    },
+    {
+      "speakerId": "s3",
+      "text": "¿Alogar la objeción?",
+      "startMs": 734815,
+      "endMs": 735535
+    },
+    {
+      "speakerId": "s4",
+      "text": "El inspector privado señala que el señor Barrientos salió muy mareado y tomó o consumió esas botellas el día de los hechos.",
+      "startMs": 736120,
+      "endMs": 743240
+    },
+    {
+      "speakerId": "s3",
+      "text": "Yo escuché lo que él dijo y yo sopesaré la eficacia o el peso que tiene la afirmación que ha realizado el testigo.",
+      "startMs": 743640,
+      "endMs": 750600
+    },
+    {
+      "speakerId": "s4",
+      "text": "Gracias, su señoría.",
+      "startMs": 751225,
+      "endMs": 752185
+    },
+    {
+      "speakerId": "s3",
+      "text": "¿Ninguna otra pregunta? No. Señor Andrés, muchas gracias, puede retirarse.",
+      "startMs": 752185,
+      "endMs": 757465
+    },
+    {
+      "speakerId": "s8",
+      "text": "Gracias, su señoría.",
+      "startMs": 757785,
+      "endMs": 759065
+    },
+    {
+      "speakerId": "s3",
+      "text": "Abogada.",
+      "startMs": 760985,
+      "endMs": 761625
+    },
+    {
+      "speakerId": "s2",
+      "text": "Antes de llamar a mi siguiente testigo, solamente pediría que se incorporen como evidencia las fotografías que acabamos de ver.",
+      "startMs": 761625,
+      "endMs": 767480
+    },
+    {
+      "speakerId": "s3",
+      "text": "Bien. Fiscal, ¿alguna objeción?",
+      "startMs": 767640,
+      "endMs": 769720
+    },
+    {
+      "speakerId": "s4",
+      "text": "Ninguna, su señoría.",
+      "startMs": 769720,
+      "endMs": 771000
+    },
+    {
+      "speakerId": "s3",
+      "text": "Vista que no existe objeción para que se incorpore como medio de prueba por parte de la defensa, se tienen por incorporadas las mismas.",
+      "startMs": 771480,
+      "endMs": 777800
+    },
+    {
+      "speakerId": "s2",
+      "text": "Gracias. Ahora quisiera llamar al médico legista Alberto Barragán Mied, por favor.",
+      "startMs": 778200,
+      "endMs": 783615
+    },
+    {
+      "speakerId": "s3",
+      "text": "Adelante. Le recuerdo que está bajo protesta decir, ¿verdad? En este caso, fue ofrecido como testigo por parte de la defensa, quien lo va a cuestionar en estos momentos, lo va a interrogar.",
+      "startMs": 783615,
+      "endMs": 795820
+    },
+    {
+      "speakerId": "s9",
+      "text": "Muy bien.",
+      "startMs": 795820,
+      "endMs": 796460
+    },
+    {
+      "speakerId": "s3",
+      "text": "Adelante.",
+      "startMs": 796460,
+      "endMs": 797100
+    },
+    {
+      "speakerId": "s2",
+      "text": "Gracias, o señoría. Doctor Barragán, ¿nos podría decir cuál es su profesión?",
+      "startMs": 797180,
+      "endMs": 802460
+    },
+    {
+      "speakerId": "s9",
+      "text": "Soy médico, soy perito en medicina.",
+      "startMs": 802460,
+      "endMs": 804780
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿Cuál fue el análisis que hizo o el estudio que hizo del señor Barrientos?",
+      "startMs": 804780,
+      "endMs": 810035
+    },
+    {
+      "speakerId": "s9",
+      "text": "Llegamos al hospital civil número 2 de esta ciudad, hicimos el examen del señor Barrientos Peña, y encontramos que tenía un traumatismo craneoencefálico. Lo revisamos y no encontramos algún indicio de forcejeos, esto regularmente se ve cuando hay rasguños, cuando hay golpes, fue lo único que encontramos en él.",
+      "startMs": 810515,
+      "endMs": 831000
+    },
+    {
+      "speakerId": "s2",
+      "text": "Doctor Barragán, ¿nos podría decir cuál fue la conclusión a la que llegó después de ese estudio que le realizó al señor Barrientos?",
+      "startMs": 831080,
+      "endMs": 837085
+    },
+    {
+      "speakerId": "s9",
+      "text": "El tipo de lesión, por la profundidad y por el tipo de de de características que tiene a su alrededor, solamente se puede producir por una precipitación o una caída.",
+      "startMs": 837085,
+      "endMs": 848205
+    },
+    {
+      "speakerId": "s2",
+      "text": "Perfecto, esas son todas las preguntas, su señoría, gracias.",
+      "startMs": 848365,
+      "endMs": 850685
+    },
+    {
+      "speakerId": "s4",
+      "text": "¿Fiscalía? No tengo ninguna pregunta, señoría.",
+      "startMs": 851160,
+      "endMs": 853960
+    },
+    {
+      "speakerId": "s3",
+      "text": "Señor Alberto, muchas gracias, puede retirarse.",
+      "startMs": 854120,
+      "endMs": 856440
+    },
+    {
+      "speakerId": "s9",
+      "text": "Sí, señor juez.",
+      "startMs": 856760,
+      "endMs": 857880
+    },
+    {
+      "speakerId": "s3",
+      "text": "Abogada, ¿serían todos sus medios de prueba?",
+      "startMs": 859480,
+      "endMs": 862120
+    },
+    {
+      "speakerId": "s2",
+      "text": "No, su señoría, deseo llamar a el señor Cayetano Méndez Lares, por favor, a declarar.",
+      "startMs": 862120,
+      "endMs": 869335
+    },
+    {
+      "speakerId": "s3",
+      "text": "Usted tiene derecho a guardar silencio. A pesar de eso, su abogada desea que usted venga y declare, que nos diga todo cuanto sepa en relación con la causa. ¿Es cierto? ¿Desea declarar?",
+      "startMs": 869335,
+      "endMs": 882210
+    },
+    {
+      "speakerId": "s10",
+      "text": "Sí, acepto.",
+      "startMs": 882210,
+      "endMs": 883330
+    },
+    {
+      "speakerId": "s3",
+      "text": "Ok, adelante, pase,",
+      "startMs": 883330,
+      "endMs": 884370
+    },
+    {
+      "speakerId": "s10",
+      "text": "por favor. Gracias.",
+      "startMs": 884370,
+      "endMs": 885410
+    },
+    {
+      "speakerId": "s3",
+      "text": "De tal manera, señor Cayetano, que se le exhorta para que diga la verdad. Adelante.",
+      "startMs": 890130,
+      "endMs": 894130
+    },
+    {
+      "speakerId": "s2",
+      "text": "Está bien. Gracias, su señoría. Señor Cayetano, ¿puede decirnos cuál es su edad?",
+      "startMs": 894210,
+      "endMs": 898655
+    },
+    {
+      "speakerId": "s10",
+      "text": "Tengo 23 años.",
+      "startMs": 898815,
+      "endMs": 900175
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿A qué se dedica?",
+      "startMs": 900335,
+      "endMs": 901375
+    },
+    {
+      "speakerId": "s10",
+      "text": "Soy obrero en una construcción.",
+      "startMs": 901375,
+      "endMs": 903215
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿Nos puede decir de dónde es originario?",
+      "startMs": 903375,
+      "endMs": 905055
+    },
+    {
+      "speakerId": "s10",
+      "text": "De San Luis Potosí.",
+      "startMs": 905055,
+      "endMs": 906495
+    },
+    {
+      "speakerId": "s2",
+      "text": "Don Cayetano, ¿puede decirnos cómo era su relación con el señor Francisco Barrientos?",
+      "startMs": 906735,
+      "endMs": 911870
+    },
+    {
+      "speakerId": "s10",
+      "text": "Pues, realmente, siempre ha sido muy buena el señor, siempre se ha portado muy generosos conmigo y con mi hermano. Desde que llegamos, nos tendió la mano, nos ofreció un lugar donde comer, donde dormir.",
+      "startMs": 912030,
+      "endMs": 921870
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿Nos puede decir cómo fue que usted conoció al señor Barrientos?",
+      "startMs": 922005,
+      "endMs": 925285
+    },
+    {
+      "speakerId": "s10",
+      "text": "Unos de mis amigos trabajan ahí en la obra, y yo le pedí de favor que si le decían al señor Francisco si me dejaban trabajar a mí y a mi hermano, y el señor aceptó, nos mandó a traer y aquí estamos laborando con él.",
+      "startMs": 925285,
+      "endMs": 937750
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿En algún momento usted tenía acceso a la oficina del señor Barrientos?",
+      "startMs": 937830,
+      "endMs": 942390
+    },
+    {
+      "speakerId": "s10",
+      "text": "Solamente los sábados, que era cuando nos pagaba, y nada más entrábamos, cobrábamos y nos íbamos.",
+      "startMs": 942390,
+      "endMs": 947670
+    },
+    {
+      "speakerId": "s2",
+      "text": "Y durante todo el tiempo que usted ha laborado, ¿ha habido alguna queja por parte del señor Barrientos?",
+      "startMs": 948305,
+      "endMs": 956385
+    },
+    {
+      "speakerId": "s10",
+      "text": "No, jamás, el señor daba indicaciones y nosotros solamente lo obedecíamos al pie de la letra.",
+      "startMs": 956385,
+      "endMs": 960865
+    },
+    {
+      "speakerId": "s2",
+      "text": "Señor Cayetano, el día de los hechos, ¿dónde se encontraba usted?",
+      "startMs": 960865,
+      "endMs": 964690
+    },
+    {
+      "speakerId": "s10",
+      "text": "Estábamos en la bodega, que es donde dormimos, escuchamos muchos ruidos y solamente despertamos hasta que llegaron los oficiales.",
+      "startMs": 964770,
+      "endMs": 971970
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿En algún momento salieron del área donde estaban durmiendo?",
+      "startMs": 972130,
+      "endMs": 975410
+    },
+    {
+      "speakerId": "s10",
+      "text": "No, jamás salimos de la obra.",
+      "startMs": 975410,
+      "endMs": 976850
+    },
+    {
+      "speakerId": "s2",
+      "text": "Perfecto, son todas las preguntas. Gracias, su señoría.",
+      "startMs": 977245,
+      "endMs": 979885
+    },
+    {
+      "speakerId": "s3",
+      "text": "Señor Cayetano, subsiste su derecho a guardar silencio, la fiscal quiere hacerle algunas preguntas. ¿Desea contestar las preguntas de la fiscal?",
+      "startMs": 990365,
+      "endMs": 999340
+    },
+    {
+      "speakerId": "s10",
+      "text": "Sí, está bien.",
+      "startMs": 999420,
+      "endMs": 1000300
+    },
+    {
+      "speakerId": "s3",
+      "text": "Adelante, fiscal.",
+      "startMs": 1000300,
+      "endMs": 1001500
+    },
+    {
+      "speakerId": "s4",
+      "text": "Buenos días, Cayetano.",
+      "startMs": 1001500,
+      "endMs": 1002620
+    },
+    {
+      "speakerId": "s10",
+      "text": "Hola, buenos días.",
+      "startMs": 1002620,
+      "endMs": 1003340
+    },
+    {
+      "speakerId": "s4",
+      "text": "Respuestas anteriores, tú nos mencionaste que el día de los hechos te fuiste a acostar la bodega donde ustedes dormían junto con tu hermano.",
+      "startMs": 1003420,
+      "endMs": 1010355
+    },
+    {
+      "speakerId": "s10",
+      "text": "Sí.",
+      "startMs": 1010515,
+      "endMs": 1011075
+    },
+    {
+      "speakerId": "s4",
+      "text": "Entonces, ¿por qué cuando llegó la policía ustedes estaban afuera de esa bodega?",
+      "startMs": 1011395,
+      "endMs": 1014835
+    },
+    {
+      "speakerId": "s10",
+      "text": "Se escuchó mucho bullicio y las sirenas nos despertaron y nos espantamos porque escuchamos que alguien entró y eran los los oficiales.",
+      "startMs": 1014835,
+      "endMs": 1023110
+    },
+    {
+      "speakerId": "s4",
+      "text": "Cuando llegaron los oficiales, ¿tú y tu hermano estaban afuera de esa bodega?",
+      "startMs": 1023110,
+      "endMs": 1026070
+    },
+    {
+      "speakerId": "s10",
+      "text": "Sí, ya habíamos salido para ver quién era.",
+      "startMs": 1026070,
+      "endMs": 1027670
+    },
+    {
+      "speakerId": "s4",
+      "text": "Gracias, gracias, su señoría.",
+      "startMs": 1027670,
+      "endMs": 1029270
+    },
+    {
+      "speakerId": "s3",
+      "text": "Abogada, ¿alguna otra pregunta?",
+      "startMs": 1029430,
+      "endMs": 1030710
+    },
+    {
+      "speakerId": "s2",
+      "text": "Ninguna pregunta más, su señoría.",
+      "startMs": 1030710,
+      "endMs": 1032150
+    },
+    {
+      "speakerId": "s3",
+      "text": "Gracias. Señor Cayetano, muchas gracias. Pase un lado con su abogada.",
+      "startMs": 1032150,
+      "endMs": 1034390
+    },
+    {
+      "speakerId": "s10",
+      "text": "Muchísimas gracias.",
+      "startMs": 1035335,
+      "endMs": 1036455
+    },
+    {
+      "speakerId": "s3",
+      "text": "Abogada, ¿algún otro medio de prueba?",
+      "startMs": 1038855,
+      "endMs": 1041015
+    },
+    {
+      "speakerId": "s2",
+      "text": "Es mi último testigo, el señor Rigoberto Méndez, su señoría, por favor.",
+      "startMs": 1041015,
+      "endMs": 1045015
+    },
+    {
+      "speakerId": "s3",
+      "text": "Abogada, veía que era factible, dado que pasó el señor Cayetano, que quisiera llamar al señor Rigoberto. ¿Está consciente del peso que puede tener, dado que ha escuchado ya el testimonio de del señor Cayetano?",
+      "startMs": 1045015,
+      "endMs": 1060050
+    },
+    {
+      "speakerId": "s2",
+      "text": "Sí, su señoría.",
+      "startMs": 1060050,
+      "endMs": 1061090
+    },
+    {
+      "speakerId": "s3",
+      "text": "Señor Rigoberto, al igual como lo hice con el señor Cayetano, ¿desea declarar, a pesar que tiene el derecho a no hacerlo? Sí. Pase, por favor, señor Rigoberto. Señor Rigoberto, entonces solamente lo exhorto para que se conduzca con verdad. Abogada, su testigo.",
+      "startMs": 1061090,
+      "endMs": 1078930
+    },
+    {
+      "speakerId": "s2",
+      "text": "Gracias, su señoría. Señor Rigoberto, ¿nos puede decir cómo era su relación con el señor Francisco Barrientos?",
+      "startMs": 1079090,
+      "endMs": 1086130
+    },
+    {
+      "speakerId": "s11",
+      "text": "Nos dio trabajo y nos dejó, pues, quedarnos a dormir, justo ahí en el trabajo, para no estar pagando rentas o otras cosas.",
+      "startMs": 1086290,
+      "endMs": 1093495
+    },
+    {
+      "speakerId": "s2",
+      "text": "¿En algún momento tuvo un problema con el señor Barrientos?",
+      "startMs": 1093575,
+      "endMs": 1096775
+    },
+    {
+      "speakerId": "s11",
+      "text": "No, ninguna, para nada, pero sí le entraba mucho a la bebida. La mayor parte del tiempo se la pasaba encerrado tomando, y bueno, cuando pasábamos por ahí, la oficina olía mucho a alcohol y a pegamento.",
+      "startMs": 1096775,
+      "endMs": 1109790
+    },
+    {
+      "speakerId": "s2",
+      "text": "Son todas las preguntas. Gracias.",
+      "startMs": 1109790,
+      "endMs": 1111550
+    },
+    {
+      "speakerId": "s3",
+      "text": "¿Fiscalía desea contrainterrogar?",
+      "startMs": 1112110,
+      "endMs": 1114190
+    },
+    {
+      "speakerId": "s4",
+      "text": "No, su señoría.",
+      "startMs": 1114190,
+      "endMs": 1115390
+    },
+    {
+      "speakerId": "s3",
+      "text": "Señor Roberto, muchas gracias. Puede pasar a un lado de la abogada.",
+      "startMs": 1115950,
+      "endMs": 1118590
+    },
+    {
+      "speakerId": "s11",
+      "text": "Sí, señor juez.",
+      "startMs": 1118590,
+      "endMs": 1119550
+    },
+    {
+      "speakerId": "s1",
+      "text": "La defensa interrogó a los 2 acusados. Ambos aseguran que ellos no le hicieron ningún daño al señor Barrientos, ya que no tenían motivos para hacerlo. Vamos ahora a ver los alegatos de clausura.",
+      "startMs": 1120830,
+      "endMs": 1132245
+    },
+    {
+      "speakerId": "s3",
+      "text": "Una vez que se han desahogado los medios de prueba, pasamos a los alegatos de clausura, comenzando con usted, fiscal, adelante.",
+      "startMs": 1133045,
+      "endMs": 1139285
+    },
+    {
+      "speakerId": "s1",
+      "text": "Gracias.",
+      "startMs": 1139285,
+      "endMs": 1139605
+    },
+    {
+      "speakerId": "s4",
+      "text": "Señoría, con todos los medios de prueba que se han desahogado en esta audiencia, es claro que los señores Cayetano y Rigoberto trataron de quitarle la vida al señor Francisco Barrientos. Se pudo ver con la declaración de la señora, quien directamente señala que fueron ellos los que hicieron este daño, además, que el señor Barrientos no había tenido ningún problema durante 20 años, y qué raro que después de 20 años lleguen 2 personas nuevas a las que el señor Barrientos les deja de quedarse a dormir, les da todos los valores, les enseña el trabajo, les enseña el dinero. ¿Y sabe cómo le pagaron? Tratando de quitarle la vida, ¿sí? Yo quiero que se haga justicia, su señoría.",
+      "startMs": 1141050,
+      "endMs": 1180120
+    },
+    {
+      "speakerId": "s4",
+      "text": "Por eso solicito, no nada más que se condene por las lesiones agravadas, sino también a la reparación del daño por todos los gastos hospitalarios que hasta la fecha ha tenido que que pagar la señora. Es todo, su señoría.",
+      "startMs": 1180120,
+      "endMs": 1191435
+    },
+    {
+      "speakerId": "s3",
+      "text": "Gracias, fiscal. Abogada",
+      "startMs": 1191755,
+      "endMs": 1193675
+    },
+    {
+      "speakerId": "s2",
+      "text": "Gracias, su señoría. Como lo anuncié desde mi alegato de apertura, estamos en un caso de discriminación. Como lo escuchamos de la propia voz de la señora Ramona, la única razón por la que acusó a mis clientes fue porque eran nuevos. Yo quisiera saber si ser nuevo es un delito. Por otra parte, escuchamos al policía, que nos dijo que ellos son culpables porque había herramienta.",
+      "startMs": 1193915,
+      "endMs": 1214835
+    },
+    {
+      "speakerId": "s2",
+      "text": "No podemos olvidar que ellos estaban trabajando en una obra, en donde todo ese herramental es necesario. Por otra parte, también escuchamos al investigador privado, que nos dijo que en la oficina del señor Barrientos había varias bebidas alcohólicas y que incluso había pegamento y que el olor era muy intenso, y que esa fue la razón por la que él salió mareado de esa oficina. También escuchamos al médico legista, quien nos dijo que la lesión del señor Barrientos correspondía a una caída. Y por último, escuchamos al señor Cayetano y al señor Rigoberto, quienes han demostrado urgente honesta, que su único pecado es ser gente humilde, ser gente de pueblo. Por eso le pido a su señoría que no permita que haya un caso más de discriminación, que haya 2 personas inocentes en la cárcel, entonces, le pido, por favor, que sean declarados inocentes ante las acusaciones tan falsas que ha hecho la señorita fiscal.",
+      "startMs": 1214995,
+      "endMs": 1262710
+    },
+    {
+      "speakerId": "s2",
+      "text": "Gracias, su señoría.",
+      "startMs": 1262870,
+      "endMs": 1263990
+    },
+    {
+      "speakerId": "s3",
+      "text": "Gracias, abogada. Señora Ramona, ¿algo que tenga que manifestar como última intervención?",
+      "startMs": 1263990,
+      "endMs": 1269750
+    },
+    {
+      "speakerId": "s5",
+      "text": "No, se lo dejo a a la abogada.",
+      "startMs": 1270585,
+      "endMs": 1274585
+    },
+    {
+      "speakerId": "s3",
+      "text": "Gracias. A ustedes, señores Cayetano y Rigoberto Méndez Lares.",
+      "startMs": 1274665,
+      "endMs": 1281945
+    },
+    {
+      "speakerId": "s10",
+      "text": "Solo que de verdad somos gente honesta y trabajadora, y nosotros no fuimos.",
+      "startMs": 1281945,
+      "endMs": 1285785
+    },
+    {
+      "speakerId": "s11",
+      "text": "Nos gusta trabajar y somos inocentes.",
+      "startMs": 1286170,
+      "endMs": 1289130
+    },
+    {
+      "speakerId": "s3",
+      "text": "¿Es todo lo que desean manifestar?",
+      "startMs": 1289450,
+      "endMs": 1290970
+    },
+    {
+      "speakerId": "s10",
+      "text": "Sí. Sí.",
+      "startMs": 1290970,
+      "endMs": 1291850
+    },
+    {
+      "speakerId": "s1",
+      "text": "¿El juez condenará o absolverá a los hermanos Méndez? Esperemos su fallo.",
+      "startMs": 1292250,
+      "endMs": 1297210
+    },
+    {
+      "speakerId": "s3",
+      "text": "El caso es tan claro que no amerita que me retire a emitir este sentido del fallo, y además no quiero ser parte de una privación de la libertad de los señores Cayetano y Rigoberto. Me extraña de sobremanera fiscal que haya traído a juicio un caso en donde sí está claro que el señor Francisco Barrientos Peña está lesionado, gravemente lesionado, no está acá, está en un hospital. Vino el señor Alberto Barragán, perito en medicina legal, quien nos dijo que las lesiones no son atribuibles a otra persona, en este caso, a Cayetano y a Rigoberto, que en todo caso fue a consecuencia de un golpe que él se pudo dar. Que queda claro es que trajo usted acá un caso solamente a raíz de una desconfianza, a raíz de el dicho de la señora Ramona, la esposa del señor Francisco Barrientos, quien solo porque no los conocía, quien solo porque tenían poco tiempo en la ciudad y venían de provincia, por eso les generaba como la desconfianza de que ellos pudiesen ser quienes cometieron la conducta. Advertí que su contrainterrogatorio quería evidenciar algo relacionado a por qué estaban en ese lugar, a si quizás estaban despiertos, pero lo cierto es que no hay discusión sobre que el señor Francisco les permitió estar en ese domicilio.",
+      "startMs": 1298010,
+      "endMs": 1392915
+    },
+    {
+      "speakerId": "s3",
+      "text": "Claro, despertaron cuando llegó la policía, pero por eso, por esa desconfianza, por eso espera usted, fiscal, que yo pueda emitir un fallo condenatorio, No es posible. Fiscal, usted no logró demostrar, no superó la presunción de inocencia que asiste al señor Cayetano y al señor Rigoberto, no demostró con su carga de prueba. En vista de lo cual, se dicta sentencia absolutoria a su favor, señores Cayetano y señor Rigoberto, y entiendo que estaban en prisión preventiva, por lo que se levantan estas medidas. Se aclara cerrada la",
+      "startMs": 1392995,
+      "endMs": 1431165
+    }
+  ]
+}

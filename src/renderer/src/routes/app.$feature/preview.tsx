@@ -5,7 +5,6 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
-import Card from "@/components/ui/card";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { useFileParse } from "@/hooks/useFileParse";
@@ -14,6 +13,7 @@ import { addFiles, filterUnselected } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
+import { Card } from "@aymurai/ui";
 import {
   createFileRoute,
   useNavigate,

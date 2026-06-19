@@ -1,0 +1,7 @@
+allowBuilds:
+  '@aymurai/ui': true
+  '@biomejs/biome': true
+  electron: true
+  electron-winstaller: false
+  esbuild: true
+  lefthook: true

@@ -14,8 +14,6 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
-import Button from "@/components/ui/button";
-import Card from "@/components/ui/card";
 import { AUDIO_EXTENSIONS } from "@/constants/config";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
@@ -26,6 +24,7 @@ import { addFiles, removeAllFiles } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import { Button, Card } from "@aymurai/ui";
 import VoiceStepper from "./stepper";
 
 const previewViewport = css({

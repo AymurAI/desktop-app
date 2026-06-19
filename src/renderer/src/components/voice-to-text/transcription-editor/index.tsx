@@ -15,11 +15,11 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 
-import Switch from "@/components/ui/switch";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { renameTranscription } from "@/reducers/transcription/actions";
 import { css } from "@/styled/css";
 import type { Transcription } from "@/types/transcription";
+import { Switch } from "@aymurai/ui";
 import AudioPlayer, { type AudioPlayerHandle } from "../audio-player";
 import { useActiveTurn } from "../use-active-turn";
 import { SelectionToolbar, useSelectionAssign } from "./selection-toolbar";
