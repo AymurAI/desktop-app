@@ -13,8 +13,10 @@ import { VoiceHowItWorksGrid } from "@/components/voice-to-text/how-it-works";
 import VoiceStepper from "@/components/voice-to-text/stepper";
 import { AUDIO_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
+import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { SectionTitle } from "@/layout/section-title";
 import { addFiles } from "@/reducers/file/actions";
+import { clearTranscriptions } from "@/reducers/transcription/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
 import { HStack, Stack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
@@ -27,6 +29,7 @@ export default function VoiceOnboarding() {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useFileDispatch();
+  const transcriptionDispatch = useTranscriptionDispatch();
   const tutorialSeen = useTutorialSeen(FeatureFlowEnum.VoiceToText);
   const toggleTutorialSeen = useSetTutorialSeen();
 
@@ -49,6 +52,7 @@ export default function VoiceOnboarding() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: only on mount
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["transcribe"] });
+    transcriptionDispatch(clearTranscriptions());
   }, []);
 
   return (

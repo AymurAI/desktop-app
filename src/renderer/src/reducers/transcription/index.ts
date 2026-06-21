@@ -4,6 +4,7 @@ import {
   ActionTypes,
   type AddSpeakerAction,
   type AddTranscriptionAction,
+  type ClearTranscriptionsAction,
   type InsertTurnAction,
   type MergeTurnWithPreviousAction,
   type ReassignTurnSpeakerAction,
@@ -30,7 +31,8 @@ export type TranscriptionAction =
   | RemoveTurnAction
   | AddSpeakerAction
   | SplitTurnAction
-  | MergeTurnWithPreviousAction;
+  | MergeTurnWithPreviousAction
+  | ClearTranscriptionsAction;
 
 /**
  * Computes speaker initials from a label.
@@ -307,6 +309,13 @@ export default function reducer(
           ],
         };
       });
+    }
+
+    // ----------------
+    // CLEAR TRANSCRIPTIONS
+    // ----------------
+    case ActionTypes.CLEAR_TRANSCRIPTIONS: {
+      return [];
     }
 
     // ----------------

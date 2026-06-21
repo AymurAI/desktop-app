@@ -1,6 +1,7 @@
 import type { Transcription } from "@/types/transcription";
 import { describe, expect, it } from "vitest";
 import {
+  clearTranscriptions,
   mergeTurnWithPrevious,
   renameSpeakerGlobal,
   renameTranscription,
@@ -39,6 +40,17 @@ describe("renameTranscription", () => {
     const next = reducer(state, renameTranscription("t1", "Cambiado"));
     expect(next[1].title).toBe("Otro");
     expect(state[0].title).toBe("Audiencia 10/04/2025");
+  });
+});
+
+describe("clearTranscriptions", () => {
+  it("resets the state to an empty array", () => {
+    const state = [
+      makeTranscription(),
+      makeTranscription({ id: "t2", title: "Otro" }),
+    ];
+    const next = reducer(state, clearTranscriptions());
+    expect(next).toEqual([]);
   });
 });
 

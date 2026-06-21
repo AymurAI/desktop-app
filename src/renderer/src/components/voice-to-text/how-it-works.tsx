@@ -26,12 +26,12 @@ const stepBadge = css({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  width: "8",
-  height: "8",
+  width: "9",
+  height: "9",
   rounded: "full",
-  bg: "brand.primary",
-  color: "text.onbutton-default",
-  textStyle: "label.md.strong",
+  bg: "action.alt-default",
+  color: "text.onbutton-alternative",
+  textStyle: "cta.md.strong",
   flexShrink: "0",
 });
 
@@ -51,7 +51,6 @@ const helpButton = css({
   },
 });
 
-const modalContent = css({ width: "[90vw]", maxWidth: "[920px]" });
 const closeButton = css({ cursor: "pointer", color: "text.lighter" });
 
 const CARD_KEYS = ["card1", "card2", "card3", "card4"] as const;
@@ -103,7 +102,7 @@ export default function VoiceHowItWorksModal() {
           <Question size={32} />
         </button>
       </DialogTrigger>
-      <DialogContent className={modalContent}>
+      <DialogContent style={{ minWidth: 900 }}>
         <Stack gap="6">
           <HStack justify="space-between" alignItems="center">
             <SectionTitle>{t("howItWorks.modalTitle")}</SectionTitle>

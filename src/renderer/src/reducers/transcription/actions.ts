@@ -16,6 +16,7 @@ export enum ActionTypes {
   ADD_SPEAKER = "ADD_SPEAKER",
   SPLIT_TURN = "SPLIT_TURN",
   MERGE_TURN_WITH_PREVIOUS = "MERGE_TURN_WITH_PREVIOUS",
+  CLEAR_TRANSCRIPTIONS = "CLEAR_TRANSCRIPTIONS",
 }
 
 /**
@@ -262,5 +263,19 @@ export function mergeTurnWithPrevious(
   return {
     type: ActionTypes.MERGE_TURN_WITH_PREVIOUS,
     payload: { transcriptionId, turnId },
+  };
+}
+
+export type ClearTranscriptionsAction = Action<
+  ActionTypes.CLEAR_TRANSCRIPTIONS,
+  Record<string, never>
+>;
+/**
+ * Clears all transcriptions from the state
+ */
+export function clearTranscriptions(): ClearTranscriptionsAction {
+  return {
+    type: ActionTypes.CLEAR_TRANSCRIPTIONS,
+    payload: {},
   };
 }
