@@ -53,6 +53,11 @@ const helpButton = css({
 
 const closeButton = css({ cursor: "pointer", color: "text.lighter" });
 
+// @aymurai/ui DialogContent caps max-width at 700px, too narrow for the 2x2
+// tutorial grid (text columns collapse). Override from the consumer so the grid
+// matches the Figma onboarding layout.
+const modalContent = css({ width: "[90vw!]", maxWidth: "[920px!]" });
+
 const CARD_KEYS = ["card1", "card2", "card3", "card4"] as const;
 const CARD_IMAGES: Record<(typeof CARD_KEYS)[number], string> = {
   card1: "/onboarding-steps/step1.png",
@@ -102,7 +107,7 @@ export default function VoiceHowItWorksModal() {
           <Question size={32} />
         </button>
       </DialogTrigger>
-      <DialogContent style={{ minWidth: 900 }}>
+      <DialogContent className={modalContent}>
         <Stack gap="6">
           <HStack justify="space-between" alignItems="center">
             <SectionTitle>{t("howItWorks.modalTitle")}</SectionTitle>
