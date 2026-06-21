@@ -36,11 +36,11 @@
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@microsoft/fetch-event-source": "^2.0.1",
-    "agent-browser": "^0.29.1",
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "agent-browser": "^0.29.1",
     "@electron-forge/cli": "^6.0.4",
     "@electron-forge/maker-deb": "^6.0.4",
     "@electron-forge/maker-rpm": "^6.0.4",
