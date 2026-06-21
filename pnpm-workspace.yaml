@@ -1,3 +1,7 @@
+# electron-forge@6 pulls @electron/node-gyp via a git-resolved subdependency.
+# pnpm >=11 blocks exotic (git) subdeps by default; allow it so install /
+# `pnpm <script>` pre-run dep-checks succeed for this Electron toolchain.
+blockExoticSubdeps: false
 allowBuilds:
   '@aymurai/ui': true
   '@biomejs/biome': true
