@@ -32,10 +32,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@aymurai/ui": "git+ssh://git@github.com/AymurAI/ui-components.git#v0.2.1",
+    "@aymurai/ui": "github:AymurAI/ui-components#v0.2.1",
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@microsoft/fetch-event-source": "^2.0.1",
+    "agent-browser": "^0.29.1",
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {

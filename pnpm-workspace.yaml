@@ -1,7 +1,10 @@
 allowBuilds:
   '@aymurai/ui': true
   '@biomejs/biome': true
+  agent-browser: false
   electron: true
   electron-winstaller: false
   esbuild: true
   lefthook: true
+minimumReleaseAgeExclude:
+  - agent-browser@0.29.1
