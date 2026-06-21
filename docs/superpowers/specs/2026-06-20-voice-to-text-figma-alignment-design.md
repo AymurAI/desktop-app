@@ -158,6 +158,28 @@ reach it (fixtures / mock / sample transcript already present in repo:
 
 - **Styling:** Panda CSS only (`@/styled/css`, `@/styled/jsx`); semantic tokens, no raw hex
   except via the `[bracket]` escape. No new Stitches usage. See `.claude/rules/panda-css.md`.
+
+### Figma code export as a coding aid
+
+For the components that are **not** in `@aymurai/ui` v0.2.1 and are therefore hand-written
+app-local composites — the Dashboard "Card Tool" tile, the drop-zone card, the file row,
+and the process card — pull the Figma reference code per slice with the Figma MCP
+`get_design_context` on that node, **just-in-time** during the slice (so it can't go stale),
+not all up front.
+
+Use the export as a **reference only**, mining it for:
+
+- exact measurements (gaps, padding, radii, icon sizes),
+- the **hex → semantic-token map** the tool appends (e.g. `bg/primary-alternative #E5E8FF`,
+  `border/primary #BCBAB8`, `text/default #110041`, `text/lighter #625C68`,
+  `subtitle/md-strong`, `subtitle/sm-default`) — these map onto the
+  `@aymurai/ui` preset / `panda.config.ts` semantic tokens,
+- asset download URLs for any icons/vectors.
+
+Then translate to Panda CSS + semantic tokens and the repo's layout primitives. **Never**
+paste the Tailwind/absolute-positioned output verbatim, never introduce raw hex (use the
+mapped token), and do not add Tailwind as a dependency. This mirrors the `authoring-aymurai-ui`
+skill's Figma→Panda translation workflow.
 - **Components:** feature code imports `@aymurai/ui` for shared primitives and
   `@/components/ui/*` for Radix wrappers — never `@radix-ui/*` directly.
 - **i18n:** all user-facing strings via `react-i18next` `voice-to-text` namespace; add keys
