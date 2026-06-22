@@ -53,13 +53,8 @@ const voiceToText = {
     sectionTitle: "2. Transcripción de voz a texto",
     processingTitle: "AymurAI está transcribiendo el archivo.",
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
-    progressLabel: "{{percent}}%",
-    completedLabel: "Carga finalizada 100%",
-    errorLabel: "Error en la transcripción del archivo. Volvelo a intentar",
-    stoppedLabel:
-      "Transcripción detenida. Reemplazá el archivo para volver a intentar",
-    stop: "Detener",
-    replace: "Reemplazar",
+    // Progress label / status / stop / replace copy is rendered by the
+    // @aymurai/ui ArchiveProgress component (v0.3.0), not here.
     waitingForWords: "Esperando las primeras palabras…",
     previewAriaLabel: "Vista previa de la transcripción",
     callout:

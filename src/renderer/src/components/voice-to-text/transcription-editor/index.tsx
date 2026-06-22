@@ -138,7 +138,7 @@ const body = css({
   display: "flex",
   flexDir: "column",
   gap: "6",
-  bg: "bg.primary",
+  bg: "bg.secondary",
   position: "relative",
 });
 
@@ -157,7 +157,7 @@ const titleRow = css({
 });
 
 const titleSection = css({
-  bg: "bg.primary",
+  bg: "bg.secondary",
   px: "12",
   pt: "6",
   flexShrink: "0",

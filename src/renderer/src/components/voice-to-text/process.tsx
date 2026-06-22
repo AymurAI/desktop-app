@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowsClockwise, CheckCircle, Info } from "phosphor-react";
+import { Info } from "phosphor-react";
 import {
   type ChangeEventHandler,
   useEffect,
@@ -24,7 +24,12 @@ import { addFiles, removeAllFiles } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
-import { Button, Card } from "@aymurai/ui";
+import {
+  ArchiveProgress,
+  type ArchiveProgressStatus,
+  Button,
+  Card,
+} from "@aymurai/ui";
 import VoiceStepper from "./stepper";
 
 const previewViewport = css({
@@ -72,30 +77,6 @@ const previewPlaceholder = css({
   fontStyle: "italic",
 });
 
-const barContainer = css({
-  width: "full",
-  height: "[10px]",
-  bg: "bg.secondary-highlight",
-  rounded: "full",
-  overflow: "hidden",
-});
-
-const barProcessing = css({
-  height: "full",
-  rounded: "full",
-  transition: "[width 200ms ease]",
-  backgroundSize: "[32px 32px]",
-  backgroundImage:
-    "[linear-gradient(135deg, #3F479D 37.5%, #C5CAFF 37.5%, #C5CAFF 50%, #3F479D 50%, #3F479D 87.5%, #C5CAFF 87.5%, #C5CAFF 100%)]",
-});
-
-const barError = css({
-  height: "full",
-  width: "full",
-  rounded: "full",
-  bg: "system.error-secondary",
-});
-
 const calloutBox = css({
   display: "flex",
   alignItems: "center",
@@ -105,23 +86,6 @@ const calloutBox = css({
   rounded: "md",
   bg: "bg.secondary-highlight",
   color: "text.default",
-});
-
-const stopButton = css({
-  display: "flex",
-  alignItems: "center",
-  gap: "2",
-  px: "4",
-  py: "2",
-  rounded: "md",
-  borderWidth: "[1px]",
-  borderStyle: "solid",
-  borderColor: "brand.primary",
-  bg: "bg.secondary",
-  color: "brand.primary",
-  cursor: "pointer",
-  whiteSpace: "nowrap",
-  "&:hover": { bg: "bg.secondary-highlight" },
 });
 
 // ~25ms per character so the preview scrolls at a brisk but readable pace,
@@ -148,9 +112,17 @@ export default function VoiceProcess() {
 
   const isCompleted = status === "completed";
   const isError = status === "error";
-  const isProcessing = status === "processing";
   const isStopped = status === "stopped";
   const progressPercent = Math.round(progress * 100);
+
+  // Map our transcription status onto @aymurai/ui ArchiveProgress states.
+  const archiveStatus: ArchiveProgressStatus = isCompleted
+    ? "completed"
+    : isError
+      ? "error"
+      : isStopped
+        ? "stopped"
+        : "default";
 
   // Show the latest partial text in the preview, but only swap it in once the
   // current scroll loop completes — otherwise each SSE update would cut the
@@ -238,103 +210,13 @@ export default function VoiceProcess() {
               </Stack>
 
               <Stack gap="3">
-                <HStack
-                  justifyContent="space-between"
-                  alignItems="center"
-                  gap="4"
-                >
-                  <styled.span
-                    textStyle="label.md.default"
-                    color={isError ? "system.error" : "text.default"}
-                    truncate
-                  >
-                    {files[0]?.data.name}
-                  </styled.span>
-
-                  <HStack gap="3" alignItems="center" flexShrink="0">
-                    {isError ? (
-                      <styled.span
-                        textStyle="label.md.default"
-                        color="system.error"
-                        fontStyle="italic"
-                      >
-                        {t("process.errorLabel")}
-                      </styled.span>
-                    ) : isStopped ? (
-                      <styled.span
-                        textStyle="label.md.default"
-                        color="text.lighter"
-                        fontStyle="italic"
-                      >
-                        {t("process.stoppedLabel")}
-                      </styled.span>
-                    ) : isCompleted ? (
-                      <HStack gap="2" alignItems="center">
-                        <CheckCircle
-                          size={20}
-                          color="#3F479D"
-                          weight="regular"
-                        />
-                        <styled.span
-                          textStyle="label.md.default"
-                          color="brand.primary"
-                        >
-                          {t("process.completedLabel")}
-                        </styled.span>
-                      </HStack>
-                    ) : (
-                      <styled.span
-                        textStyle="label.md.default"
-                        color="text.default"
-                      >
-                        {t("process.progressLabel", {
-                          percent: progressPercent,
-                        })}
-                      </styled.span>
-                    )}
-
-                    {isProcessing && (
-                      <button
-                        type="button"
-                        className={stopButton}
-                        onClick={handleStop}
-                      >
-                        <styled.span
-                          width="[14px]"
-                          height="[14px]"
-                          borderWidth="[2px]"
-                          borderStyle="solid"
-                          borderColor="brand.primary"
-                          rounded="[2px]"
-                        />
-                        {t("process.stop")}
-                      </button>
-                    )}
-                    {(isError || isStopped) && (
-                      <button
-                        type="button"
-                        className={stopButton}
-                        onClick={handleReplaceClick}
-                      >
-                        <ArrowsClockwise size={16} />
-                        {t("process.replace")}
-                      </button>
-                    )}
-                  </HStack>
-                </HStack>
-
-                <div className={barContainer}>
-                  {isError ? (
-                    <div className={barError} />
-                  ) : (
-                    <div
-                      className={barProcessing}
-                      style={{
-                        width: `${isCompleted ? 100 : progressPercent}%`,
-                      }}
-                    />
-                  )}
-                </div>
+                <ArchiveProgress
+                  fileName={files[0]?.data.name}
+                  progress={isCompleted ? 100 : progressPercent}
+                  status={archiveStatus}
+                  onStop={handleStop}
+                  onReplace={handleReplaceClick}
+                />
 
                 {!isError ? (
                   <div
