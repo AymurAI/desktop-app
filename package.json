@@ -32,7 +32,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@aymurai/ui": "github:AymurAI/ui-components#v0.2.1",
+    "@aymurai/ui": "github:AymurAI/ui-components#chore/release-v0.3.0",
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@microsoft/fetch-event-source": "^2.0.1",
@@ -40,7 +40,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "agent-browser": "^0.29.1",
     "@electron-forge/cli": "^6.0.4",
     "@electron-forge/maker-deb": "^6.0.4",
     "@electron-forge/maker-rpm": "^6.0.4",
@@ -66,6 +65,7 @@
     "@types/react-dom": "19",
     "@types/regex-escape": "^3.4.1",
     "@vitejs/plugin-react": "^4.5.0",
+    "agent-browser": "^0.29.1",
     "axios": "^1.12.0",
     "concurrently": "^7.5.0",
     "cross-env": "^7.0.3",
