@@ -33,10 +33,9 @@ const fileRow = css({
   justifyContent: "space-between",
   gap: "4",
   width: "full",
-  px: "4",
-  py: "3",
-  rounded: "md",
-  borderWidth: "[2px]",
+  p: "6",
+  rounded: "[8px]",
+  borderWidth: "[4px]",
   borderStyle: "solid",
   borderColor: "[#BCBAB8]",
   bg: "bg.secondary",
@@ -46,23 +45,22 @@ const playButton = css({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  width: "10",
-  height: "10",
-  rounded: "md",
+  p: "[9.6px]",
+  rounded: "[9.6px]",
   border: "[none]",
   cursor: "pointer",
   flexShrink: "0",
-  bg: "bg.secondary-highlight",
+  bg: "bg.primary-alternative",
   color: "brand.primary",
-  "&:hover": { bg: "action.hover", color: "text.onbutton-alternative" },
+  "&:hover": { bg: "bg.primary-highlight" },
 });
 
 const removeButton = css({
   background: "transparent",
   border: "[none]",
   cursor: "pointer",
-  color: "text.lighter",
-  p: "2",
+  color: "text.default",
+  p: "0",
   rounded: "md",
   flexShrink: "0",
   "&:hover": { color: "system.error" },
@@ -86,13 +84,17 @@ function FileRow({ file, onRemove }: { file: File; onRemove: () => void }) {
           }
         >
           {isPlaying ? (
-            <Pause size={20} weight="fill" />
+            <Pause size={28} weight="fill" />
           ) : (
-            <Play size={20} weight="fill" />
+            <Play size={28} weight="fill" />
           )}
         </button>
-        <Stack gap="0" minWidth="0">
-          <styled.span textStyle="paragraph.sm.strong" truncate>
+        <Stack gap="1" minWidth="0">
+          <styled.span
+            textStyle="paragraph.md.default"
+            color="text.default"
+            truncate
+          >
             {file.name}
           </styled.span>
           <styled.span textStyle="paragraph.sm.default" color="text.lighter">
@@ -109,7 +111,7 @@ function FileRow({ file, onRemove }: { file: File; onRemove: () => void }) {
         aria-label={t("preview.removeAria", { name: file.name })}
         className={removeButton}
       >
-        <Trash size={18} />
+        <Trash size={24} />
       </button>
     </div>
   );
@@ -149,7 +151,7 @@ export default function VoicePreview() {
             <SectionTitle>{t("preview.sectionTitle")}</SectionTitle>
           </HStack>
           <Card>
-            <Stack gap="4">
+            <Stack gap="8">
               <styled.h2 textStyle="subtitle.md.default">
                 {t("preview.selectedCount", { count: files.length })}
               </styled.h2>

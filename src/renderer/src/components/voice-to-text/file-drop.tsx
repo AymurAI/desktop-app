@@ -98,6 +98,7 @@ export default function VoiceFileDrop({
           textStyle="subtitle.md.default"
           color="text.default"
           textAlign="center"
+          maxWidth="[340px]"
         >
           {t("onboarding.dropAreaTitle")}
         </styled.p>
