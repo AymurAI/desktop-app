@@ -32,6 +32,13 @@ import {
 } from "@aymurai/ui";
 import VoiceStepper from "./stepper";
 
+// @aymurai/ui ArchiveProgress always renders a "Descartar" (✕) button, which the
+// Figma transcription screen does not include. Hide it from the consumer until
+// the library makes it conditional.
+const hideDismiss = css({
+  "& button[aria-label='Descartar']": { display: "none" },
+});
+
 const previewViewport = css({
   position: "relative",
   alignSelf: "stretch",
@@ -211,6 +218,7 @@ export default function VoiceProcess() {
 
               <Stack gap="3">
                 <ArchiveProgress
+                  className={hideDismiss}
                   fileName={files[0]?.data.name}
                   progress={isCompleted ? 100 : progressPercent}
                   status={archiveStatus}
