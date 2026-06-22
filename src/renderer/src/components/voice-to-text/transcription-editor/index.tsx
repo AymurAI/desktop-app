@@ -19,8 +19,9 @@ import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { renameTranscription } from "@/reducers/transcription/actions";
 import { css } from "@/styled/css";
 import type { Transcription } from "@/types/transcription";
-import { Switch } from "@aymurai/ui";
+import { Switch, TranscriptBlock } from "@aymurai/ui";
 import AudioPlayer, { type AudioPlayerHandle } from "../audio-player";
+import { formatTime } from "../format-time";
 import { useActiveTurn } from "../use-active-turn";
 import { SelectionToolbar, useSelectionAssign } from "./selection-toolbar";
 import TurnBlock from "./turn-block";
@@ -459,6 +460,23 @@ export default function TranscriptionEditor({
           {transcription.turns.map((turn) => {
             const speaker = speakerMap[turn.speakerId];
             if (!speaker) return null;
+
+            // Read mode → @aymurai/ui TranscriptBlock (Figma display component).
+            // Wrapped in a ref'd div so search scroll-to-match still works;
+            // search highlight + click-to-seek are edit-mode only.
+            if (!isEditMode) {
+              return (
+                <div key={turn.id} ref={setTurnRef(turn.id)}>
+                  <TranscriptBlock
+                    initials={speaker.initials}
+                    name={speaker.label}
+                    time={formatTime(turn.startMs)}
+                    text={turn.text}
+                    color={speaker.color}
+                  />
+                </div>
+              );
+            }
 
             return (
               <TurnBlock
