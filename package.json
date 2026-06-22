@@ -32,7 +32,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@aymurai/ui": "github:AymurAI/ui-components#chore/release-v0.3.0",
+    "@aymurai/ui": "github:AymurAI/ui-components#v0.3.1",
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@microsoft/fetch-event-source": "^2.0.1",
