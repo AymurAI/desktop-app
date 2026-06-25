@@ -19,6 +19,8 @@ export interface TranscribeStreamOptions {
 
 class FatalStreamError extends Error {}
 
+const clampRatio = (ratio: number) => Math.max(0, Math.min(1, ratio));
+
 export async function transcribeStream(
   file: File,
   { signal, useCache, onProgress, onPartialText }: TranscribeStreamOptions,
@@ -28,9 +30,12 @@ export async function transcribeStream(
   const form = new FormData();
   form.append("file", file);
 
-  const paragraphs = new Map<string, ASRParagraph>();
-  const anonymousParagraphs: ASRParagraph[] = [];
   let documentId: string | null = null;
+  let paragraphs: ASRParagraph[] = [];
+  // Accumulated `delta` chunks form the live preview. They overlap slightly at
+  // their boundaries, so this is throwaway text — the authoritative transcript
+  // arrives once in the `segments` event.
+  const previewParts: string[] = [];
 
   const baseURL = api.defaults.baseURL?.replace(/\/$/, "");
   if (!baseURL) {
@@ -77,33 +82,30 @@ export async function transcribeStream(
         const parsed = ASRStreamEventSchema.safeParse(JSON.parse(ev.data));
         if (!parsed.success) return;
 
-        const { document_id, document, current_time, total_time } = parsed.data;
-        documentId = document_id;
-
-        for (const para of document) {
-          if (para.paragraph_id) {
-            paragraphs.set(para.paragraph_id, para);
-          } else {
-            anonymousParagraphs.push(para);
-          }
-        }
-
-        if (onProgress && total_time > 0) {
-          const ratio = (current_time ?? 0) / total_time;
-          onProgress(Math.max(0, Math.min(1, ratio)));
-        }
-
-        if (onPartialText) {
-          // Each SSE event already carries the complete document so far; build
-          // the preview straight from it. Don't reuse the merged accumulators
-          // above because anonymous paragraphs get .push()'d every event and
-          // would duplicate themselves in the preview.
-          const cumulative = document
-            .filter((p) => p.speaker_no >= 0)
-            .map((p) => p.text.trim())
-            .filter(Boolean)
-            .join(" ");
-          onPartialText(cumulative);
+        const event = parsed.data;
+        switch (event.type) {
+          case "meta":
+            documentId = event.document_id;
+            break;
+          case "delta":
+            previewParts.push(event.text.trim());
+            onProgress?.(clampRatio(event.progress));
+            onPartialText?.(previewParts.filter(Boolean).join(" "));
+            break;
+          case "segments":
+            // The authoritative, full transcript. Replaces the preview text.
+            paragraphs = event.document;
+            onPartialText?.(
+              event.document
+                .filter((p) => p.speaker_no >= 0)
+                .map((p) => p.text.trim())
+                .filter(Boolean)
+                .join(" "),
+            );
+            break;
+          case "done":
+            onProgress?.(clampRatio(event.progress));
+            break;
         }
       },
       onerror(err) {
@@ -128,7 +130,7 @@ export async function transcribeStream(
 
   const doc: ASRDocument = {
     document_id: documentId,
-    document: [...paragraphs.values(), ...anonymousParagraphs],
+    document: paragraphs,
   };
 
   onProgress?.(1);
