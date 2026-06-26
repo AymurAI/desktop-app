@@ -44,7 +44,7 @@ const previewViewport = css({
   alignSelf: "stretch",
   width: "full",
   height: "[240px]",
-  overflow: "hidden",
+  overflowY: "auto",
   borderWidth: "[1px]",
   borderStyle: "solid",
   borderColor: "[#E5E3E0]",
@@ -53,25 +53,15 @@ const previewViewport = css({
   px: "6",
   bg: "[rgba(255, 255, 255, 0.6)]",
   boxSizing: "border-box",
-  maskImage:
-    "[linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)]",
-  WebkitMaskImage:
-    "[linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)]",
 });
 
-const previewTrack = css({
-  position: "absolute",
-  left: "6",
-  right: "6",
+const previewText = css({
+  m: "[0]",
   fontWeight: "[300]",
   fontSize: "[18px]",
   lineHeight: "[30px]",
   color: "text.lighter",
   whiteSpace: "pre-wrap",
-  willChange: "[transform]",
-  animationName: "[voice-to-text-preview-scroll]",
-  animationTimingFunction: "linear",
-  animationIterationCount: "infinite",
 });
 
 const previewPlaceholder = css({
@@ -94,13 +84,6 @@ const calloutBox = css({
   bg: "bg.secondary-highlight",
   color: "text.default",
 });
-
-// ~25ms per character so the preview scrolls at a brisk but readable pace,
-// clamped so very short or very long texts still feel right.
-function estimateScrollDuration(text: string): number {
-  const chars = text.length || 1;
-  return Math.max(6, Math.min(40, chars * 0.025));
-}
 
 export default function VoiceProcess() {
   const { t } = useTranslation("voice-to-text");
@@ -131,34 +114,38 @@ export default function VoiceProcess() {
         ? "stopped"
         : "default";
 
-  // Show the latest partial text in the preview, but only swap it in once the
-  // current scroll loop completes — otherwise each SSE update would cut the
-  // animation mid-flight and leave the track perpetually starting from off-screen.
+  // Show the latest partial text in a plain scrollable preview that updates as
+  // each new fragment streams in.
   const [displayedText, setDisplayedText] = useState("");
-  const pendingTextRef = useRef("");
 
   useEffect(() => {
-    pendingTextRef.current = partialText;
-    if (partialText && !displayedText) setDisplayedText(partialText);
-  }, [partialText, displayedText]);
+    setDisplayedText(partialText);
+  }, [partialText]);
 
   useEffect(() => {
     if (status === "idle" || status === "stopped" || status === "error") {
       setDisplayedText("");
-      pendingTextRef.current = "";
     }
   }, [status]);
 
-  const previewDuration = useMemo(
-    () => estimateScrollDuration(displayedText),
-    [displayedText],
-  );
+  // Keep the newest fragment in view by sticking to the bottom, but stop
+  // following once the user scrolls up to re-read earlier text.
+  const previewRef = useRef<HTMLDivElement>(null);
+  const stickToBottomRef = useRef(true);
 
-  const handleTrackIteration = () => {
-    if (pendingTextRef.current && pendingTextRef.current !== displayedText) {
-      setDisplayedText(pendingTextRef.current);
-    }
+  const handlePreviewScroll = () => {
+    const el = previewRef.current;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    stickToBottomRef.current = distanceFromBottom < 40;
   };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: displayedText is the trigger — re-scroll to the bottom whenever new text streams in
+  useEffect(() => {
+    if (!stickToBottomRef.current) return;
+    const el = previewRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [displayedText]);
 
   const handleStop = () => abort();
 
@@ -185,12 +172,6 @@ export default function VoiceProcess() {
 
   return (
     <RequireFile>
-      {/* TODO: move voice-to-text-preview-scroll keyframe to panda.config.ts theme.extend.keyframes */}
-      <style>
-        {
-          "@keyframes voice-to-text-preview-scroll { 0% { transform: translateY(100%); } 100% { transform: translateY(-100%); } }"
-        }
-      </style>
       <Header
         title={t("title")}
         feature={FeatureFlowEnum.VoiceToText}
@@ -228,18 +209,14 @@ export default function VoiceProcess() {
 
                 {!isError ? (
                   <div
+                    ref={previewRef}
                     className={previewViewport}
+                    onScroll={handlePreviewScroll}
                     aria-live="polite"
                     aria-label={t("process.previewAriaLabel")}
                   >
                     {displayedText ? (
-                      <div
-                        className={previewTrack}
-                        style={{ animationDuration: `${previewDuration}s` }}
-                        onAnimationIteration={handleTrackIteration}
-                      >
-                        {displayedText}
-                      </div>
+                      <p className={previewText}>{displayedText}</p>
                     ) : (
                       <span className={previewPlaceholder}>
                         {t("process.waitingForWords")}
