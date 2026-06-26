@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { renameTranscription } from "@/reducers/transcription/actions";
-import { css } from "@/styled/css";
+import { css, cx } from "@/styled/css";
 import type { Transcription } from "@/types/transcription";
 import { Switch, TranscriptBlock } from "@aymurai/ui";
 import AudioPlayer, { type AudioPlayerHandle } from "../audio-player";
@@ -205,6 +205,19 @@ const editBanner = css({
   fontSize: "[14px]",
 });
 
+// Read-mode transcript block: clickable (seeks the player to the turn) and
+// gently highlighted while it is the turn currently playing.
+const readBlock = css({
+  cursor: "pointer",
+  rounded: "md",
+  transition: "[background-color 0.15s ease]",
+  "&:hover": { bg: "[rgba(63, 71, 157, 0.04)]" },
+});
+
+const readBlockActive = css({
+  bg: "[rgba(197, 202, 255, 0.15)]",
+});
+
 interface SearchMatch {
   turnId: string;
   index: number;
@@ -336,6 +349,17 @@ export default function TranscriptionEditor({
 
   const activeTurnId = useActiveTurn(transcription.turns, currentMs);
 
+  // Follow-along: keep the turn currently playing in view as the playhead
+  // advances. Keyed on activeTurnId (which only changes when playback crosses
+  // into a new turn), so it scrolls on play / seek but stays out of the way
+  // while the audio is paused.
+  useEffect(() => {
+    if (!activeTurnId) return;
+    turnRefsMap.current
+      .get(activeTurnId)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [activeTurnId]);
+
   const sa = useSelectionAssign(scrollRef, transcription);
 
   const handleSeekTo = (ms: number) => {
@@ -462,9 +486,11 @@ export default function TranscriptionEditor({
             if (!speaker) return null;
 
             // Read mode → @aymurai/ui TranscriptBlock (Figma display component).
-            // Wrapped in a ref'd div so search scroll-to-match still works;
-            // search highlight + click-to-seek are edit-mode only.
+            // Wrapped in a ref'd div so search scroll-to-match and the
+            // playback follow-along both work. Clicking a block seeks the
+            // player to that turn; the active turn is highlighted.
             if (!isEditMode) {
+              const isActive = turn.id === activeTurnId;
               return (
                 <div key={turn.id} ref={setTurnRef(turn.id)}>
                   <TranscriptBlock
@@ -473,6 +499,19 @@ export default function TranscriptionEditor({
                     time={formatTime(turn.startMs)}
                     text={turn.text}
                     color={speaker.color}
+                    className={cx(readBlock, isActive && readBlockActive)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={t("editor.seekToTurn", {
+                      time: formatTime(turn.startMs),
+                    })}
+                    onClick={() => handleSeekTo(turn.startMs)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleSeekTo(turn.startMs);
+                      }
+                    }}
                   />
                 </div>
               );

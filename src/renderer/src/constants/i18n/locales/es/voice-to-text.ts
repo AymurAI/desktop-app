@@ -98,6 +98,7 @@ const voiceToText = {
     pause: "Pausar",
     speedAria: "Cambiar velocidad de reproducción",
     turnTextAria: "Texto de {{speaker}} en {{time}}",
+    seekToTurn: "Reproducir desde {{time}}",
   },
   speakerPicker: {
     people: "Personas",
