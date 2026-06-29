@@ -4,6 +4,7 @@ import { CanceledError } from "axios";
 import {
   type ASRDocument,
   type ASRParagraph,
+  type ASRSpeakerTurn,
   ASRStreamEventSchema,
 } from "@/schema/asr";
 import api from "@/services/api";
@@ -32,6 +33,7 @@ export async function transcribeStream(
 
   let documentId: string | null = null;
   let paragraphs: ASRParagraph[] = [];
+  let speakerTurns: ASRSpeakerTurn[] = [];
   // Accumulated `delta` chunks form the live preview. They overlap slightly at
   // their boundaries, so this is throwaway text — the authoritative transcript
   // arrives once in the `segments` event.
@@ -89,16 +91,21 @@ export async function transcribeStream(
             break;
           case "delta":
             previewParts.push(event.text.trim());
-            onProgress?.(clampRatio(event.progress));
+            if (typeof event.progress === "number") {
+              onProgress?.(clampRatio(event.progress));
+            }
             onPartialText?.(previewParts.filter(Boolean).join(" "));
             break;
           case "segments":
             // The authoritative, full transcript. Replaces the preview text.
             paragraphs = event.document;
+            speakerTurns = event.speaker_turns;
             onPartialText?.(
-              event.document
-                .filter((p) => p.speaker_no >= 0)
-                .map((p) => p.text.trim())
+              (event.speaker_turns.length > 0
+                ? event.speaker_turns
+                : event.document.filter((p) => p.speaker_no >= 0)
+              )
+                .map((item) => item.text.trim())
                 .filter(Boolean)
                 .join(" "),
             );
@@ -106,6 +113,8 @@ export async function transcribeStream(
           case "done":
             onProgress?.(clampRatio(event.progress));
             break;
+          case "error":
+            throw new FatalStreamError(event.detail);
         }
       },
       onerror(err) {
@@ -131,6 +140,7 @@ export async function transcribeStream(
   const doc: ASRDocument = {
     document_id: documentId,
     document: paragraphs,
+    speaker_turns: speakerTurns,
   };
 
   onProgress?.(1);
