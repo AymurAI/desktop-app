@@ -45,7 +45,12 @@ function parseDurationToMs(value: string | number): number {
 }
 
 function speakerLabelForSegment(segment: ASRParagraph): string {
-  return segment.speaker_name?.trim() || `Persona ${segment.speaker_no}`;
+  return (
+    segment.speaker_name?.trim() ||
+    (segment.speaker_no < 0
+      ? `Speaker ${segment.speaker_no}`
+      : `Persona ${segment.speaker_no}`)
+  );
 }
 
 function buildSpeakersFromLabels(
@@ -64,7 +69,7 @@ function collectSpeakerTurnLabels(
 ): Map<number, string> {
   const labels = new Map<number, string>();
   for (const turn of speakerTurns) {
-    if (turn.speaker_no < 0 || labels.has(turn.speaker_no)) continue;
+    if (labels.has(turn.speaker_no)) continue;
     labels.set(turn.speaker_no, turn.speaker);
   }
   return labels;
@@ -75,7 +80,7 @@ function collectSegmentSpeakerLabels(
 ): Map<number, string> {
   const labels = new Map<number, string>();
   for (const segment of segments) {
-    if (segment.speaker_no < 0 || labels.has(segment.speaker_no)) continue;
+    if (labels.has(segment.speaker_no)) continue;
     labels.set(segment.speaker_no, speakerLabelForSegment(segment));
   }
   return labels;
@@ -91,31 +96,27 @@ function turnIdFromSpeakerTurn(turn: ASRSpeakerTurn): string {
 }
 
 function buildTurnsFromSpeakerTurns(speakerTurns: ASRSpeakerTurn[]): Turn[] {
-  return speakerTurns
-    .filter((turn) => turn.speaker_no >= 0)
-    .map((turn) => ({
-      id: turnIdFromSpeakerTurn(turn),
-      speakerId: `s${turn.speaker_no}`,
-      speakerNo: turn.speaker_no,
-      text: turn.text,
-      startMs: parseDurationToMs(turn.start),
-      endMs: parseDurationToMs(turn.end),
-      segments: turn.segments,
-    }));
+  return speakerTurns.map((turn) => ({
+    id: turnIdFromSpeakerTurn(turn),
+    speakerId: `s${turn.speaker_no}`,
+    speakerNo: turn.speaker_no,
+    text: turn.text,
+    startMs: parseDurationToMs(turn.start),
+    endMs: parseDurationToMs(turn.end),
+    segments: turn.segments,
+  }));
 }
 
 export function legacyBuildTurnsFromDocument(document: ASRParagraph[]): Turn[] {
-  return document
-    .filter((p) => p.speaker_no >= 0)
-    .map((para) => ({
-      id: para.paragraph_id ?? crypto.randomUUID(),
-      speakerId: `s${para.speaker_no}`,
-      speakerNo: para.speaker_no,
-      text: para.text,
-      startMs: parseDurationToMs(para.start),
-      endMs: parseDurationToMs(para.end),
-      segments: [para],
-    }));
+  return document.map((para) => ({
+    id: para.paragraph_id ?? crypto.randomUUID(),
+    speakerId: `s${para.speaker_no}`,
+    speakerNo: para.speaker_no,
+    text: para.text,
+    startMs: parseDurationToMs(para.start),
+    endMs: parseDurationToMs(para.end),
+    segments: [para],
+  }));
 }
 
 function transcriptionTitleFromFile(file: File): string {
@@ -135,8 +136,6 @@ export function mapASRDocumentToTranscription(
   file: File,
   audioObjectUrl: string,
 ): Transcription {
-  // Negative speaker_no marks non-speech segments (silence, music, etc.).
-  // Keep them out of the editor UI but still use them to compute full audio duration.
   const speakerTurns =
     doc.speaker_turns && doc.speaker_turns.length > 0 ? doc.speaker_turns : [];
   const turns =

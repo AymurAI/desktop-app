@@ -103,7 +103,7 @@ export async function transcribeStream(
             onPartialText?.(
               (event.speaker_turns.length > 0
                 ? event.speaker_turns
-                : event.document.filter((p) => p.speaker_no >= 0)
+                : event.document
               )
                 .map((item) => item.text.trim())
                 .filter(Boolean)
