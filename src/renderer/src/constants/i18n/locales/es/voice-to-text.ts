@@ -1,6 +1,16 @@
+import { MEDIA_EXTENSIONS } from "@/constants/config";
+
+function formatExtensionList(extensions: string[]) {
+  const formatted = extensions.map((extension) => `.${extension}`);
+  if (formatted.length <= 1) return formatted.join("");
+
+  const head = formatted.slice(0, -1).join(", ");
+  return `${head} o ${formatted.at(-1)}`;
+}
+
 const voiceToText = {
   title: "Voz a Texto",
-  subtitle: "Transcribí audios a documentos de texto editables",
+  subtitle: "Transcribí audios y videos a documentos de texto editables",
   stepper: {
     step1: "Selección",
     step2: "Transcripción",
@@ -14,12 +24,13 @@ const voiceToText = {
     helpAria: "Cómo funciona la transcripción de voz a texto",
     cards: {
       card1: {
-        title: "Subí el archivo de audio",
-        subtitle: "Cargá un archivo en formato .mp3, .wav, .m4a o .webm.",
+        title: "Subí el archivo de audio o video",
+        subtitle: `Cargá un archivo en formato ${formatExtensionList(MEDIA_EXTENSIONS)}.`,
       },
       card2: {
-        title: "La inteligencia artificial analiza el audio",
-        subtitle: "Extrae la información relevante de cada documento.",
+        title: "La inteligencia artificial procesa el archivo",
+        subtitle:
+          "Genera la transcripción e identifica distintas personas que hablan en el audio.",
       },
       card3: {
         title: "Revisión y validación humana",
@@ -37,7 +48,7 @@ const voiceToText = {
     loadDocuments: "Cargar archivo",
     dropAreaTitle:
       "Selecciona el archivo que desea transcribir o arrástralo y suéltalo",
-    dropAreaFormats: "Formatos válidos: .mp3, .wav, .m4a o .webm",
+    dropAreaFormats: `Formatos válidos: ${formatExtensionList(MEDIA_EXTENSIONS)}`,
   },
   preview: {
     sectionTitle: "1. Selección de archivo",
@@ -58,7 +69,7 @@ const voiceToText = {
     waitingForWords: "Esperando las primeras palabras…",
     previewAriaLabel: "Vista previa de la transcripción",
     callout:
-      "Transcribiendo audio. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
+      "Transcribiendo archivo. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
     back: "Volver",
     next: "Siguiente",
   },

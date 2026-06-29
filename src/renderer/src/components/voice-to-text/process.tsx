@@ -14,7 +14,7 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
-import { AUDIO_EXTENSIONS } from "@/constants/config";
+import { MEDIA_EXTENSIONS } from "@/constants/config";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { useTranscribe } from "@/hooks/useTranscribe";
@@ -257,7 +257,7 @@ export default function VoiceProcess() {
       <HiddenInput
         ref={replaceInputRef}
         onChange={handleReplaceFiles}
-        extensions={AUDIO_EXTENSIONS}
+        extensions={MEDIA_EXTENSIONS}
       />
     </RequireFile>
   );

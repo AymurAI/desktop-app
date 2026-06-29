@@ -1,19 +1,21 @@
-import { WHITELISTED_EXTENSIONS } from "@/constants/config";
+import { DOCUMENT_EXTENSIONS } from "@/constants/config";
+
+const documentFormats = `Formatos válidos: ${DOCUMENT_EXTENSIONS.map((extension) => `.${extension}`).join(", ")}`;
 
 const anonymizer = {
   title: "Anonimizador",
   subtitle: "Anonimiza resoluciones judiciales de manera automática y editable",
   onboarding: {
     sectionTitle: "1. Selección de Archivo",
-    validFormats: "Formatos válidos: .doc y .docx",
+    validFormats: documentFormats,
     loadDocuments: "Cargar documentos",
     dropAreaTitle: "Selecciona el archivo para anonimizar",
-    dropAreaFormats: `Formatos válidos: ${WHITELISTED_EXTENSIONS.map((e) => `.${e}`).join(", ")}`,
+    dropAreaFormats: documentFormats,
   },
   preview: {
     sectionTitle: "1. Selección de Archivo",
     filesLabel: "Archivos seleccionados",
-    validFormats: "Formatos válidos: .doc y .docx",
+    validFormats: documentFormats,
     loadMore: "Cargar más documentos",
     continue: "Continuar",
   },

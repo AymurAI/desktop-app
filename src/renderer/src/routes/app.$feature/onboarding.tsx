@@ -11,6 +11,7 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
+import { DOCUMENT_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
 import { addFiles } from "@/reducers/file/actions";
@@ -70,6 +71,7 @@ function DocumentOnboarding() {
     inputRef.current?.click();
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only on mount
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["predict"] });
     queryClient.removeQueries({ queryKey: ["file-parser"] });
@@ -107,7 +109,11 @@ function DocumentOnboarding() {
           </Button>
         </HStack>
       </Footer>
-      <HiddenInput ref={inputRef} onChange={handleInputChange} />
+      <HiddenInput
+        ref={inputRef}
+        onChange={handleInputChange}
+        extensions={DOCUMENT_EXTENSIONS}
+      />
     </>
   );
 }

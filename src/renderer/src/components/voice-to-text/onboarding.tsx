@@ -11,7 +11,7 @@ import BackButton from "@/components/ui/back-button";
 import VoiceFileDrop from "@/components/voice-to-text/file-drop";
 import { VoiceHowItWorksGrid } from "@/components/voice-to-text/how-it-works";
 import VoiceStepper from "@/components/voice-to-text/stepper";
-import { AUDIO_EXTENSIONS } from "@/constants/config";
+import { MEDIA_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { SectionTitle } from "@/layout/section-title";
@@ -91,7 +91,7 @@ export default function VoiceOnboarding() {
       <HiddenInput
         ref={inputRef}
         onChange={handleInputChange}
-        extensions={AUDIO_EXTENSIONS}
+        extensions={MEDIA_EXTENSIONS}
         multiple
       />
     </>

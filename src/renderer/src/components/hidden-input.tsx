@@ -12,7 +12,7 @@ const input = css({
 interface HiddenInputProps extends Omit<ComponentProps<"input">, "onChange"> {
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   /**
-   * Optional whitelist override, e.g. audio-only extensions for the
+   * Optional whitelist override, e.g. media-only extensions for the
    * voice-to-text flow. Defaults to {@link WHITELISTED_EXTENSIONS}.
    */
   extensions?: string[];

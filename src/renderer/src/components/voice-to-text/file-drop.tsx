@@ -2,7 +2,7 @@ import { FileAudio } from "phosphor-react";
 import { type DragEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { AUDIO_EXTENSIONS } from "@/constants/config";
+import { MEDIA_EXTENSIONS } from "@/constants/config";
 import { css, cva } from "@/styled/css";
 import { Stack, styled } from "@/styled/jsx";
 
@@ -46,9 +46,9 @@ interface VoiceFileDropProps {
   onClickZone: () => void;
 }
 
-function hasAudioExtension(file: File): boolean {
+function hasMediaExtension(file: File): boolean {
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
-  return AUDIO_EXTENSIONS.includes(ext);
+  return MEDIA_EXTENSIONS.includes(ext);
 }
 
 export default function VoiceFileDrop({
@@ -63,7 +63,7 @@ export default function VoiceFileDrop({
     e.preventDefault();
     dragCounter.current = 0;
     setDragging(false);
-    const files = Array.from(e.dataTransfer.files).filter(hasAudioExtension);
+    const files = Array.from(e.dataTransfer.files).filter(hasMediaExtension);
     if (files.length) onDropFiles(files);
   };
 

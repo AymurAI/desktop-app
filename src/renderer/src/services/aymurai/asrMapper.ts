@@ -1,4 +1,4 @@
-import { AUDIO_EXTENSIONS } from "@/constants/config";
+import { MEDIA_EXTENSIONS } from "@/constants/config";
 import type { ASRDocument, ASRParagraph, ASRSpeakerTurn } from "@/schema/asr";
 import type {
   Speaker,
@@ -121,7 +121,7 @@ export function legacyBuildTurnsFromDocument(document: ASRParagraph[]): Turn[] {
 
 function transcriptionTitleFromFile(file: File): string {
   const lowerName = file.name.toLowerCase();
-  const extension = AUDIO_EXTENSIONS.find((ext) =>
+  const extension = MEDIA_EXTENSIONS.find((ext) =>
     lowerName.endsWith(`.${ext.toLowerCase()}`),
   );
   if (!extension) return file.name;

@@ -1,4 +1,4 @@
-import { WHITELISTED_EXTENSIONS } from "@/constants/config";
+import { DOCUMENT_EXTENSIONS } from "@/constants/config";
 import { css, cva } from "@/styled/css";
 import { Stack, styled } from "@/styled/jsx";
 import { File } from "phosphor-react";
@@ -55,6 +55,7 @@ interface DropAreaProps {
   title: string;
   description: string;
   multiple?: boolean;
+  extensions?: string[];
 }
 
 export default function DropArea({
@@ -62,22 +63,23 @@ export default function DropArea({
   title,
   description,
   multiple = true,
+  extensions = DOCUMENT_EXTENSIONS,
 }: DropAreaProps) {
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);
 
-  const accept = WHITELISTED_EXTENSIONS.map((ext) => `.${ext}`).join(",");
+  const accept = extensions.map((ext) => `.${ext}`).join(",");
 
   const handleFiles = useCallback(
     (fileList: FileList) => {
       const files = Array.from(fileList).filter((file) => {
         const ext = file.name.split(".").pop()?.toLowerCase();
-        return ext && WHITELISTED_EXTENSIONS.includes(ext);
+        return ext && extensions.includes(ext);
       });
       if (files.length > 0) onDropFiles(files);
     },
-    [onDropFiles],
+    [extensions, onDropFiles],
   );
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {

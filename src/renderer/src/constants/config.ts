@@ -7,15 +7,21 @@ export const DATAGENERO_URL = "https://www.datagenero.org/";
 export const PREDICT_PORT = 8899;
 
 /** Document extensions accepted by the dataset/anonymizer flows. */
-export const DOCUMENT_EXTENSIONS = ["doc", "docx", "pdf"];
+export const DOCUMENT_EXTENSIONS = ["docx", "pdf"];
 
 /** Audio extensions accepted by the voice-to-text flow. */
 export const AUDIO_EXTENSIONS = ["mp3", "wav", "m4a", "webm", "ogg", "flac"];
 
+/** Video extensions accepted by the voice-to-text flow. */
+export const VIDEO_EXTENSIONS = ["mp4", "mov", "mkv", "avi", "m4v"];
+
+/** Media extensions accepted by the voice-to-text flow. */
+export const MEDIA_EXTENSIONS = [...AUDIO_EXTENSIONS, ...VIDEO_EXTENSIONS];
+
 /** Union — kept for any consumer that needs to know "is this analyzable at all". */
 export const WHITELISTED_EXTENSIONS = [
   ...DOCUMENT_EXTENSIONS,
-  ...AUDIO_EXTENSIONS,
+  ...MEDIA_EXTENSIONS,
 ];
 
 /** Dataset Spreadsheet */

@@ -211,6 +211,9 @@ describe("mapASRDocumentToTranscription", () => {
     const dottedFile = new File(["audio"], "audiencia.29.06.final.MP3", {
       type: "audio/mpeg",
     });
+    const videoFile = new File(["video"], "audiencia.video.final.MP4", {
+      type: "video/mp4",
+    });
     const unknownExtensionFile = new File(["audio"], "audiencia.final.backup", {
       type: "application/octet-stream",
     });
@@ -218,6 +221,9 @@ describe("mapASRDocumentToTranscription", () => {
     expect(
       mapASRDocumentToTranscription(doc, dottedFile, "blob:audio").title,
     ).toBe("audiencia.29.06.final");
+    expect(
+      mapASRDocumentToTranscription(doc, videoFile, "blob:video").title,
+    ).toBe("audiencia.video.final");
     expect(
       mapASRDocumentToTranscription(doc, unknownExtensionFile, "blob:audio")
         .title,
