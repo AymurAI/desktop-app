@@ -1,3 +1,4 @@
+import { AUDIO_EXTENSIONS } from "@/constants/config";
 import type { ASRDocument, ASRParagraph, ASRSpeakerTurn } from "@/schema/asr";
 import type {
   Speaker,
@@ -117,6 +118,18 @@ export function legacyBuildTurnsFromDocument(document: ASRParagraph[]): Turn[] {
     }));
 }
 
+function transcriptionTitleFromFile(file: File): string {
+  const lowerName = file.name.toLowerCase();
+  const extension = AUDIO_EXTENSIONS.find((ext) =>
+    lowerName.endsWith(`.${ext.toLowerCase()}`),
+  );
+  if (!extension) return file.name;
+
+  const extensionLength = extension.length + 1;
+  return file.name.length > extensionLength
+    ? file.name.slice(0, -extensionLength)
+    : file.name;
+}
 export function mapASRDocumentToTranscription(
   doc: ASRDocument,
   file: File,
@@ -146,7 +159,7 @@ export function mapASRDocumentToTranscription(
 
   return {
     id: doc.document_id,
-    title: `Audiencia ${new Date().toLocaleDateString("es-AR")}`,
+    title: transcriptionTitleFromFile(file),
     audioFileName: file.name,
     audioDurationMs,
     audioObjectUrl,

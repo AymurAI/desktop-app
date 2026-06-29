@@ -2,7 +2,9 @@ import type { ASRDocument } from "@/schema/asr";
 import { describe, expect, it } from "vitest";
 import { mapASRDocumentToTranscription } from "./asrMapper";
 
-const audioFile = new File(["audio"], "audiencia.mp3", { type: "audio/mpeg" });
+const audioFile = new File(["audio"], "audiencia.29.06.final.mp3", {
+  type: "audio/mpeg",
+});
 
 describe("mapASRDocumentToTranscription", () => {
   it("uses speaker_turns as the editable turn source instead of raw document chunks", () => {
@@ -61,6 +63,7 @@ describe("mapASRDocumentToTranscription", () => {
       "blob:audio",
     );
 
+    expect(transcription.title).toBe("audiencia.29.06.final");
     expect(transcription.turns).toHaveLength(1);
     expect(transcription.turns[0]).toMatchObject({
       speakerId: "s1",
