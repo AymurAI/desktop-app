@@ -77,6 +77,8 @@ const voiceToText = {
     back: "Volver",
     finish: "Finalizar",
     saving: "Guardando...",
+    saveFailed:
+      "No se pudo guardar la validación. Podés continuar, pero los cambios podrían no quedar persistidos.",
     missingTranscription: "No se encontró ninguna transcripción.",
   },
   finish: {

@@ -64,6 +64,7 @@ describe("mapASRDocumentToTranscription", () => {
     );
 
     expect(transcription.title).toBe("audiencia.29.06.final");
+    expect(transcription.source).toBe("asr");
     expect(transcription.turns).toHaveLength(1);
     expect(transcription.turns[0]).toMatchObject({
       speakerId: "s1",
@@ -76,6 +77,114 @@ describe("mapASRDocumentToTranscription", () => {
     expect(transcription.speakers[0].label).toBe("Speaker 1");
     expect(transcription.rawDocument).toHaveLength(2);
     expect(transcription.rawSpeakerTurns).toHaveLength(1);
+  });
+
+  it("uses persisted validation before persisted transcription and fresh asr output", () => {
+    const doc: ASRDocument = {
+      document_id: "doc-validation-cache",
+      document: [
+        {
+          speaker_no: 1,
+          speaker_name: null,
+          start: "PT1S",
+          end: "PT2S",
+          text: "Texto fresco",
+          paragraph_id: "fresh",
+        },
+      ],
+      speaker_turns: [
+        {
+          speaker: "Speaker 1",
+          speaker_no: 1,
+          start: "00:00:01.000",
+          end: "00:00:02.000",
+          text: "Texto fresco mergeado",
+          segments: [],
+        },
+      ],
+      transcription: [
+        {
+          speaker_no: 2,
+          speaker_name: "Transcripcion cacheada",
+          start: "PT3S",
+          end: "PT4S",
+          text: "Texto cacheado",
+          paragraph_id: "cached-transcription",
+        },
+      ],
+      validation: [
+        {
+          speaker_no: 3,
+          speaker_name: "Validacion",
+          start: "PT5S",
+          end: "PT6S",
+          text: "Texto validado",
+          paragraph_id: "cached-validation",
+        },
+      ],
+    };
+
+    const transcription = mapASRDocumentToTranscription(
+      doc,
+      audioFile,
+      "blob:audio",
+    );
+
+    expect(transcription.source).toBe("validation");
+    expect(transcription.turns).toHaveLength(1);
+    expect(transcription.turns[0]).toMatchObject({
+      id: "cached-validation",
+      speakerId: "s3",
+      text: "Texto validado",
+      startMs: 5000,
+    });
+    expect(transcription.speakers[0].label).toBe("Validacion");
+    expect(transcription.rawValidation).toHaveLength(1);
+    expect(transcription.rawTranscription).toHaveLength(1);
+  });
+
+  it("uses persisted transcription when validation is empty", () => {
+    const doc: ASRDocument = {
+      document_id: "doc-transcription-cache",
+      document: [
+        {
+          speaker_no: 1,
+          speaker_name: null,
+          start: "PT1S",
+          end: "PT2S",
+          text: "Texto fresco",
+          paragraph_id: "fresh",
+        },
+      ],
+      speaker_turns: [],
+      transcription: [
+        {
+          speaker_no: 2,
+          speaker_name: "Cache",
+          start: "PT3S",
+          end: "PT4S",
+          text: "Texto cacheado",
+          paragraph_id: "cached-transcription",
+        },
+      ],
+      validation: [],
+    };
+
+    const transcription = mapASRDocumentToTranscription(
+      doc,
+      audioFile,
+      "blob:audio",
+    );
+
+    expect(transcription.source).toBe("transcription");
+    expect(transcription.turns).toHaveLength(1);
+    expect(transcription.turns[0]).toMatchObject({
+      id: "cached-transcription",
+      speakerId: "s2",
+      text: "Texto cacheado",
+      startMs: 3000,
+    });
+    expect(transcription.speakers[0].label).toBe("Cache");
   });
 
   it("falls back to one turn per document segment for legacy responses", () => {
@@ -108,6 +217,7 @@ describe("mapASRDocumentToTranscription", () => {
       "blob:audio",
     );
 
+    expect(transcription.source).toBe("asr");
     expect(transcription.turns).toHaveLength(2);
     expect(transcription.turns.map((turn) => turn.text)).toEqual([
       "Primer chunk",

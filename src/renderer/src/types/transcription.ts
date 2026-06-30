@@ -2,6 +2,7 @@ import type { ASRSegment, ASRSpeakerTurn } from "@/schema/asr";
 
 export type SpeakerColor = "primary" | "secondary" | "warning" | "success";
 export type SpeakerId = string;
+export type TranscriptionSource = "validation" | "transcription" | "asr";
 
 export interface Speaker {
   id: SpeakerId;
@@ -28,8 +29,11 @@ export interface Transcription {
   audioObjectUrl: string; // URL.createObjectURL(file)
   speakers: Speaker[];
   turns: Turn[];
+  source: TranscriptionSource;
   rawDocument?: ASRSegment[];
   rawSpeakerTurns?: ASRSpeakerTurn[];
+  rawTranscription?: ASRSegment[] | null;
+  rawValidation?: ASRSegment[] | null;
   createdAt: string;
 }
 

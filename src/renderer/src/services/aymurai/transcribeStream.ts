@@ -5,6 +5,7 @@ import {
   type ASRDocument,
   type ASRParagraph,
   type ASRSpeakerTurn,
+  type ASRStreamEvent,
   ASRStreamEventSchema,
 } from "@/schema/asr";
 import api from "@/services/api";
@@ -22,6 +23,18 @@ class FatalStreamError extends Error {}
 
 const clampRatio = (ratio: number) => Math.max(0, Math.min(1, ratio));
 
+const hasSegments = (
+  segments: ASRParagraph[] | null | undefined,
+): segments is ASRParagraph[] => Array.isArray(segments) && segments.length > 0;
+
+function previewItemsForSegmentsEvent(
+  event: Extract<ASRStreamEvent, { type: "segments" }>,
+) {
+  if (hasSegments(event.validation)) return event.validation;
+  if (hasSegments(event.transcription)) return event.transcription;
+  return event.speaker_turns.length > 0 ? event.speaker_turns : event.document;
+}
+
 export async function transcribeStream(
   file: File,
   { signal, useCache, onProgress, onPartialText }: TranscribeStreamOptions,
@@ -34,6 +47,8 @@ export async function transcribeStream(
   let documentId: string | null = null;
   let paragraphs: ASRParagraph[] = [];
   let speakerTurns: ASRSpeakerTurn[] = [];
+  let cachedTranscription: ASRParagraph[] | null | undefined;
+  let cachedValidation: ASRParagraph[] | null | undefined;
   // Accumulated `delta` chunks form the live preview. They overlap slightly at
   // their boundaries, so this is throwaway text — the authoritative transcript
   // arrives once in the `segments` event.
@@ -100,11 +115,10 @@ export async function transcribeStream(
             // The authoritative, full transcript. Replaces the preview text.
             paragraphs = event.document;
             speakerTurns = event.speaker_turns;
+            cachedTranscription = event.transcription;
+            cachedValidation = event.validation;
             onPartialText?.(
-              (event.speaker_turns.length > 0
-                ? event.speaker_turns
-                : event.document
-              )
+              previewItemsForSegmentsEvent(event)
                 .map((item) => item.text.trim())
                 .filter(Boolean)
                 .join(" "),
@@ -141,6 +155,8 @@ export async function transcribeStream(
     document_id: documentId,
     document: paragraphs,
     speaker_turns: speakerTurns,
+    transcription: cachedTranscription,
+    validation: cachedValidation,
   };
 
   onProgress?.(1);

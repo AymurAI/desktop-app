@@ -10,7 +10,7 @@ import type { DocFile, Paragraph } from "@/types/file";
 import type { Transcription } from "@/types/transcription";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import api from "../api";
-import { mapTranscriptionToASRParagraphRequests } from "./asrMapper";
+import { saveValidation as postASRValidation } from "./asrValidation";
 import predict from "./predict";
 import { transcribe } from "./transcribe";
 
@@ -220,8 +220,7 @@ export const transcribeBatch = ({
 export const saveValidation = () =>
   mutationOptions({
     mutationFn: async (transcription: Transcription) => {
-      const body = mapTranscriptionToASRParagraphRequests(transcription);
-      await api.post(`/asr/validation/document/${transcription.id}`, body);
+      await postASRValidation(transcription);
     },
   });
 

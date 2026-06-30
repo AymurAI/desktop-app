@@ -20,6 +20,7 @@ function makeTranscription(
     audioObjectUrl: "blob:x",
     speakers: [],
     turns: [],
+    source: "asr",
     createdAt: "2026-06-04T00:00:00.000Z",
     ...overrides,
   };
@@ -63,6 +64,7 @@ describe("splitTurn", () => {
       audioDurationMs: 9,
       audioObjectUrl: "b",
       createdAt: "c",
+      source: "asr" as const,
       speakers: [
         {
           id: "s1",
@@ -129,6 +131,7 @@ describe("mergeTurnWithPrevious", () => {
       audioDurationMs: 9,
       audioObjectUrl: "b",
       createdAt: "c",
+      source: "asr" as const,
       speakers: [
         { id: "s1", label: "P1", initials: "P1", color: "primary" as const },
       ],
@@ -163,6 +166,7 @@ describe("renameSpeakerGlobal", () => {
       audioDurationMs: 9,
       audioObjectUrl: "b",
       createdAt: "c",
+      source: "asr" as const,
       speakers: [
         {
           id: "s1",

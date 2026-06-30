@@ -27,6 +27,7 @@ export function buildFixture(file: File): Transcription {
     audioDurationMs: FIXTURE.audioDurationMs,
     audioObjectUrl: URL.createObjectURL(file),
     createdAt: new Date().toISOString(),
+    source: "asr",
     speakers: FIXTURE.speakers.map((speaker) => ({ ...speaker })),
     turns,
   };

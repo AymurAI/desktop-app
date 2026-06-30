@@ -4,6 +4,7 @@ import type {
   Speaker,
   SpeakerColor,
   Transcription,
+  TranscriptionSource,
   Turn,
 } from "@/types/transcription";
 
@@ -131,21 +132,56 @@ function transcriptionTitleFromFile(file: File): string {
     ? file.name.slice(0, -extensionLength)
     : file.name;
 }
+
+function hasSegments(
+  segments: ASRParagraph[] | null | undefined,
+): segments is ASRParagraph[] {
+  return Array.isArray(segments) && segments.length > 0;
+}
+
+function resolveASRTranscriptSource(doc: ASRDocument): {
+  source: TranscriptionSource;
+  turns: Turn[];
+  speakerLabels: Map<number, string>;
+} {
+  if (hasSegments(doc.validation)) {
+    return {
+      source: "validation",
+      turns: legacyBuildTurnsFromDocument(doc.validation),
+      speakerLabels: collectSegmentSpeakerLabels(doc.validation),
+    };
+  }
+
+  if (hasSegments(doc.transcription)) {
+    return {
+      source: "transcription",
+      turns: legacyBuildTurnsFromDocument(doc.transcription),
+      speakerLabels: collectSegmentSpeakerLabels(doc.transcription),
+    };
+  }
+
+  const speakerTurns =
+    doc.speaker_turns && doc.speaker_turns.length > 0 ? doc.speaker_turns : [];
+
+  return {
+    source: "asr",
+    turns:
+      speakerTurns.length > 0
+        ? buildTurnsFromSpeakerTurns(speakerTurns)
+        : legacyBuildTurnsFromDocument(doc.document),
+    speakerLabels:
+      speakerTurns.length > 0
+        ? collectSpeakerTurnLabels(speakerTurns)
+        : collectSegmentSpeakerLabels(doc.document),
+  };
+}
+
 export function mapASRDocumentToTranscription(
   doc: ASRDocument,
   file: File,
   audioObjectUrl: string,
 ): Transcription {
-  const speakerTurns =
-    doc.speaker_turns && doc.speaker_turns.length > 0 ? doc.speaker_turns : [];
-  const turns =
-    speakerTurns.length > 0
-      ? buildTurnsFromSpeakerTurns(speakerTurns)
-      : legacyBuildTurnsFromDocument(doc.document);
-  const speakerLabels =
-    speakerTurns.length > 0
-      ? collectSpeakerTurnLabels(speakerTurns)
-      : collectSegmentSpeakerLabels(doc.document);
+  const { source, turns, speakerLabels } = resolveASRTranscriptSource(doc);
   const speakers = buildSpeakersFromLabels(speakerLabels);
 
   const audioDurationMs =
@@ -164,8 +200,11 @@ export function mapASRDocumentToTranscription(
     audioObjectUrl,
     speakers,
     turns,
+    source,
     rawDocument: doc.document,
-    rawSpeakerTurns: speakerTurns,
+    rawSpeakerTurns: doc.speaker_turns,
+    rawTranscription: doc.transcription,
+    rawValidation: doc.validation,
     createdAt: new Date().toISOString(),
   };
 }

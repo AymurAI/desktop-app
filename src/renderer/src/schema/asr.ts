@@ -22,6 +22,8 @@ export const ASRDocumentSchema = z.object({
   document_id: z.string(),
   document: z.array(ASRParagraphSchema),
   speaker_turns: z.array(ASRSpeakerTurnSchema).optional().default([]),
+  transcription: z.array(ASRParagraphSchema).nullable().optional(),
+  validation: z.array(ASRParagraphSchema).nullable().optional(),
 });
 
 // The transcription backend streams Server-Sent Events as a discriminated union
@@ -46,6 +48,8 @@ export const ASRSegmentsEventSchema = z.object({
   type: z.literal("segments"),
   document: z.array(ASRParagraphSchema),
   speaker_turns: z.array(ASRSpeakerTurnSchema).optional().default([]),
+  transcription: z.array(ASRParagraphSchema).nullable().optional(),
+  validation: z.array(ASRParagraphSchema).nullable().optional(),
 });
 
 export const ASRDoneEventSchema = z.object({

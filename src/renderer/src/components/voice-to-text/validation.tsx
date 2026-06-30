@@ -8,6 +8,7 @@ import Header from "@/components/layout/header";
 import BackButton from "@/components/ui/back-button";
 import { USE_MOCK_STT } from "@/constants/config";
 import RequireFile from "@/features/RequireFile";
+import { showToast } from "@/features/showToast";
 import { useTranscriptions } from "@/hooks/useTranscriptions";
 import { saveValidation } from "@/services/aymurai/queries";
 import { css } from "@/styled/css";
@@ -39,7 +40,7 @@ export default function VoiceValidation() {
       try {
         await saveMutation.mutateAsync(transcription);
       } catch {
-        // Best-effort — don't block navigation on save failure
+        showToast(t("validation.saveFailed"), "warning");
       }
     }
     navigate({
