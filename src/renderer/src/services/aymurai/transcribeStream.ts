@@ -45,6 +45,7 @@ export async function transcribeStream(
   form.append("file", file);
 
   let documentId: string | null = null;
+  let title: string | null | undefined;
   let paragraphs: ASRParagraph[] = [];
   let speakerTurns: ASRSpeakerTurn[] = [];
   let cachedTranscription: ASRParagraph[] | null | undefined;
@@ -103,6 +104,7 @@ export async function transcribeStream(
         switch (event.type) {
           case "meta":
             documentId = event.document_id;
+            title = event.title;
             break;
           case "delta":
             previewParts.push(event.text.trim());
@@ -114,6 +116,7 @@ export async function transcribeStream(
           case "segments":
             // The authoritative, full transcript. Replaces the preview text.
             paragraphs = event.document;
+            title = event.title ?? title;
             speakerTurns = event.speaker_turns;
             cachedTranscription = event.transcription;
             cachedValidation = event.validation;
@@ -153,6 +156,7 @@ export async function transcribeStream(
 
   const doc: ASRDocument = {
     document_id: documentId,
+    title,
     document: paragraphs,
     speaker_turns: speakerTurns,
     transcription: cachedTranscription,

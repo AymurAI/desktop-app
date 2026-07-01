@@ -10,6 +10,7 @@ describe("mapASRDocumentToTranscription", () => {
   it("uses speaker_turns as the editable turn source instead of raw document chunks", () => {
     const doc: ASRDocument = {
       document_id: "doc-1",
+      title: "Audiencia desde backend",
       document: [
         {
           speaker_no: 1,
@@ -63,7 +64,7 @@ describe("mapASRDocumentToTranscription", () => {
       "blob:audio",
     );
 
-    expect(transcription.title).toBe("audiencia.29.06.final");
+    expect(transcription.title).toBe("Audiencia desde backend");
     expect(transcription.source).toBe("asr");
     expect(transcription.turns).toHaveLength(1);
     expect(transcription.turns[0]).toMatchObject({
@@ -338,5 +339,22 @@ describe("mapASRDocumentToTranscription", () => {
       mapASRDocumentToTranscription(doc, unknownExtensionFile, "blob:audio")
         .title,
     ).toBe("audiencia.final.backup");
+  });
+
+  it("falls back to the filename when backend title is blank", () => {
+    const doc: ASRDocument = {
+      document_id: "doc-blank-title",
+      title: "   ",
+      document: [],
+      speaker_turns: [],
+    };
+
+    const transcription = mapASRDocumentToTranscription(
+      doc,
+      audioFile,
+      "blob:audio",
+    );
+
+    expect(transcription.title).toBe("audiencia.29.06.final");
   });
 });

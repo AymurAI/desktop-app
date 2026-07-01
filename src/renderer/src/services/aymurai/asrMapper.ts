@@ -133,6 +133,10 @@ function transcriptionTitleFromFile(file: File): string {
     : file.name;
 }
 
+function transcriptionTitle(doc: ASRDocument, file: File): string {
+  return doc.title?.trim() || transcriptionTitleFromFile(file);
+}
+
 function hasSegments(
   segments: ASRParagraph[] | null | undefined,
 ): segments is ASRParagraph[] {
@@ -194,7 +198,7 @@ export function mapASRDocumentToTranscription(
 
   return {
     id: doc.document_id,
-    title: transcriptionTitleFromFile(file),
+    title: transcriptionTitle(doc, file),
     audioFileName: file.name,
     audioDurationMs,
     audioObjectUrl,

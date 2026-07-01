@@ -66,10 +66,12 @@ describe("transcribeStream", () => {
       {
         type: "meta",
         document_id: "doc-validation",
+        title: "Titulo desde meta",
         duration: null,
       },
       {
         type: "segments",
+        title: "Titulo desde segments",
         document: [
           {
             speaker_no: 1,
@@ -114,6 +116,7 @@ describe("transcribeStream", () => {
     });
 
     expect(result.source).toBe("validation");
+    expect(result.title).toBe("Titulo desde segments");
     expect(result.turns[0]).toMatchObject({
       id: "validated",
       speakerId: "s3",
@@ -127,6 +130,7 @@ describe("transcribeStream", () => {
       {
         type: "meta",
         document_id: "doc-transcription",
+        title: "Titulo cacheado",
         duration: null,
       },
       {
@@ -166,6 +170,7 @@ describe("transcribeStream", () => {
     });
 
     expect(result.source).toBe("transcription");
+    expect(result.title).toBe("Titulo cacheado");
     expect(result.turns[0]).toMatchObject({
       id: "cached",
       speakerId: "s2",

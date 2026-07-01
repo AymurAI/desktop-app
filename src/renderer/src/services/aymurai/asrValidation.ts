@@ -6,7 +6,10 @@ export async function saveValidation(
   transcription: Transcription,
   signal?: AbortSignal,
 ): Promise<void> {
-  const body = mapTranscriptionToASRParagraphRequests(transcription);
+  const body = {
+    title: transcription.title,
+    document: mapTranscriptionToASRParagraphRequests(transcription),
+  };
   await api.post(`/asr/validation/document/${transcription.id}`, body, {
     signal,
   });

@@ -20,6 +20,7 @@ export const ASRSpeakerTurnSchema = z.object({
 
 export const ASRDocumentSchema = z.object({
   document_id: z.string(),
+  title: z.string().nullable().optional(),
   document: z.array(ASRParagraphSchema),
   speaker_turns: z.array(ASRSpeakerTurnSchema).optional().default([]),
   transcription: z.array(ASRParagraphSchema).nullable().optional(),
@@ -35,6 +36,7 @@ export const ASRDocumentSchema = z.object({
 export const ASRMetaEventSchema = z.object({
   type: z.literal("meta"),
   document_id: z.string(),
+  title: z.string().nullable().optional(),
   duration: z.number().nullable(),
 });
 
@@ -46,6 +48,7 @@ export const ASRDeltaEventSchema = z.object({
 
 export const ASRSegmentsEventSchema = z.object({
   type: z.literal("segments"),
+  title: z.string().nullable().optional(),
   document: z.array(ASRParagraphSchema),
   speaker_turns: z.array(ASRSpeakerTurnSchema).optional().default([]),
   transcription: z.array(ASRParagraphSchema).nullable().optional(),

@@ -37,15 +37,18 @@ describe("saveValidation", () => {
 
     expect(post).toHaveBeenCalledWith(
       "/asr/validation/document/doc-1",
-      [
-        {
-          speaker_no: 1,
-          speaker_name: "Persona 1",
-          start: 0,
-          end: 2,
-          text: "Texto validado",
-        },
-      ],
+      {
+        title: "Audiencia",
+        document: [
+          {
+            speaker_no: 1,
+            speaker_name: "Persona 1",
+            start: 0,
+            end: 2,
+            text: "Texto validado",
+          },
+        ],
+      },
       { signal: undefined },
     );
   });
