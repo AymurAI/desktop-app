@@ -99,6 +99,21 @@ describe("splitTurn", () => {
     expect(t[0].startMs).toBe(1000);
   });
 
+  it("apportions the original time range across split pieces by character offset instead of duplicating it", () => {
+    // "hola mundo cruel" has 16 chars over [1000, 5000) -> 4000ms / 16 = 250ms/char
+    const next = reducer(base(), splitTurn("t1", "ta", 5, 10, "s2")); // "mundo"
+    const [pre, mid, post] = next[0].turns;
+    expect(pre.startMs).toBe(1000);
+    expect(pre.endMs).toBe(2250); // 1000 + 5*250
+    expect(mid.startMs).toBe(2250);
+    expect(mid.endMs).toBe(3500); // 1000 + 10*250
+    expect(post.startMs).toBe(3500);
+    expect(post.endMs).toBe(5000);
+    // Each piece has its own non-overlapping range — none duplicate the original [1000,5000)
+    const ranges = new Set(next[0].turns.map((t) => `${t.startMs}-${t.endMs}`));
+    expect(ranges.size).toBe(3);
+  });
+
   it("reassigns the whole turn when the range covers all text", () => {
     const next = reducer(base(), splitTurn("t1", "ta", 0, 16, "s2"));
     expect(next[0].turns).toHaveLength(1);

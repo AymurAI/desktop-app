@@ -31,6 +31,7 @@ interface EditableTurnTextProps {
   ariaLabel: string;
   onCommit: (turnId: string, value: string) => void;
   onSelect: () => void;
+  onFocusChange?: (turnId: string, isFocused: boolean) => void;
 }
 
 export const EditableTurnText = memo(
@@ -40,6 +41,7 @@ export const EditableTurnText = memo(
     ariaLabel,
     onCommit,
     onSelect,
+    onFocusChange,
   }: EditableTurnTextProps) {
     const ref = useRef<HTMLDivElement>(null);
     return (
@@ -54,7 +56,11 @@ export const EditableTurnText = memo(
         role="textbox"
         tabIndex={0}
         aria-label={ariaLabel}
-        onBlur={(e) => onCommit(turnId, e.currentTarget.textContent ?? "")}
+        onFocus={() => onFocusChange?.(turnId, true)}
+        onBlur={(e) => {
+          onCommit(turnId, e.currentTarget.textContent ?? "");
+          onFocusChange?.(turnId, false);
+        }}
         onMouseUp={onSelect}
         onKeyUp={onSelect}
       >

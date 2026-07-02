@@ -144,6 +144,7 @@ interface TurnBlockProps {
   onSeekTo: (ms: number) => void;
   onSelect: (turnId: string) => void;
   onTextSelect: () => void;
+  onEditingFocusChange?: (turnId: string, isFocused: boolean) => void;
   turnRef?: (el: HTMLDivElement | null) => void;
 }
 
@@ -158,18 +159,25 @@ export default function TurnBlock({
   onSeekTo,
   onSelect,
   onTextSelect,
+  onEditingFocusChange,
   turnRef,
 }: TurnBlockProps) {
   const { t } = useTranslation("voice-to-text");
   const dispatch = useTranscriptionDispatch();
 
   const handleHeaderClick = () => {
+    onSeekTo(turn.startMs);
     if (isEditMode) onSelect(turn.id);
-    else onSeekTo(turn.startMs);
   };
 
   const handleWrapClick = () => {
-    if (isEditMode) onSelect(turn.id);
+    if (!isEditMode) return;
+    // Only seek when this click is what selects the block. Once it's already
+    // selected, further clicks are just caret placement while editing its
+    // text, and re-seeking to the block's start on every one of those would
+    // yank playback back each time the user repositions the cursor.
+    if (!isSelected) onSeekTo(turn.startMs);
+    onSelect(turn.id);
   };
 
   return (
@@ -212,6 +220,7 @@ export default function TurnBlock({
                 dispatch(updateTurnText(transcription.id, id, value))
               }
               onSelect={onTextSelect}
+              onFocusChange={onEditingFocusChange}
             />
           ) : (
             <p className={text}>

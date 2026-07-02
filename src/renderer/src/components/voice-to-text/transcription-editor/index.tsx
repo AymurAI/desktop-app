@@ -332,6 +332,7 @@ export default function TranscriptionEditor({
   const [searchQuery, setSearchQuery] = useState("");
   const [matchIndex, setMatchIndex] = useState(0);
   const [selectedTurnId, setSelectedTurnId] = useState<string | null>(null);
+  const [editingTurnId, setEditingTurnId] = useState<string | null>(null);
 
   const turnRefsMap = useRef<Map<string, HTMLDivElement>>(new Map());
   const setTurnRef = useCallback(
@@ -352,13 +353,26 @@ export default function TranscriptionEditor({
   // Follow-along: keep the turn currently playing in view as the playhead
   // advances. Keyed on activeTurnId (which only changes when playback crosses
   // into a new turn), so it scrolls on play / seek but stays out of the way
-  // while the audio is paused.
+  // while the audio is paused. Paused entirely while the user is typing in a
+  // turn's text (editingTurnId set) so correcting a turn doesn't get yanked
+  // out of view by unrelated playback — it resumes as soon as the field
+  // blurs.
   useEffect(() => {
-    if (!activeTurnId) return;
+    if (!activeTurnId || editingTurnId) return;
     turnRefsMap.current
       .get(activeTurnId)
       ?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [activeTurnId]);
+  }, [activeTurnId, editingTurnId]);
+
+  const handleEditingFocusChange = useCallback(
+    (turnId: string, isFocused: boolean) => {
+      setEditingTurnId((current) => {
+        if (isFocused) return turnId;
+        return current === turnId ? null : current;
+      });
+    },
+    [],
+  );
 
   const sa = useSelectionAssign(scrollRef, transcription);
 
@@ -401,7 +415,10 @@ export default function TranscriptionEditor({
   // Clear the selected turn when leaving edit mode so re-entering doesn't
   // reopen the side panel on a stale turn.
   useEffect(() => {
-    if (!isEditMode) setSelectedTurnId(null);
+    if (!isEditMode) {
+      setSelectedTurnId(null);
+      setEditingTurnId(null);
+    }
   }, [isEditMode]);
 
   const switchId = "transcription-edit-mode";
@@ -530,6 +547,7 @@ export default function TranscriptionEditor({
                 onSeekTo={handleSeekTo}
                 onSelect={handleTurnSelect}
                 onTextSelect={sa.onSelect}
+                onEditingFocusChange={handleEditingFocusChange}
                 turnRef={setTurnRef(turn.id)}
               />
             );

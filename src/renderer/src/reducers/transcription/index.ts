@@ -1,4 +1,5 @@
 import type { Transcription } from "@/types/transcription";
+import { apportionTimeRange } from "@/utils/apportion-time-range";
 
 import {
   ActionTypes,
@@ -260,19 +261,40 @@ export default function reducer(
             ),
           };
         }
+        // There's no word-level timing, so apportion the turn's time range
+        // across the split pieces by character offset — each piece gets its
+        // own non-overlapping range instead of all pieces claiming the
+        // original full range (which would make them indistinguishable for
+        // playback highlighting/seeking).
+        const [msAtStartChar, msAtEndChar] = apportionTimeRange(
+          turn.startMs,
+          turn.endMs,
+          turn.text.length,
+          [startChar, endChar],
+        );
         const pieces: typeof tr.turns = [];
-        if (pre) pieces.push({ ...turn, text: pre }); // keeps original id
+        if (pre)
+          pieces.push({
+            ...turn,
+            text: pre,
+            startMs: turn.startMs,
+            endMs: msAtStartChar,
+          }); // keeps original id
         pieces.push({
           ...turn,
           id: crypto.randomUUID(),
           speakerId: newSpeakerId,
           text: mid,
+          startMs: msAtStartChar,
+          endMs: msAtEndChar,
         });
         if (post)
           pieces.push({
             ...turn,
             id: pre ? crypto.randomUUID() : turn.id,
             text: post,
+            startMs: msAtEndChar,
+            endMs: turn.endMs,
           });
         return {
           ...tr,
