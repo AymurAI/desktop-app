@@ -54,6 +54,12 @@ function speakerLabelForSegment(segment: ASRParagraph): string {
   );
 }
 
+function normalizeSpeakerLabel(label: string, speakerNo: number): string {
+  return speakerNo >= 0 && label.trim() === `Speaker ${speakerNo}`
+    ? `Persona ${speakerNo}`
+    : label;
+}
+
 function buildSpeakersFromLabels(
   speakerLabelsByNo: Map<number, string>,
 ): Speaker[] {
@@ -71,7 +77,10 @@ function collectSpeakerTurnLabels(
   const labels = new Map<number, string>();
   for (const turn of speakerTurns) {
     if (labels.has(turn.speaker_no)) continue;
-    labels.set(turn.speaker_no, turn.speaker);
+    labels.set(
+      turn.speaker_no,
+      normalizeSpeakerLabel(turn.speaker, turn.speaker_no),
+    );
   }
   return labels;
 }

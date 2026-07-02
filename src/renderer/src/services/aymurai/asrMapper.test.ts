@@ -75,7 +75,7 @@ describe("mapASRDocumentToTranscription", () => {
       endMs: 15760,
     });
     expect(transcription.turns[0].segments).toHaveLength(2);
-    expect(transcription.speakers[0].label).toBe("Speaker 1");
+    expect(transcription.speakers[0].label).toBe("Persona 1");
     expect(transcription.rawDocument).toHaveLength(2);
     expect(transcription.rawSpeakerTurns).toHaveLength(1);
   });
