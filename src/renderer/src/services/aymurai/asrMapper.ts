@@ -1,4 +1,3 @@
-import { MEDIA_EXTENSIONS } from "@/constants/config";
 import type { ASRDocument, ASRParagraph, ASRSpeakerTurn } from "@/schema/asr";
 import type {
   Speaker,
@@ -7,6 +6,7 @@ import type {
   TranscriptionSource,
   Turn,
 } from "@/types/transcription";
+import { stripKnownMediaExtension } from "@/utils/strip-known-media-extension";
 
 const SPEAKER_COLORS: SpeakerColor[] = [
   "primary",
@@ -130,16 +130,7 @@ export function legacyBuildTurnsFromDocument(document: ASRParagraph[]): Turn[] {
 }
 
 function transcriptionTitleFromFile(file: File): string {
-  const lowerName = file.name.toLowerCase();
-  const extension = MEDIA_EXTENSIONS.find((ext) =>
-    lowerName.endsWith(`.${ext.toLowerCase()}`),
-  );
-  if (!extension) return file.name;
-
-  const extensionLength = extension.length + 1;
-  return file.name.length > extensionLength
-    ? file.name.slice(0, -extensionLength)
-    : file.name;
+  return stripKnownMediaExtension(file.name);
 }
 
 function transcriptionTitle(doc: ASRDocument, file: File): string {
