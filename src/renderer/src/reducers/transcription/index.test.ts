@@ -114,6 +114,48 @@ describe("splitTurn", () => {
     expect(ranges.size).toBe(3);
   });
 
+  it("has mid absorb a dropped edge's time span instead of leaving a coverage gap", () => {
+    // Leading space: startChar=1 makes `pre` ("".trim()) empty even though
+    // startChar > 0, so its [0, startChar) time span must not be lost.
+    const state = [
+      {
+        id: "t1",
+        title: "T",
+        audioFileName: "a",
+        audioDurationMs: 2000,
+        audioObjectUrl: "b",
+        createdAt: "c",
+        source: "asr" as const,
+        speakers: [
+          { id: "s1", label: "P1", initials: "P1", color: "primary" as const },
+          {
+            id: "s2",
+            label: "P2",
+            initials: "P2",
+            color: "secondary" as const,
+          },
+        ],
+        turns: [
+          {
+            id: "ta",
+            speakerId: "s1",
+            text: " Hola mundo",
+            startMs: 0,
+            endMs: 2000,
+          },
+        ],
+      },
+    ];
+    const next = reducer(state, splitTurn("t1", "ta", 1, 5, "s2")); // "Hola"
+    const [mid, post] = next[0].turns;
+    expect(next[0].turns).toHaveLength(2); // pre dropped (whitespace-only)
+    expect(mid.text).toBe("Hola");
+    expect(mid.startMs).toBe(0); // absorbs the dropped pre's span, not msAt(1)
+    expect(post.text).toBe("mundo");
+    expect(mid.endMs).toBe(post.startMs); // contiguous, no gap
+    expect(post.endMs).toBe(2000);
+  });
+
   it("reassigns the whole turn when the range covers all text", () => {
     const next = reducer(base(), splitTurn("t1", "ta", 0, 16, "s2"));
     expect(next[0].turns).toHaveLength(1);

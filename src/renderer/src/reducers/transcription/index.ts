@@ -285,8 +285,12 @@ export default function reducer(
           id: crypto.randomUUID(),
           speakerId: newSpeakerId,
           text: mid,
-          startMs: msAtStartChar,
-          endMs: msAtEndChar,
+          // When pre/post is dropped (its trimmed text was whitespace-only),
+          // mid absorbs that edge's time span too, instead of leaving a gap
+          // that no turn covers — startChar/endChar are offsets into the raw,
+          // untrimmed text, so a dropped edge's span still needs a home.
+          startMs: pre ? msAtStartChar : turn.startMs,
+          endMs: post ? msAtEndChar : turn.endMs,
         });
         if (post)
           pieces.push({
