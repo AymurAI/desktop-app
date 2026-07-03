@@ -5,41 +5,35 @@ import FeaturesMenu from "@/components/features-menu";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
+import MenuButton from "@/components/ui/button";
+import {
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import RequireFile from "@/features/RequireFile";
 import { useTranscriptions } from "@/hooks/useTranscriptions";
 import { SectionTitle } from "@/layout/section-title";
+import type { ExportFormat } from "@/services/export/types";
+import { useExportTranscription } from "@/services/export/use-export-transcription";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { Button, Card } from "@aymurai/ui";
-import { formatTime } from "./format-time";
 import VoiceStepper from "./stepper";
 
 export default function VoiceFinish() {
   const { t } = useTranslation("voice-to-text");
   const navigate = useNavigate();
   const transcriptions = useTranscriptions();
-  const transcription = transcriptions[0];
+  const transcription = transcriptions[0] ?? null;
+  const { isExporting, download } = useExportTranscription(transcription);
 
-  const handleDownloadTxt = () => {
-    if (!transcription) return;
-
-    const lines = transcription.turns.map((turn) => {
-      const speaker = transcription.speakers.find(
-        (s) => s.id === turn.speakerId,
-      );
-      const time = formatTime(turn.startMs);
-      return `[${time}] ${speaker?.label ?? "Persona"}: ${turn.text}`;
-    });
-
-    const content = lines.join("\n\n");
-    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${transcription.title.replace(/[^a-zA-Z0-9\s]/g, "")}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const formats: { format: ExportFormat; label: string }[] = [
+    { format: "txt", label: t("finish.downloadTxt") },
+    { format: "odt", label: t("finish.downloadOdt") },
+    { format: "pdf", label: t("finish.downloadPdf") },
+  ];
 
   return (
     <RequireFile>
@@ -102,9 +96,24 @@ export default function VoiceFinish() {
           >
             {t("finish.back")}
           </Button>
-          <Button onClick={handleDownloadTxt} disabled={!transcription}>
-            {t("finish.download")}
-          </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button disabled={!transcription} isLoading={isExporting}>
+                {t("finish.download")}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end">
+              <Stack gap="1" p="2" minWidth="[160px]">
+                {formats.map(({ format, label }) => (
+                  <PopoverClose key={format} asChild>
+                    <MenuButton variant="none" onClick={() => download(format)}>
+                      {label}
+                    </MenuButton>
+                  </PopoverClose>
+                ))}
+              </Stack>
+            </PopoverContent>
+          </Popover>
         </HStack>
       </Footer>
     </RequireFile>

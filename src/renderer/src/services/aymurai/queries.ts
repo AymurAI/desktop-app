@@ -224,20 +224,26 @@ export const saveValidation = () =>
     },
   });
 
+/**
+ * Converts an .odt file to .pdf via the backend's generic converter — the
+ * same endpoint the anonymizer module uses to produce its .pdf export.
+ */
+export const convertOdtToPdf = async (file: Blob): Promise<Blob> => {
+  const formData = new FormData();
+  formData.append("file", file, "document.odt");
+
+  const response = await api.post<Blob>("/convert/odt/pdf", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Accept: "application/octet-stream",
+    },
+    responseType: "blob",
+  });
+
+  return response.data;
+};
+
 export const odtToPdf = () =>
   mutationOptions({
-    mutationFn: async (file: Blob) => {
-      const formData = new FormData();
-      formData.append("file", file, "document.odt");
-
-      const response = await api.post<Blob>("/convert/odt/pdf", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Accept: "application/octet-stream",
-        },
-        responseType: "blob",
-      });
-
-      return response.data;
-    },
+    mutationFn: convertOdtToPdf,
   });

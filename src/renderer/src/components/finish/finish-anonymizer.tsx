@@ -1,5 +1,6 @@
 import { useFiles } from "@/hooks";
 import { aymuraiService } from "@/services/aymurai";
+import { downloadBlob } from "@/services/export/download-blob";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import { HStack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
@@ -35,7 +36,7 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
       console.error("Tried to download a file that is not ready.");
       return;
     }
-    triggerDownload(odtFile, changeExtension(file.data.name));
+    downloadBlob(odtFile, changeExtension(file.data.name));
   };
 
   const downloadPdf = () => {
@@ -46,7 +47,7 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
 
     convertToPdf(odtFile, {
       onSuccess: (pdfBlob) => {
-        triggerDownload(pdfBlob, changeExtension(file.data.name, "pdf"));
+        downloadBlob(pdfBlob, changeExtension(file.data.name, "pdf"));
       },
     });
   };
@@ -83,15 +84,6 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
       </Footer>
     </>
   );
-}
-
-function triggerDownload(blob: Blob, fileName: string) {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName;
-  link.click();
-  URL.revokeObjectURL(url);
 }
 
 function changeExtension(name: string, ext = "odt") {
