@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { formatTime } from "@/components/voice-to-text/format-time";
+import { showToast } from "@/features/showToast";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { computeInitials } from "@/reducers/transcription";
 import {
@@ -18,11 +19,36 @@ import type {
   Speaker,
   SpeakerColor,
   Transcription,
+  Turn,
 } from "@/types/transcription";
 import { SidePanel } from "@aymurai/ui";
 import { parseTimestampToMs } from "./parse-timestamp";
 
 const PALETTE: SpeakerColor[] = ["primary", "secondary", "warning", "success"];
+
+// A newly-inserted turn needs a real (non-zero) time span, or it can never
+// become the "active" turn during playback (useActiveTurn requires
+// startMs <= currentMs < endMs). Capped so it doesn't eat too much of the
+// gap to the next turn when turns are close together.
+const DEFAULT_NEW_TURN_DURATION_MS = 2000;
+
+/**
+ * Valid [min, max) range for a turn's startMs so the `turns` array — which
+ * both drives reading order and is assumed sorted by start time for
+ * highlighting/follow-scroll — stays chronologically ordered after an edit.
+ */
+export function getTimestampBounds(
+  turns: Turn[],
+  idx: number,
+  audioDurationMs: number,
+): { minMs: number; maxMs: number } {
+  const prevTurn = turns[idx - 1];
+  const nextTurn = turns[idx + 1];
+  return {
+    minMs: prevTurn ? prevTurn.startMs + 1 : 0,
+    maxMs: nextTurn ? nextTurn.startMs : audioDurationMs,
+  };
+}
 
 // The @aymurai/ui SidePanel has no intrinsic width, so constrain it to a fixed
 // right column inside the editor's flex row.
@@ -145,15 +171,56 @@ export default function TurnSidePanel({
     );
   };
 
+  const { minMs, maxMs } = getTimestampBounds(
+    turns,
+    idx,
+    transcription.audioDurationMs,
+  );
+
   const handleTimestampChange = (value: string) => {
     setTimeValue(value);
     const ms = parseTimestampToMs(value);
-    if (ms !== null) {
-      dispatch(updateTurnStartMs(transcription.id, activeTurn.id, ms));
+    if (ms === null) return;
+
+    if (ms < minMs || ms >= maxMs) {
+      showToast(
+        t("sidePanel.timestampOutOfRange", {
+          min: formatTime(minMs),
+          max: formatTime(maxMs),
+        }),
+        "warning",
+      );
+      return;
     }
+    dispatch(updateTurnStartMs(transcription.id, activeTurn.id, ms));
   };
 
   const nextTurn = turns[idx + 1];
+
+  const handleAddBelow = () => {
+    // Start right where the active turn ends, and use the gap to the next
+    // turn (if any) for its duration — capped so a small gap doesn't get
+    // entirely swallowed, or expanded, into a fixed default when there's no
+    // next turn. A zero-width turn (the previous behavior) can never become
+    // "active" during playback, since useActiveTurn requires
+    // startMs <= currentMs < endMs.
+    const insertStart = activeTurn.endMs;
+    const gapToNext = nextTurn ? nextTurn.startMs - insertStart : null;
+    const insertEnd =
+      gapToNext !== null && gapToNext > 0
+        ? insertStart + Math.min(gapToNext, DEFAULT_NEW_TURN_DURATION_MS)
+        : insertStart + DEFAULT_NEW_TURN_DURATION_MS;
+
+    dispatch(
+      insertTurn(transcription.id, activeTurn.id, {
+        id: crypto.randomUUID(),
+        speakerId: activeTurn.speakerId,
+        text: "",
+        startMs: insertStart,
+        endMs: insertEnd,
+      }),
+    );
+  };
 
   return (
     <div className={panelColumn}>
@@ -182,17 +249,7 @@ export default function TurnSidePanel({
             dispatch(mergeTurnWithPrevious(transcription.id, nextTurn.id));
           }
         }}
-        onAddBelow={() =>
-          dispatch(
-            insertTurn(transcription.id, activeTurn.id, {
-              id: crypto.randomUUID(),
-              speakerId: activeTurn.speakerId,
-              text: "",
-              startMs: activeTurn.startMs,
-              endMs: activeTurn.startMs,
-            }),
-          )
-        }
+        onAddBelow={handleAddBelow}
         onDelete={() => dispatch(removeTurn(transcription.id, activeTurn.id))}
       />
     </div>

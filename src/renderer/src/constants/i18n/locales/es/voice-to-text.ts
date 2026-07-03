@@ -135,6 +135,8 @@ const voiceToText = {
     create: "Crear",
     timeSection: "Marca de tiempo",
     timeInvalid: "Formato inválido. Usá mm:ss o hh:mm:ss.",
+    timestampOutOfRange:
+      "La marca de tiempo debe estar entre {{min}} y {{max}} para mantener el orden de los turnos.",
     actionsSection: "Acciones",
     mergePrev: "Unir con el turno anterior",
     mergeNext: "Unir con el turno siguiente",
