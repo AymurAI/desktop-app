@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
@@ -140,6 +140,7 @@ interface TurnBlockProps {
   isActive: boolean;
   isEditMode: boolean;
   isSelected: boolean;
+  isEditing: boolean;
   searchQuery: string;
   onSeekTo: (ms: number) => void;
   onSelect: (turnId: string) => void;
@@ -155,6 +156,7 @@ export default function TurnBlock({
   isActive,
   isEditMode,
   isSelected,
+  isEditing,
   searchQuery,
   onSeekTo,
   onSelect,
@@ -165,18 +167,22 @@ export default function TurnBlock({
   const { t } = useTranslation("voice-to-text");
   const dispatch = useTranscriptionDispatch();
 
-  const handleHeaderClick = () => {
+  const handleHeaderClick = (e: MouseEvent) => {
+    // Stop propagation so this doesn't also trigger handleWrapClick below —
+    // both are bound because the header sits inside the click-to-seek wrap.
+    e.stopPropagation();
     onSeekTo(turn.startMs);
     if (isEditMode) onSelect(turn.id);
   };
 
   const handleWrapClick = () => {
     if (!isEditMode) return;
-    // Only seek when this click is what selects the block. Once it's already
-    // selected, further clicks are just caret placement while editing its
-    // text, and re-seeking to the block's start on every one of those would
-    // yank playback back each time the user repositions the cursor.
-    if (!isSelected) onSeekTo(turn.startMs);
+    // Only seek when this click is what selects/enters the block. Once it's
+    // already selected or being edited (including via keyboard focus, which
+    // never sets isSelected), further clicks are just caret placement while
+    // editing its text, and re-seeking to the block's start on every one of
+    // those would yank playback back each time the user repositions the cursor.
+    if (!isSelected && !isEditing) onSeekTo(turn.startMs);
     onSelect(turn.id);
   };
 

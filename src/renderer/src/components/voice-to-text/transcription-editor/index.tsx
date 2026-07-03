@@ -543,6 +543,7 @@ export default function TranscriptionEditor({
                 isActive={turn.id === activeTurnId}
                 isEditMode={isEditMode}
                 isSelected={turn.id === selectedTurnId}
+                isEditing={turn.id === editingTurnId}
                 searchQuery={searchQuery}
                 onSeekTo={handleSeekTo}
                 onSelect={handleTurnSelect}

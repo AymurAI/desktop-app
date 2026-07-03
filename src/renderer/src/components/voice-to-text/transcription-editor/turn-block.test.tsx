@@ -54,6 +54,7 @@ function renderBlock(
       isActive={false}
       isEditMode={true}
       isSelected={false}
+      isEditing={false}
       searchQuery=""
       onSeekTo={onSeekTo}
       onSelect={onSelect}
@@ -66,10 +67,12 @@ function renderBlock(
 }
 
 describe("TurnBlock click-to-seek in edit mode", () => {
-  it("seeks and selects when the speaker/timestamp header is clicked", () => {
+  it("seeks and selects exactly once when the speaker/timestamp header is clicked (no double-fire via bubbling)", () => {
     const { onSeekTo, onSelect } = renderBlock();
     fireEvent.click(screen.getByText("Persona 1"));
+    expect(onSeekTo).toHaveBeenCalledTimes(1);
     expect(onSeekTo).toHaveBeenCalledWith(1500);
+    expect(onSelect).toHaveBeenCalledTimes(1);
     expect(onSelect).toHaveBeenCalledWith("t1");
   });
 
@@ -91,6 +94,19 @@ describe("TurnBlock click-to-seek in edit mode", () => {
     const { onSeekTo } = renderBlock({ isSelected: true });
     fireEvent.click(screen.getByText("Persona 1"));
     expect(onSeekTo).toHaveBeenCalledWith(1500);
+  });
+
+  it("does not re-seek when clicking the text of a block being edited via keyboard focus (isEditing, not isSelected)", () => {
+    // A turn reached by Tab (keyboard focus) sets isEditing but never
+    // isSelected — the guard must still cover it, or the first click after
+    // tabbing in would incorrectly jump playback back to the block's start.
+    const { onSeekTo, onSelect } = renderBlock({
+      isSelected: false,
+      isEditing: true,
+    });
+    fireEvent.click(screen.getByRole("textbox"));
+    expect(onSeekTo).not.toHaveBeenCalled();
+    expect(onSelect).toHaveBeenCalledWith("t1");
   });
 
   it("does not seek/select on wrap click when isEditMode is false", () => {
