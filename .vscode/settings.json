@@ -1,4 +1,5 @@
 {
+  "uiMergePreview.devCommand": "pnpm run dev:web",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",

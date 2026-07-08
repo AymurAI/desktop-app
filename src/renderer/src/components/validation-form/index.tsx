@@ -11,11 +11,11 @@ import {
   useState,
 } from "react";
 
-import { Button } from "@/components";
 import type { NativeComponent } from "@/types/component";
 
 import { css } from "@/styled/css";
 import { styled } from "@/styled/jsx";
+import Button from "../ui/button";
 import { Form } from "./ValidationForm.styles";
 
 interface Props extends NativeComponent<"form"> {

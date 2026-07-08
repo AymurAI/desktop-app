@@ -24,7 +24,7 @@ const anonymizer = {
       alt: "Binoculares con globo terráqueo",
       title: "Generación del documento anonimizado",
       subtitle:
-        "Proceso terminado. El documento esta listo para ser exportado.",
+        "Proceso terminado. El documento está listo para ser exportado.",
     },
   },
   process: {
@@ -48,6 +48,8 @@ const anonymizer = {
     restart: "Cargar un nuevo documento",
     viewResult: "Descargar ODT",
     viewResultPDF: "Descargar PDF",
+    downloadError:
+      "Ocurrió un error al generar el archivo. Por favor, intente nuevamente.",
   },
 };
 

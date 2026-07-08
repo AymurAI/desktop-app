@@ -83,6 +83,7 @@ datasheet files
 - `validate`: runs linting and type checking on both React and renderer
 - `prepare`: runs `panda codegen` and installs lefthook git hooks (auto-runs after `pnpm install`)
 - `knip`: detects unused exports and dependencies (also gated on `pre-push`)
+- `pre-commit`: runs _LintStaged_
 
 ### Deployment
 

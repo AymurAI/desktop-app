@@ -17,6 +17,8 @@ interface LocalStorageStore {
   setExcludedTags: (tags: Record<AnonymizerLabels, boolean>) => void;
   excludedWords: string[];
   setExcludedWords: (words: string[]) => void;
+  groupOrder: Record<string, string[]> | null;
+  setGroupOrder: (order: Record<string, string[]>) => void;
 }
 
 const useLocalStore = create<LocalStorageStore>()(
@@ -41,9 +43,19 @@ const useLocalStore = create<LocalStorageStore>()(
         setExcludedTags: (tags) => set({ excludedTags: tags }),
         excludedWords: [],
         setExcludedWords: (words) => set({ excludedWords: words }),
+        groupOrder: null,
+        setGroupOrder: (groupOrder) => set({ groupOrder }),
       }),
       {
         name: "local-storage",
+        // groupOrder holds canonical UUIDs regenerated each session, so
+        // persisting it would only accumulate stale data across sessions.
+        partialize: (state) => ({
+          serverHost: state.serverHost,
+          tutorialsSeen: state.tutorialsSeen,
+          excludedTags: state.excludedTags,
+          excludedWords: state.excludedWords,
+        }),
       },
     ),
   ),
@@ -76,5 +88,18 @@ export const useExcludedTagsConfigActions = () =>
     useShallow((s) => ({
       setTags: s.setExcludedTags,
       setWords: s.setExcludedWords,
+    })),
+  );
+
+export const useGroupOrder = () =>
+  useLocalStore(
+    useShallow((s) => ({
+      groupOrder: s.groupOrder,
+    })),
+  );
+export const useGroupOrderActions = () =>
+  useLocalStore(
+    useShallow((s) => ({
+      setGroupOrder: s.setGroupOrder,
     })),
   );

@@ -5,7 +5,7 @@ import taskbarAPI from "./utils";
  */
 function notify() {
   taskbarAPI()?.notify?.();
-  const audio = new Audio("audio/notification.mp3");
+  const audio = new Audio(`${import.meta.env.BASE_URL}audio/notification.mp3`);
   audio.play();
 }
 

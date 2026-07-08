@@ -8,6 +8,7 @@ import {
 
 interface ReplaceDialogProps {
   isOpen: boolean;
+  text: string;
   label: string;
   onClose: (open: boolean) => void;
   onConfirm: () => void;
@@ -16,6 +17,7 @@ export default function ReplaceDialog({
   isOpen,
   onClose,
   onConfirm,
+  text,
   label,
 }: ReplaceDialogProps) {
   return (
@@ -23,8 +25,9 @@ export default function ReplaceDialog({
       <DialogContent>
         <DialogTitle>Reemplazar todas las ocurrencias</DialogTitle>
         <p>
-          ¿Deseas reemplazar todas las ocurrencias del grupo con la etiqueta{" "}
-          <b>{label}</b>?
+          Se reemplazará la etiqueta en todas las ocurrencias que coincidan
+          exactamente con el texto <b>{text}</b> por <b>{label}</b>. ¿Deseas
+          continuar?
         </p>
         <DialogFooter>
           <Button onClick={onConfirm}>Aplicar</Button>

@@ -56,8 +56,8 @@ export default function FileProcessing({
     const rawFiles = e.target.files;
 
     if (rawFiles) {
-      const files = Array.from(rawFiles);
-      if (files.length > 0) {
+      const fileList = Array.from(rawFiles);
+      if (fileList.length > 0) {
         queryClient.removeQueries({
           queryKey: ["file-parser", fileName],
           exact: false,
@@ -72,7 +72,7 @@ export default function FileProcessing({
             return key[0] === "predict" && key[2] === fileName;
           },
         });
-        dispatch(replaceFile(fileName, files[0]));
+        dispatch(replaceFile(fileName, fileList[0]));
       }
     }
   };

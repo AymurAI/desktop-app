@@ -15,7 +15,7 @@ const Affix = styled("span", {
   },
 });
 
-export type SelectOption = { id: string; text: string };
+export type SelectOption = { id: string; text: string; shortText?: string };
 export type SelectSuggestion = { id: string; text?: string };
 
 interface SelectProps {
@@ -23,6 +23,7 @@ interface SelectProps {
   label?: string;
   value?: string;
   onChange?: (value: SelectOption) => void;
+  onOpenChange?: (open: boolean) => void;
   prefix?: string;
   suffix?: string;
   suggestion?: SelectSuggestion;
@@ -108,7 +109,7 @@ const select = sva({
       color: "text.default",
       transition: "[transform 0.15s ease]",
 
-      "[data-state='open'] &": {
+      "[data-state='open'] > &": {
         transform: "[rotate(180deg)]",
       },
     },
@@ -184,6 +185,7 @@ export default function Select({
   label,
   value,
   onChange,
+  onOpenChange,
   prefix,
   suffix,
   suggestion,
@@ -233,6 +235,7 @@ export default function Select({
       <RadixSelect.Root
         value={value}
         onValueChange={handleChange}
+        onOpenChange={onOpenChange}
         disabled={disabled}
       >
         <RadixSelect.Trigger id={triggerId} asChild>
@@ -259,7 +262,13 @@ export default function Select({
                   <Suggestion clickable>{securedSuggestion.text}</Suggestion>
                 </button>
               ) : (
-                <RadixSelect.Value placeholder={placeholder} />
+                <RadixSelect.Value placeholder={placeholder}>
+                  {value
+                    ? (options.find((o) => o.id === value)?.shortText ??
+                      options.find((o) => o.id === value)?.text ??
+                      placeholder)
+                    : undefined}
+                </RadixSelect.Value>
               )}
             </span>
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import { Button, FileAnnotator, FileStepper, Grid } from "@/components";
 import Footer from "@/components/layout/footer";
+import Button from "@/components/ui/button";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
 import { validate } from "@/reducers/file/actions";
@@ -9,6 +9,9 @@ import { css } from "@/styled/css";
 import { HStack, Stack } from "@/styled/jsx";
 import { isFileValidated, isValidationCompleted } from "@/utils/file";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import FileAnnotator from "../file-annotator";
+import FileStepper from "../file-stepper";
+import Grid from "../grid";
 import FormGroup from "./form-group";
 import { moveNext, movePrevious } from "./utils";
 

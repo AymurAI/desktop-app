@@ -1,10 +1,10 @@
-import { Button } from "@/components";
 import { useRunLocalServer } from "@/services/aymurai";
 import { css } from "@/styled/css";
-import { Stack } from "@/styled/jsx";
+import { Stack, styled } from "@/styled/jsx";
 import { useNavigate } from "@tanstack/react-router";
 import { HardDrives, Monitor } from "phosphor-react";
 import { useTranslation } from "react-i18next";
+import Button from "../ui/button";
 
 interface ChooseHostProps {
   onRemoteClick: () => void;
@@ -21,11 +21,11 @@ export default function ChooseHost({ onRemoteClick }: ChooseHostProps) {
   const { t } = useTranslation();
 
   return (
-    <Stack align="center" gap="12" width="[400px]">
-      <img
-        src="/brand/aymurai-vert-darkpurple.svg"
+    <Stack align="center" gap={{ base: "[1rem]", xl: "12" }} width="[400px]">
+      <styled.img
+        src={`${import.meta.env.BASE_URL}brand/aymurai-vert-darkpurple.svg`}
         alt="Logotipo AymurAI"
-        width={180}
+        width={{ base: "[100px]", xl: "[180px]" }}
       />
       <Stack
         as="fieldset"

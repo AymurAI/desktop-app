@@ -1,6 +1,9 @@
-import { Input, Radio, RadioGroup, Stack, ValidationForm } from "@/components";
 import Select from "@/components/ui/select";
 import { LabelDecisiones } from "@/types/aymurai";
+import { Radio, RadioGroup } from "../../../radio";
+import Stack from "../../../stack";
+import Input from "../../../uncontrolled-input";
+import ValidationForm from "../../../validation-form";
 import type { FormDecisionProps } from "../FormGroup.types";
 import json from "./options.json";
 
