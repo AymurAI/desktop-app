@@ -43,7 +43,11 @@ function DocumentValidation() {
   if (feature === FeatureFlowEnum.Anonymizer)
     return (
       <RequireFile>
-        <Header title={t("title")} center={<Stepper currentStep={3} />} />
+        <Header
+          title={t("title")}
+          center={<Stepper currentStep={3} />}
+          feature={feature}
+        />
         <Grid
           columns={1}
           gap="0"

@@ -1,7 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import FeaturesMenu from "@/components/features-menu";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
@@ -39,7 +38,7 @@ export default function VoiceFinish() {
     <RequireFile>
       <Header
         title={t("title")}
-        right={<FeaturesMenu />}
+        feature={FeatureFlowEnum.VoiceToText}
         center={<VoiceStepper current={4} />}
       />
       <MainContent>
