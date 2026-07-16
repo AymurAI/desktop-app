@@ -91,4 +91,26 @@ describe("VoiceFinish export options", () => {
       }),
     );
   });
+
+  it("wires the format select's label to its trigger via a matching id, rendered once", () => {
+    render(<VoiceFinish />);
+    const labelEls = screen.getAllByText("finish.formatLabel");
+    expect(labelEls).toHaveLength(1);
+    const [label] = labelEls;
+    expect(label.tagName).toBe("LABEL");
+    const triggerId = label.getAttribute("for");
+    expect(triggerId).toBeTruthy();
+    const trigger = document.getElementById(triggerId as string);
+    expect(trigger).toHaveAttribute("role", "combobox");
+  });
+
+  it("renders a heading for the export options column, matching the summary column", () => {
+    render(<VoiceFinish />);
+    expect(
+      screen.getByRole("heading", { name: "finish.summaryTitle" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "finish.exportOptionsTitle" }),
+    ).toBeInTheDocument();
+  });
 });

@@ -86,7 +86,7 @@ const voiceToText = {
   },
   finish: {
     sectionTitle: "4. Finalización",
-    description: "La transcripción a sido completada y revisada.",
+    description: "La transcripción ha sido completada y revisada.",
     summaryTitle: "Resumen de la transcripción",
     titleLabel: "Título",
     fileLabel: "Archivo",

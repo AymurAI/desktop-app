@@ -18,17 +18,11 @@ import { SectionTitle } from "@/layout/section-title";
 import type { ExportFormat } from "@/services/export/types";
 import { useExportTranscription } from "@/services/export/use-export-transcription";
 import { css } from "@/styled/css";
-import { Grid, HStack, Stack, styled } from "@/styled/jsx";
+import { Box, Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { Avatar, Button, Card } from "@aymurai/ui";
 import { Info } from "phosphor-react";
 import VoiceHeader from "./header";
-
-const formatLabel = css({
-  display: "flex",
-  alignItems: "center",
-  gap: "1",
-});
 
 const switchRow = css({
   display: "flex",
@@ -127,44 +121,44 @@ export default function VoiceFinish() {
                 </Stack>
 
                 <Stack gap="6">
-                  <Stack gap="2">
+                  <styled.h2 textStyle="subtitle.md.strong">
+                    {t("finish.exportOptionsTitle")}
+                  </styled.h2>
+
+                  <HStack gap="2" alignItems="flex-end">
+                    <Box flex="1">
+                      <Select
+                        options={FORMAT_OPTIONS}
+                        label={t("finish.formatLabel")}
+                        value={format}
+                        onChange={(opt) => setFormat(opt.id as ExportFormat)}
+                      />
+                    </Box>
                     <TooltipProvider>
-                      <HStack className={formatLabel} gap="1">
-                        <styled.span
-                          textStyle="label.sm.default"
-                          color="text.lighter"
-                        >
-                          {t("finish.formatLabel")}
-                        </styled.span>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <button
-                              type="button"
-                              aria-label={t("finish.formatHelpAria")}
-                              className={css({
-                                display: "inline-flex",
-                                color: "text.lighter",
-                                border: "[none]",
-                                bg: "transparent",
-                                cursor: "pointer",
-                                p: "[0]",
-                              })}
-                            >
-                              <Info size={16} />
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {t("finish.formatHelp")}
-                          </TooltipContent>
-                        </Tooltip>
-                      </HStack>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            aria-label={t("finish.formatHelpAria")}
+                            className={css({
+                              display: "inline-flex",
+                              color: "text.lighter",
+                              border: "[none]",
+                              bg: "transparent",
+                              cursor: "pointer",
+                              p: "[0]",
+                              mb: "3",
+                            })}
+                          >
+                            <Info size={16} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {t("finish.formatHelp")}
+                        </TooltipContent>
+                      </Tooltip>
                     </TooltipProvider>
-                    <Select
-                      options={FORMAT_OPTIONS}
-                      value={format}
-                      onChange={(opt) => setFormat(opt.id as ExportFormat)}
-                    />
-                  </Stack>
+                  </HStack>
 
                   <Stack gap="4">
                     <styled.h2 textStyle="subtitle.sm.strong">
