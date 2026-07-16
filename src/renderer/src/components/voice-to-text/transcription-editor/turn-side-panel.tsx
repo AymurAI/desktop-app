@@ -12,7 +12,7 @@ import {
 import { formatTime } from "@/components/voice-to-text/format-time";
 import { showToast } from "@/features/showToast";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
-import { computeInitials } from "@/reducers/transcription";
+import { computeInitials, nextPersonaLabel } from "@/reducers/transcription";
 import {
   addSpeaker,
   insertTurn,
@@ -228,7 +228,7 @@ export default function TurnSidePanel({
   };
 
   const handleNewPerson = () => {
-    const label = `Persona ${speakers.length + 1}`;
+    const label = nextPersonaLabel(speakers);
     const newSpeaker: Speaker = {
       id: crypto.randomUUID(),
       label,

@@ -328,3 +328,54 @@ describe("TurnSidePanel bulk-apply scope prompt", () => {
     expect(dispatch).not.toHaveBeenCalled();
   });
 });
+
+describe("TurnSidePanel new-person numbering", () => {
+  beforeEach(() => dispatch.mockClear());
+
+  it("starts a fresh Persona count at 1 when the only speaker was renamed away from Persona N", () => {
+    // Regression: renaming the sole "Persona 1" to a custom name (e.g. "JFK")
+    // must not make the next auto-generated speaker "Persona 2" just because
+    // `speakers.length` is 1 — there are zero Persona-N speakers left.
+    const renamedOnly: Transcription = {
+      ...transcription,
+      speakers: [{ id: "s1", label: "JFK", initials: "JF", color: "violet" }],
+    };
+    render(<TurnSidePanel transcription={renamedOnly} activeTurnId="a" />);
+    fireEvent.click(screen.getByText("Nuevo"));
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "ADD_SPEAKER",
+        payload: expect.objectContaining({
+          speaker: expect.objectContaining({ label: "Persona 1" }),
+        }),
+      }),
+    );
+  });
+
+  it("continues from the highest existing Persona N, not from the total speaker count", () => {
+    const withCustomAndPersona: Transcription = {
+      ...transcription,
+      speakers: [
+        { id: "s1", label: "JFK", initials: "JF", color: "violet" },
+        { id: "s2", label: "Persona 1", initials: "P1", color: "green" },
+      ],
+      turns: [
+        { id: "a", speakerId: "s1", text: "uno", startMs: 5000, endMs: 8000 },
+      ],
+    };
+    render(
+      <TurnSidePanel transcription={withCustomAndPersona} activeTurnId="a" />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "ADD_SPEAKER",
+        payload: expect.objectContaining({
+          speaker: expect.objectContaining({ label: "Persona 2" }),
+        }),
+      }),
+    );
+  });
+});

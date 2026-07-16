@@ -61,6 +61,22 @@ export function computeInitials(label: string): string {
 const PERSONA_LABEL_RE = /^Persona (\d+)$/;
 
 /**
+ * Label for the next auto-generated speaker: one past the highest existing
+ * "Persona N" label, or "Persona 1" if there are none — regardless of how
+ * many other (custom-named) speakers exist. Used by "Nuevo" in the side
+ * panel; matches the numbering `renumberPersonaSpeakers` below keeps
+ * contiguous after a rename.
+ */
+export function nextPersonaLabel(speakers: Speaker[]): string {
+  const numbers = speakers
+    .map((s) => s.label.match(PERSONA_LABEL_RE)?.[1])
+    .filter((n): n is string => n !== undefined)
+    .map(Number);
+  const next = numbers.length > 0 ? Math.max(...numbers) + 1 : 1;
+  return `Persona ${next}`;
+}
+
+/**
  * Renumbers auto-generated "Persona N" labels so they stay contiguous
  * (1, 2, 3, ...) after a rename/merge relabels or drops one of them.
  * Speakers with a custom label (anything not matching "Persona N") are

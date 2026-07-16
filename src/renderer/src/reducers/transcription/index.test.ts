@@ -8,7 +8,7 @@ import {
   renameTranscription,
   splitTurn,
 } from "./actions";
-import reducer from "./index";
+import reducer, { nextPersonaLabel } from "./index";
 
 function makeTranscription(
   overrides: Partial<Transcription> = {},
@@ -376,5 +376,41 @@ describe("renameSpeakerGlobal renumbering", () => {
     const speakers = next[0].speakers;
     expect(speakers.find((s) => s.id === "s1")?.label).toBe("Persona 1");
     expect(speakers.find((s) => s.id === "s2")?.label).toBe("Persona 2");
+  });
+});
+
+describe("nextPersonaLabel", () => {
+  it("starts at Persona 1 when there are no speakers at all", () => {
+    expect(nextPersonaLabel([])).toBe("Persona 1");
+  });
+
+  it("starts at Persona 1 when only custom-named speakers exist", () => {
+    // Regression: the only speaker was renamed from "Persona 1" to "JFK" —
+    // the next auto-generated speaker must not count JFK toward the number.
+    const speakers = [
+      { id: "s1", label: "JFK", initials: "JF", color: "violet" as const },
+    ];
+    expect(nextPersonaLabel(speakers)).toBe("Persona 1");
+  });
+
+  it("continues one past the highest existing Persona N, ignoring other speakers", () => {
+    const speakers = [
+      { id: "s1", label: "JFK", initials: "JF", color: "violet" as const },
+      { id: "s2", label: "Persona 1", initials: "P1", color: "green" as const },
+    ];
+    expect(nextPersonaLabel(speakers)).toBe("Persona 2");
+  });
+
+  it("uses the highest number, not the count, when there's a gap", () => {
+    const speakers = [
+      {
+        id: "s1",
+        label: "Persona 1",
+        initials: "P1",
+        color: "violet" as const,
+      },
+      { id: "s2", label: "Persona 3", initials: "P3", color: "green" as const },
+    ];
+    expect(nextPersonaLabel(speakers)).toBe("Persona 4");
   });
 });
