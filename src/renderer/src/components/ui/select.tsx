@@ -70,8 +70,8 @@ function SelectItem({
   id: string;
   text: string;
   description?: string;
-  itemClassName: string;
-  itemIndicatorClassName: string;
+  itemClassName?: string;
+  itemIndicatorClassName?: string;
 }) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
