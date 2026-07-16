@@ -66,7 +66,7 @@ const PERSONA_LABEL_RE = /^Persona (\d+)$/;
  * Speakers with a custom label (anything not matching "Persona N") are
  * left untouched.
  */
-export function renumberPersonaSpeakers(speakers: Speaker[]): Speaker[] {
+function renumberPersonaSpeakers(speakers: Speaker[]): Speaker[] {
   const personaSpeakers = speakers
     .filter((s) => PERSONA_LABEL_RE.test(s.label))
     .sort((a, b) => {
