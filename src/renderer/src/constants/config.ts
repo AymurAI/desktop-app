@@ -1,5 +1,5 @@
 import { FeatureFlowEnum } from "@/types/features";
-import { Database, Detective, type Icon, Microphone } from "phosphor-react";
+import { Database, Detective, FileAudio, type Icon } from "phosphor-react";
 
 export const DATAGENERO_URL = "https://www.datagenero.org/";
 
@@ -38,7 +38,7 @@ export const AYMURAI_API_URL = `http://localhost:${PREDICT_PORT}`;
 export const FEATURE_ICON: Record<FeatureFlowEnum, Icon> = {
   [FeatureFlowEnum.Dataset]: Database,
   [FeatureFlowEnum.Anonymizer]: Detective,
-  [FeatureFlowEnum.VoiceToText]: Microphone,
+  [FeatureFlowEnum.VoiceToText]: FileAudio,
 };
 
 export const USE_MOCK_STT = import.meta.env.VITE_USE_MOCK_STT === "true";
