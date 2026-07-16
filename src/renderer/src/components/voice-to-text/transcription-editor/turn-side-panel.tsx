@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import Button from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { formatTime } from "@/components/voice-to-text/format-time";
 import { showToast } from "@/features/showToast";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
@@ -71,6 +79,11 @@ const emptyPanel = css({
   p: "6",
 });
 
+const dialogContent = css({
+  width: "[min(420px,90vw)]",
+  maxWidth: "[420px]",
+});
+
 export interface TurnSidePanelProps {
   transcription: Transcription;
   activeTurnId: string | null;
@@ -99,6 +112,13 @@ export default function TurnSidePanel({
   const [timeValue, setTimeValue] = useState(
     activeTurn ? formatTime(activeTurn.startMs) : "",
   );
+  // Declared here (before the early-return guard below) rather than next to
+  // the handlers that use it, so every render calls the same hooks in the
+  // same order regardless of whether activeTurn/currentSpeaker are set.
+  const [scopeChoice, setScopeChoice] = useState<{
+    personIndex: number;
+    targetLabel: string;
+  } | null>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: re-seed from the stable turn id; activeTurn is derived from it
   useEffect(() => {
@@ -137,7 +157,7 @@ export default function TurnSidePanel({
     (p) => p.kind === "existing" && p.id === currentSpeaker.id,
   );
 
-  const handleSelectPerson = (i: number) => {
+  const applySelection = (i: number) => {
     const p = people[i];
     if (!p) return;
     if (p.kind === "existing") {
@@ -154,6 +174,42 @@ export default function TurnSidePanel({
     dispatch(
       reassignTurnSpeaker(transcription.id, activeTurn.id, newSpeaker.id),
     );
+  };
+
+  const handleSelectPerson = (i: number) => {
+    const p = people[i];
+    if (!p || !currentSpeaker) return;
+
+    const targetLabel = p.kind === "existing" ? p.name : p.sg.label;
+    const isDifferentIdentity =
+      p.kind === "suggested" || p.id !== currentSpeaker.id;
+    const currentSpeakerTurnCount = turns.filter(
+      (t) => t.speakerId === currentSpeaker.id,
+    ).length;
+
+    if (isDifferentIdentity && currentSpeakerTurnCount > 1) {
+      setScopeChoice({ personIndex: i, targetLabel });
+      return;
+    }
+    applySelection(i);
+  };
+
+  const handleApplyToThisTurnOnly = () => {
+    if (!scopeChoice) return;
+    applySelection(scopeChoice.personIndex);
+    setScopeChoice(null);
+  };
+
+  const handleApplyToAllTurns = () => {
+    if (!scopeChoice || !currentSpeaker) return;
+    dispatch(
+      renameSpeakerGlobal(
+        transcription.id,
+        currentSpeaker.id,
+        scopeChoice.targetLabel,
+      ),
+    );
+    setScopeChoice(null);
   };
 
   const handleNewPerson = () => {
@@ -277,6 +333,35 @@ export default function TurnSidePanel({
           onDelete={() => dispatch(removeTurn(transcription.id, activeTurn.id))}
         />
       </TooltipProvider>
+
+      <Dialog
+        open={scopeChoice !== null}
+        onOpenChange={(open) => {
+          if (!open) setScopeChoice(null);
+        }}
+      >
+        <DialogContent className={dialogContent}>
+          <DialogTitle>{t("sidePanel.scopeDialog.title")}</DialogTitle>
+          <DialogDescription>
+            {t("sidePanel.scopeDialog.description", {
+              current: currentSpeaker?.label,
+            })}
+          </DialogDescription>
+          <DialogFooter>
+            <Button variant="secondary" onClick={handleApplyToThisTurnOnly}>
+              {t("sidePanel.scopeDialog.thisTurnOnly")}
+            </Button>
+            <Button onClick={handleApplyToAllTurns}>
+              {t("sidePanel.scopeDialog.allTurns", {
+                current: currentSpeaker?.label,
+              })}
+            </Button>
+          </DialogFooter>
+          <Button variant="secondary" onClick={() => setScopeChoice(null)}>
+            {t("sidePanel.scopeDialog.cancel")}
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

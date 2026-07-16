@@ -150,6 +150,14 @@ const voiceToText = {
     mergeNext: "Unir con el turno siguiente",
     addBelow: "Agregar turno debajo",
     delete: "Eliminar turno",
+    scopeDialog: {
+      title: "Aplicar cambio",
+      description:
+        '"{{current}}" tiene más de una intervención en esta transcripción. ¿Aplicás el cambio sólo a este turno o a todas las intervenciones de "{{current}}"?',
+      thisTurnOnly: "Sólo este turno",
+      allTurns: "Todas las de {{current}}",
+      cancel: "Cancelar",
+    },
   },
 };
 
