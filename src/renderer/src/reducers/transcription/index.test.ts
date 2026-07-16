@@ -2,6 +2,7 @@ import type { Transcription } from "@/types/transcription";
 import { describe, expect, it } from "vitest";
 import {
   clearTranscriptions,
+  mergeTurnWithNext,
   mergeTurnWithPrevious,
   renameSpeakerGlobal,
   renameTranscription,
@@ -211,6 +212,47 @@ describe("mergeTurnWithPrevious", () => {
     expect(
       reducer(base(), mergeTurnWithPrevious("t1", "a"))[0].turns,
     ).toHaveLength(2);
+  });
+});
+
+describe("mergeTurnWithNext", () => {
+  const base = () => [
+    {
+      id: "t1",
+      title: "T",
+      audioFileName: "a",
+      audioDurationMs: 9,
+      audioObjectUrl: "b",
+      createdAt: "c",
+      source: "asr" as const,
+      speakers: [
+        { id: "s1", label: "P1", initials: "P1", color: "violet" as const },
+        { id: "s2", label: "P2", initials: "P2", color: "green" as const },
+      ],
+      turns: [
+        { id: "a", speakerId: "s1", text: "uno", startMs: 0, endMs: 1000 },
+        { id: "b", speakerId: "s2", text: "dos", startMs: 1000, endMs: 2000 },
+      ],
+    },
+  ];
+
+  it("keeps the selected turn and adopts the next turn's speaker", () => {
+    const next = reducer(base(), mergeTurnWithNext("t1", "a"));
+    expect(next[0].turns).toEqual([
+      {
+        id: "a",
+        speakerId: "s2",
+        text: "uno dos",
+        startMs: 0,
+        endMs: 2000,
+      },
+    ]);
+  });
+
+  it("is a no-op for the last turn", () => {
+    expect(reducer(base(), mergeTurnWithNext("t1", "b"))[0].turns).toHaveLength(
+      2,
+    );
   });
 });
 

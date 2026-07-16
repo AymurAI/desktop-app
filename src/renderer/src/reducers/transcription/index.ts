@@ -7,6 +7,7 @@ import {
   type AddTranscriptionAction,
   type ClearTranscriptionsAction,
   type InsertTurnAction,
+  type MergeTurnWithNextAction,
   type MergeTurnWithPreviousAction,
   type ReassignTurnSpeakerAction,
   type RemoveTranscriptionAction,
@@ -33,6 +34,7 @@ export type TranscriptionAction =
   | AddSpeakerAction
   | SplitTurnAction
   | MergeTurnWithPreviousAction
+  | MergeTurnWithNextAction
   | ClearTranscriptionsAction;
 
 /**
@@ -333,6 +335,29 @@ export default function reducer(
             merged,
             ...tr.turns.slice(i + 1),
           ],
+        };
+      });
+    }
+
+    // ----------------
+    // MERGE TURN WITH NEXT
+    // ----------------
+    case ActionTypes.MERGE_TURN_WITH_NEXT: {
+      const { transcriptionId, turnId } = payload;
+      return updateTranscription(state, transcriptionId, (tr) => {
+        const i = tr.turns.findIndex((t) => t.id === turnId);
+        if (i < 0 || i >= tr.turns.length - 1) return tr;
+        const cur = tr.turns[i];
+        const next = tr.turns[i + 1];
+        const merged = {
+          ...cur,
+          speakerId: next.speakerId,
+          text: `${cur.text.replace(/\s+$/, "")} ${next.text.replace(/^\s+/, "")}`.trim(),
+          endMs: Math.max(cur.endMs, next.endMs),
+        };
+        return {
+          ...tr,
+          turns: [...tr.turns.slice(0, i), merged, ...tr.turns.slice(i + 2)],
         };
       });
     }

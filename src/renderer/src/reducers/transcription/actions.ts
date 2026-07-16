@@ -16,13 +16,14 @@ export enum ActionTypes {
   ADD_SPEAKER = "ADD_SPEAKER",
   SPLIT_TURN = "SPLIT_TURN",
   MERGE_TURN_WITH_PREVIOUS = "MERGE_TURN_WITH_PREVIOUS",
+  MERGE_TURN_WITH_NEXT = "MERGE_TURN_WITH_NEXT",
   CLEAR_TRANSCRIPTIONS = "CLEAR_TRANSCRIPTIONS",
 }
 
 /**
  * Generic action
  */
-type Action<Type, Payload = {}> = {
+type Action<Type, Payload> = {
   type: Type;
   payload: Payload;
 };
@@ -262,6 +263,24 @@ export function mergeTurnWithPrevious(
 ): MergeTurnWithPreviousAction {
   return {
     type: ActionTypes.MERGE_TURN_WITH_PREVIOUS,
+    payload: { transcriptionId, turnId },
+  };
+}
+
+export type MergeTurnWithNextAction = Action<
+  ActionTypes.MERGE_TURN_WITH_NEXT,
+  { transcriptionId: string; turnId: string }
+>;
+/**
+ * Merges the next turn into the selected turn, preserving the selected turn's
+ * identity while adopting the next turn's speaker. No-op for the last turn.
+ */
+export function mergeTurnWithNext(
+  transcriptionId: string,
+  turnId: string,
+): MergeTurnWithNextAction {
+  return {
+    type: ActionTypes.MERGE_TURN_WITH_NEXT,
     payload: { transcriptionId, turnId },
   };
 }

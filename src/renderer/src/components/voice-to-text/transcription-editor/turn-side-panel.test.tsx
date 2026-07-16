@@ -4,6 +4,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Transcription } from "@/types/transcription";
 import TurnSidePanel, { getTimestampBounds } from "./turn-side-panel";
 
+vi.stubGlobal(
+  "ResizeObserver",
+  class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  },
+);
+
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
@@ -125,5 +134,120 @@ describe("TurnSidePanel add-below", () => {
     const action = dispatch.mock.calls[0][0];
     expect(action.payload.turn.startMs).toBe(25000); // turn "c"'s endMs
     expect(action.payload.turn.endMs).toBe(27000); // + 2000ms default
+  });
+});
+
+const multiSpeakerTranscription: Transcription = {
+  ...transcription,
+  speakers: [
+    { id: "s1", label: "Persona 1", initials: "P1", color: "violet" },
+    { id: "s2", label: "Persona 2", initials: "P2", color: "green" },
+  ],
+  turns: [
+    { id: "a", speakerId: "s1", text: "uno", startMs: 0, endMs: 10_000 },
+    { id: "b", speakerId: "s2", text: "dos", startMs: 10_000, endMs: 20_000 },
+    { id: "c", speakerId: "s1", text: "tres", startMs: 20_000, endMs: 30_000 },
+  ],
+};
+
+describe("TurnSidePanel speaker identity editing", () => {
+  beforeEach(() => dispatch.mockClear());
+
+  it("dispatches a unique global rename for an existing speaker", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+
+    expect(screen.getAllByLabelText("Renombrar")).toHaveLength(2);
+    fireEvent.click(screen.getAllByLabelText("Renombrar")[0]);
+    const input = screen.getByLabelText("Editar nombre de Persona 1");
+    fireEvent.change(input, { target: { value: "Jueza" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "RENAME_SPEAKER_GLOBAL",
+        payload: expect.objectContaining({
+          speakerId: "s1",
+          newLabel: "Jueza",
+        }),
+      }),
+    );
+  });
+
+  it("only merges colliding identities after confirmation and supports cancel", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+
+    const startCollision = () => {
+      fireEvent.click(screen.getAllByLabelText("Renombrar")[0]);
+      const input = screen.getByLabelText("Editar nombre de Persona 1");
+      fireEvent.change(input, { target: { value: "Persona 2" } });
+      fireEvent.keyDown(input, { key: "Enter" });
+    };
+
+    startCollision();
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
+    expect(dispatch).not.toHaveBeenCalled();
+
+    startCollision();
+    fireEvent.click(screen.getByRole("button", { name: "Combinar" }));
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "RENAME_SPEAKER_GLOBAL",
+        payload: expect.objectContaining({
+          speakerId: "s1",
+          newLabel: "Persona 2",
+        }),
+      }),
+    );
+  });
+});
+
+describe("TurnSidePanel adjacent turn merging", () => {
+  beforeEach(() => dispatch.mockClear());
+
+  it("merges same-speaker adjacent turns without confirmation", () => {
+    render(<TurnSidePanel transcription={transcription} activeTurnId="b" />);
+    fireEvent.click(screen.getByText("Unir con el siguiente"));
+    expect(screen.queryByRole("button", { name: "Combinar" })).toBeNull();
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "MERGE_TURN_WITH_NEXT" }),
+    );
+  });
+
+  it("confirms a different-speaker merge with the previous turn", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b"
+      />,
+    );
+    fireEvent.click(screen.getByText("Unir con el anterior"));
+    expect(screen.getByText(/persona del turno anterior/)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Combinar" }));
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "MERGE_TURN_WITH_PREVIOUS" }),
+    );
+  });
+
+  it("cancels a different-speaker merge with the next turn", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b"
+      />,
+    );
+    fireEvent.click(screen.getByText("Unir con el siguiente"));
+    expect(screen.getByText(/persona del turno siguiente/)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
+    expect(dispatch).not.toHaveBeenCalled();
   });
 });

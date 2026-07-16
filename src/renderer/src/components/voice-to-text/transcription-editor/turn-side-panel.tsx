@@ -8,23 +8,19 @@ import { computeInitials } from "@/reducers/transcription";
 import {
   addSpeaker,
   insertTurn,
+  mergeTurnWithNext,
   mergeTurnWithPrevious,
   reassignTurnSpeaker,
   removeTurn,
+  renameSpeakerGlobal,
   updateTurnStartMs,
 } from "@/reducers/transcription/actions";
 import { SUGGESTED_SPEAKERS } from "@/services/aymurai/fixtures/suggestedSpeakers";
 import { css } from "@/styled/css";
-import type {
-  Speaker,
-  SpeakerColor,
-  Transcription,
-  Turn,
-} from "@/types/transcription";
-import { SidePanel } from "@aymurai/ui";
+import type { Speaker, Transcription, Turn } from "@/types/transcription";
+import { SPEAKER_PALETTE } from "@/types/transcription";
+import { SidePanel, TooltipProvider } from "@aymurai/ui";
 import { parseTimestampToMs } from "./parse-timestamp";
-
-const PALETTE: SpeakerColor[] = ["primary", "secondary", "warning", "success"];
 
 // A newly-inserted turn needs a real (non-zero) time span, or it can never
 // become the "active" turn during playback (useActiveTurn requires
@@ -125,13 +121,16 @@ export default function TurnSidePanel({
       initials: s.initials,
       name: s.label,
       color: s.color,
+      renamable: true,
     })),
     ...availableSuggested.map((sg) => ({
       kind: "suggested" as const,
+      id: sg.id,
       sg,
       initials: sg.initials,
       name: sg.label,
       color: sg.color,
+      renamable: false,
     })),
   ];
   const selectedIndex = people.findIndex(
@@ -163,7 +162,7 @@ export default function TurnSidePanel({
       id: crypto.randomUUID(),
       label,
       initials: computeInitials(label),
-      color: PALETTE[speakers.length % PALETTE.length],
+      color: SPEAKER_PALETTE[speakers.length % SPEAKER_PALETTE.length],
     };
     dispatch(addSpeaker(transcription.id, newSpeaker));
     dispatch(
@@ -195,7 +194,27 @@ export default function TurnSidePanel({
     dispatch(updateTurnStartMs(transcription.id, activeTurn.id, ms));
   };
 
+  const previousTurn = turns[idx - 1];
   const nextTurn = turns[idx + 1];
+  const previousTurnName = previousTurn
+    ? speakers.find((speaker) => speaker.id === previousTurn.speakerId)?.label
+    : undefined;
+  const nextTurnName = nextTurn
+    ? speakers.find((speaker) => speaker.id === nextTurn.speakerId)?.label
+    : undefined;
+
+  const handleRenamePerson = (personIndex: number, name: string) => {
+    const person = people[personIndex];
+    if (person?.kind !== "existing") return;
+    dispatch(renameSpeakerGlobal(transcription.id, person.id, name));
+  };
+
+  const handleMergePeople = (sourceIndex: number, targetIndex: number) => {
+    const source = people[sourceIndex];
+    const target = people[targetIndex];
+    if (source?.kind !== "existing" || target?.kind !== "existing") return;
+    dispatch(renameSpeakerGlobal(transcription.id, source.id, target.name));
+  };
 
   const handleAddBelow = () => {
     // Start right where the active turn ends, and use the gap to the next
@@ -224,34 +243,40 @@ export default function TurnSidePanel({
 
   return (
     <div className={panelColumn}>
-      <SidePanel
-        turn={{
-          initials: currentSpeaker.initials,
-          name: currentSpeaker.label,
-          time: formatTime(activeTurn.startMs),
-          color: currentSpeaker.color,
-        }}
-        people={people.map((p) => ({
-          initials: p.initials,
-          name: p.name,
-          color: p.color,
-        }))}
-        selectedIndex={selectedIndex >= 0 ? selectedIndex : undefined}
-        onSelectPerson={handleSelectPerson}
-        onNewPerson={handleNewPerson}
-        timestamp={timeValue}
-        onTimestampChange={handleTimestampChange}
-        onMergePrevious={() =>
-          dispatch(mergeTurnWithPrevious(transcription.id, activeTurn.id))
-        }
-        onMergeNext={() => {
-          if (nextTurn) {
-            dispatch(mergeTurnWithPrevious(transcription.id, nextTurn.id));
+      <TooltipProvider>
+        <SidePanel
+          turn={{
+            initials: currentSpeaker.initials,
+            name: currentSpeaker.label,
+            time: formatTime(activeTurn.startMs),
+            color: currentSpeaker.color,
+          }}
+          people={people.map((p) => ({
+            id: p.id,
+            initials: p.initials,
+            name: p.name,
+            color: p.color,
+            renamable: p.renamable,
+          }))}
+          selectedIndex={selectedIndex >= 0 ? selectedIndex : undefined}
+          onSelectPerson={handleSelectPerson}
+          onNewPerson={handleNewPerson}
+          onRenamePerson={handleRenamePerson}
+          onMergePeople={handleMergePeople}
+          timestamp={timeValue}
+          onTimestampChange={handleTimestampChange}
+          onMergePrevious={() =>
+            dispatch(mergeTurnWithPrevious(transcription.id, activeTurn.id))
           }
-        }}
-        onAddBelow={handleAddBelow}
-        onDelete={() => dispatch(removeTurn(transcription.id, activeTurn.id))}
-      />
+          onMergeNext={() =>
+            dispatch(mergeTurnWithNext(transcription.id, activeTurn.id))
+          }
+          previousTurnName={previousTurnName}
+          nextTurnName={nextTurnName}
+          onAddBelow={handleAddBelow}
+          onDelete={() => dispatch(removeTurn(transcription.id, activeTurn.id))}
+        />
+      </TooltipProvider>
     </div>
   );
 }
