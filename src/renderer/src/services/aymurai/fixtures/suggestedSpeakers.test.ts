@@ -13,5 +13,15 @@ describe("SUGGESTED_SPEAKERS", () => {
       "Testigo/a",
       "Niño/a - Adolescente",
     ]);
+    expect(SUGGESTED_SPEAKERS.map((speaker) => speaker.color)).toEqual([
+      "violet",
+      "green",
+      "red",
+      "yellow",
+      "pink",
+      "orange",
+      "blue",
+      "violet",
+    ]);
   });
 });

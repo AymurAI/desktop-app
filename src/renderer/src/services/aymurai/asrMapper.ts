@@ -1,19 +1,12 @@
 import type { ASRDocument, ASRParagraph, ASRSpeakerTurn } from "@/schema/asr";
 import type {
   Speaker,
-  SpeakerColor,
   Transcription,
   TranscriptionSource,
   Turn,
 } from "@/types/transcription";
+import { SPEAKER_PALETTE } from "@/types/transcription";
 import { stripKnownMediaExtension } from "@/utils/strip-known-media-extension";
-
-const SPEAKER_COLORS: SpeakerColor[] = [
-  "primary",
-  "secondary",
-  "warning",
-  "success",
-];
 
 function parseDurationToMs(value: string | number): number {
   if (typeof value === "number") return Math.round(value * 1000);
@@ -67,7 +60,7 @@ function buildSpeakersFromLabels(
     id: `s${no}`,
     label,
     initials: `P${no}`.slice(0, 2),
-    color: SPEAKER_COLORS[idx % SPEAKER_COLORS.length],
+    color: SPEAKER_PALETTE[idx % SPEAKER_PALETTE.length],
   }));
 }
 

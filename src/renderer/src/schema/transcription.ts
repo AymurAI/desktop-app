@@ -1,10 +1,11 @@
+import { SPEAKER_COLORS } from "@/types/transcription";
 import { z } from "zod";
 
 export const SpeakerSchema = z.object({
   id: z.string(),
   label: z.string(),
   initials: z.string().max(2),
-  color: z.enum(["primary", "secondary", "warning", "success"]),
+  color: z.enum(SPEAKER_COLORS),
 });
 
 export const TurnSchema = z.object({

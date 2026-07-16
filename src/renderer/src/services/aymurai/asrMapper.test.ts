@@ -7,6 +7,33 @@ const audioFile = new File(["audio"], "audiencia.29.06.final.mp3", {
 });
 
 describe("mapASRDocumentToTranscription", () => {
+  it("cycles the seven-color palette for newly mapped speakers", () => {
+    const speakerTurns = Array.from({ length: 8 }, (_, index) => ({
+      speaker: `Speaker ${index + 1}`,
+      speaker_no: index + 1,
+      start: `00:00:${String(index).padStart(2, "0")}.000`,
+      end: `00:00:${String(index + 1).padStart(2, "0")}.000`,
+      text: `Turno ${index + 1}`,
+      segments: [],
+    }));
+    const transcription = mapASRDocumentToTranscription(
+      { document_id: "palette", document: [], speaker_turns: speakerTurns },
+      audioFile,
+      "blob:audio",
+    );
+
+    expect(transcription.speakers.map((speaker) => speaker.color)).toEqual([
+      "violet",
+      "green",
+      "red",
+      "yellow",
+      "pink",
+      "orange",
+      "blue",
+      "violet",
+    ]);
+  });
+
   it("uses speaker_turns as the editable turn source instead of raw document chunks", () => {
     const doc: ASRDocument = {
       document_id: "doc-1",

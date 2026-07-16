@@ -13,8 +13,7 @@ import type {
   SpeakerColor,
   Transcription,
 } from "@/types/transcription";
-
-const PALETTE: SpeakerColor[] = ["primary", "secondary", "warning", "success"];
+import { SPEAKER_PALETTE } from "@/types/transcription";
 
 const popover = css({
   bg: "bg.secondary",
@@ -136,20 +135,6 @@ const checkIcon = css({
   ml: "auto",
 });
 
-const miniAvatar = css({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "6",
-  height: "6",
-  borderRadius: "full",
-  bg: "bg.primary-alternative",
-  color: "brand.primary",
-  fontSize: "[11px]",
-  fontWeight: "[700]",
-  flexShrink: "0",
-});
-
 export interface SpeakerPickerProps {
   transcription: Transcription;
   currentSpeakerId?: string;
@@ -215,7 +200,8 @@ export default function SpeakerPicker({
     if (existing) return existing.id;
 
     const color: SpeakerColor =
-      fallbackColor ?? PALETTE[speakers.length % PALETTE.length];
+      fallbackColor ??
+      SPEAKER_PALETTE[speakers.length % SPEAKER_PALETTE.length];
     const initials = fallbackInitials ?? computeInitials(trimmed);
     const newSpeaker: Speaker = {
       id: crypto.randomUUID(),
@@ -295,7 +281,7 @@ export default function SpeakerPicker({
                 handleSuggestedPick(sg.label, sg.color, sg.initials)
               }
             >
-              <div className={miniAvatar}>{sg.initials}</div>
+              <SpeakerAvatar speaker={sg} size="sm" />
               <span className={itemName}>{sg.label}</span>
             </button>
           ))}

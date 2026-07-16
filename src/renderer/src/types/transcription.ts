@@ -1,6 +1,28 @@
 import type { ASRSegment, ASRSpeakerTurn } from "@/schema/asr";
 
-export type SpeakerColor = "primary" | "secondary" | "warning" | "success";
+export const SPEAKER_PALETTE = [
+  "violet",
+  "green",
+  "red",
+  "yellow",
+  "pink",
+  "orange",
+  "blue",
+] as const;
+
+export const LEGACY_SPEAKER_COLORS = [
+  "primary",
+  "secondary",
+  "warning",
+  "success",
+] as const;
+
+export const SPEAKER_COLORS = [
+  ...SPEAKER_PALETTE,
+  ...LEGACY_SPEAKER_COLORS,
+] as const;
+
+export type SpeakerColor = (typeof SPEAKER_COLORS)[number];
 export type SpeakerId = string;
 export type TranscriptionSource = "validation" | "transcription" | "asr";
 
