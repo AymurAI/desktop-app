@@ -6,22 +6,16 @@ import Footer from "@/components/layout/footer";
 import MainContent from "@/components/layout/main-content";
 import Select, { type SelectOption } from "@/components/ui/select";
 import Switch from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import RequireFile from "@/features/RequireFile";
 import { useTranscriptions } from "@/hooks/useTranscriptions";
 import { SectionTitle } from "@/layout/section-title";
 import type { ExportFormat } from "@/services/export/types";
 import { useExportTranscription } from "@/services/export/use-export-transcription";
 import { css } from "@/styled/css";
-import { Box, Grid, HStack, Stack, styled } from "@/styled/jsx";
+import { Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { Avatar, Button, Card } from "@aymurai/ui";
-import { Info } from "phosphor-react";
 import VoiceHeader from "./header";
 
 const switchRow = css({
@@ -47,11 +41,7 @@ const speakerPill = css({
   px: "2",
 });
 
-const FORMAT_OPTIONS: SelectOption[] = [
-  { id: "txt", text: ".txt" },
-  { id: "odt", text: ".odt" },
-  { id: "pdf", text: ".pdf" },
-];
+const FORMAT_IDS: ExportFormat[] = ["odt", "pdf", "txt"];
 
 export default function VoiceFinish() {
   const { t } = useTranslation("voice-to-text");
@@ -60,12 +50,18 @@ export default function VoiceFinish() {
   const transcription = transcriptions[0] ?? null;
   const { isExporting, download } = useExportTranscription(transcription);
 
-  const [format, setFormat] = useState<ExportFormat>("txt");
+  const [format, setFormat] = useState<ExportFormat>("odt");
   const [includeSpeakers, setIncludeSpeakers] = useState(true);
   const [includeTimestamps, setIncludeTimestamps] = useState(true);
 
   const speakersSwitchId = "finish-include-speakers";
   const timestampsSwitchId = "finish-include-timestamps";
+
+  const formatOptions: SelectOption[] = FORMAT_IDS.map((id) => ({
+    id,
+    text: `.${id}`,
+    description: t(`finish.formatDescriptions.${id}`),
+  }));
 
   return (
     <RequireFile>
@@ -125,40 +121,14 @@ export default function VoiceFinish() {
                     {t("finish.exportOptionsTitle")}
                   </styled.h2>
 
-                  <HStack gap="2" alignItems="flex-end">
-                    <Box flex="1">
-                      <Select
-                        options={FORMAT_OPTIONS}
-                        label={t("finish.formatLabel")}
-                        value={format}
-                        onChange={(opt) => setFormat(opt.id as ExportFormat)}
-                      />
-                    </Box>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            type="button"
-                            aria-label={t("finish.formatHelpAria")}
-                            className={css({
-                              display: "inline-flex",
-                              color: "text.lighter",
-                              border: "[none]",
-                              bg: "transparent",
-                              cursor: "pointer",
-                              p: "[0]",
-                              mb: "3",
-                            })}
-                          >
-                            <Info size={16} />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {t("finish.formatHelp")}
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </HStack>
+                  <TooltipProvider>
+                    <Select
+                      options={formatOptions}
+                      label={t("finish.formatLabel")}
+                      value={format}
+                      onChange={(opt) => setFormat(opt.id as ExportFormat)}
+                    />
+                  </TooltipProvider>
 
                   <Stack gap="4">
                     <styled.h2 textStyle="subtitle.sm.strong">

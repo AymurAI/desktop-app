@@ -58,7 +58,7 @@ describe("VoiceFinish export options", () => {
     render(<VoiceFinish />);
     fireEvent.click(screen.getByText("finish.export"));
     expect(download).toHaveBeenCalledWith(
-      "txt",
+      "odt",
       expect.objectContaining({
         includeSpeakers: true,
         includeTimestamps: true,
@@ -71,7 +71,7 @@ describe("VoiceFinish export options", () => {
     fireEvent.click(screen.getByLabelText("finish.includeSpeakers"));
     fireEvent.click(screen.getByText("finish.export"));
     expect(download).toHaveBeenCalledWith(
-      "txt",
+      "odt",
       expect.objectContaining({
         includeSpeakers: false,
         includeTimestamps: true,
@@ -84,7 +84,7 @@ describe("VoiceFinish export options", () => {
     fireEvent.click(screen.getByLabelText("finish.includeTimestamps"));
     fireEvent.click(screen.getByText("finish.export"));
     expect(download).toHaveBeenCalledWith(
-      "txt",
+      "odt",
       expect.objectContaining({
         includeSpeakers: true,
         includeTimestamps: false,

@@ -95,9 +95,11 @@ const voiceToText = {
     speakersLabel: "Personas",
     exportOptionsTitle: "Opciones de exportación",
     formatLabel: "Formato de archivo",
-    formatHelpAria: "Diferencias entre formatos de archivo",
-    formatHelp:
-      ".txt: texto simple, sin formato. .odt: documento editable. .pdf: sólo lectura, ideal para archivar o compartir.",
+    formatDescriptions: {
+      txt: ".txt: texto simple, sin formato.",
+      odt: ".odt: documento editable.",
+      pdf: ".pdf: sólo lectura, ideal para archivar o compartir.",
+    },
     contentTitle: "Contenido",
     includeSpeakers: "Incluir oradores",
     includeTimestamps: "Incluir marcas de tiempo",

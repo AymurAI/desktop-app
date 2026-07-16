@@ -26,7 +26,7 @@ describe("renderTxt", () => {
 
   it("omits speaker/timestamp prefixes independently when absent", () => {
     expect(renderTxt({ blocks: [{ timestamp: "00:05", text: "Hola" }] })).toBe(
-      `[00:05] Hola\n\n${WATERMARK_TEXT}`,
+      `[00:05]: Hola\n\n${WATERMARK_TEXT}`,
     );
     expect(renderTxt({ blocks: [{ speaker: "Juez", text: "Hola" }] })).toBe(
       `Juez: Hola\n\n${WATERMARK_TEXT}`,

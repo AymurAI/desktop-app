@@ -3,6 +3,11 @@ import { CaretDown, CaretUp, Check } from "phosphor-react";
 import { type Ref, useId, useImperativeHandle } from "react";
 
 import Suggestion from "@/components/ui/suggestion";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { sva } from "@/styled/css";
 import { styled } from "@/styled/jsx";
 import { stack } from "@/styled/patterns";
@@ -15,7 +20,13 @@ const Affix = styled("span", {
   },
 });
 
-export type SelectOption = { id: string; text: string; shortText?: string };
+export type SelectOption = {
+  id: string;
+  text: string;
+  shortText?: string;
+  /** Shown in a tooltip on hover over this option, while the list is open. */
+  description?: string;
+};
 export type SelectSuggestion = { id: string; text?: string };
 
 interface SelectProps {
@@ -145,10 +156,10 @@ const select = sva({
       outline: "none",
       userSelect: "none",
 
+      // Only the hovered/keyboard-focused option is highlighted — the
+      // selected option is already marked by its check indicator, so it
+      // doesn't need to stay highlighted too once the list is open.
       "&[data-highlighted]": {
-        bg: "bg.primary-alternative",
-      },
-      "&[data-state='checked']": {
         bg: "bg.primary-alternative",
       },
       "&[data-disabled]": {
@@ -286,14 +297,31 @@ export default function Select({
               <CaretUp size={12} />
             </RadixSelect.ScrollUpButton>
             <RadixSelect.Viewport className={classes.viewport}>
-              {orderedOptions.map(({ id, text }) => (
-                <RadixSelect.Item key={id} value={id} className={classes.item}>
-                  <RadixSelect.ItemIndicator className={classes.itemIndicator}>
-                    <Check size={14} weight="bold" />
-                  </RadixSelect.ItemIndicator>
-                  <RadixSelect.ItemText>{text}</RadixSelect.ItemText>
-                </RadixSelect.Item>
-              ))}
+              {orderedOptions.map(({ id, text, description }) => {
+                const optionItem = (
+                  <RadixSelect.Item
+                    key={id}
+                    value={id}
+                    className={classes.item}
+                  >
+                    <RadixSelect.ItemIndicator
+                      className={classes.itemIndicator}
+                    >
+                      <Check size={14} weight="bold" />
+                    </RadixSelect.ItemIndicator>
+                    <RadixSelect.ItemText>{text}</RadixSelect.ItemText>
+                  </RadixSelect.Item>
+                );
+
+                if (!description) return optionItem;
+
+                return (
+                  <Tooltip key={id}>
+                    <TooltipTrigger asChild>{optionItem}</TooltipTrigger>
+                    <TooltipContent side="right">{description}</TooltipContent>
+                  </Tooltip>
+                );
+              })}
             </RadixSelect.Viewport>
             <RadixSelect.ScrollDownButton className={classes.scrollButton}>
               <CaretDown size={12} />
