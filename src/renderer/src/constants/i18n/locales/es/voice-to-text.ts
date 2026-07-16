@@ -14,8 +14,8 @@ const voiceToText = {
   stepper: {
     step1: "Selección",
     step2: "Transcripción",
-    step3: "Edición",
-    step4: "Descarga",
+    step3: "Validación",
+    step4: "Finalización",
   },
   header: {
     appsAria: "Abrir aplicaciones",
