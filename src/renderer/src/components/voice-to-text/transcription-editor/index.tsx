@@ -350,47 +350,47 @@ export default function TranscriptionEditor({
 
   return (
     <div className={wrap}>
-      <Toolbar
-        context="search-switch"
-        searchValue={searchQuery}
-        onSearchChange={(value) => {
-          setSearchQuery(value);
-          setMatchIndex(0);
-        }}
-        searchPlaceholder={t("editor.searchPlaceholder")}
-        searchAriaLabel={t("editor.searchAria")}
-        searchLabels={{
-          clear: t("editor.clearSearch"),
-          previous: t("editor.prevResult"),
-          next: t("editor.nextResult"),
-        }}
-        searchResultCount={
-          searchQuery
-            ? matches.length > 0
-              ? `${safeMatchIndex + 1} de ${matches.length}`
-              : "0 de 0"
-            : undefined
-        }
-        onSearchPrev={handlePrev}
-        onSearchNext={handleNext}
-        onSearchClear={() => {
-          setSearchQuery("");
-          setMatchIndex(0);
-        }}
-        rightSlot={
-          <label className={switchLabel} htmlFor={switchId}>
-            <Switch
-              id={switchId}
-              checked={isEditMode}
-              onCheckedChange={onEditModeChange}
-            />
-            <span>{t("editor.editMode")}</span>
-          </label>
-        }
-      />
-
       <div className={content}>
         <div className={bodyColumn}>
+          <Toolbar
+            context="search-switch"
+            searchValue={searchQuery}
+            onSearchChange={(value) => {
+              setSearchQuery(value);
+              setMatchIndex(0);
+            }}
+            searchPlaceholder={t("editor.searchPlaceholder")}
+            searchAriaLabel={t("editor.searchAria")}
+            searchLabels={{
+              clear: t("editor.clearSearch"),
+              previous: t("editor.prevResult"),
+              next: t("editor.nextResult"),
+            }}
+            searchResultCount={
+              searchQuery
+                ? matches.length > 0
+                  ? `${safeMatchIndex + 1} de ${matches.length}`
+                  : "0 de 0"
+                : undefined
+            }
+            onSearchPrev={handlePrev}
+            onSearchNext={handleNext}
+            onSearchClear={() => {
+              setSearchQuery("");
+              setMatchIndex(0);
+            }}
+            rightSlot={
+              <label className={switchLabel} htmlFor={switchId}>
+                <Switch
+                  id={switchId}
+                  checked={isEditMode}
+                  onCheckedChange={onEditModeChange}
+                />
+                <span>{t("editor.editMode")}</span>
+              </label>
+            }
+          />
+
           <div className={titleSection}>
             <EditableTitle
               title={transcription.title}
