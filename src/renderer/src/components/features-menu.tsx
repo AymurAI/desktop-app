@@ -4,13 +4,18 @@ import { Grid, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import { Link } from "@tanstack/react-router";
 import { DotsNine, Gear } from "phosphor-react";
+import type { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import FeatureIcon from "./feature-icon";
 import Button from "./ui/button";
 import Card from "./ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
-export default function FeaturesMenu() {
+interface FeaturesMenuProps {
+  trigger?: ReactElement;
+}
+
+export default function FeaturesMenu({ trigger }: FeaturesMenuProps) {
   const { t } = useTranslation();
   const dispatch = useFileDispatch();
   const features = Object.values(FeatureFlowEnum);
@@ -22,9 +27,15 @@ export default function FeaturesMenu() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="icon-sm" style={{ padding: 2 }} aria-label="Ir al inicio">
-          <DotsNine size={32} />
-        </Button>
+        {trigger ?? (
+          <Button
+            size="icon-sm"
+            style={{ padding: 2 }}
+            aria-label="Ir al inicio"
+          >
+            <DotsNine size={32} />
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent align="end">
         <Grid columns={2} padding="4">

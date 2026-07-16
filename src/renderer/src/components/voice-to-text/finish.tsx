@@ -2,7 +2,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import Footer from "@/components/layout/footer";
-import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import MenuButton from "@/components/ui/button";
 import {
@@ -19,7 +18,7 @@ import { useExportTranscription } from "@/services/export/use-export-transcripti
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { Button, Card } from "@aymurai/ui";
-import VoiceStepper from "./stepper";
+import VoiceHeader from "./header";
 
 export default function VoiceFinish() {
   const { t } = useTranslation("voice-to-text");
@@ -36,11 +35,7 @@ export default function VoiceFinish() {
 
   return (
     <RequireFile>
-      <Header
-        title={t("title")}
-        feature={FeatureFlowEnum.VoiceToText}
-        center={<VoiceStepper current={4} />}
-      />
+      <VoiceHeader currentStep={4} />
       <MainContent>
         <Stack gap="6">
           <SectionTitle>{t("finish.sectionTitle")}</SectionTitle>

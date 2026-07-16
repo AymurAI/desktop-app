@@ -1,4 +1,5 @@
 import { Question, X } from "phosphor-react";
+import type { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 
 import { SectionTitle } from "@/layout/section-title";
@@ -94,18 +95,26 @@ export function VoiceHowItWorksGrid() {
   );
 }
 
-export default function VoiceHowItWorksModal() {
+interface VoiceHowItWorksModalProps {
+  trigger?: ReactElement;
+}
+
+export default function VoiceHowItWorksModal({
+  trigger,
+}: VoiceHowItWorksModalProps) {
   const { t } = useTranslation("voice-to-text");
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button
-          type="button"
-          className={helpButton}
-          aria-label={t("howItWorks.helpAria")}
-        >
-          <Question size={32} />
-        </button>
+        {trigger ?? (
+          <button
+            type="button"
+            className={helpButton}
+            aria-label={t("howItWorks.helpAria")}
+          >
+            <Question size={32} />
+          </button>
+        )}
       </DialogTrigger>
       <DialogContent className={modalContent}>
         <Stack gap="6">

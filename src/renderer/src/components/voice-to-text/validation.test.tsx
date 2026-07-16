@@ -49,7 +49,7 @@ vi.mock("@/features/RequireFile", () => ({
   default: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 
-vi.mock("@/components/layout/header", () => ({
+vi.mock("./header", () => ({
   default: () => <header />,
 }));
 
@@ -65,10 +65,6 @@ vi.mock("@/components/ui/back-button", () => ({
 
 vi.mock("@/hooks/useTranscriptions", () => ({
   useTranscriptions: () => [transcription],
-}));
-
-vi.mock("./stepper", () => ({
-  default: () => <div />,
 }));
 
 vi.mock("./transcription-editor", () => ({

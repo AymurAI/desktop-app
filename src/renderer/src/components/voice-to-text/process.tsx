@@ -11,7 +11,6 @@ import { useTranslation } from "react-i18next";
 
 import HiddenInput from "@/components/hidden-input";
 import Footer from "@/components/layout/footer";
-import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import { MEDIA_EXTENSIONS } from "@/constants/config";
@@ -30,7 +29,7 @@ import {
   Button,
   Card,
 } from "@aymurai/ui";
-import VoiceStepper from "./stepper";
+import VoiceHeader from "./header";
 
 // @aymurai/ui ArchiveProgress always renders a "Descartar" (✕) button, which the
 // Figma transcription screen does not include. Hide it from the consumer until
@@ -172,11 +171,7 @@ export default function VoiceProcess() {
 
   return (
     <RequireFile>
-      <Header
-        title={t("title")}
-        feature={FeatureFlowEnum.VoiceToText}
-        center={<VoiceStepper current={2} />}
-      />
+      <VoiceHeader currentStep={2} />
       <MainContent>
         <Stack gap="10">
           <HStack alignItems="center" gap="6">

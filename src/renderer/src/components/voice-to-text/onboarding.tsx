@@ -5,12 +5,11 @@ import { useTranslation } from "react-i18next";
 
 import HiddenInput from "@/components/hidden-input";
 import Footer from "@/components/layout/footer";
-import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import VoiceFileDrop from "@/components/voice-to-text/file-drop";
+import VoiceHeader from "@/components/voice-to-text/header";
 import { VoiceHowItWorksGrid } from "@/components/voice-to-text/how-it-works";
-import VoiceStepper from "@/components/voice-to-text/stepper";
 import { MEDIA_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
@@ -57,11 +56,7 @@ export default function VoiceOnboarding() {
 
   return (
     <>
-      <Header
-        title={t("title")}
-        feature={FeatureFlowEnum.VoiceToText}
-        center={tutorialSeen ? <VoiceStepper current={1} /> : undefined}
-      />
+      <VoiceHeader currentStep={tutorialSeen ? 1 : undefined} />
       <MainContent>
         {tutorialSeen ? (
           <Stack gap="8">

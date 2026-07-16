@@ -17,6 +17,9 @@ const voiceToText = {
     step3: "Edición",
     step4: "Descarga",
   },
+  header: {
+    appsAria: "Abrir aplicaciones",
+  },
   howItWorks: {
     pageTitle: "¿Cómo funciona?",
     modalTitle: "¿Cómo funciona de Voz a Texto?",
