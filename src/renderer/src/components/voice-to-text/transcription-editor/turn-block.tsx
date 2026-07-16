@@ -105,6 +105,8 @@ interface TurnBlockProps {
   isActive: boolean;
   isSelected: boolean;
   isEditing: boolean;
+  /** Current search query — forwarded to EditableTurnText for highlighting. */
+  highlight?: string;
   onSeekTo: (ms: number) => void;
   onSelect: (turnId: string) => void;
   onTextSelect: () => void;
@@ -119,6 +121,7 @@ export default function TurnBlock({
   isActive,
   isSelected,
   isEditing,
+  highlight,
   onSeekTo,
   onSelect,
   onTextSelect,
@@ -177,6 +180,7 @@ export default function TurnBlock({
           <EditableTurnText
             turnId={turn.id}
             text={turn.text}
+            highlight={highlight}
             ariaLabel={t("editor.turnTextAria", {
               speaker: speaker.label,
               time: formatTime(turn.startMs),

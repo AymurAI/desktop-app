@@ -116,3 +116,12 @@ describe("TurnBlock click-to-seek in edit mode", () => {
     expect(onEditingFocusChange).toHaveBeenCalledWith("t1", false);
   });
 });
+
+describe("TurnBlock search highlighting", () => {
+  it("forwards the search query to the editable text as a highlight", () => {
+    renderBlock({ highlight: "mundo" });
+    expect(screen.getByRole("textbox").innerHTML).toContain(
+      "<mark>mundo</mark>",
+    );
+  });
+});
