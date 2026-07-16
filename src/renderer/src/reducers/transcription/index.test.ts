@@ -314,3 +314,67 @@ describe("renameSpeakerGlobal", () => {
     );
   });
 });
+
+describe("renameSpeakerGlobal renumbering", () => {
+  const baseSpeakers = () => [
+    { id: "s1", label: "Persona 1", initials: "P1", color: "violet" as const },
+    { id: "s2", label: "Persona 2", initials: "P2", color: "green" as const },
+    { id: "s3", label: "Jueza", initials: "JU", color: "red" as const },
+  ];
+  const baseTurns = () => [
+    { id: "turn1", speakerId: "s1", text: "a", startMs: 0, endMs: 100 },
+    { id: "turn2", speakerId: "s2", text: "b", startMs: 100, endMs: 200 },
+  ];
+
+  it("renumbers remaining Persona speakers after a plain rename", () => {
+    const state = [
+      makeTranscription({ speakers: baseSpeakers(), turns: baseTurns() }),
+    ];
+    const next = reducer(state, renameSpeakerGlobal("t1", "s1", "Fiscal"));
+    const speakers = next[0].speakers;
+    expect(speakers.find((s) => s.id === "s2")).toMatchObject({
+      label: "Persona 1",
+      initials: "P1",
+    });
+    expect(speakers.find((s) => s.id === "s3")?.label).toBe("Jueza");
+  });
+
+  it("renumbers remaining Persona speakers after a merge-collision rename", () => {
+    const state = [
+      makeTranscription({
+        speakers: [
+          {
+            id: "s1",
+            label: "Persona 1",
+            initials: "P1",
+            color: "violet" as const,
+          },
+          {
+            id: "s2",
+            label: "Persona 2",
+            initials: "P2",
+            color: "green" as const,
+          },
+          { id: "s3", label: "Fiscal", initials: "FI", color: "red" as const },
+        ],
+        turns: baseTurns(),
+      }),
+    ];
+    // "Persona 1" collides with the existing "Fiscal" speaker -> merges s1
+    // into s3 and drops s1, leaving a gap that s2 must fill.
+    const next = reducer(state, renameSpeakerGlobal("t1", "s1", "Fiscal"));
+    const speakers = next[0].speakers;
+    expect(speakers.find((s) => s.id === "s1")).toBeUndefined();
+    expect(speakers.find((s) => s.id === "s2")?.label).toBe("Persona 1");
+  });
+
+  it("leaves numbering untouched when no gap is created", () => {
+    const state = [
+      makeTranscription({ speakers: baseSpeakers(), turns: baseTurns() }),
+    ];
+    const next = reducer(state, renameSpeakerGlobal("t1", "s3", "Defensor/a"));
+    const speakers = next[0].speakers;
+    expect(speakers.find((s) => s.id === "s1")?.label).toBe("Persona 1");
+    expect(speakers.find((s) => s.id === "s2")?.label).toBe("Persona 2");
+  });
+});
