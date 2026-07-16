@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Transcription } from "@/types/transcription";
 import VoiceFinish from "./finish";
@@ -47,8 +47,9 @@ const transcription: Transcription = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
+let currentTranscription: Transcription = transcription;
 vi.mock("@/hooks/useTranscriptions", () => ({
-  useTranscriptions: () => [transcription],
+  useTranscriptions: () => [currentTranscription],
 }));
 
 describe("VoiceFinish export options", () => {
@@ -112,5 +113,42 @@ describe("VoiceFinish export options", () => {
     expect(
       screen.getByRole("heading", { name: "finish.exportOptionsTitle" }),
     ).toBeInTheDocument();
+  });
+});
+
+describe("VoiceFinish speaker summary", () => {
+  afterEach(() => {
+    currentTranscription = transcription;
+  });
+
+  it("only lists speakers that have at least one turn, excluding leftover editing artifacts", () => {
+    // "Defensor/a" has no turns — e.g. created via "Nuevo" while editing,
+    // then never actually assigned to any turn — and must not appear here.
+    currentTranscription = {
+      ...transcription,
+      speakers: [
+        ...transcription.speakers,
+        { id: "s3", label: "Defensor/a", initials: "DE", color: "blue" },
+      ],
+    };
+
+    render(<VoiceFinish />);
+    expect(screen.getByText("Persona 1")).toBeInTheDocument();
+    expect(screen.getByText("Jueza")).toBeInTheDocument();
+    expect(screen.queryByText("Defensor/a")).toBeNull();
+  });
+
+  it("counts only speakers with turns in the 'Personas' summary line", () => {
+    currentTranscription = {
+      ...transcription,
+      speakers: [
+        ...transcription.speakers,
+        { id: "s3", label: "Defensor/a", initials: "DE", color: "blue" },
+      ],
+    };
+
+    render(<VoiceFinish />);
+    const speakersLine = screen.getByText(/finish\.speakersLabel/).closest("p");
+    expect(speakersLine).toHaveTextContent("2");
   });
 });

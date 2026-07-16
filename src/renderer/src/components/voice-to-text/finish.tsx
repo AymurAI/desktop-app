@@ -63,6 +63,14 @@ export default function VoiceFinish() {
     description: t(`finish.formatDescriptions.${id}`),
   }));
 
+  // Only speakers with at least one turn are "validated" people in this
+  // transcription — a speaker created (e.g. via "Nuevo") but never actually
+  // used for a turn is an editing artifact, not part of the final result.
+  const activeSpeakers =
+    transcription?.speakers.filter((speaker) =>
+      transcription.turns.some((turn) => turn.speakerId === speaker.id),
+    ) ?? [];
+
   return (
     <RequireFile>
       <VoiceHeader currentStep={4} />
@@ -97,11 +105,11 @@ export default function VoiceFinish() {
                     </styled.p>
                     <styled.p textStyle="paragraph.sm.default">
                       <strong>{t("finish.speakersLabel")}:</strong>{" "}
-                      {transcription.speakers.length}
+                      {activeSpeakers.length}
                     </styled.p>
                   </Stack>
                   <div className={speakerPills}>
-                    {transcription.speakers.map((speaker) => (
+                    {activeSpeakers.map((speaker) => (
                       <div key={speaker.id} className={speakerPill}>
                         <Avatar
                           initials={speaker.initials}
