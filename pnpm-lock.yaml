@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@aymurai/ui':
-        specifier: github:AymurAI/ui-components#v0.4.1
-        version: https://codeload.github.com/AymurAI/ui-components/tar.gz/e48fb1c5f53d0a857ca8ad7010be4070366ea815(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: github:AymurAI/ui-components#v0.4.2
+        version: https://codeload.github.com/AymurAI/ui-components/tar.gz/88732278935cb8aeef832beba4add0104026b1f8(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -219,9 +219,9 @@ packages:
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
 
-  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/e48fb1c5f53d0a857ca8ad7010be4070366ea815':
-    resolution: {tarball: https://codeload.github.com/AymurAI/ui-components/tar.gz/e48fb1c5f53d0a857ca8ad7010be4070366ea815}
-    version: 0.4.1
+  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/88732278935cb8aeef832beba4add0104026b1f8':
+    resolution: {tarball: https://codeload.github.com/AymurAI/ui-components/tar.gz/88732278935cb8aeef832beba4add0104026b1f8}
+    version: 0.4.2
     peerDependencies:
       react: ^18 || ^19
       react-dom: ^18 || ^19
@@ -5524,7 +5524,7 @@ snapshots:
       '@csstools/css-tokenizer': 3.0.4
       lru-cache: 10.4.3
 
-  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/e48fb1c5f53d0a857ca8ad7010be4070366ea815(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/88732278935cb8aeef832beba4add0104026b1f8(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-dialog': 1.1.18(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@radix-ui/react-popover': 1.1.18(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
