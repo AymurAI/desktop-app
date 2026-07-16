@@ -177,17 +177,24 @@ export function mapASRDocumentToTranscription(
   doc: ASRDocument,
   file: File,
   audioObjectUrl: string,
+  knownAudioDurationMs?: number,
 ): Transcription {
   const { source, turns, speakerLabels } = resolveASRTranscriptSource(doc);
   const speakers = buildSpeakersFromLabels(speakerLabels);
 
-  const audioDurationMs =
+  const transcriptDurationMs =
     doc.document.length > 0 || turns.length > 0
       ? Math.max(
           ...doc.document.map((p) => parseDurationToMs(p.end)),
           ...turns.map((turn) => turn.endMs),
         )
       : 0;
+  const audioDurationMs =
+    typeof knownAudioDurationMs === "number" &&
+    Number.isFinite(knownAudioDurationMs) &&
+    knownAudioDurationMs > 0
+      ? Math.round(knownAudioDurationMs)
+      : transcriptDurationMs;
 
   return {
     id: doc.document_id,

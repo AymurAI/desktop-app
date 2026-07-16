@@ -93,7 +93,14 @@ export default function VoiceProcess() {
 
   const replaceInputRef = useRef<HTMLInputElement>(null);
 
-  const audioFiles = useMemo(() => files.map((f) => f.data), [files]);
+  const audioFiles = useMemo(
+    () =>
+      files.map((file) => ({
+        file: file.data,
+        durationMs: file.durationMs,
+      })),
+    [files],
+  );
 
   const { progress, status, partialText, abort } = useTranscribe(audioFiles, {
     dispatch: transcriptionDispatch,

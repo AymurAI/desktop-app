@@ -11,13 +11,14 @@ import { transcribeStream } from "./transcribeStream";
 
 export interface TranscribeOptions {
   signal?: AbortSignal;
+  durationMs?: number;
   onProgress?: (ratio: number) => void;
   onPartialText?: (text: string) => void;
 }
 
 export async function transcribe(
   file: File,
-  { signal, onProgress, onPartialText }: TranscribeOptions = {},
+  { signal, durationMs, onProgress, onPartialText }: TranscribeOptions = {},
 ): Promise<Transcription> {
   if (USE_MOCK_STT) {
     return new Promise((resolve, reject) => {
@@ -43,7 +44,14 @@ export async function transcribe(
       const timer = setTimeout(() => {
         clearInterval(tick);
         onProgress?.(1);
-        resolve(buildFixture(file));
+        const fixture = buildFixture(file);
+        resolve(
+          typeof durationMs === "number" &&
+            Number.isFinite(durationMs) &&
+            durationMs > 0
+            ? { ...fixture, audioDurationMs: Math.round(durationMs) }
+            : fixture,
+        );
       }, STT_MOCK_DELAY_MS);
       signal?.addEventListener("abort", () => {
         clearInterval(tick);
@@ -56,7 +64,13 @@ export async function transcribe(
   return transcribeStream(file, {
     signal,
     useCache: USE_ASR_CACHE,
+    durationMs,
     onProgress,
     onPartialText,
   });
+}
+
+export interface TranscribeFileInput {
+  file: File;
+  durationMs?: number;
 }

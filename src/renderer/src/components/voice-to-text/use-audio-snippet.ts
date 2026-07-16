@@ -19,15 +19,24 @@ interface UseAudioSnippet {
   toggle: () => void;
 }
 
+interface UseAudioSnippetOptions {
+  onDuration?: (durationMs: number) => void;
+}
+
 /**
  * Owns an off-DOM <audio> element for `file`, reads its duration once metadata
  * loads, and plays a 10-second snippet (auto-pausing at +10s) on toggle.
  */
-export function useAudioSnippet(file: File): UseAudioSnippet {
+export function useAudioSnippet(
+  file: File,
+  { onDuration }: UseAudioSnippetOptions = {},
+): UseAudioSnippet {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const stopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const onDurationRef = useRef(onDuration);
   const [durationMs, setDurationMs] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  onDurationRef.current = onDuration;
 
   useEffect(() => {
     const url = URL.createObjectURL(file);
@@ -36,7 +45,9 @@ export function useAudioSnippet(file: File): UseAudioSnippet {
 
     const handleMeta = () => {
       const d = audio.duration;
-      setDurationMs(Number.isFinite(d) ? d * 1000 : 0);
+      const nextDurationMs = Number.isFinite(d) ? d * 1000 : 0;
+      setDurationMs(nextDurationMs);
+      if (nextDurationMs > 0) onDurationRef.current?.(nextDurationMs);
     };
     const handleEnded = () => setIsPlaying(false);
     audio.addEventListener("loadedmetadata", handleMeta);

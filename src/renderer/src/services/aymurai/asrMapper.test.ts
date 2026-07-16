@@ -7,6 +7,30 @@ const audioFile = new File(["audio"], "audiencia.29.06.final.mp3", {
 });
 
 describe("mapASRDocumentToTranscription", () => {
+  it("prefers known media duration and falls back to the last transcript boundary", () => {
+    const doc: ASRDocument = {
+      document_id: "duration",
+      document: [
+        {
+          speaker_no: 1,
+          start: "PT0S",
+          end: "PT10S",
+          text: "Texto",
+        },
+      ],
+      speaker_turns: [],
+    };
+
+    expect(
+      mapASRDocumentToTranscription(doc, audioFile, "blob:audio", 11_284.6)
+        .audioDurationMs,
+    ).toBe(11_285);
+    expect(
+      mapASRDocumentToTranscription(doc, audioFile, "blob:audio")
+        .audioDurationMs,
+    ).toBe(10_000);
+  });
+
   it("cycles the seven-color palette for newly mapped speakers", () => {
     const speakerTurns = Array.from({ length: 8 }, (_, index) => ({
       speaker: `Speaker ${index + 1}`,

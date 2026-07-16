@@ -15,6 +15,7 @@ import { mapASRDocumentToTranscription } from "./asrMapper";
 export interface TranscribeStreamOptions {
   signal?: AbortSignal;
   useCache: boolean;
+  durationMs?: number;
   onProgress?: (ratio: number) => void;
   onPartialText?: (text: string) => void;
 }
@@ -37,7 +38,13 @@ function previewItemsForSegmentsEvent(
 
 export async function transcribeStream(
   file: File,
-  { signal, useCache, onProgress, onPartialText }: TranscribeStreamOptions,
+  {
+    signal,
+    useCache,
+    durationMs,
+    onProgress,
+    onPartialText,
+  }: TranscribeStreamOptions,
 ): Promise<Transcription> {
   const audioObjectUrl = URL.createObjectURL(file);
 
@@ -46,6 +53,7 @@ export async function transcribeStream(
 
   let documentId: string | null = null;
   let title: string | null | undefined;
+  let metaDurationMs: number | undefined;
   let paragraphs: ASRParagraph[] = [];
   let speakerTurns: ASRSpeakerTurn[] = [];
   let cachedTranscription: ASRParagraph[] | null | undefined;
@@ -105,6 +113,13 @@ export async function transcribeStream(
           case "meta":
             documentId = event.document_id;
             title = event.title;
+            if (
+              typeof event.duration === "number" &&
+              Number.isFinite(event.duration) &&
+              event.duration > 0
+            ) {
+              metaDurationMs = event.duration * 1000;
+            }
             break;
           case "delta":
             previewParts.push(event.text.trim());
@@ -165,5 +180,17 @@ export async function transcribeStream(
 
   onProgress?.(1);
 
-  return mapASRDocumentToTranscription(doc, file, audioObjectUrl);
+  const preferredDurationMs =
+    typeof durationMs === "number" &&
+    Number.isFinite(durationMs) &&
+    durationMs > 0
+      ? durationMs
+      : metaDurationMs;
+
+  return mapASRDocumentToTranscription(
+    doc,
+    file,
+    audioObjectUrl,
+    preferredDurationMs,
+  );
 }

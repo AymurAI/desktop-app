@@ -61,6 +61,65 @@ describe("transcribeStream", () => {
     );
   });
 
+  it("uses the browser-reported duration before ASR segment boundaries", async () => {
+    emitEvents([
+      {
+        type: "meta",
+        document_id: "doc-local-duration",
+        duration: 12.5,
+      },
+      {
+        type: "segments",
+        document: [
+          {
+            speaker_no: 1,
+            start: "PT0S",
+            end: "PT10S",
+            text: "Texto",
+          },
+        ],
+        speaker_turns: [],
+      },
+      { type: "done", progress: 1 },
+    ]);
+
+    const result = await transcribeStream(new File(["audio"], "sample.mp3"), {
+      useCache: false,
+      durationMs: 11_284.6,
+    });
+
+    expect(result.audioDurationMs).toBe(11_285);
+  });
+
+  it("uses meta.duration when no browser duration is available", async () => {
+    emitEvents([
+      {
+        type: "meta",
+        document_id: "doc-meta-duration",
+        duration: 11.2846,
+      },
+      {
+        type: "segments",
+        document: [
+          {
+            speaker_no: 1,
+            start: "PT0S",
+            end: "PT10S",
+            text: "Texto",
+          },
+        ],
+        speaker_turns: [],
+      },
+      { type: "done", progress: 1 },
+    ]);
+
+    const result = await transcribeStream(new File(["audio"], "sample.mp3"), {
+      useCache: false,
+    });
+
+    expect(result.audioDurationMs).toBe(11_285);
+  });
+
   it("uses validation from a segments event as the editable transcript", async () => {
     emitEvents([
       {

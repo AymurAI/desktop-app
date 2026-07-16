@@ -12,10 +12,11 @@ import {
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
-import { removeFile } from "@/reducers/file/actions";
+import { removeFile, setFileDuration } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import type { DocFile } from "@/types/file";
 import { Button, Card } from "@aymurai/ui";
 import VoiceHeader from "./header";
 
@@ -65,9 +66,15 @@ const removeButton = css({
   "&:hover": { color: "system.error" },
 });
 
-function FileRow({ file, onRemove }: { file: File; onRemove: () => void }) {
+function FileRow({ file, onRemove }: { file: DocFile; onRemove: () => void }) {
   const { t } = useTranslation("voice-to-text");
-  const { durationMs, isPlaying, toggle } = useAudioSnippet(file);
+  const dispatch = useFileDispatch();
+  const { durationMs, isPlaying, toggle } = useAudioSnippet(file.data, {
+    onDuration: (detectedDurationMs) => {
+      dispatch(setFileDuration(file.data.name, detectedDurationMs));
+    },
+  });
+  const displayedDurationMs = durationMs || file.durationMs || 0;
 
   return (
     <div className={fileRow}>
@@ -78,8 +85,8 @@ function FileRow({ file, onRemove }: { file: File; onRemove: () => void }) {
           onClick={toggle}
           aria-label={
             isPlaying
-              ? t("preview.pauseAria", { name: file.name })
-              : t("preview.playAria", { name: file.name })
+              ? t("preview.pauseAria", { name: file.data.name })
+              : t("preview.playAria", { name: file.data.name })
           }
         >
           {isPlaying ? (
@@ -94,12 +101,12 @@ function FileRow({ file, onRemove }: { file: File; onRemove: () => void }) {
             color="text.default"
             truncate
           >
-            {file.name}
+            {file.data.name}
           </styled.span>
           <styled.span textStyle="paragraph.sm.default" color="text.lighter">
             {t("preview.meta", {
-              duration: formatDuration(durationMs),
-              size: formatFileSize(file.size),
+              duration: formatDuration(displayedDurationMs),
+              size: formatFileSize(file.data.size),
             })}
           </styled.span>
         </Stack>
@@ -107,7 +114,7 @@ function FileRow({ file, onRemove }: { file: File; onRemove: () => void }) {
       <button
         type="button"
         onClick={onRemove}
-        aria-label={t("preview.removeAria", { name: file.name })}
+        aria-label={t("preview.removeAria", { name: file.data.name })}
         className={removeButton}
       >
         <Trash size={24} />
@@ -154,7 +161,7 @@ export default function VoicePreview() {
                 {files.map((file) => (
                   <FileRow
                     key={file.data.name}
-                    file={file.data}
+                    file={file}
                     onRemove={handleRemoveFile(file.data.name)}
                   />
                 ))}

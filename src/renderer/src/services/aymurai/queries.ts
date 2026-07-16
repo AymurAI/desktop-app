@@ -18,7 +18,7 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import api from "../api";
 import { saveValidation as postASRValidation } from "./asrValidation";
 import predict from "./predict";
-import { transcribe } from "./transcribe";
+import { type TranscribeFileInput, transcribe } from "./transcribe";
 
 export type SuffixMode = "always" | "when_multiple" | "never";
 
@@ -285,7 +285,7 @@ export const transcribeBatch = ({
       files,
       signal,
     }: {
-      files: File[];
+      files: TranscribeFileInput[];
       signal: AbortSignal;
     }): Promise<Transcription[]> => {
       if (files.length === 0) return [];
@@ -295,9 +295,10 @@ export const transcribeBatch = ({
         onProgress?.(sum / files.length);
       };
       return Promise.all(
-        files.map((file, i) =>
+        files.map(({ file, durationMs }, i) =>
           transcribe(file, {
             signal,
+            durationMs,
             onProgress: (r) => {
               ratios[i] = r;
               recompute();

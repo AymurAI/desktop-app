@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TranscriptionAction } from "@/reducers/transcription";
 import { addTranscription } from "@/reducers/transcription/actions";
 import { transcribeBatch } from "@/services/aymurai/queries";
+import type { TranscribeFileInput } from "@/services/aymurai/transcribe";
 import type { Transcription } from "@/types/transcription";
 
 export type TranscribeStatus =
@@ -21,7 +22,7 @@ interface UseTranscribeOptions {
 }
 
 export function useTranscribe(
-  files: File[],
+  files: TranscribeFileInput[],
   { onTranscription, onStatusChange, dispatch }: UseTranscribeOptions = {},
 ) {
   const [progress, setProgress] = useState(0);
@@ -51,7 +52,13 @@ export function useTranscribe(
 
   // Stable key so identical file lists don't refire the run on parent re-renders.
   const filesKey = useMemo(
-    () => files.map((f) => `${f.name}:${f.size}`).join("|"),
+    () =>
+      files
+        .map(
+          ({ file, durationMs }) =>
+            `${file.name}:${file.size}:${durationMs ?? "unknown"}`,
+        )
+        .join("|"),
     [files],
   );
 
