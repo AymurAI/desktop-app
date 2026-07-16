@@ -78,7 +78,7 @@ export function VoiceHowItWorksGrid() {
             alt={t(`howItWorks.cards.${key}.title`)}
             className={cardImg}
           />
-          <HStack gap="4" alignItems="flex-start" flex="1" minWidth="0">
+          <Stack gap="4" minWidth="0">
             <span className={stepBadge}>{i + 1}</span>
             <Stack gap="1" minWidth="0">
               <styled.h3 textStyle="paragraph.sm.strong">
@@ -88,7 +88,7 @@ export function VoiceHowItWorksGrid() {
                 {t(`howItWorks.cards.${key}.subtitle`)}
               </styled.p>
             </Stack>
-          </HStack>
+          </Stack>
         </div>
       ))}
     </Grid>

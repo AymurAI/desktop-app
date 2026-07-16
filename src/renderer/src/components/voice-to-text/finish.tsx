@@ -1,24 +1,57 @@
 import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import Footer from "@/components/layout/footer";
 import MainContent from "@/components/layout/main-content";
-import MenuButton from "@/components/ui/button";
+import Select, { type SelectOption } from "@/components/ui/select";
+import Switch from "@/components/ui/switch";
 import {
-  Popover,
-  PopoverClose,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import RequireFile from "@/features/RequireFile";
 import { useTranscriptions } from "@/hooks/useTranscriptions";
 import { SectionTitle } from "@/layout/section-title";
 import type { ExportFormat } from "@/services/export/types";
 import { useExportTranscription } from "@/services/export/use-export-transcription";
-import { HStack, Stack, styled } from "@/styled/jsx";
+import { css } from "@/styled/css";
+import { Box, Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
-import { Button, Card } from "@aymurai/ui";
+import { Avatar, Button, Card } from "@aymurai/ui";
+import { Info } from "phosphor-react";
 import VoiceHeader from "./header";
+
+const switchRow = css({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: "4",
+});
+
+const speakerPills = css({
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "2",
+});
+
+const speakerPill = css({
+  display: "flex",
+  alignItems: "center",
+  gap: "2",
+  bg: "bg.secondary-highlight",
+  rounded: "full",
+  py: "1",
+  px: "2",
+});
+
+const FORMAT_OPTIONS: SelectOption[] = [
+  { id: "txt", text: ".txt" },
+  { id: "odt", text: ".odt" },
+  { id: "pdf", text: ".pdf" },
+];
 
 export default function VoiceFinish() {
   const { t } = useTranslation("voice-to-text");
@@ -27,25 +60,29 @@ export default function VoiceFinish() {
   const transcription = transcriptions[0] ?? null;
   const { isExporting, download } = useExportTranscription(transcription);
 
-  const formats: { format: ExportFormat; label: string }[] = [
-    { format: "txt", label: t("finish.downloadTxt") },
-    { format: "odt", label: t("finish.downloadOdt") },
-    { format: "pdf", label: t("finish.downloadPdf") },
-  ];
+  const [format, setFormat] = useState<ExportFormat>("txt");
+  const [includeSpeakers, setIncludeSpeakers] = useState(true);
+  const [includeTimestamps, setIncludeTimestamps] = useState(true);
+
+  const speakersSwitchId = "finish-include-speakers";
+  const timestampsSwitchId = "finish-include-timestamps";
 
   return (
     <RequireFile>
       <VoiceHeader currentStep={4} />
       <MainContent>
         <Stack gap="6">
-          <SectionTitle>{t("finish.sectionTitle")}</SectionTitle>
+          <Stack gap="1">
+            <SectionTitle>{t("finish.sectionTitle")}</SectionTitle>
+            <styled.p textStyle="paragraph.md.default">
+              {t("finish.description")}
+            </styled.p>
+          </Stack>
+
           {transcription ? (
-            <>
-              <styled.p textStyle="paragraph.md.default" maxWidth="3xl">
-                {t("finish.description")}
-              </styled.p>
-              <Card>
-                <Stack gap="2">
+            <Card>
+              <Grid columns={2} columnGap="8" rowGap="6">
+                <Stack gap="4">
                   <styled.h2 textStyle="subtitle.md.strong">
                     {t("finish.summaryTitle")}
                   </styled.h2>
@@ -59,17 +96,98 @@ export default function VoiceFinish() {
                       {transcription.audioFileName}
                     </styled.p>
                     <styled.p textStyle="paragraph.sm.default">
-                      <strong>{t("finish.speakersLabel")}:</strong>{" "}
-                      {transcription.speakers.length}
-                    </styled.p>
-                    <styled.p textStyle="paragraph.sm.default">
                       <strong>{t("finish.turnsLabel")}:</strong>{" "}
                       {transcription.turns.length}
                     </styled.p>
+                    <styled.p textStyle="paragraph.sm.default">
+                      <strong>{t("finish.speakersLabel")}:</strong>{" "}
+                      {transcription.speakers.length}
+                    </styled.p>
+                  </Stack>
+                  <div className={speakerPills}>
+                    {transcription.speakers.map((speaker) => (
+                      <div key={speaker.id} className={speakerPill}>
+                        <Avatar
+                          initials={speaker.initials}
+                          color={speaker.color}
+                          size="sm"
+                        />
+                        <styled.span textStyle="label.sm.default">
+                          {speaker.label}
+                        </styled.span>
+                      </div>
+                    ))}
+                  </div>
+                </Stack>
+
+                <Stack gap="6">
+                  <styled.h2 textStyle="subtitle.md.strong">
+                    {t("finish.exportOptionsTitle")}
+                  </styled.h2>
+
+                  <HStack gap="2" alignItems="flex-end">
+                    <Box flex="1">
+                      <Select
+                        options={FORMAT_OPTIONS}
+                        label={t("finish.formatLabel")}
+                        value={format}
+                        onChange={(opt) => setFormat(opt.id as ExportFormat)}
+                      />
+                    </Box>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            aria-label={t("finish.formatHelpAria")}
+                            className={css({
+                              display: "inline-flex",
+                              color: "text.lighter",
+                              border: "[none]",
+                              bg: "transparent",
+                              cursor: "pointer",
+                              p: "[0]",
+                              mb: "3",
+                            })}
+                          >
+                            <Info size={16} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {t("finish.formatHelp")}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </HStack>
+
+                  <Stack gap="4">
+                    <styled.h2 textStyle="subtitle.sm.strong">
+                      {t("finish.contentTitle")}
+                    </styled.h2>
+                    <div className={switchRow}>
+                      <label htmlFor={speakersSwitchId}>
+                        {t("finish.includeSpeakers")}
+                      </label>
+                      <Switch
+                        id={speakersSwitchId}
+                        checked={includeSpeakers}
+                        onCheckedChange={setIncludeSpeakers}
+                      />
+                    </div>
+                    <div className={switchRow}>
+                      <label htmlFor={timestampsSwitchId}>
+                        {t("finish.includeTimestamps")}
+                      </label>
+                      <Switch
+                        id={timestampsSwitchId}
+                        checked={includeTimestamps}
+                        onCheckedChange={setIncludeTimestamps}
+                      />
+                    </div>
                   </Stack>
                 </Stack>
-              </Card>
-            </>
+              </Grid>
+            </Card>
           ) : (
             <styled.p textStyle="paragraph.md.default">
               {t("finish.missing")}
@@ -90,24 +208,19 @@ export default function VoiceFinish() {
           >
             {t("finish.back")}
           </Button>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button disabled={!transcription} isLoading={isExporting}>
-                {t("finish.download")}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent align="end">
-              <Stack gap="1" p="2" minWidth="[160px]">
-                {formats.map(({ format, label }) => (
-                  <PopoverClose key={format} asChild>
-                    <MenuButton variant="none" onClick={() => download(format)}>
-                      {label}
-                    </MenuButton>
-                  </PopoverClose>
-                ))}
-              </Stack>
-            </PopoverContent>
-          </Popover>
+          <Button
+            disabled={!transcription}
+            isLoading={isExporting}
+            onClick={() =>
+              download(format, {
+                includeSpeakers,
+                includeTimestamps,
+                includeTitle: true,
+              })
+            }
+          >
+            {t("finish.export")}
+          </Button>
         </HStack>
       </Footer>
     </RequireFile>

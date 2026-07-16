@@ -1,4 +1,4 @@
-import type { Transcription } from "@/types/transcription";
+import type { Speaker, Transcription } from "@/types/transcription";
 import { apportionTimeRange } from "@/utils/apportion-time-range";
 
 import {
@@ -56,6 +56,34 @@ export function computeInitials(label: string): string {
     .map((w) => w.charAt(0))
     .join("")
     .toUpperCase();
+}
+
+const PERSONA_LABEL_RE = /^Persona (\d+)$/;
+
+/**
+ * Renumbers auto-generated "Persona N" labels so they stay contiguous
+ * (1, 2, 3, ...) after a rename/merge relabels or drops one of them.
+ * Speakers with a custom label (anything not matching "Persona N") are
+ * left untouched.
+ */
+function renumberPersonaSpeakers(speakers: Speaker[]): Speaker[] {
+  const personaSpeakers = speakers
+    .filter((s) => PERSONA_LABEL_RE.test(s.label))
+    .sort((a, b) => {
+      const aNum = Number(a.label.match(PERSONA_LABEL_RE)?.[1]);
+      const bNum = Number(b.label.match(PERSONA_LABEL_RE)?.[1]);
+      return aNum - bNum;
+    });
+
+  const nextLabelById = new Map(
+    personaSpeakers.map((s, i) => [s.id, `Persona ${i + 1}`]),
+  );
+
+  return speakers.map((s) => {
+    const nextLabel = nextLabelById.get(s.id);
+    if (!nextLabel || nextLabel === s.label) return s;
+    return { ...s, label: nextLabel, initials: computeInitials(nextLabel) };
+  });
 }
 
 /**
@@ -126,25 +154,29 @@ export default function reducer(
             s.id !== speakerId &&
             s.label.toLowerCase() === trimmed.toLowerCase(),
         );
-        if (existing) {
-          return {
-            ...t,
-            speakers: t.speakers.filter((s) => s.id !== speakerId),
-            turns: t.turns.map((turn) =>
-              turn.speakerId === speakerId
-                ? { ...turn, speakerId: existing.id }
-                : turn,
-            ),
-          };
-        }
+
+        const renamed = existing
+          ? {
+              ...t,
+              speakers: t.speakers.filter((s) => s.id !== speakerId),
+              turns: t.turns.map((turn) =>
+                turn.speakerId === speakerId
+                  ? { ...turn, speakerId: existing.id }
+                  : turn,
+              ),
+            }
+          : {
+              ...t,
+              speakers: t.speakers.map((s) =>
+                s.id === speakerId
+                  ? { ...s, label: trimmed, initials: computeInitials(trimmed) }
+                  : s,
+              ),
+            };
 
         return {
-          ...t,
-          speakers: t.speakers.map((s) =>
-            s.id === speakerId
-              ? { ...s, label: trimmed, initials: computeInitials(trimmed) }
-              : s,
-          ),
+          ...renamed,
+          speakers: renumberPersonaSpeakers(renamed.speakers),
         };
       });
     }

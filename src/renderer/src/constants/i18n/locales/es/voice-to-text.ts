@@ -86,17 +86,22 @@ const voiceToText = {
   },
   finish: {
     sectionTitle: "4. Finalización",
-    description:
-      "La transcripción ha sido completada y revisada. Podés descargarla en distintos formatos.",
+    description: "La transcripción ha sido completada y revisada.",
     summaryTitle: "Resumen de la transcripción",
     titleLabel: "Título",
     fileLabel: "Archivo",
-    speakersLabel: "Personas",
+    durationLabel: "Duración",
     turnsLabel: "Turnos",
-    download: "Descargar",
-    downloadTxt: "Descargar .txt",
-    downloadOdt: "Descargar .odt",
-    downloadPdf: "Descargar .pdf",
+    speakersLabel: "Personas",
+    exportOptionsTitle: "Opciones de exportación",
+    formatLabel: "Formato de archivo",
+    formatHelpAria: "Diferencias entre formatos de archivo",
+    formatHelp:
+      ".txt: texto simple, sin formato. .odt: documento editable. .pdf: sólo lectura, ideal para archivar o compartir.",
+    contentTitle: "Contenido",
+    includeSpeakers: "Incluir oradores",
+    includeTimestamps: "Incluir marcas de tiempo",
+    export: "Exportar",
     exportFailed: "No se pudo generar el archivo. Intentá de nuevo.",
     back: "Volver",
     missing: "No se encontró ninguna transcripción.",
@@ -150,6 +155,14 @@ const voiceToText = {
     mergeNext: "Unir con el turno siguiente",
     addBelow: "Agregar turno debajo",
     delete: "Eliminar turno",
+    scopeDialog: {
+      title: "Aplicar cambio",
+      description:
+        '"{{current}}" tiene más de una intervención en esta transcripción. ¿Aplicás el cambio sólo a este turno o a todas las intervenciones de "{{current}}"?',
+      thisTurnOnly: "Sólo este turno",
+      allTurns: "Todas las de {{current}}",
+      cancel: "Cancelar",
+    },
   },
 };
 

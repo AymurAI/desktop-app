@@ -251,3 +251,80 @@ describe("TurnSidePanel adjacent turn merging", () => {
     expect(dispatch).not.toHaveBeenCalled();
   });
 });
+
+describe("TurnSidePanel bulk-apply scope prompt", () => {
+  beforeEach(() => dispatch.mockClear());
+
+  it("applies immediately with no prompt when the current speaker has only one turn", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b" // "b" is s2's only turn
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 1")); // pill for s1, a different speaker
+    expect(screen.queryByText("sidePanel.scopeDialog.title")).toBeNull();
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "REASSIGN_TURN_SPEAKER",
+        payload: expect.objectContaining({ turnId: "b", newSpeakerId: "s1" }),
+      }),
+    );
+  });
+
+  it("prompts for scope when the current speaker has more than one turn, and applies to this turn only on choice", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a" // "a" is one of s1's two turns (a, c)
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2")); // pill for s2, a different speaker
+    expect(screen.getByText("sidePanel.scopeDialog.title")).toBeTruthy();
+
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "REASSIGN_TURN_SPEAKER",
+        payload: expect.objectContaining({ turnId: "a", newSpeakerId: "s2" }),
+      }),
+    );
+    expect(screen.queryByText("sidePanel.scopeDialog.title")).toBeNull();
+  });
+
+  it("applies to all of the current speaker's turns when that scope is chosen", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2"));
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.allTurns"));
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "RENAME_SPEAKER_GLOBAL",
+        payload: expect.objectContaining({
+          speakerId: "s1",
+          newLabel: "Persona 2",
+        }),
+      }),
+    );
+    expect(dispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: "REASSIGN_TURN_SPEAKER" }),
+    );
+  });
+
+  it("dismisses without dispatching on cancel", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2"));
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.cancel"));
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+});
