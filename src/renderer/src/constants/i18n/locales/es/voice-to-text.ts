@@ -104,6 +104,7 @@ const voiceToText = {
   editor: {
     searchPlaceholder: "Buscar",
     searchAria: "Buscar en la transcripción",
+    clearSearch: "Limpiar búsqueda",
     editMode: "Modo Edición",
     editModeBanner:
       "Modo edición activo. Seleccioná el texto para modificarlo.",

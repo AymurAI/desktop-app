@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactNode } from "react";
+import type { MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
@@ -98,50 +98,13 @@ const timestamp = css({
   color: "text.lighter",
 });
 
-const text = css({
-  fontSize: "[16px]",
-  lineHeight: "[26px]",
-  fontWeight: "[300]",
-  color: "text.default",
-  m: "[0]",
-  p: "[0]",
-});
-
-const highlightMark = css({
-  bg: "[#FFE066]",
-  color: "[currentColor]",
-  rounded: "[2px]",
-});
-
-function highlightText(input: string, query: string): ReactNode {
-  if (!query) return input;
-  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const regex = new RegExp(`(${escaped})`, "gi");
-  const parts = input.split(regex);
-  return parts.map((part, i) => {
-    if (regex.test(part)) {
-      regex.lastIndex = 0;
-      return (
-        // biome-ignore lint/suspicious/noArrayIndexKey: split+regex parts are positionally stable
-        <mark key={i} className={highlightMark}>
-          {part}
-        </mark>
-      );
-    }
-    regex.lastIndex = 0;
-    return part;
-  });
-}
-
 interface TurnBlockProps {
   turn: Turn;
   speaker: Speaker;
   transcription: Transcription;
   isActive: boolean;
-  isEditMode: boolean;
   isSelected: boolean;
   isEditing: boolean;
-  searchQuery: string;
   onSeekTo: (ms: number) => void;
   onSelect: (turnId: string) => void;
   onTextSelect: () => void;
@@ -154,10 +117,8 @@ export default function TurnBlock({
   speaker,
   transcription,
   isActive,
-  isEditMode,
   isSelected,
   isEditing,
-  searchQuery,
   onSeekTo,
   onSelect,
   onTextSelect,
@@ -172,11 +133,10 @@ export default function TurnBlock({
     // both are bound because the header sits inside the click-to-seek wrap.
     e.stopPropagation();
     onSeekTo(turn.startMs);
-    if (isEditMode) onSelect(turn.id);
+    onSelect(turn.id);
   };
 
   const handleWrapClick = () => {
-    if (!isEditMode) return;
     // Only seek when this click is what selects/enters the block. Once it's
     // already selected or being edited (including via keyboard focus, which
     // never sets isSelected), further clicks are just caret placement while
@@ -192,7 +152,7 @@ export default function TurnBlock({
       onClick={handleWrapClick}
       className={wrap({
         active: isActive,
-        selected: isEditMode && isSelected,
+        selected: isSelected,
       })}
     >
       <div className={row}>
@@ -214,25 +174,19 @@ export default function TurnBlock({
             <span className={speakerLabel}>{speaker.label}</span>
             <span className={timestamp}>{formatTime(turn.startMs)}</span>
           </button>
-          {isEditMode ? (
-            <EditableTurnText
-              turnId={turn.id}
-              text={turn.text}
-              ariaLabel={t("editor.turnTextAria", {
-                speaker: speaker.label,
-                time: formatTime(turn.startMs),
-              })}
-              onCommit={(id, value) =>
-                dispatch(updateTurnText(transcription.id, id, value))
-              }
-              onSelect={onTextSelect}
-              onFocusChange={onEditingFocusChange}
-            />
-          ) : (
-            <p className={text}>
-              {searchQuery ? highlightText(turn.text, searchQuery) : turn.text}
-            </p>
-          )}
+          <EditableTurnText
+            turnId={turn.id}
+            text={turn.text}
+            ariaLabel={t("editor.turnTextAria", {
+              speaker: speaker.label,
+              time: formatTime(turn.startMs),
+            })}
+            onCommit={(id, value) =>
+              dispatch(updateTurnText(transcription.id, id, value))
+            }
+            onSelect={onTextSelect}
+            onFocusChange={onEditingFocusChange}
+          />
         </div>
       </div>
     </div>

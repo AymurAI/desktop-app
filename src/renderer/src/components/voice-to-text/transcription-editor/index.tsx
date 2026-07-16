@@ -1,10 +1,4 @@
-import {
-  CaretLeft,
-  CaretRight,
-  Info,
-  MagnifyingGlass,
-  PencilSimple,
-} from "phosphor-react";
+import { Info, PencilSimple } from "phosphor-react";
 import {
   type ReactNode,
   useCallback,
@@ -19,7 +13,7 @@ import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { renameTranscription } from "@/reducers/transcription/actions";
 import { css, cx } from "@/styled/css";
 import type { Transcription } from "@/types/transcription";
-import { Switch, TranscriptBlock } from "@aymurai/ui";
+import { Switch, Toolbar, TranscriptBlock } from "@aymurai/ui";
 import AudioPlayer, { type AudioPlayerHandle } from "../audio-player";
 import { formatTime } from "../format-time";
 import { useActiveTurn } from "../use-active-turn";
@@ -34,17 +28,6 @@ const wrap = css({
   overflow: "hidden",
 });
 
-const header = css({
-  bg: "bg.secondary",
-  borderBottomWidth: "[1px]",
-  borderBottomStyle: "solid",
-  borderBottomColor: "[#BCBAB8]",
-  pt: "[42px]",
-  pb: "6",
-  px: "12",
-  flexShrink: "0",
-});
-
 const titleText = css({
   fontSize: "[32px]",
   lineHeight: "[38px]",
@@ -52,75 +35,6 @@ const titleText = css({
   color: "text.default",
   m: "[0]",
   p: "[0]",
-});
-
-const toolBar = css({
-  display: "flex",
-  flexDir: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: "4",
-});
-
-const searchWrapper = css({
-  display: "flex",
-  flexDir: "row",
-  alignItems: "center",
-  flex: "[1]",
-  maxWidth: "[711px]",
-  borderWidth: "[1px]",
-  borderStyle: "solid",
-  borderColor: "[#BCBAB8]",
-  rounded: "[24px]",
-  px: "4",
-  py: "2",
-  bg: "bg.secondary",
-  gap: "2",
-  boxSizing: "border-box",
-  "&:focus-within": { borderColor: "brand.primary" },
-});
-
-const searchInput = css({
-  flex: "[1]",
-  border: "[none]",
-  outline: "none",
-  fontSize: "[16px]",
-  lineHeight: "[22px]",
-  color: "text.default",
-  bg: "transparent",
-  "&::placeholder": { color: "[#9F99A5]" },
-});
-
-const searchCounter = css({
-  fontSize: "[13px]",
-  lineHeight: "[18px]",
-  color: "[#9F99A5]",
-  whiteSpace: "nowrap",
-  flexShrink: "0",
-});
-
-const navButton = css({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "6",
-  height: "6",
-  border: "[none]",
-  rounded: "[4px]",
-  bg: "transparent",
-  cursor: "pointer",
-  color: "text.lighter",
-  p: "[0]",
-  flexShrink: "0",
-  "&:hover": {
-    bg: "[rgba(63, 71, 157, 0.08)]",
-    color: "brand.primary",
-  },
-  "&:disabled": {
-    opacity: "0.3",
-    cursor: "default",
-    "&:hover": { bg: "transparent", color: "text.lighter" },
-  },
 });
 
 const switchLabel = css({
@@ -425,50 +339,34 @@ export default function TranscriptionEditor({
 
   return (
     <div className={wrap}>
-      <div className={header}>
-        <div className={toolBar}>
-          <div className={searchWrapper}>
-            <MagnifyingGlass size={20} color="#9F99A5" weight="bold" />
-            <input
-              type="text"
-              placeholder={t("editor.searchPlaceholder")}
-              aria-label={t("editor.searchAria")}
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setMatchIndex(0);
-              }}
-              className={searchInput}
-            />
-            {searchQuery && (
-              <>
-                <span className={searchCounter}>
-                  {matches.length > 0
-                    ? `${safeMatchIndex + 1} / ${matches.length}`
-                    : "0 / 0"}
-                </span>
-                <button
-                  type="button"
-                  onClick={handlePrev}
-                  disabled={matches.length === 0}
-                  aria-label={t("editor.prevResult")}
-                  className={navButton}
-                >
-                  <CaretLeft size={16} weight="bold" />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={matches.length === 0}
-                  aria-label={t("editor.nextResult")}
-                  className={navButton}
-                >
-                  <CaretRight size={16} weight="bold" />
-                </button>
-              </>
-            )}
-          </div>
-
+      <Toolbar
+        context="search-switch"
+        searchValue={searchQuery}
+        onSearchChange={(value) => {
+          setSearchQuery(value);
+          setMatchIndex(0);
+        }}
+        searchPlaceholder={t("editor.searchPlaceholder")}
+        searchAriaLabel={t("editor.searchAria")}
+        searchLabels={{
+          clear: t("editor.clearSearch"),
+          previous: t("editor.prevResult"),
+          next: t("editor.nextResult"),
+        }}
+        searchResultCount={
+          searchQuery
+            ? matches.length > 0
+              ? `${safeMatchIndex + 1} de ${matches.length}`
+              : "0 de 0"
+            : undefined
+        }
+        onSearchPrev={handlePrev}
+        onSearchNext={handleNext}
+        onSearchClear={() => {
+          setSearchQuery("");
+          setMatchIndex(0);
+        }}
+        rightSlot={
           <label className={switchLabel} htmlFor={switchId}>
             <Switch
               id={switchId}
@@ -477,8 +375,8 @@ export default function TranscriptionEditor({
             />
             <span>{t("editor.editMode")}</span>
           </label>
-        </div>
-      </div>
+        }
+      />
 
       <div className={titleSection}>
         <EditableTitle
@@ -515,6 +413,7 @@ export default function TranscriptionEditor({
                     name={speaker.label}
                     time={formatTime(turn.startMs)}
                     text={turn.text}
+                    highlight={searchQuery}
                     color={speaker.color}
                     className={cx(readBlock, isActive && readBlockActive)}
                     role="button"
@@ -541,10 +440,8 @@ export default function TranscriptionEditor({
                 speaker={speaker}
                 transcription={transcription}
                 isActive={turn.id === activeTurnId}
-                isEditMode={isEditMode}
                 isSelected={turn.id === selectedTurnId}
                 isEditing={turn.id === editingTurnId}
-                searchQuery={searchQuery}
                 onSeekTo={handleSeekTo}
                 onSelect={handleTurnSelect}
                 onTextSelect={sa.onSelect}

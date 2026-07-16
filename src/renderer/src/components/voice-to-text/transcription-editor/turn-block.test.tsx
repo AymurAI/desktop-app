@@ -52,10 +52,8 @@ function renderBlock(
       speaker={speaker}
       transcription={transcription}
       isActive={false}
-      isEditMode={true}
       isSelected={false}
       isEditing={false}
-      searchQuery=""
       onSeekTo={onSeekTo}
       onSelect={onSelect}
       onTextSelect={onTextSelect}
@@ -107,13 +105,6 @@ describe("TurnBlock click-to-seek in edit mode", () => {
     fireEvent.click(screen.getByRole("textbox"));
     expect(onSeekTo).not.toHaveBeenCalled();
     expect(onSelect).toHaveBeenCalledWith("t1");
-  });
-
-  it("does not seek/select on wrap click when isEditMode is false", () => {
-    const { onSeekTo, onSelect } = renderBlock({ isEditMode: false });
-    fireEvent.click(screen.getByText("hola mundo"));
-    expect(onSeekTo).not.toHaveBeenCalled();
-    expect(onSelect).not.toHaveBeenCalled();
   });
 
   it("notifies focus changes so the parent can pause auto-scroll while editing", () => {

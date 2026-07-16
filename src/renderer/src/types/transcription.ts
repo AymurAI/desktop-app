@@ -16,7 +16,7 @@ export interface Turn {
   speakerId: SpeakerId;
   speakerNo?: number;
   text: string;
-  startMs: number; // visible in UI as "mm:ss"
+  startMs: number; // visible as MM:SS below 1h, H+:MM:SS from 1h
   endMs: number;
   segments?: ASRSegment[];
 }

@@ -117,3 +117,38 @@ describe("TranscriptionEditor edit-mode sync", () => {
     scrollSpy.mockRestore();
   });
 });
+
+describe("TranscriptionEditor search toolbar", () => {
+  it("searches, navigates, highlights and clears with accessible controls", () => {
+    const scrollSpy = vi
+      .spyOn(Element.prototype, "scrollIntoView")
+      .mockImplementation(() => {});
+    const { container } = render(
+      <TranscriptionEditor
+        transcription={transcription}
+        isEditMode={false}
+        onEditModeChange={vi.fn()}
+      />,
+    );
+
+    const search = screen.getByLabelText("editor.searchAria");
+    expect(search.getAttribute("placeholder")).toBe("editor.searchPlaceholder");
+
+    fireEvent.change(search, { target: { value: "a" } });
+    expect(screen.getByText("1 de 2")).toBeTruthy();
+    expect(container.querySelectorAll("mark")).toHaveLength(2);
+
+    fireEvent.click(screen.getByLabelText("editor.nextResult"));
+    expect(screen.getByText("2 de 2")).toBeTruthy();
+    expect(scrollSpy).toHaveBeenCalled();
+
+    fireEvent.click(screen.getByLabelText("editor.prevResult"));
+    expect(screen.getByText("1 de 2")).toBeTruthy();
+
+    fireEvent.click(screen.getByLabelText("editor.clearSearch"));
+    expect(search).toHaveValue("");
+    expect(screen.queryByText("1 de 2")).toBeNull();
+    expect(container.querySelectorAll("mark")).toHaveLength(0);
+    scrollSpy.mockRestore();
+  });
+});
