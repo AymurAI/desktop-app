@@ -64,6 +64,17 @@ const content = css({
   overflow: "hidden",
 });
 
+// Groups the title/banner and the scrollable transcript into a single
+// left-hand column, so both stop at the same width as the side panel column
+// (Figma node 40002322-57394) instead of spanning the full editor width.
+const bodyColumn = css({
+  display: "flex",
+  flexDir: "column",
+  flex: "[1]",
+  minWidth: "0",
+  overflow: "hidden",
+});
+
 const titleRow = css({
   display: "flex",
   alignItems: "center",
@@ -378,91 +389,93 @@ export default function TranscriptionEditor({
         }
       />
 
-      <div className={titleSection}>
-        <EditableTitle
-          title={transcription.title}
-          onRename={(value) =>
-            dispatch(renameTranscription(transcription.id, value))
-          }
-        />
-
-        {isEditMode && (
-          <div className={editBanner}>
-            <Info size={20} color="#3F479D" />
-            <span>{t("editor.editModeBanner")}</span>
-          </div>
-        )}
-      </div>
-
       <div className={content}>
-        <div ref={scrollRef} className={body}>
-          {transcription.turns.map((turn) => {
-            const speaker = speakerMap[turn.speakerId];
-            if (!speaker) return null;
-
-            // Read mode → @aymurai/ui TranscriptBlock (Figma display component).
-            // Wrapped in a ref'd div so search scroll-to-match and the
-            // playback follow-along both work. Clicking a block seeks the
-            // player to that turn; the active turn is highlighted.
-            if (!isEditMode) {
-              const isActive = turn.id === activeTurnId;
-              return (
-                <div key={turn.id} ref={setTurnRef(turn.id)}>
-                  <TranscriptBlock
-                    initials={speaker.initials}
-                    name={speaker.label}
-                    time={formatTime(turn.startMs)}
-                    text={turn.text}
-                    highlight={searchQuery}
-                    color={speaker.color}
-                    className={cx(readBlock, isActive && readBlockActive)}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={t("editor.seekToTurn", {
-                      time: formatTime(turn.startMs),
-                    })}
-                    onClick={() => handleSeekTo(turn.startMs)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        handleSeekTo(turn.startMs);
-                      }
-                    }}
-                  />
-                </div>
-              );
-            }
-
-            return (
-              <TurnBlock
-                key={turn.id}
-                turn={turn}
-                speaker={speaker}
-                transcription={transcription}
-                isActive={turn.id === activeTurnId}
-                isSelected={turn.id === selectedTurnId}
-                isEditing={turn.id === editingTurnId}
-                highlight={searchQuery}
-                onSeekTo={handleSeekTo}
-                onSelect={handleTurnSelect}
-                onTextSelect={sa.onSelect}
-                onEditingFocusChange={handleEditingFocusChange}
-                turnRef={setTurnRef(turn.id)}
-              />
-            );
-          })}
-
-          {isEditMode && (
-            <SelectionToolbar
-              sel={sa.sel}
-              transcription={transcription}
-              onAssign={(speakerId) => {
-                sa.assign(speakerId);
-                setSelectedTurnId(null);
-              }}
-              onClose={sa.clear}
+        <div className={bodyColumn}>
+          <div className={titleSection}>
+            <EditableTitle
+              title={transcription.title}
+              onRename={(value) =>
+                dispatch(renameTranscription(transcription.id, value))
+              }
             />
-          )}
+
+            {isEditMode && (
+              <div className={editBanner}>
+                <Info size={20} color="#3F479D" />
+                <span>{t("editor.editModeBanner")}</span>
+              </div>
+            )}
+          </div>
+
+          <div ref={scrollRef} className={body}>
+            {transcription.turns.map((turn) => {
+              const speaker = speakerMap[turn.speakerId];
+              if (!speaker) return null;
+
+              // Read mode → @aymurai/ui TranscriptBlock (Figma display component).
+              // Wrapped in a ref'd div so search scroll-to-match and the
+              // playback follow-along both work. Clicking a block seeks the
+              // player to that turn; the active turn is highlighted.
+              if (!isEditMode) {
+                const isActive = turn.id === activeTurnId;
+                return (
+                  <div key={turn.id} ref={setTurnRef(turn.id)}>
+                    <TranscriptBlock
+                      initials={speaker.initials}
+                      name={speaker.label}
+                      time={formatTime(turn.startMs)}
+                      text={turn.text}
+                      highlight={searchQuery}
+                      color={speaker.color}
+                      className={cx(readBlock, isActive && readBlockActive)}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={t("editor.seekToTurn", {
+                        time: formatTime(turn.startMs),
+                      })}
+                      onClick={() => handleSeekTo(turn.startMs)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleSeekTo(turn.startMs);
+                        }
+                      }}
+                    />
+                  </div>
+                );
+              }
+
+              return (
+                <TurnBlock
+                  key={turn.id}
+                  turn={turn}
+                  speaker={speaker}
+                  transcription={transcription}
+                  isActive={turn.id === activeTurnId}
+                  isSelected={turn.id === selectedTurnId}
+                  isEditing={turn.id === editingTurnId}
+                  highlight={searchQuery}
+                  onSeekTo={handleSeekTo}
+                  onSelect={handleTurnSelect}
+                  onTextSelect={sa.onSelect}
+                  onEditingFocusChange={handleEditingFocusChange}
+                  turnRef={setTurnRef(turn.id)}
+                />
+              );
+            })}
+
+            {isEditMode && (
+              <SelectionToolbar
+                sel={sa.sel}
+                transcription={transcription}
+                onAssign={(speakerId) => {
+                  sa.assign(speakerId);
+                  setSelectedTurnId(null);
+                }}
+                onClose={sa.clear}
+              />
+            )}
+          </div>
         </div>
         {isEditMode && (
           <TurnSidePanel

@@ -23,6 +23,13 @@ const editable = css({
     bg: "bg.secondary",
     boxShadow: "[0 0 0 1.5px token(colors.action.default)]",
   },
+  // Matches @aymurai/ui's TranscriptBlock highlight (read mode) instead of
+  // the browser's default yellow <mark> background.
+  "& mark": {
+    bg: "bg.primary-alternative",
+    color: "[inherit]",
+    rounded: "[4px]",
+  },
 });
 
 function escapeHtml(value: string): string {

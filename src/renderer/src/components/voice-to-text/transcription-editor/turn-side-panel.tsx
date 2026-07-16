@@ -84,6 +84,21 @@ const dialogContent = css({
   maxWidth: "[420px]",
 });
 
+// Lightweight text-link Cancel, matching the "Ya existe" Figma reference
+// (bordered buttons for the real actions, plain text for Cancelar) instead of
+// a third equally-weighted bordered button crowding the footer.
+const cancelLink = css({
+  color: "text.lighter",
+  textStyle: "label.md.default",
+  textDecoration: "underline",
+  cursor: "pointer",
+  bg: "transparent",
+  border: "[none]",
+  p: "[0]",
+  mr: "auto",
+  "&:hover": { color: "brand.primary" },
+});
+
 export interface TurnSidePanelProps {
   transcription: Transcription;
   activeTurnId: string | null;
@@ -348,6 +363,13 @@ export default function TurnSidePanel({
             })}
           </DialogDescription>
           <DialogFooter>
+            <button
+              type="button"
+              className={cancelLink}
+              onClick={() => setScopeChoice(null)}
+            >
+              {t("sidePanel.scopeDialog.cancel")}
+            </button>
             <Button variant="secondary" onClick={handleApplyToThisTurnOnly}>
               {t("sidePanel.scopeDialog.thisTurnOnly")}
             </Button>
@@ -357,9 +379,6 @@ export default function TurnSidePanel({
               })}
             </Button>
           </DialogFooter>
-          <Button variant="secondary" onClick={() => setScopeChoice(null)}>
-            {t("sidePanel.scopeDialog.cancel")}
-          </Button>
         </DialogContent>
       </Dialog>
     </div>
