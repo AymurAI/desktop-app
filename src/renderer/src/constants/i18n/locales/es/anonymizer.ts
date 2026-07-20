@@ -20,6 +20,22 @@ const anonymizer = {
     continue: "Continuar",
   },
   howItWorks: {
+    step1: {
+      alt: "Interfaz web con selector y cursor",
+      title: "Selecciona la resolución judicial",
+      subtitle: "Sube el documento que quieres anonimizar.",
+    },
+    step2: {
+      alt: "Barra de búsqueda con cursor",
+      title: "La inteligencia artificial analiza el documento",
+      subtitle: "Reconoce automáticamente la información a anonimizar.",
+    },
+    step3: {
+      alt: "Visor de documentos con controles de revisión",
+      title: "Revisión y validación humana",
+      subtitle:
+        "Es importante que verifiques que los datos sean correctos antes de exportar el archivo.",
+    },
     step4: {
       alt: "Binoculares con globo terráqueo",
       title: "Generación del documento anonimizado",
