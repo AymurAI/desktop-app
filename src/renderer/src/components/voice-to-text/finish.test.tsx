@@ -105,6 +105,13 @@ describe("VoiceFinish export options", () => {
     expect(trigger).toHaveAttribute("role", "combobox");
   });
 
+  it("renders the transcription's duration in the summary, between the file and turns lines", () => {
+    render(<VoiceFinish />);
+    const durationLine = screen.getByText(/finish\.durationLabel/).closest("p");
+    // 60_000ms fixture -> "1 min. 0 seg." per formatDuration.
+    expect(durationLine).toHaveTextContent("1 min. 0 seg.");
+  });
+
   it("renders a heading for the export options column, matching the summary column", () => {
     render(<VoiceFinish />);
     expect(

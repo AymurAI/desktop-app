@@ -13,16 +13,19 @@ import { SectionTitle } from "@/layout/section-title";
 import type { ExportFormat } from "@/services/export/types";
 import { useExportTranscription } from "@/services/export/use-export-transcription";
 import { css } from "@/styled/css";
-import { Grid, HStack, Stack, styled } from "@/styled/jsx";
+import { Divider, Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { Avatar, Button, Card } from "@aymurai/ui";
 import VoiceHeader from "./header";
+import { formatDuration } from "./use-audio-snippet";
 
 const switchRow = css({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   gap: "4",
+  py: "2",
+  borderBottom: "primary",
 });
 
 const speakerPills = css({
@@ -35,10 +38,9 @@ const speakerPill = css({
   display: "flex",
   alignItems: "center",
   gap: "2",
-  bg: "bg.secondary-highlight",
+  bg: "bg.primary",
   rounded: "full",
-  py: "1",
-  px: "2",
+  p: "2",
 });
 
 const FORMAT_IDS: ExportFormat[] = ["odt", "pdf", "txt"];
@@ -85,7 +87,11 @@ export default function VoiceFinish() {
 
           {transcription ? (
             <Card>
-              <Grid columns={2} columnGap="8" rowGap="6">
+              <Grid
+                gridTemplateColumns="1fr auto 1fr"
+                columnGap="12"
+                rowGap="6"
+              >
                 <Stack gap="4">
                   <styled.h2 textStyle="subtitle.md.strong">
                     {t("finish.summaryTitle")}
@@ -98,6 +104,10 @@ export default function VoiceFinish() {
                     <styled.p textStyle="paragraph.sm.default">
                       <strong>{t("finish.fileLabel")}:</strong>{" "}
                       {transcription.audioFileName}
+                    </styled.p>
+                    <styled.p textStyle="paragraph.sm.default">
+                      <strong>{t("finish.durationLabel")}:</strong>{" "}
+                      {formatDuration(transcription.audioDurationMs)}
                     </styled.p>
                     <styled.p textStyle="paragraph.sm.default">
                       <strong>{t("finish.turnsLabel")}:</strong>{" "}
@@ -116,13 +126,22 @@ export default function VoiceFinish() {
                           color={speaker.color}
                           size="sm"
                         />
-                        <styled.span textStyle="label.sm.default">
+                        <styled.span
+                          textStyle="label.md.default"
+                          color="text.lighter"
+                        >
                           {speaker.label}
                         </styled.span>
                       </div>
                     ))}
                   </div>
                 </Stack>
+
+                <Divider
+                  orientation="vertical"
+                  color="[#BCBAB8]"
+                  alignSelf="stretch"
+                />
 
                 <Stack gap="6">
                   <styled.h2 textStyle="subtitle.md.strong">
