@@ -3,6 +3,7 @@ import HiddenInput from "@/components/hidden-input";
 import Stepper from "@/components/home/stepper";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
+import HomeButton from "@/components/layout/home-button";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import RequireFile from "@/features/RequireFile";
@@ -81,6 +82,7 @@ function DocumentPreview() {
         title={t("title")}
         center={<Stepper currentStep={1} />}
         feature={feature}
+        right={<HomeButton />}
       />
       <MainContent>
         <Stack gap="8">

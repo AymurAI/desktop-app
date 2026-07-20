@@ -1,8 +1,8 @@
-import { Tab, TabName } from "@/components";
 import { css } from "@/styled/css";
 import { Stack } from "@/styled/jsx";
 import nArray from "@/utils/nArray";
 import { Plus } from "phosphor-react";
+import { Tab, TabName } from "../tabs";
 
 const button = css({
   cursor: "pointer",
