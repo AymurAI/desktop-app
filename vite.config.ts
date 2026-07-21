@@ -27,6 +27,7 @@ export default defineConfig({
     outDir: "../../out/renderer",
   },
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "@": resolve("src/renderer/src"),
     },

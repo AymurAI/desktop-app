@@ -27,6 +27,7 @@ export default defineConfig({
       port: Number(process.env.PORT) || 3000,
     },
     resolve: {
+      dedupe: ["react", "react-dom"],
       alias: {
         "@": resolve("src/renderer/src"),
       },
