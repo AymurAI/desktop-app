@@ -5,13 +5,19 @@ const content = css({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
-
+  width: "full",
+  h: "24",
+  minH: "24",
+  flexShrink: "0",
+  boxSizing: "border-box",
+  bg: "bg.secondary",
   borderTop: "primary",
   px: "12",
   py: "6",
 });
 const childrenContainer = css({
   flex: "1",
+  minW: "0",
   display: "flex",
   justifyContent: "flex-end",
 });

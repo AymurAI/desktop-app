@@ -12,24 +12,31 @@ const content = cva({
     bg: "bg.primary",
   },
   variants: {
-    full: {
-      true: {},
-      false: {
-        ...stack.raw({ align: "center", gap: "0" }),
-
-        pt: { base: "6", xl: "16" },
-        px: "8",
-
-        "& > div.spacing": {
-          width: "full",
-          maxWidth: "5xl",
-        },
-      },
-    },
+    full: { true: {}, false: {} },
   },
   defaultVariants: {
     full: false,
   },
+});
+
+const inner = cva({
+  base: {
+    width: "full",
+    minH: "full",
+  },
+  variants: {
+    full: {
+      true: {},
+      false: {
+        ...stack.raw({ gap: "0" }),
+        maxWidth: "5xl",
+        mx: "auto",
+        pt: { base: "6", xl: "16" },
+        px: "8",
+      },
+    },
+  },
+  defaultVariants: { full: false },
 });
 
 interface MainContentProps {
@@ -42,7 +49,7 @@ export default function MainContent({
 }: MainContentProps) {
   return (
     <main className={cx(content({ full }))}>
-      <div className="spacing">{children}</div>
+      <div className={inner({ full })}>{children}</div>
     </main>
   );
 }
