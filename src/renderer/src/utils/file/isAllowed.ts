@@ -6,6 +6,10 @@ import getExtension from "./getExtension";
  * @param file `File` to check
  * @returns `true` if the file is allowed, `false` otherwise
  */
-export default function isAllowed(file: File) {
-  return !!WHITELISTED_EXTENSIONS.find((ext) => ext === getExtension(file));
+export default function isAllowed(
+  file: File,
+  extensions: string[] = WHITELISTED_EXTENSIONS,
+) {
+  const extension = getExtension(file);
+  return extension !== undefined && extensions.includes(extension);
 }

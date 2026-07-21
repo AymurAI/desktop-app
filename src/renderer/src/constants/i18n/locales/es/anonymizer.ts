@@ -6,14 +6,14 @@ const anonymizer = {
   title: "Anonimizador",
   subtitle: "Anonimiza resoluciones judiciales de manera automática y editable",
   onboarding: {
-    sectionTitle: "1. Selección de Archivo",
+    sectionTitle: "1. Selección de archivo",
     validFormats: documentFormats,
     loadDocuments: "Cargar documentos",
-    dropAreaTitle: "Selecciona el archivo para anonimizar",
+    dropAreaTitle: "Selecciona o arrastra el archivo para\nanonimizar",
     dropAreaFormats: documentFormats,
   },
   preview: {
-    sectionTitle: "1. Selección de Archivo",
+    sectionTitle: "1. Selección de archivo",
     filesLabel: "Archivos seleccionados",
     validFormats: documentFormats,
     loadMore: "Cargar más documentos",
@@ -45,7 +45,7 @@ const anonymizer = {
   },
   process: {
     sectionTitle: "2. Procesamiento del archivo",
-    processingTitle: "AymurAI está extrayendo los datos del archivo",
+    processingTitle: "AymurAI está extrayendo los datos del archivo.",
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
     finishText: "Se finalizó el análisis del documento.",
   },
