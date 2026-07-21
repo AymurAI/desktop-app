@@ -1,6 +1,5 @@
-import { Button, FilePreview } from "@/components";
+import { FilePreview } from "@/components";
 import HiddenInput from "@/components/hidden-input";
-import Stepper from "@/components/home/stepper";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
@@ -13,7 +12,7 @@ import { addFiles, filterUnselected } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
-import { Card } from "@aymurai/ui";
+import { Button, Card } from "@aymurai/ui";
 import {
   createFileRoute,
   useNavigate,
@@ -77,11 +76,7 @@ function DocumentPreview() {
 
   return (
     <RequireFile>
-      <Header
-        title={t("title")}
-        center={<Stepper currentStep={1} />}
-        feature={feature}
-      />
+      <Header title={t("title")} currentStep={1} feature={feature} />
       <MainContent>
         <Stack gap="8">
           <HStack alignItems="center" gap="6">

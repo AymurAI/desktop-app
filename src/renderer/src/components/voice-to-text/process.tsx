@@ -1,16 +1,6 @@
-import { useNavigate } from "@tanstack/react-router";
-import { Info } from "phosphor-react";
-import {
-  type ChangeEventHandler,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { useTranslation } from "react-i18next";
-
 import HiddenInput from "@/components/hidden-input";
 import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import ScrollArea from "@/components/ui/scroll-area";
@@ -28,16 +18,19 @@ import {
   ArchiveProgress,
   type ArchiveProgressStatus,
   Button,
+  Callout,
   Card,
 } from "@aymurai/ui";
-import VoiceHeader from "./header";
-
-// @aymurai/ui ArchiveProgress always renders a "Descartar" (✕) button, which the
-// Figma transcription screen does not include. Hide it from the consumer until
-// the library makes it conditional.
-const hideDismiss = css({
-  "& button[aria-label='Descartar']": { display: "none" },
-});
+import { useNavigate } from "@tanstack/react-router";
+import { Info } from "phosphor-react";
+import {
+  type ChangeEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useTranslation } from "react-i18next";
 
 const previewFrame = css({
   alignSelf: "stretch",
@@ -71,21 +64,6 @@ const previewPlaceholder = css({
   lineHeight: "[30px]",
   color: "[#9F99A5]",
   fontStyle: "italic",
-});
-
-const processingNotice = css({
-  display: "flex",
-  alignItems: "center",
-  gap: "2",
-  width: "full",
-  p: "4",
-  rounded: "xs",
-  bg: "system.info-secondary",
-  color: "text.default",
-  "& > svg": {
-    flexShrink: "0",
-    color: "system.info",
-  },
 });
 
 export default function VoiceProcess() {
@@ -182,7 +160,7 @@ export default function VoiceProcess() {
 
   return (
     <RequireFile>
-      <VoiceHeader currentStep={2} />
+      <Header feature={FeatureFlowEnum.VoiceToText} currentStep={2} />
       <MainContent>
         <Stack gap="10">
           <HStack alignItems="center" gap="6">
@@ -205,7 +183,6 @@ export default function VoiceProcess() {
 
               <Stack gap="3">
                 <ArchiveProgress
-                  className={hideDismiss}
                   fileName={files[0]?.data.name}
                   progress={isCompleted ? 100 : progressPercent}
                   status={archiveStatus}
@@ -242,12 +219,13 @@ export default function VoiceProcess() {
                 )}
 
                 {!isError && !isStopped && (
-                  <div className={processingNotice}>
-                    <Info size={24} />
-                    <styled.span textStyle="subtitle.sm.strong">
-                      {t("process.callout")}
-                    </styled.span>
-                  </div>
+                  <Callout
+                    message={t("process.callout")}
+                    variant="info"
+                    size="compact"
+                    icon={Info}
+                    noBorder
+                  />
                 )}
               </Stack>
             </Stack>

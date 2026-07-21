@@ -1,5 +1,4 @@
-import { Button, FileProcessing } from "@/components";
-import Stepper from "@/components/home/stepper";
+import { FileProcessing } from "@/components";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
@@ -17,7 +16,7 @@ import { HStack, Stack, styled } from "@/styled/jsx";
 import type { Workflows } from "@/types/aymurai";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import type { DocFile } from "@/types/file";
-import { Callout, Card } from "@aymurai/ui";
+import { Button, Callout, Card } from "@aymurai/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   createFileRoute,
@@ -128,11 +127,7 @@ function DocumentProcess() {
 
   return (
     <RequireFile>
-      <Header
-        title={t("title")}
-        feature={feature}
-        center={<Stepper currentStep={2} />}
-      />
+      <Header title={t("title")} feature={feature} currentStep={2} />
       <MainContent>
         <Stack gap="10">
           <HStack alignItems="center" gap="6">

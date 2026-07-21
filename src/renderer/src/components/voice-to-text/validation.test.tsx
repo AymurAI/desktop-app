@@ -49,7 +49,7 @@ vi.mock("@/features/RequireFile", () => ({
   default: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 
-vi.mock("./header", () => ({
+vi.mock("@/components/layout/header", () => ({
   default: () => <header />,
 }));
 

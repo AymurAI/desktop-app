@@ -3,10 +3,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
-import Select, { type SelectOption } from "@/components/ui/select";
-import Switch from "@/components/ui/switch";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import RequireFile from "@/features/RequireFile";
 import { useTranscriptions } from "@/hooks/useTranscriptions";
 import { SectionTitle } from "@/layout/section-title";
@@ -15,8 +13,15 @@ import { useExportTranscription } from "@/services/export/use-export-transcripti
 import { css } from "@/styled/css";
 import { Divider, Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
-import { Avatar, Button, Card } from "@aymurai/ui";
-import VoiceHeader from "./header";
+import {
+  Avatar,
+  Button,
+  Card,
+  Select,
+  type SelectOption,
+  Switch,
+  TooltipProvider,
+} from "@aymurai/ui";
 import { formatDuration } from "./use-audio-snippet";
 
 const switchRow = css({
@@ -75,7 +80,7 @@ export default function VoiceFinish() {
 
   return (
     <RequireFile>
-      <VoiceHeader currentStep={4} />
+      <Header feature={FeatureFlowEnum.VoiceToText} currentStep={4} />
       <MainContent>
         <Stack gap="6">
           <Stack gap="1">

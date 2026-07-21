@@ -3,9 +3,16 @@ const common = {
   howItWorks: "¿Cómo funciona?",
   platformBuiltBy: "Plataforma hecha por",
   settings: "Configuración",
+  header: {
+    appsAria: "Abrir aplicaciones",
+    homeAria: "Ir al inicio",
+  },
   home: {
     features: {
       greeting: "¡Hola! Selecciona la herramienta a utilizar",
+      summaryTitle: "Resumen de Documentos",
+      summarySubtitle:
+        "Genera síntesis claras de resoluciones judiciales extensas",
     },
     host: {
       howToConnect: "¿Cómo deseas conectarte a Aymurai?",

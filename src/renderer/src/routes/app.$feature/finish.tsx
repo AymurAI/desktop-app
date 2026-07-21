@@ -1,6 +1,5 @@
 import FinishAnonymizer from "@/components/finish/finish-anonymizer";
 import FinishDataset from "@/components/finish/finish-dataset";
-import Stepper from "@/components/home/stepper";
 import Header from "@/components/layout/header";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch } from "@/hooks";
@@ -42,11 +41,7 @@ function DocumentFinish() {
     <RequireFile>
       <Header
         title={t("title")}
-        center={
-          feature === FeatureFlowEnum.Dataset ? (
-            <Stepper currentStep={4} />
-          ) : undefined
-        }
+        currentStep={feature === FeatureFlowEnum.Dataset ? 4 : undefined}
         feature={feature}
       />
 

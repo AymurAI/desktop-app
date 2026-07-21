@@ -14,9 +14,8 @@ vi.mock("@tanstack/react-router", () => ({
   useNavigate: () => navigate,
 }));
 
-// VoiceHeader itself renders `Link` (needs a real router context) — stub it
-// out entirely, matching the convention already used in validation.test.tsx.
-vi.mock("./header", () => ({
+// The shared Header renders `Link` (needs a real router context) — stub it.
+vi.mock("@/components/layout/header", () => ({
   default: () => <header />,
 }));
 

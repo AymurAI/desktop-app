@@ -3,6 +3,7 @@ import { Pause, Play, Trash } from "phosphor-react";
 import { useTranslation } from "react-i18next";
 
 import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import {
@@ -18,7 +19,6 @@ import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import type { DocFile } from "@/types/file";
 import { Button, Card } from "@aymurai/ui";
-import VoiceHeader from "./header";
 
 function formatFileSize(bytes: number): string {
   if (bytes >= 1024 * 1024) {
@@ -142,7 +142,7 @@ export default function VoicePreview() {
 
   return (
     <RequireFile>
-      <VoiceHeader currentStep={1} />
+      <Header feature={FeatureFlowEnum.VoiceToText} currentStep={1} />
       <MainContent>
         <Stack gap="8">
           <HStack alignItems="center" gap="6">
