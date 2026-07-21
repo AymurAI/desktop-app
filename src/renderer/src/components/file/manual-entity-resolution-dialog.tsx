@@ -139,13 +139,7 @@ export default function ManualEntityResolutionDialog({
         if (!open) onClose();
       }}
     >
-      <DialogContent
-        className={css({
-          w: "[min(92vw, 520px)]",
-          maxW: "[520px]",
-          bg: "bg.secondary",
-        })}
-      >
+      <DialogContent size="md">
         <DialogTitle>Resolver grupo de entidad</DialogTitle>
         {request && candidate && (
           <Stack gap="3" align="stretch">
