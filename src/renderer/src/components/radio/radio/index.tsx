@@ -1,15 +1,12 @@
-import { Circle } from "phosphor-react";
 import {
-  type ChangeEventHandler,
   type ReactNode,
   forwardRef,
+  useEffect,
   useImperativeHandle,
-  useRef,
+  useState,
 } from "react";
 
-import type { CSS } from "@/styles";
-import { colors } from "@/styles/tokens";
-import { Input, Radio as StyledRadio, Wrapper } from "./Radio.styles";
+import { Radio as UiRadio } from "@aymurai/ui";
 
 export interface Props {
   children?: ReactNode;
@@ -17,49 +14,41 @@ export interface Props {
   checked?: boolean;
   disabled?: boolean;
   onChange?: (value: boolean) => void;
-  css?: CSS;
 }
 export default forwardRef<{ value: boolean }, Props>(function Radio(
-  { name, checked = false, disabled = false, onChange, css, children },
+  { name, checked = false, disabled = false, onChange, children },
   ref,
 ) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [isChecked, setIsChecked] = useState(checked);
 
-  const hasText = !!children;
+  useEffect(() => {
+    setIsChecked(checked);
+  }, [checked]);
 
   // Only exposes `value` object to the parent component
   useImperativeHandle(
     ref,
     () => {
       return {
-        value: inputRef.current?.checked ?? false,
+        value: isChecked,
       };
     },
-    [],
+    [isChecked],
   );
 
-  const handleToggle: ChangeEventHandler<HTMLInputElement> = (e) => {
-    onChange?.(e.target.checked);
+  const handleChange = (nextChecked: boolean) => {
+    setIsChecked(nextChecked);
+    onChange?.(nextChecked);
   };
 
-  const iconColor = disabled
-    ? colors.textOnButtonDisabled
-    : colors.textOnButtonAlternative;
-
   return (
-    <Wrapper hasText={hasText} isDisabled={disabled} css={css}>
-      <Input
-        ref={inputRef}
-        type="radio"
-        name={name}
-        defaultChecked={checked}
-        disabled={disabled}
-        onChange={handleToggle}
-      />
-      <StyledRadio>
-        <Circle color={iconColor} weight="fill" />
-      </StyledRadio>
+    <UiRadio
+      name={name}
+      checked={isChecked}
+      disabled={disabled}
+      onChange={handleChange}
+    >
       {children}
-    </Wrapper>
+    </UiRadio>
   );
 });
