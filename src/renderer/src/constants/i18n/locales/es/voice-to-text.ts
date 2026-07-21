@@ -72,7 +72,7 @@ const voiceToText = {
     waitingForWords: "Esperando las primeras palabras…",
     previewAriaLabel: "Vista previa de la transcripción",
     callout:
-      "Transcribiendo archivo. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
+      "Transcribiendo audio. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
     back: "Volver",
     next: "Siguiente",
   },

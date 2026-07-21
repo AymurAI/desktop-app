@@ -73,15 +73,19 @@ const previewPlaceholder = css({
   fontStyle: "italic",
 });
 
-const calloutBox = css({
+const processingNotice = css({
   display: "flex",
   alignItems: "center",
-  gap: "3",
-  px: "4",
-  py: "3",
-  rounded: "md",
-  bg: "bg.secondary-highlight",
+  gap: "2",
+  width: "full",
+  p: "4",
+  rounded: "xs",
+  bg: "system.info-secondary",
   color: "text.default",
+  "& > svg": {
+    flexShrink: "0",
+    color: "system.info",
+  },
 });
 
 export default function VoiceProcess() {
@@ -234,9 +238,9 @@ export default function VoiceProcess() {
                 )}
 
                 {!isError && !isStopped && (
-                  <div className={calloutBox}>
-                    <Info size={20} color="#3F479D" />
-                    <styled.span textStyle="paragraph.sm.default">
+                  <div className={processingNotice}>
+                    <Info size={24} />
+                    <styled.span textStyle="subtitle.sm.strong">
                       {t("process.callout")}
                     </styled.span>
                   </div>
