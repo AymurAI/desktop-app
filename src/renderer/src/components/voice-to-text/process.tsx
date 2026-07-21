@@ -13,6 +13,7 @@ import HiddenInput from "@/components/hidden-input";
 import Footer from "@/components/layout/footer";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
+import ScrollArea from "@/components/ui/scroll-area";
 import { MEDIA_EXTENSIONS } from "@/constants/config";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
@@ -38,19 +39,20 @@ const hideDismiss = css({
   "& button[aria-label='Descartar']": { display: "none" },
 });
 
-const previewViewport = css({
-  position: "relative",
+const previewFrame = css({
   alignSelf: "stretch",
   width: "full",
-  height: "[240px]",
-  overflowY: "auto",
-  borderWidth: "[1px]",
-  borderStyle: "solid",
-  borderColor: "[#E5E3E0]",
-  rounded: "lg",
-  py: "5",
+  height: "[200px]",
+  borderLeft: "primary",
+  borderRight: "primary",
+  bg: "white",
+  boxSizing: "border-box",
+});
+
+const previewContent = css({
+  width: "full",
   px: "6",
-  bg: "[rgba(255, 255, 255, 0.6)]",
+  py: "4",
   boxSizing: "border-box",
 });
 
@@ -64,8 +66,6 @@ const previewText = css({
 });
 
 const previewPlaceholder = css({
-  position: "absolute",
-  inset: "[20px 24px]",
   fontWeight: "[300]",
   fontSize: "[18px]",
   lineHeight: "[30px]",
@@ -214,27 +214,31 @@ export default function VoiceProcess() {
                 />
 
                 {!isError ? (
-                  <div
-                    ref={previewRef}
-                    className={previewViewport}
+                  <ScrollArea
+                    className={previewFrame}
+                    viewportRef={previewRef}
                     onScroll={handlePreviewScroll}
                     aria-live="polite"
                     aria-label={t("process.previewAriaLabel")}
                   >
-                    {displayedText ? (
-                      <p className={previewText}>{displayedText}</p>
-                    ) : (
+                    <div className={previewContent}>
+                      {displayedText ? (
+                        <p className={previewText}>{displayedText}</p>
+                      ) : (
+                        <span className={previewPlaceholder}>
+                          {t("process.waitingForWords")}
+                        </span>
+                      )}
+                    </div>
+                  </ScrollArea>
+                ) : (
+                  <ScrollArea className={previewFrame}>
+                    <div className={previewContent}>
                       <span className={previewPlaceholder}>
                         {t("process.waitingForWords")}
                       </span>
-                    )}
-                  </div>
-                ) : (
-                  <div className={previewViewport}>
-                    <span className={previewPlaceholder}>
-                      {t("process.waitingForWords")}
-                    </span>
-                  </div>
+                    </div>
+                  </ScrollArea>
                 )}
 
                 {!isError && !isStopped && (
