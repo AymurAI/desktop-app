@@ -10,13 +10,13 @@ import {
 
 import { SearchBar } from "./SearchBar";
 
-import type { SelectOption } from "@/components/ui/select";
 import AnnotationProvider, { useAnnotation } from "@/context/Annotation";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import { css } from "@/styled/css";
 import { HStack } from "@/styled/jsx";
 import type { AllLabels, PredictLabel } from "@/types/aymurai";
 import type { DocFile, Paragraph as ParagraphType } from "@/types/file";
+import type { SelectOption } from "@/types/select";
 import { getActiveAnonymizerLabelOptions } from "@/utils/anonymizer/labels";
 import { filterActivePredictions } from "@/utils/anonymizer/predictions";
 import LabelManager from "../anonymizer/label-manager";
@@ -71,7 +71,7 @@ const Paragraph = memo(
     const splits = generateSplits(children, annotations);
 
     return (
-      <S.Paragraph id={paragraph.id}>
+      <p id={paragraph.id} className={S.paragraph}>
         {splits.map((s) => {
           const content = children.slice(s.start, s.end);
           const key = `${s.type}-${s.start}-${s.end}`;
@@ -98,7 +98,7 @@ const Paragraph = memo(
               );
           }
         })}
-      </S.Paragraph>
+      </p>
     );
   },
 );
@@ -229,8 +229,16 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
   }, []);
 
   return (
-    <HStack w="full" h="full" alignItems="unset" overflow="hidden">
-      <S.Container>
+    <HStack
+      w="full"
+      h="full"
+      minW="0"
+      minH="0"
+      gap="0"
+      alignItems="stretch"
+      overflow="hidden"
+    >
+      <div className={S.container}>
         <SearchBar
           onSearchChange={handleSearchChange}
           onLabelChange={selectChangeHandler}
@@ -244,7 +252,7 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
           onPrevious={handleSearchPrevious}
           onFocusDocument={focusDocument}
         />
-        <S.File ref={fileRef} tabIndex={-1}>
+        <div ref={fileRef} tabIndex={-1} className={S.file}>
           <AnnotationProvider
             file={file}
             isAnnotable={isAnnotable}
@@ -262,8 +270,8 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
               </Paragraph>
             ))}
           </AnnotationProvider>
-        </S.File>
-      </S.Container>
+        </div>
+      </div>
       <div hidden={!labelManagerOpen} className={labelManagerWrapper}>
         <LabelManager onClose={toggleManagerLabel} />
       </div>
