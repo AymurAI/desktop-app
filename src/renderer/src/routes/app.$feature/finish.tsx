@@ -39,11 +39,7 @@ function DocumentFinish() {
 
   return (
     <RequireFile>
-      <Header
-        title={t("title")}
-        currentStep={feature === FeatureFlowEnum.Dataset ? 4 : undefined}
-        feature={feature}
-      />
+      <Header title={t("title")} currentStep={4} feature={feature} />
 
       {feature === FeatureFlowEnum.Dataset ? (
         <FinishDataset onRestart={handleRestart} />
