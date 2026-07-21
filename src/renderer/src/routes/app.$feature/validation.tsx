@@ -56,7 +56,7 @@ function DocumentValidation() {
           <FileAnnotator {...{ file }} isAnnotable />
         </Grid>
 
-        <Footer>
+        <Footer withBuiltBy>
           <Button size="md" onClick={handleContinue}>
             Anonimizar documento
           </Button>

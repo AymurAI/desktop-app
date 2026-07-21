@@ -101,7 +101,7 @@ export function ValidateDataset() {
           />
         </Stack>
       </Grid>
-      <Footer>
+      <Footer withBuiltBy>
         <HStack
           alignItems="center"
           width="full"
