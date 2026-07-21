@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import VoiceHeader from "./header";
+
+let tutorialSeen = false;
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -19,13 +21,21 @@ vi.mock("@/components/features-menu", () => ({
   ),
 }));
 
-vi.mock("./how-it-works", () => ({
+vi.mock("@/components/how-it-works-modal", () => ({
   default: ({ trigger }: { trigger: ReactNode }) => (
     <div data-testid="help-trigger">{trigger}</div>
   ),
 }));
 
+vi.mock("@/store/useLocal", () => ({
+  useTutorialSeen: () => tutorialSeen,
+}));
+
 describe("VoiceHeader", () => {
+  beforeEach(() => {
+    tutorialSeen = false;
+  });
+
   it("maps VTT step numbers to the zero-based AppHeader progress", () => {
     render(<VoiceHeader currentStep={3} />);
 
@@ -37,16 +47,23 @@ describe("VoiceHeader", () => {
     ).toHaveAttribute("aria-current", "step");
   });
 
-  it("omits progress and wraps logo, help and apps with VTT integrations", () => {
+  it("omits progress and help before the tutorial was seen", () => {
     render(<VoiceHeader />);
 
     expect(screen.queryByRole("list", { name: "Progress" })).toBeNull();
     expect(screen.getByRole("link")).toHaveAttribute("href", "/home/features");
-    expect(screen.getByTestId("help-trigger")).toContainElement(
-      screen.getByLabelText("howItWorks.helpAria"),
-    );
+    expect(screen.queryByTestId("help-trigger")).toBeNull();
     expect(screen.getByTestId("apps-trigger")).toContainElement(
       screen.getByLabelText("header.appsAria"),
+    );
+  });
+
+  it("shows shared help after the tutorial was seen", () => {
+    tutorialSeen = true;
+    render(<VoiceHeader />);
+
+    expect(screen.getByTestId("help-trigger")).toContainElement(
+      screen.getByLabelText("howItWorks.helpAria"),
     );
   });
 });

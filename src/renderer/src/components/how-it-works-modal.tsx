@@ -3,6 +3,7 @@ import { css } from "@/styled/css";
 import { HStack, Stack } from "@/styled/jsx";
 import type { FeatureFlowEnum } from "@/types/features";
 import { Question, X } from "phosphor-react";
+import type { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import HowItWorks from "./how-it-works";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
@@ -42,8 +43,12 @@ const content = css({
 
 interface HowItWorksModalProps {
   feature: FeatureFlowEnum;
+  trigger?: ReactElement;
 }
-export default function HowItWorksModal({ feature }: HowItWorksModalProps) {
+export default function HowItWorksModal({
+  feature,
+  trigger,
+}: HowItWorksModalProps) {
   const { t } = useTranslation();
 
   return (
@@ -51,13 +56,15 @@ export default function HowItWorksModal({ feature }: HowItWorksModalProps) {
       <Tooltip>
         <TooltipTrigger asChild>
           <DialogTrigger asChild>
-            <button
-              type="button"
-              className={modalButton}
-              aria-label="Información sobre AymurAI"
-            >
-              <Question size={32} />
-            </button>
+            {trigger ?? (
+              <button
+                type="button"
+                className={modalButton}
+                aria-label="Información sobre AymurAI"
+              >
+                <Question size={32} />
+              </button>
+            )}
           </DialogTrigger>
         </TooltipTrigger>
         <TooltipContent className={tooltip}>{t("howItWorks")}</TooltipContent>

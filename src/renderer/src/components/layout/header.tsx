@@ -5,7 +5,6 @@ import { FeatureFlowEnum } from "@/types/features";
 import { Link } from "@tanstack/react-router";
 import FeaturesMenu from "../features-menu";
 import HowItWorksModal from "../how-it-works-modal";
-import VoiceHowItWorksModal from "../voice-to-text/how-it-works";
 
 const header = css({
   position: "relative",
@@ -34,7 +33,7 @@ interface HeaderProps {
 }
 
 export default function Header({ title, center, feature, right }: HeaderProps) {
-  const tutorialSeen = useTutorialSeen(feature!);
+  const tutorialSeen = useTutorialSeen(feature ?? FeatureFlowEnum.Dataset);
 
   const img = title
     ? `${import.meta.env.BASE_URL}brand/aymurai-iso-darkpurple.svg`
@@ -60,11 +59,7 @@ export default function Header({ title, center, feature, right }: HeaderProps) {
       </Link>
       {center && <div className={centerSlot}>{center}</div>}
       <HStack>
-        {feature === FeatureFlowEnum.VoiceToText ? (
-          <VoiceHowItWorksModal />
-        ) : (
-          tutorialSeen && feature && <HowItWorksModal feature={feature} />
-        )}
+        {tutorialSeen && feature && <HowItWorksModal feature={feature} />}
         {right}
         <FeaturesMenu />
       </HStack>

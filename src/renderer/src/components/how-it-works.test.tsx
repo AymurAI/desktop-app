@@ -18,6 +18,7 @@ describe("HowItWorks", () => {
   it.each([
     [FeatureFlowEnum.Dataset, "dataset"],
     [FeatureFlowEnum.Anonymizer, "anonymizer"],
+    [FeatureFlowEnum.VoiceToText, "voice-to-text"],
   ])("uses the %s namespace for every feature step", (feature, namespace) => {
     render(<HowItWorks feature={feature} />);
 

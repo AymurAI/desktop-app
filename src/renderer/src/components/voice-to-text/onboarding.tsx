@@ -4,12 +4,12 @@ import { type ChangeEventHandler, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import HiddenInput from "@/components/hidden-input";
+import HowItWorks from "@/components/how-it-works";
 import Footer from "@/components/layout/footer";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import VoiceFileDrop from "@/components/voice-to-text/file-drop";
 import VoiceHeader from "@/components/voice-to-text/header";
-import { VoiceHowItWorksGrid } from "@/components/voice-to-text/how-it-works";
 import { MEDIA_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
@@ -70,10 +70,7 @@ export default function VoiceOnboarding() {
             />
           </Stack>
         ) : (
-          <Stack gap="8">
-            <SectionTitle>{t("howItWorks.pageTitle")}</SectionTitle>
-            <VoiceHowItWorksGrid />
-          </Stack>
+          <HowItWorks feature={FeatureFlowEnum.VoiceToText} />
         )}
       </MainContent>
       <Footer withBuiltBy>

@@ -21,29 +21,28 @@ const voiceToText = {
     appsAria: "Abrir aplicaciones",
   },
   howItWorks: {
-    pageTitle: "¿Cómo funciona?",
-    modalTitle: "¿Cómo funciona de Voz a Texto?",
-    gotIt: "Entendido",
     helpAria: "Cómo funciona la transcripción de voz a texto",
-    cards: {
-      card1: {
-        title: "Subí el archivo de audio o video",
-        subtitle: `Cargá un archivo en formato ${formatExtensionList(MEDIA_EXTENSIONS)}.`,
-      },
-      card2: {
-        title: "La inteligencia artificial procesa el archivo",
-        subtitle:
-          "Genera la transcripción e identifica distintas personas que hablan en el audio.",
-      },
-      card3: {
-        title: "Revisión y validación humana",
-        subtitle:
-          "Revisá la transcripción, editá el texto y renombrá a las personas antes de exportar el archivo.",
-      },
-      card4: {
-        title: "Descargá la transcripción",
-        subtitle: "El archivo queda listo para exportar en formato de texto.",
-      },
+    step1: {
+      alt: "Interfaz de carga de un archivo de audio o video",
+      title: "Subí el archivo de audio o video",
+      subtitle: `Cargá un archivo en formato ${formatExtensionList(MEDIA_EXTENSIONS)}.`,
+    },
+    step2: {
+      alt: "Procesamiento automático de un archivo multimedia",
+      title: "La inteligencia artificial procesa el archivo",
+      subtitle:
+        "Genera la transcripción e identifica distintas personas que hablan en el audio.",
+    },
+    step3: {
+      alt: "Revisión y edición de una transcripción",
+      title: "Revisión y validación humana",
+      subtitle:
+        "Revisá la transcripción, editá el texto y renombrá a las personas antes de exportar el archivo.",
+    },
+    step4: {
+      alt: "Descarga de una transcripción terminada",
+      title: "Descargá la transcripción",
+      subtitle: "El archivo queda listo para exportar en formato de texto.",
     },
   },
   onboarding: {
