@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 
-import Button from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import Select from "@/components/ui/select";
 import { css } from "@/styled/css";
 import { Stack, styled } from "@/styled/jsx";
 import type {
   ManualEntityResolution,
   SimilarEntityGroupCandidate,
 } from "@/utils/anonymizer/entity-similarity";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+  Select,
+} from "@aymurai/ui";
 
 export interface ManualEntityResolutionRequest {
   text: string;

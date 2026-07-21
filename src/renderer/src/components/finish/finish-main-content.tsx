@@ -1,10 +1,10 @@
 import { SectionTitle } from "@/layout/section-title";
 import { Grid, Stack, styled } from "@/styled/jsx";
 import { type FeatureFlowEnum, featureNamespace } from "@/types/features";
+import { Card } from "@aymurai/ui";
 import type React from "react";
 import { useTranslation } from "react-i18next";
 import MainContent from "../layout/main-content";
-import Card from "../ui/card";
 
 interface FinishMainContentProps {
   feature: FeatureFlowEnum;

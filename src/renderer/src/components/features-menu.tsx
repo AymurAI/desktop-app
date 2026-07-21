@@ -2,14 +2,18 @@ import { useFileDispatch } from "@/hooks/useFiles";
 import { removeAllFiles } from "@/reducers/file/actions";
 import { Grid, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
+import {
+  Button,
+  Card,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@aymurai/ui";
 import { Link } from "@tanstack/react-router";
 import { DotsNine, Gear } from "phosphor-react";
 import type { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import FeatureIcon from "./feature-icon";
-import Button from "./ui/button";
-import Card from "./ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 interface FeaturesMenuProps {
   trigger?: ReactElement;

@@ -1,10 +1,6 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { css } from "@/styled/css";
 import type { AllLabels } from "@/types/aymurai";
+import { Popover, PopoverContent, PopoverTrigger } from "@aymurai/ui";
 import type { FocusEventHandler, ReactNode } from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import Tagger from "./tagger";

@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import Button from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { formatTime } from "@/components/voice-to-text/format-time";
 import { showToast } from "@/features/showToast";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
@@ -27,7 +19,16 @@ import { SUGGESTED_SPEAKERS } from "@/services/aymurai/fixtures/suggestedSpeaker
 import { css } from "@/styled/css";
 import type { Speaker, Transcription, Turn } from "@/types/transcription";
 import { SPEAKER_PALETTE } from "@/types/transcription";
-import { SidePanel, TooltipProvider } from "@aymurai/ui";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+  SidePanel,
+  TooltipProvider,
+} from "@aymurai/ui";
 import { parseTimestampToMs } from "./parse-timestamp";
 
 // A newly-inserted turn needs a real (non-zero) time span, or it can never

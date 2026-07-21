@@ -1,11 +1,5 @@
 import { useState } from "react";
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useFileDispatch } from "@/hooks";
 import {
   removePredictionValueByCanonicalId,
@@ -16,6 +10,12 @@ import { css, sva } from "@/styled/css";
 import { HStack } from "@/styled/jsx";
 import { stack } from "@/styled/patterns";
 import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@aymurai/ui";
 import LabelConfigTab from "./config-tab";
 import LabelEntityTab from "./entity-tab";
 import LabelManagerTab from "./tab";
@@ -27,8 +27,8 @@ const styles = sva({
   base: {
     container: {
       ...stack.raw({ gap: "0" }),
-      width: "[400px]",
-      maxWidth: "[400px]",
+      width: "[clamp(260px,32vw,400px)]",
+      maxWidth: "[45vw]",
       h: "full",
       minH: "0",
       flexShrink: "0",

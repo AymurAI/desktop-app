@@ -2,7 +2,6 @@ import * as RadixSelect from "@radix-ui/react-select";
 import { CaretDown, Check, MagnifyingGlass } from "phosphor-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
-import type { SelectOption } from "@/components/ui/select";
 import {
   ANONYMIZER_CATEGORY_NAMES,
   getAnonymizerLabelsForCategory,
@@ -10,6 +9,7 @@ import {
 import { css, sva } from "@/styled/css";
 import { styled } from "@/styled/jsx";
 import { stack } from "@/styled/patterns";
+import type { SelectOption } from "@/types/select";
 import { normalizeEntityText } from "@/utils/anonymizer/entity-similarity";
 
 interface AnonymizerLabelSelectProps {

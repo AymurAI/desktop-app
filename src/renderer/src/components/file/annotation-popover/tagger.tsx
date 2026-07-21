@@ -5,10 +5,10 @@ import { styled } from "@/styled/jsx";
 import { hstack } from "@/styled/patterns";
 
 import AnonymizerLabelSelect from "@/components/anonymizer/anonymizer-label-select";
-import type { SelectOption } from "@/components/ui/select";
 import { useAnnotation } from "@/context/Annotation";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import type { AllLabels } from "@/types/aymurai";
+import type { SelectOption } from "@/types/select";
 import { getActiveAnonymizerLabelOptions } from "@/utils/anonymizer/labels";
 
 import {
@@ -16,7 +16,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@aymurai/ui";
 
 import TaggerButton from "./tagger-button";
 

@@ -2,24 +2,6 @@ import { HStack, Stack, styled } from "@/styled/jsx";
 import type { AnonymizerLabels } from "@/types/aymurai";
 import { useState } from "react";
 
-import Button from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import Input from "@/components/ui/input";
-import BaseSwitch from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   ANONYMIZER_CATEGORY_NAMES,
   getAnonymizerLabelsForCategory,
@@ -30,6 +12,22 @@ import {
   useExcludedTagsConfigActions,
 } from "@/store/useLocal";
 import { css } from "@/styled/css";
+import {
+  Switch as BaseSwitch,
+  Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  TextField,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@aymurai/ui";
 import { Trash } from "phosphor-react";
 import { Label } from "./label";
 import LabelManagerSection from "./section";
@@ -178,7 +176,7 @@ export default function LabelConfigTab({
         >
           <Stack align="stretch" gap="6">
             <Stack align="stretch" gap="2">
-              <Input
+              <TextField
                 label="Agrega términos que serán excluidos de la anonimización"
                 placeholder="Ingresa un término"
                 value={inputValue}

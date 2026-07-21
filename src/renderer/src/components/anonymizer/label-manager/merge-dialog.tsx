@@ -1,11 +1,11 @@
-import Button from "@/components/ui/button";
+import type { EntityGroup } from "@/hooks/useEntityGroups";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogFooter,
   DialogTitle,
-} from "@/components/ui/dialog";
-import type { EntityGroup } from "@/hooks/useEntityGroups";
+} from "@aymurai/ui";
 
 interface MergeDialogProps {
   source: EntityGroup | null;

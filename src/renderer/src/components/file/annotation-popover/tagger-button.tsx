@@ -1,11 +1,11 @@
+import { sva } from "@/styled/css";
+import { styled } from "@/styled/jsx";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { sva } from "@/styled/css";
-import { styled } from "@/styled/jsx";
+} from "@aymurai/ui";
 
 const button = sva({
   slots: ["button", "tooltipContent"],

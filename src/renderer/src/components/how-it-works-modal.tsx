@@ -2,12 +2,19 @@ import { SectionTitle } from "@/layout/section-title";
 import { css } from "@/styled/css";
 import { HStack, Stack } from "@/styled/jsx";
 import type { FeatureFlowEnum } from "@/types/features";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@aymurai/ui";
 import { Question, X } from "phosphor-react";
 import type { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import HowItWorks from "./how-it-works";
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const tooltip = css({
   padding: "2",

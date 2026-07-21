@@ -2,6 +2,7 @@ import { useConnectToHost } from "@/services/aymurai";
 import * as localStore from "@/store/useLocal";
 import { css } from "@/styled/css";
 import { Stack } from "@/styled/jsx";
+import { Button, TextField } from "@aymurai/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { AxiosError } from "axios";
 import { ArrowLeft } from "phosphor-react";
@@ -12,8 +13,6 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { ZodError } from "zod";
-import Button from "../ui/button";
-import Input from "../ui/input";
 
 const BackButton = ({ onClick }: { onClick: () => void }) => (
   <button
@@ -89,7 +88,7 @@ export default function ConnectToHost({ onBackClick }: ConnectToHostProps) {
           </h2>
 
           <Stack gap="1" width="full">
-            <Input
+            <TextField
               label={t("home.host.connectServerLabel")}
               placeholder="http://"
               value={host}

@@ -1,10 +1,10 @@
-import Button from "@/components/ui/button";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogFooter,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@aymurai/ui";
 
 interface ReplaceDialogProps {
   isOpen: boolean;
