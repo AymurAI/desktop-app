@@ -1,7 +1,7 @@
+import { FEATURE_ICON } from "@/constants/config";
 import { cva } from "@/styled/css";
 import { stack } from "@/styled/patterns";
 import type { FeatureFlowEnum } from "@/types/features";
-import { FEATURE_ICON } from "@/utils/config";
 import type { Icon } from "phosphor-react";
 
 const styles = cva({

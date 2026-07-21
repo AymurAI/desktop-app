@@ -2,11 +2,8 @@ import { Button, FileProcessing } from "@/components";
 import Stepper from "@/components/home/stepper";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
-import HomeButton from "@/components/layout/home-button";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
-import Callout from "@/components/ui/callout";
-import Card from "@/components/ui/card";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { useDisambiguate } from "@/hooks/useDisambiguate";
@@ -20,6 +17,7 @@ import { HStack, Stack, styled } from "@/styled/jsx";
 import type { Workflows } from "@/types/aymurai";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import type { DocFile } from "@/types/file";
+import { Callout, Card } from "@aymurai/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   createFileRoute,
@@ -29,11 +27,21 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import VoiceProcess from "@/components/voice-to-text/process";
+
 export const Route = createFileRoute("/app/$feature/process")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { feature } = useParams({
+    from: "/app/$feature/process",
+  });
+  if (feature === FeatureFlowEnum.VoiceToText) return <VoiceProcess />;
+  return <DocumentProcess />;
+}
+
+function DocumentProcess() {
   const queryClient = useQueryClient();
   const { feature } = useParams({
     from: "/app/$feature/process",
@@ -124,7 +132,6 @@ function RouteComponent() {
         title={t("title")}
         feature={feature}
         center={<Stepper currentStep={2} />}
-        right={<HomeButton />}
       />
       <MainContent>
         <Stack gap="10">

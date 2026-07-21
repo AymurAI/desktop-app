@@ -3,10 +3,8 @@ import HiddenInput from "@/components/hidden-input";
 import Stepper from "@/components/home/stepper";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
-import HomeButton from "@/components/layout/home-button";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
-import Card from "@/components/ui/card";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { useFileParse } from "@/hooks/useFileParse";
@@ -15,6 +13,7 @@ import { addFiles, filterUnselected } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
+import { Card } from "@aymurai/ui";
 import {
   createFileRoute,
   useNavigate,
@@ -23,11 +22,21 @@ import {
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
+import VoicePreview from "@/components/voice-to-text/preview";
+
 export const Route = createFileRoute("/app/$feature/preview")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { feature } = useParams({
+    from: "/app/$feature/preview",
+  });
+  if (feature === FeatureFlowEnum.VoiceToText) return <VoicePreview />;
+  return <DocumentPreview />;
+}
+
+function DocumentPreview() {
   const { feature } = useParams({
     from: "/app/$feature/preview",
   });
@@ -72,7 +81,6 @@ function RouteComponent() {
         title={t("title")}
         center={<Stepper currentStep={1} />}
         feature={feature}
-        right={<HomeButton />}
       />
       <MainContent>
         <Stack gap="8">

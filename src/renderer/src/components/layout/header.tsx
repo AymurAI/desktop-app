@@ -1,7 +1,7 @@
 import { useTutorialSeen } from "@/store/useLocal";
 import { css } from "@/styled/css";
 import { Divider, HStack, Stack, styled } from "@/styled/jsx";
-import type { FeatureFlowEnum } from "@/types/features";
+import { FeatureFlowEnum } from "@/types/features";
 import { Link } from "@tanstack/react-router";
 import FeaturesMenu from "../features-menu";
 import HowItWorksModal from "../how-it-works-modal";
@@ -33,7 +33,7 @@ interface HeaderProps {
 }
 
 export default function Header({ title, center, feature, right }: HeaderProps) {
-  const tutorialSeen = useTutorialSeen(feature!);
+  const tutorialSeen = useTutorialSeen(feature ?? FeatureFlowEnum.Dataset);
 
   const img = title
     ? `${import.meta.env.BASE_URL}brand/aymurai-iso-darkpurple.svg`

@@ -8,7 +8,7 @@
 tools
 - ⚡ **Electron** as the _deployment and packaging tool_. It also serves the
 purpose of communicating the webapp with the _NodeJS_ process.
-- 🪡 **Stitches** as the _styling library_
+- 🐼 **Panda CSS** as the _styling library_ (migrating off legacy Stitches)
 - 🛣️ **Tanstack React Router** as the _routing library_ to navigate across the webapp
 - 📄 **Mammoth** + **ExcelJS** as the _libraries_ to read and write `.docx` and
 datasheet files
@@ -17,6 +17,7 @@ datasheet files
 
 - **pnpm** as _package manager_
 - **biome** as code _linter and formatter_
+- **lefthook** for git hooks (pre-commit + pre-push gates)
 
 ##  Getting started
 
@@ -26,6 +27,14 @@ datasheet files
 
     ```bash
     pnpm install
+    ```
+
+1. Run `prepare` to generate the Panda CSS runtime and install the lefthook
+   git hooks (also runs automatically after `pnpm install`, but re-run it
+   after pulling changes that touch `panda.config.ts` or `lefthook.yml`):
+
+    ```bash
+    pnpm prepare
     ```
 
 1. Start the app in development mode with
@@ -72,6 +81,8 @@ datasheet files
 - `typecheck:node`: runs type checking on the _Electron_ application
 - `typecheck:web`: runs type checking on the _React_ application
 - `validate`: runs linting and type checking on both React and renderer
+- `prepare`: runs `panda codegen` and installs lefthook git hooks (auto-runs after `pnpm install`)
+- `knip`: detects unused exports and dependencies (also gated on `pre-push`)
 - `pre-commit`: runs _LintStaged_
 
 ### Deployment

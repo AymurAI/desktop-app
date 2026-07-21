@@ -9,19 +9,22 @@ import HiddenInput from "@/components/hidden-input";
 import HowItWorks from "@/components/how-it-works";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
-import HomeButton from "@/components/layout/home-button";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
-import Button from "@/components/ui/button";
+import { DOCUMENT_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
 import { addFiles } from "@/reducers/file/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { featureNamespace } from "@/types/features";
+import { Button } from "@aymurai/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+
+import VoiceOnboarding from "@/components/voice-to-text/onboarding";
+import { FeatureFlowEnum } from "@/types/features";
 
 // FIRST step of the processing workflow
 export const Route = createFileRoute("/app/$feature/onboarding")({
@@ -29,6 +32,14 @@ export const Route = createFileRoute("/app/$feature/onboarding")({
 });
 
 function RouteComponent() {
+  const { feature } = useParams({
+    from: "/app/$feature/onboarding",
+  });
+  if (feature === FeatureFlowEnum.VoiceToText) return <VoiceOnboarding />;
+  return <DocumentOnboarding />;
+}
+
+function DocumentOnboarding() {
   const queryClient = useQueryClient();
   const { feature } = useParams({
     from: "/app/$feature/onboarding",
@@ -60,6 +71,7 @@ function RouteComponent() {
     inputRef.current?.click();
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only on mount
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["predict"] });
     queryClient.removeQueries({ queryKey: ["file-parser"] });
@@ -67,7 +79,7 @@ function RouteComponent() {
 
   return (
     <>
-      <Header title={t("title")} feature={feature} right={<HomeButton />} />
+      <Header title={t("title")} feature={feature} />
       <MainContent>
         {tutorialSeen ? (
           <Stack gap="8">
@@ -97,7 +109,11 @@ function RouteComponent() {
           </Button>
         </HStack>
       </Footer>
-      <HiddenInput ref={inputRef} onChange={handleInputChange} />
+      <HiddenInput
+        ref={inputRef}
+        onChange={handleInputChange}
+        extensions={DOCUMENT_EXTENSIONS}
+      />
     </>
   );
 }

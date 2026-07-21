@@ -21,7 +21,7 @@ export default defineConfig({
   root: "src/renderer",
   envDir: resolve("."),
   server: {
-    port: 3000,
+    port: Number(process.env.PORT) || 3000,
   },
   build: {
     outDir: "../../out/renderer",

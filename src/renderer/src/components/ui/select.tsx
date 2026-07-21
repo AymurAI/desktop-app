@@ -1,8 +1,13 @@
 import * as RadixSelect from "@radix-ui/react-select";
 import { CaretDown, CaretUp, Check } from "phosphor-react";
-import { type Ref, useId, useImperativeHandle } from "react";
+import { type Ref, useId, useImperativeHandle, useRef, useState } from "react";
 
 import Suggestion from "@/components/ui/suggestion";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { sva } from "@/styled/css";
 import { styled } from "@/styled/jsx";
 import { stack } from "@/styled/patterns";
@@ -15,7 +20,13 @@ const Affix = styled("span", {
   },
 });
 
-export type SelectOption = { id: string; text: string; shortText?: string };
+export type SelectOption = {
+  id: string;
+  text: string;
+  shortText?: string;
+  /** Shown in a tooltip on hover over this option, while the list is open. */
+  description?: string;
+};
 export type SelectSuggestion = { id: string; text?: string };
 
 interface SelectProps {
@@ -40,6 +51,71 @@ function orderByPriority(options: SelectOption[], priority: string[] = []) {
     .map((p) => options.find(({ id }) => p === id))
     .filter((o): o is SelectOption => !!o);
   return [...preferred, ...filtered];
+}
+
+// Matches Radix Tooltip's own default hover delay. Kept separate from focus:
+// Radix opens a tooltip instantly on focus (correct for keyboard users), but
+// Select auto-focuses the current value when the list opens, which would
+// otherwise pop its tooltip immediately with no hover involved. Driving
+// `open` ourselves from pointer events only (ignoring focus) avoids that.
+const OPTION_TOOLTIP_DELAY_MS = 700;
+
+function SelectItem({
+  id,
+  text,
+  description,
+  itemClassName,
+  itemIndicatorClassName,
+}: {
+  id: string;
+  text: string;
+  description?: string;
+  itemClassName?: string;
+  itemIndicatorClassName?: string;
+}) {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+
+  const item = (
+    <RadixSelect.Item
+      value={id}
+      className={itemClassName}
+      onPointerEnter={
+        description
+          ? () => {
+              timeoutRef.current = setTimeout(
+                () => setTooltipOpen(true),
+                OPTION_TOOLTIP_DELAY_MS,
+              );
+            }
+          : undefined
+      }
+      onPointerLeave={
+        description
+          ? () => {
+              clearTimeout(timeoutRef.current);
+              setTooltipOpen(false);
+            }
+          : undefined
+      }
+    >
+      <RadixSelect.ItemIndicator className={itemIndicatorClassName}>
+        <Check size={14} weight="bold" />
+      </RadixSelect.ItemIndicator>
+      <RadixSelect.ItemText>{text}</RadixSelect.ItemText>
+    </RadixSelect.Item>
+  );
+
+  if (!description) return item;
+
+  return (
+    <Tooltip open={tooltipOpen} onOpenChange={() => {}}>
+      <TooltipTrigger asChild>{item}</TooltipTrigger>
+      <TooltipContent side="right">{description}</TooltipContent>
+    </Tooltip>
+  );
 }
 
 function secureSuggestion(
@@ -145,10 +221,10 @@ const select = sva({
       outline: "none",
       userSelect: "none",
 
+      // Only the hovered/keyboard-focused option is highlighted — the
+      // selected option is already marked by its check indicator, so it
+      // doesn't need to stay highlighted too once the list is open.
       "&[data-highlighted]": {
-        bg: "bg.primary-alternative",
-      },
-      "&[data-state='checked']": {
         bg: "bg.primary-alternative",
       },
       "&[data-disabled]": {
@@ -286,13 +362,15 @@ export default function Select({
               <CaretUp size={12} />
             </RadixSelect.ScrollUpButton>
             <RadixSelect.Viewport className={classes.viewport}>
-              {orderedOptions.map(({ id, text }) => (
-                <RadixSelect.Item key={id} value={id} className={classes.item}>
-                  <RadixSelect.ItemIndicator className={classes.itemIndicator}>
-                    <Check size={14} weight="bold" />
-                  </RadixSelect.ItemIndicator>
-                  <RadixSelect.ItemText>{text}</RadixSelect.ItemText>
-                </RadixSelect.Item>
+              {orderedOptions.map(({ id, text, description }) => (
+                <SelectItem
+                  key={id}
+                  id={id}
+                  text={text}
+                  description={description}
+                  itemClassName={classes.item}
+                  itemIndicatorClassName={classes.itemIndicator}
+                />
               ))}
             </RadixSelect.Viewport>
             <RadixSelect.ScrollDownButton className={classes.scrollButton}>

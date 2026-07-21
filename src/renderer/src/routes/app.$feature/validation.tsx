@@ -2,7 +2,6 @@ import { Button, FileAnnotator, ValidateDataset } from "@/components";
 import Stepper from "@/components/home/stepper";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
-import HomeButton from "@/components/layout/home-button";
 import RequireFile from "@/features/RequireFile";
 import { useFiles } from "@/hooks";
 import { Grid, Stack } from "@/styled/jsx";
@@ -14,11 +13,21 @@ import {
 } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import VoiceValidation from "@/components/voice-to-text/validation";
+
 export const Route = createFileRoute("/app/$feature/validation")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { feature } = useParams({
+    from: "/app/$feature/validation",
+  });
+  if (feature === FeatureFlowEnum.VoiceToText) return <VoiceValidation />;
+  return <DocumentValidation />;
+}
+
+function DocumentValidation() {
   const { feature } = useParams({
     from: "/app/$feature/validation",
   });
@@ -38,7 +47,6 @@ function RouteComponent() {
           title={t("title")}
           center={<Stepper currentStep={3} />}
           feature={feature}
-          right={<HomeButton />}
         />
         <Grid
           columns={1}

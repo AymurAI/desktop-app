@@ -18,6 +18,7 @@ import {
   type RemovePredictionsByCanonicalId,
   type RemovePredictionsByText,
   type ReplaceFileAction,
+  type SetDurationAction,
   type ToggleSelectedAction,
   type UpdatePredictionLabel,
   type UpdatePredictionsByCanonicalId,
@@ -49,6 +50,7 @@ export type Action =
   | RemoveFileAction
   | RemovePredictionsAction
   | ReplaceFileAction
+  | SetDurationAction
   | FilterUnselectedAction
   | ValidateAction
   | AppendValidationAction
@@ -144,6 +146,13 @@ export default function reducer(state: State, action: Action): State {
     case ActionTypes.REPLACE_FILE: {
       const { fileName, file } = payload;
       return replaceFile(fileName, file, state);
+    }
+    case ActionTypes.SET_DURATION: {
+      const { fileName, durationMs } = payload;
+      return update(fileName, (current) => ({
+        ...current,
+        durationMs,
+      }));
     }
     // ----------------
     // FILTER UNSELECTED

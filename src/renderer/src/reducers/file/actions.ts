@@ -21,6 +21,7 @@ export enum ActionTypes {
   REMOVE_ALL_FILES = "REMOVE_ALL_FILES",
   REMOVE_FILE = "REMOVE_FILE",
   REPLACE_FILE = "REPLACE_FILE",
+  SET_DURATION = "SET_DURATION",
   VALIDATE = "VALIDATE",
   APPEND_VALIDATION = "APPEND_VALIDATION",
   APPEND_PREDICTION = "APPEND_PREDICTION",
@@ -164,6 +165,22 @@ export function replaceFile(fileName: string, file: File): ReplaceFileAction {
   return {
     type: ActionTypes.REPLACE_FILE,
     payload: { fileName, file },
+  };
+}
+
+export type SetDurationAction = Action<
+  ActionTypes.SET_DURATION,
+  { fileName: string; durationMs: number }
+>;
+
+/** Stores browser-reported media duration for use across the VTT flow. */
+export function setFileDuration(
+  fileName: string,
+  durationMs: number,
+): SetDurationAction {
+  return {
+    type: ActionTypes.SET_DURATION,
+    payload: { fileName, durationMs },
   };
 }
 

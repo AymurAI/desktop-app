@@ -1,14 +1,17 @@
-import path from "node:path";
+import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  test: {
-    globals: true,
-    environment: "node",
-  },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src/renderer/src"),
+      "@": resolve(__dirname, "src/renderer/src"),
+      "@/styled": resolve(__dirname, "src/renderer/src/styled"),
     },
+  },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["src/renderer/src/test/setup.ts"],
+    include: ["src/renderer/src/**/*.{test,spec}.{ts,tsx}"],
   },
 });

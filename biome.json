@@ -48,6 +48,9 @@
           "level": "error"
         }
       },
+      "suspicious": {
+        "noConsoleLog": "warn"
+      },
       "a11y": {
         "noSvgWithoutTitle": "off",
         "useKeyWithClickEvents": "off"

@@ -2,7 +2,6 @@ import FinishAnonymizer from "@/components/finish/finish-anonymizer";
 import FinishDataset from "@/components/finish/finish-dataset";
 import Stepper from "@/components/home/stepper";
 import Header from "@/components/layout/header";
-import HomeButton from "@/components/layout/home-button";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch } from "@/hooks";
 import { removeAllFiles } from "@/reducers/file/actions";
@@ -14,11 +13,19 @@ import {
 } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import VoiceFinish from "@/components/voice-to-text/finish";
+
 export const Route = createFileRoute("/app/$feature/finish")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const params = useParams({ from: "/app/$feature/finish" });
+  if (params.feature === FeatureFlowEnum.VoiceToText) return <VoiceFinish />;
+  return <DocumentFinish />;
+}
+
+function DocumentFinish() {
   const navigate = useNavigate();
   const params = useParams({ from: "/app/$feature/finish" });
   const { feature } = params;
@@ -40,7 +47,7 @@ function RouteComponent() {
             <Stepper currentStep={4} />
           ) : undefined
         }
-        right={<HomeButton />}
+        feature={feature}
       />
 
       {feature === FeatureFlowEnum.Dataset ? (

@@ -1,7 +1,15 @@
-allowBuilds:
-  "@biomejs/biome": true
-  electron-winstaller: true
-  electron: true
-  esbuild: true
-
+# electron-forge@6 pulls @electron/node-gyp via a git-resolved subdependency.
+# pnpm >=11 blocks exotic (git) subdeps by default; allow it so install /
+# `pnpm <script>` pre-run dep-checks succeed for this Electron toolchain.
 blockExoticSubdeps: false
+allowBuilds:
+  '@aymurai/ui': true
+  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/1bbbdf739418ce550344a4ca863074d1c53be389': true
+  '@biomejs/biome': true
+  agent-browser: false
+  electron: true
+  electron-winstaller: true
+  esbuild: true
+  lefthook: true
+minimumReleaseAgeExclude:
+  - agent-browser@0.29.1

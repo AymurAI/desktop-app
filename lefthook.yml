@@ -1,0 +1,32 @@
+# Pre-commit and pre-push hooks. Installed automatically by `pnpm install` via
+# the `prepare` script. Skip in any single run with `LEFTHOOK=0 git commit -m ...`.
+
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: "*.{js,jsx,ts,tsx,json,jsonc}"
+      run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+
+    panda-codegen:
+      glob: "{panda.config.ts,src/renderer/src/**/*.{ts,tsx,css}}"
+      run: pnpm exec panda codegen --silent
+
+    forbidden-patterns:
+      glob: "*.{js,jsx,ts,tsx}"
+      run: |
+        if grep -Pn 'console\.log\b|debugger;|^<<<<<<< |\.only\(|from ['\''"]react-router-dom|from ['\''"]@stitches/react' {staged_files}; then
+          echo ""
+          echo "Forbidden pattern found in staged files."
+          echo "Banned: console.log, debugger, leftover merge markers, .only( in tests,"
+          echo "@stitches/react imports, react-router-dom imports."
+          exit 1
+        fi
+
+pre-push:
+  commands:
+    typecheck:
+      run: pnpm typecheck
+    knip:
+      run: pnpm exec knip --no-config-hints

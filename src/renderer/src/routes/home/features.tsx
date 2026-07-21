@@ -3,11 +3,11 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import Card from "@/components/ui/card";
+import { FEATURE_ICON } from "@/constants/config";
 import APIProtected from "@/features/APIProtected";
 import { css } from "@/styled/css";
 import { Grid, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
-import { FEATURE_ICON } from "@/utils/config";
 import {
   Link,
   type LinkComponentProps,
@@ -51,7 +51,12 @@ export const Route = createFileRoute("/home/features")({
 });
 
 function RouteComponent() {
-  const { t } = useTranslation(["common", "dataset", "anonymizer"]);
+  const { t } = useTranslation([
+    "common",
+    "dataset",
+    "anonymizer",
+    "voice-to-text",
+  ]);
 
   return (
     <APIProtected>
@@ -62,7 +67,8 @@ function RouteComponent() {
             <styled.h1 textStyle="title.md.strong">
               {t("home.features.greeting")}
             </styled.h1>
-            <Grid columns={2} rowGap="6" columnGap="6">
+            <Grid columns={3} rowGap="6" columnGap="6">
+              {/* FIXME: fix the text wrapping on smaller screens */}
               <CardTool
                 to="/app/$feature"
                 params={{ feature: FeatureFlowEnum.Dataset }}
@@ -76,6 +82,13 @@ function RouteComponent() {
                 title={t("anonymizer:title")}
                 subtitle={t("anonymizer:subtitle")}
                 icon={FEATURE_ICON.ANONYMIZER}
+              />
+              <CardTool
+                to="/app/$feature"
+                params={{ feature: FeatureFlowEnum.VoiceToText }}
+                title={t("voice-to-text:title")}
+                subtitle={t("voice-to-text:subtitle")}
+                icon={FEATURE_ICON.VOICE_TO_TEXT}
               />
             </Grid>
           </Stack>

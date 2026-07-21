@@ -1,6 +1,7 @@
 import { showToast } from "@/features/showToast";
 import { useFiles } from "@/hooks";
 import { aymuraiService } from "@/services/aymurai";
+import { downloadBlob } from "@/services/export/download-blob";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import { HStack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
@@ -63,12 +64,12 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
     if (isPdfInput) {
       convertToOdt(anonymizedFile, {
         onSuccess: (odtBlob) => {
-          triggerDownload(odtBlob, changeExtension(file.data.name));
+          downloadBlob(odtBlob, changeExtension(file.data.name));
         },
         onError: onConversionError,
       });
     } else {
-      triggerDownload(anonymizedFile, changeExtension(file.data.name));
+      downloadBlob(anonymizedFile, changeExtension(file.data.name));
     }
   };
 
@@ -79,11 +80,11 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
     }
 
     if (isPdfInput) {
-      triggerDownload(anonymizedFile, changeExtension(file.data.name, "pdf"));
+      downloadBlob(anonymizedFile, changeExtension(file.data.name, "pdf"));
     } else {
       convertToPdf(anonymizedFile, {
         onSuccess: (pdfBlob) => {
-          triggerDownload(pdfBlob, changeExtension(file.data.name, "pdf"));
+          downloadBlob(pdfBlob, changeExtension(file.data.name, "pdf"));
         },
         onError: onConversionError,
       });
@@ -127,15 +128,6 @@ export default function FinishAnonymizer({ onRestart }: FinishAnonymizerProps) {
 
 function getExtension(name: string) {
   return name.split(".").pop()?.toLowerCase() ?? "";
-}
-
-function triggerDownload(blob: Blob, fileName: string) {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName;
-  link.click();
-  URL.revokeObjectURL(url);
 }
 
 function changeExtension(name: string, ext = "odt") {

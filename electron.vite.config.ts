@@ -24,7 +24,7 @@ export default defineConfig({
     // keeps the default base of "/".
     base: "./",
     server: {
-      port: 3000,
+      port: Number(process.env.PORT) || 3000,
     },
     resolve: {
       alias: {

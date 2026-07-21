@@ -7,13 +7,18 @@ import {
 import { z } from "zod";
 
 import FileProvider from "@/context/File";
+import TranscriptionProvider from "@/context/Transcription";
 import APIProtected from "@/features/APIProtected";
 import { Stack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 
 // Validation schema for feature parameter
 const featureParamSchema = z.object({
-  feature: z.enum([FeatureFlowEnum.Dataset, FeatureFlowEnum.Anonymizer]),
+  feature: z.enum([
+    FeatureFlowEnum.Dataset,
+    FeatureFlowEnum.Anonymizer,
+    FeatureFlowEnum.VoiceToText,
+  ]),
 });
 
 export const Route = createFileRoute("/app/$feature")({
@@ -33,13 +38,17 @@ export const Route = createFileRoute("/app/$feature")({
 
 function AppLayoutRoute() {
   const { feature } = useParams({ from: "/app/$feature" });
+  const isVoice = feature === FeatureFlowEnum.VoiceToText;
+  const inner = (
+    <Stack width="screen" height="screen" gap="0">
+      <FileProvider>
+        <Outlet key={feature} />
+      </FileProvider>
+    </Stack>
+  );
   return (
     <APIProtected>
-      <Stack width="screen" height="screen" gap="0">
-        <FileProvider>
-          <Outlet key={feature} />
-        </FileProvider>
-      </Stack>
+      {isVoice ? <TranscriptionProvider>{inner}</TranscriptionProvider> : inner}
     </APIProtected>
   );
 }
