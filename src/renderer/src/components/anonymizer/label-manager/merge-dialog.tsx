@@ -27,7 +27,7 @@ export default function MergeDialog({
         if (!open) onClose();
       }}
     >
-      <DialogContent>
+      <DialogContent size="sm">
         <DialogTitle>Unificar grupos</DialogTitle>
         {source && target && (
           <p>

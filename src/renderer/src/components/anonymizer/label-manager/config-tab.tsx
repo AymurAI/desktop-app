@@ -199,7 +199,7 @@ export default function LabelConfigTab({
           </Stack>
         </LabelManagerSection>
         <Dialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
-          <DialogContent>
+          <DialogContent size="sm">
             <DialogHeader>
               <DialogTitle>Borrar términos excluidos</DialogTitle>
             </DialogHeader>

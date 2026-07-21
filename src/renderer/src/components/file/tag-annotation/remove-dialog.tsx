@@ -20,7 +20,7 @@ export default function RemoveDialog({
 }: RemoveDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent size="sm">
         <DialogTitle>Eliminar ocurrencias con este texto</DialogTitle>
         <p id="remove-dialog-description">
           Se eliminarán todas las ocurrencias que coincidan exactamente con el

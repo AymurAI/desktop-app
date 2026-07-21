@@ -22,7 +22,7 @@ export default function ReplaceDialog({
 }: ReplaceDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent size="sm">
         <DialogTitle>Reemplazar todas las ocurrencias</DialogTitle>
         <p>
           Se reemplazará la etiqueta en todas las ocurrencias que coincidan

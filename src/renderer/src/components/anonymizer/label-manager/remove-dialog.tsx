@@ -20,7 +20,7 @@ export default function RemoveDialog({
 }: RemoveDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent size="sm">
         <DialogTitle>Eliminar todas las ocurrencias</DialogTitle>
         <p>
           ¿Deseas eliminar todas las ocurrencias del grupo con la etiqueta{" "}
