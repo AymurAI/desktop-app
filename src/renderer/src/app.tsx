@@ -6,8 +6,8 @@ import {
 import { Toaster } from "react-hot-toast";
 
 import { ThemeProvider } from "@/components";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import * as TanstackReactQuery from "@/features/ReactQueryProvider";
+import { TooltipProvider } from "@aymurai/ui";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
