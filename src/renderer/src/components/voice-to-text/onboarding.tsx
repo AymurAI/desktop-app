@@ -17,7 +17,7 @@ import { SectionTitle } from "@/layout/section-title";
 import { addFiles } from "@/reducers/file/actions";
 import { clearTranscriptions } from "@/reducers/transcription/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
-import { HStack, Stack } from "@/styled/jsx";
+import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { Button } from "@aymurai/ui";
 
@@ -75,6 +75,11 @@ export default function VoiceOnboarding() {
       </MainContent>
       <Footer withBuiltBy>
         <HStack gap="4">
+          {!tutorialSeen && (
+            <styled.p textStyle="paragraph.sm.default">
+              {t("onboarding.validFormats")}
+            </styled.p>
+          )}
           <Button onClick={handleOpenInput}>
             {t("onboarding.loadDocuments")}
           </Button>

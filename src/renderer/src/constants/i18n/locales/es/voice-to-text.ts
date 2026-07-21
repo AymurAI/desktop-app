@@ -48,6 +48,7 @@ const voiceToText = {
   onboarding: {
     sectionTitle: "1. Selección de archivo",
     loadDocuments: "Cargar archivo",
+    validFormats: `Formatos válidos: ${formatExtensionList(MEDIA_EXTENSIONS)}`,
     dropAreaTitle:
       "Selecciona el archivo que desea transcribir o arrástralo y suéltalo",
     dropAreaFormats: `Formatos válidos: ${formatExtensionList(MEDIA_EXTENSIONS)}`,
