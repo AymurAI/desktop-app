@@ -12,7 +12,7 @@ import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import { DOCUMENT_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
-import { addFiles } from "@/reducers/file/actions";
+import { addFiles, removeAllFiles } from "@/reducers/file/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
 import { HStack, styled } from "@/styled/jsx";
 import { featureNamespace } from "@/types/features";
@@ -53,7 +53,8 @@ function DocumentOnboarding() {
   const tutorialSeen = useTutorialSeen(feature);
   const toggleTutorialSeen = useSetTutorialSeen();
   const handleAddFiles = async (files: File[]) => {
-    dispatch(addFiles(files));
+    dispatch(removeAllFiles());
+    dispatch(addFiles(files.slice(0, 1)));
     await navigate({
       to: "/app/$feature/preview",
       params: { feature },
@@ -94,7 +95,8 @@ function DocumentOnboarding() {
                 const allowedFiles = files.filter((file) =>
                   isAllowed(file, DOCUMENT_EXTENSIONS),
                 );
-                if (allowedFiles.length > 0) handleAddFiles(allowedFiles);
+                if (allowedFiles.length > 0)
+                  handleAddFiles(allowedFiles.slice(0, 1));
               }}
               onClick={handleOpenInput}
             />
@@ -119,7 +121,6 @@ function DocumentOnboarding() {
         ref={inputRef}
         onChange={handleInputChange}
         extensions={DOCUMENT_EXTENSIONS}
-        multiple={feature === FeatureFlowEnum.Dataset}
       />
     </>
   );

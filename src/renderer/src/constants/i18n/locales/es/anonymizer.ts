@@ -8,7 +8,7 @@ const anonymizer = {
   onboarding: {
     sectionTitle: "1. Selección de archivo",
     validFormats: documentFormats,
-    loadDocuments: "Cargar documentos",
+    loadDocuments: "Cargar documento",
     dropAreaTitle: "Selecciona o arrastra el archivo para\nanonimizar",
     dropAreaFormats: documentFormats,
   },
