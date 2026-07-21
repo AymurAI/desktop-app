@@ -2,7 +2,6 @@ import { useFiles } from "@/hooks/useFiles";
 import filesystem from "@/services/filesystem";
 import { HStack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
-import type { DocFile } from "@/types/file";
 import { submitValidations } from "@/utils/file";
 import { Button } from "@aymurai/ui";
 import { useEffect, useState } from "react";
@@ -24,32 +23,36 @@ export default function FinishDataset({ onRestart }: FinishDatasetProps) {
   const checkForErrors = (fileName: string) =>
     !!errorNames.find((name) => name === fileName);
 
-  const submit = async (file: DocFile) => {
-    try {
-      // POST the validated data to the dataset
-      await submitValidations({
-        isOnline: false,
-        validations: file.validationObject,
-      });
-    } catch {
-      setErrorNames((names) => [...names, file.data.name]);
-    }
-
-    // Export the feedback JSON
-    await filesystem.feedback.export(files);
-  };
-
   // At first render, submit all the data
+  // biome-ignore lint/correctness/useExhaustiveDependencies: submit the initial file snapshot once
   useEffect(() => {
+    let active = true;
+
     const submitAll = async () => {
       for (const file of files) {
-        await submit(file);
+        try {
+          await submitValidations({
+            isOnline: false,
+            validations: file.validationObject,
+          });
+        } catch {
+          if (active) setErrorNames((names) => [...names, file.data.name]);
+        }
       }
+
+      // Feedback export is secondary to saving each validated document.
+      await filesystem.feedback.export(files).catch(() => undefined);
     };
 
-    submitAll().then(() => setIsLoading(false));
+    void submitAll()
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
 
-    // We strictly need to run this effect once
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
