@@ -18,28 +18,8 @@ import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import type { DocFile } from "@/types/file";
-import { Button, Card } from "@aymurai/ui";
-
-function formatFileSize(bytes: number): string {
-  if (bytes >= 1024 * 1024) {
-    return `${(bytes / (1024 * 1024)).toFixed(1)} mb`;
-  }
-  return `${Math.round(bytes / 1024)} kb`;
-}
-
-const fileRow = css({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: "4",
-  width: "full",
-  p: "6",
-  rounded: "[8px]",
-  borderWidth: "[4px]",
-  borderStyle: "solid",
-  borderColor: "[#BCBAB8]",
-  bg: "bg.secondary",
-});
+import { formatFileSize } from "@/utils/file";
+import { ArchiveRow, Button, Card } from "@aymurai/ui";
 
 const playButton = css({
   display: "flex",
@@ -77,8 +57,14 @@ function FileRow({ file, onRemove }: { file: DocFile; onRemove: () => void }) {
   const displayedDurationMs = durationMs || file.durationMs || 0;
 
   return (
-    <div className={fileRow}>
-      <HStack gap="3" alignItems="center" minWidth="0">
+    <ArchiveRow
+      variant="outlined"
+      title={file.data.name}
+      description={t("preview.meta", {
+        duration: formatDuration(displayedDurationMs),
+        size: formatFileSize(file.data.size),
+      })}
+      leadingAction={
         <button
           type="button"
           className={playButton}
@@ -95,31 +81,18 @@ function FileRow({ file, onRemove }: { file: DocFile; onRemove: () => void }) {
             <Play size={28} weight="fill" />
           )}
         </button>
-        <Stack gap="1" minWidth="0">
-          <styled.span
-            textStyle="paragraph.md.default"
-            color="text.default"
-            truncate
-          >
-            {file.data.name}
-          </styled.span>
-          <styled.span textStyle="paragraph.sm.default" color="text.lighter">
-            {t("preview.meta", {
-              duration: formatDuration(displayedDurationMs),
-              size: formatFileSize(file.data.size),
-            })}
-          </styled.span>
-        </Stack>
-      </HStack>
-      <button
-        type="button"
-        onClick={onRemove}
-        aria-label={t("preview.removeAria", { name: file.data.name })}
-        className={removeButton}
-      >
-        <Trash size={24} />
-      </button>
-    </div>
+      }
+      trailingAction={
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label={t("preview.removeAria", { name: file.data.name })}
+          className={removeButton}
+        >
+          <Trash size={24} />
+        </button>
+      }
+    />
   );
 }
 
