@@ -1,10 +1,19 @@
 import { useFiles } from "@/hooks";
+import { css } from "@/styled/css";
+import { HStack } from "@/styled/jsx";
 import type { DocFile } from "@/types/file";
-import Stack from "../stack";
-import { TabName as FileName, Tab as FileStep } from "../tabs";
-import { CaretButton, Carousel } from "./FileStepper.styles";
-import Icons from "./Icons";
+import { ArchiveTabs, Button } from "@aymurai/ui";
+import { CaretLeft, CaretRight } from "phosphor-react";
 import { canMoveLeft as checkLeft, canMoveRight as checkRight } from "./utils";
+
+const carousel = css({
+  display: "flex",
+  flexDirection: "row",
+  gap: "2",
+  alignItems: "center",
+  flex: "1",
+  overflowX: "auto",
+});
 
 interface Props {
   selected: number;
@@ -25,44 +34,48 @@ export default function FileStepper({
 
   const getStatus = (current: number, file: DocFile) => {
     if (file.validated) {
-      return "completed";
+      return "completed" as const;
     }
-    return selected === current ? "focus" : "default";
+    return selected === current
+      ? ("selected" as const)
+      : ("unselected" as const);
   };
 
   return (
-    <Stack css={{ overflow: "scroll" }}>
-      {/* <- */}
+    <HStack overflow="hidden" gap="2" width="full">
       {canMoveLeft && (
-        <CaretButton
+        <Button
           variant="tertiary"
+          size="icon-sm"
           disabled={isLeftDisabled}
           onClick={previousFile}
+          aria-label="Documento anterior"
         >
-          <Icons.ArrowLeft />
-        </CaretButton>
+          <CaretLeft size={24} />
+        </Button>
       )}
 
-      {/* List of files */}
-      <Carousel>
+      <div className={carousel} role="tablist" aria-label="Documentos">
         {files.map((file, i) => (
-          <FileStep key={file.data.name} status={getStatus(i, file)}>
-            <FileName css={{ width: 200 }}>{file.data.name}</FileName>
-            <Icons.Check status={getStatus(i, file)} />
-          </FileStep>
+          <ArchiveTabs
+            key={file.data.name}
+            label={file.data.name}
+            status={getStatus(i, file)}
+          />
         ))}
-      </Carousel>
+      </div>
 
-      {/* -> */}
       {canMoveRight && (
-        <CaretButton
+        <Button
           variant="tertiary"
+          size="icon-sm"
           disabled={isRightDisabled}
           onClick={nextFile}
+          aria-label="Documento siguiente"
         >
-          <Icons.ArrowRight />
-        </CaretButton>
+          <CaretRight size={24} />
+        </Button>
       )}
-    </Stack>
+    </HStack>
   );
 }
