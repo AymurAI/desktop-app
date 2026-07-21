@@ -3,6 +3,7 @@ const common = {
   howItWorks: "¿Cómo funciona?",
   platformBuiltBy: "Plataforma hecha por",
   settings: "Configuración",
+  close: "Cerrar",
   header: {
     appsAria: "Abrir aplicaciones",
     homeAria: "Ir al inicio",
