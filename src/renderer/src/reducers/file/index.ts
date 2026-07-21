@@ -6,7 +6,6 @@ import {
   type AppendPrediction,
   type AppendValidationAction,
   type FilterUnprocessedAction,
-  type FilterUnselectedAction,
   type MergeGroupsAction,
   type MoveMentionToGroupAction,
   type RemoveAllFilesAction,
@@ -19,7 +18,6 @@ import {
   type RemovePredictionsByText,
   type ReplaceFileAction,
   type SetDurationAction,
-  type ToggleSelectedAction,
   type UpdatePredictionLabel,
   type UpdatePredictionsByCanonicalId,
   type UpdatePredictionsByText,
@@ -44,14 +42,12 @@ type State = DocFile[];
 export type Action =
   | AddFilesAction
   | AddPredictionsAction
-  | ToggleSelectedAction
   | RemoveAllPredictionsAction
   | RemoveAllFilesAction
   | RemoveFileAction
   | RemovePredictionsAction
   | ReplaceFileAction
   | SetDurationAction
-  | FilterUnselectedAction
   | ValidateAction
   | AppendValidationAction
   | FilterUnprocessedAction
@@ -102,17 +98,6 @@ export default function reducer(state: State, action: Action): State {
       }));
     }
     // ----------------
-    // TOGGLE SELECTED
-    // ----------------
-    case ActionTypes.TOGGLE_SELECTED: {
-      const { fileName } = payload;
-
-      return update(fileName, (current) => ({
-        ...current,
-        selected: !current.selected,
-      }));
-    }
-    // ----------------
     // REMOVE ALL PREDICTIONS
     // ----------------
     case ActionTypes.REMOVE_ALL_PREDICTIONS: {
@@ -155,14 +140,7 @@ export default function reducer(state: State, action: Action): State {
       }));
     }
     // ----------------
-    // FILTER UNSELECTED
-    // ----------------
-    case ActionTypes.FILTER_UNSELECTED: {
-      return state.filter((file) => file.selected);
-    }
-
-    // ----------------
-    // FILTER UNSELECTED
+    // FILTER UNPROCESSED
     // ----------------
     case ActionTypes.FILTER_UNPROCESSED: {
       return state.filter((file) => file.predictions);
