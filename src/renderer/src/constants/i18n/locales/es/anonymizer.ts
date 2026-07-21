@@ -14,7 +14,7 @@ const anonymizer = {
   },
   preview: {
     sectionTitle: "1. Selección de archivo",
-    filesLabel: "Archivos seleccionados",
+    filesLabel: "Vista previa del documento",
     validFormats: documentFormats,
     loadMore: "Cargar más documentos",
     continue: "Continuar",

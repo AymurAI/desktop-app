@@ -41,6 +41,9 @@ const common = {
   },
   filePreview: {
     loadError: "No se pudo cargar el archivo",
+    meta_one: "{{count}} párrafo · {{size}}",
+    meta_other: "{{count}} párrafos · {{size}}",
+    removeAria: "Eliminar {{name}}",
   },
 };
 

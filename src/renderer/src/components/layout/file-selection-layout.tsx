@@ -20,17 +20,19 @@ const content = css({
 interface FileSelectionLayoutProps {
   title: ReactNode;
   children: ReactNode;
+  backButton?: ReactNode;
 }
 
 export default function FileSelectionLayout({
   title,
   children,
+  backButton,
 }: FileSelectionLayoutProps) {
   return (
     <div className={viewport}>
       <Stack gap="8" className={content}>
         <HStack alignItems="center" gap="6">
-          <BackButton to="/home/features" />
+          {backButton ?? <BackButton to="/home/features" />}
           <SectionTitle>{title}</SectionTitle>
         </HStack>
         {children}
