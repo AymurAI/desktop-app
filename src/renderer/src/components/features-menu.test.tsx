@@ -53,10 +53,10 @@ describe("FeaturesMenu — Summarizer", () => {
     navigate.mockClear();
   });
 
-  it("navigates to the Summarizer flow and clears files on click", () => {
+  it("navigates to the Summarizer flow with the short label and clears files on click", () => {
     render(<FeaturesMenu />);
     fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
-    fireEvent.click(screen.getByText("summarizer:title"));
+    fireEvent.click(screen.getByText("common:featuresMenu.summary"));
 
     expect(dispatch).toHaveBeenCalledOnce();
     expect(navigate).toHaveBeenCalledWith({
@@ -65,9 +65,9 @@ describe("FeaturesMenu — Summarizer", () => {
     });
   });
 
-  it("no longer renders a separate disabled Summarizer entry", () => {
+  it("does not render the full Summarizer title in the menu", () => {
     render(<FeaturesMenu />);
     fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
-    expect(screen.queryByText("common:featuresMenu.summary")).toBeNull();
+    expect(screen.queryByText("summarizer:title")).toBeNull();
   });
 });

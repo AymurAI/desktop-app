@@ -63,11 +63,15 @@ export default function FeaturesMenu({ trigger }: FeaturesMenuProps) {
         <FeaturesMenuGrid>
           {features.map((feature) => {
             const Icon = FEATURE_ICON[feature];
+            const label =
+              feature === FeatureFlowEnum.Summarizer
+                ? t("featuresMenu.summary")
+                : t("title", { ns: featureNamespace[feature] });
             return (
               <FeaturesMenuItem
                 key={feature}
                 icon={<Icon size={24} />}
-                label={t("title", { ns: featureNamespace[feature] })}
+                label={label}
                 onClick={() => goToFeature(feature)}
               />
             );
