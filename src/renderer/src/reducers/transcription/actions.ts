@@ -129,7 +129,8 @@ export type UpdateTurnStartMsAction = Action<
 >;
 /**
  * Updates the start timestamp (in milliseconds) of a turn.
- * If the new start exceeds the current end, end is shifted to keep duration positive.
+ * Aligns the previous turn's end to the new boundary. The edited turn keeps
+ * its duration unless it is last, in which case it extends to the audio end.
  */
 export function updateTurnStartMs(
   transcriptionId: string,
