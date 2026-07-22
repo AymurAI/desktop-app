@@ -10,9 +10,29 @@ vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (opts: unknown) => ({
     options: opts,
   }),
-  Link: ({ children, ...props }: React.ComponentProps<"a">) => (
-    <a {...props}>{children}</a>
-  ),
+  Link: ({
+    to,
+    params = {},
+    children,
+    ...props
+  }: {
+    to: string;
+    params?: Record<string, string>;
+    children: React.ReactNode;
+  } & React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
+    // Simple template substitution: /app/$feature + { feature: "SUMMARIZER" } => /app/SUMMARIZER
+    let href = to;
+    if (params && to.includes("$")) {
+      Object.entries(params).forEach(([key, value]) => {
+        href = href.replace(`$${key}`, String(value));
+      });
+    }
+    return (
+      <a href={href} {...props}>
+        {children}
+      </a>
+    );
+  },
   Navigate: () => null,
   useNavigate: () => vi.fn(),
 }));
