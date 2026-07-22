@@ -158,6 +158,7 @@ export default function VoiceFinish() {
                       options={formatOptions}
                       label={t("finish.formatLabel")}
                       value={format}
+                      clearable={false}
                       onChange={(opt) => setFormat(opt.id as ExportFormat)}
                     />
                   </TooltipProvider>
