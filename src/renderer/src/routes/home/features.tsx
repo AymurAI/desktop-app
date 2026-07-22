@@ -12,7 +12,7 @@ import {
   type LinkComponentProps,
   createFileRoute,
 } from "@tanstack/react-router";
-import { Article, type Icon } from "phosphor-react";
+import type { Icon } from "phosphor-react";
 import { useTranslation } from "react-i18next";
 
 const featureCard = css({ minH: "[195px]" });
@@ -121,12 +121,12 @@ function RouteComponent() {
                   subtitle={t("voice-to-text:subtitle")}
                   icon={FEATURE_ICON.VOICE_TO_TEXT}
                 />
-                <CardTool
-                  className={featureCard}
-                  icon={<Article />}
+                <FeatureCardLink
+                  to="/app/$feature"
+                  params={{ feature: FeatureFlowEnum.Summarizer }}
                   title={t("home.features.summaryTitle")}
-                  description={t("home.features.summarySubtitle")}
-                  disabled
+                  subtitle={t("home.features.summarySubtitle")}
+                  icon={FEATURE_ICON.SUMMARIZER}
                 />
               </Grid>
               <div className={builtBy}>
