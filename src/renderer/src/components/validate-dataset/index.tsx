@@ -61,7 +61,11 @@ export function ValidateDataset() {
   };
 
   return (
-    <Stack gap="0" flex="1" minHeight="0" overflow="hidden">
+    // Render the Grid and Footer as direct children of the app shell's flex
+    // column (like the Anonimizador validation route) so the shell's 100vh +
+    // overflow:hidden bounds them. An extra wrapping Stack here let content
+    // escape the height constraint and produced a spurious page-level scrollbar.
+    <>
       <Grid
         flex="1"
         minHeight="0"
@@ -82,6 +86,11 @@ export function ValidateDataset() {
           isAnnotable={false}
         />
         <Stack
+          // position:relative makes this scrolling column the containing block
+          // for the Radix Select's hidden absolutely-positioned native <select>
+          // elements. Without it they resolve against <html>, escape this
+          // column's overflow, and stretch the page far past the footer.
+          position="relative"
           px={{ base: "6", xl: "[100px]" }}
           py={{ base: "6", xl: "16" }}
           overflowY="auto"
@@ -127,6 +136,6 @@ export function ValidateDataset() {
           )}
         </HStack>
       </Footer>
-    </Stack>
+    </>
   );
 }
