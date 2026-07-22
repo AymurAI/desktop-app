@@ -14,7 +14,7 @@ const common = {
   home: {
     features: {
       greeting: "¡Hola! Selecciona la herramienta a utilizar",
-      summaryTitle: "Resumen de Documentos",
+      summaryTitle: "Resumen de Documento",
       summarySubtitle:
         "Genera síntesis claras de resoluciones judiciales extensas",
     },

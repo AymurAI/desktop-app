@@ -1,5 +1,11 @@
 import { FeatureFlowEnum } from "@/types/features";
-import { Database, Detective, FileAudio, type Icon } from "phosphor-react";
+import {
+  Article,
+  Database,
+  Detective,
+  FileAudio,
+  type Icon,
+} from "phosphor-react";
 
 export const DATAGENERO_URL = "https://www.datagenero.org/";
 
@@ -39,6 +45,7 @@ export const FEATURE_ICON: Record<FeatureFlowEnum, Icon> = {
   [FeatureFlowEnum.Dataset]: Database,
   [FeatureFlowEnum.Anonymizer]: Detective,
   [FeatureFlowEnum.VoiceToText]: FileAudio,
+  [FeatureFlowEnum.Summarizer]: Article,
 };
 
 export const USE_MOCK_STT = import.meta.env.VITE_USE_MOCK_STT === "true";

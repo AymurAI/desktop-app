@@ -18,6 +18,7 @@ const featureParamSchema = z.object({
     FeatureFlowEnum.Dataset,
     FeatureFlowEnum.Anonymizer,
     FeatureFlowEnum.VoiceToText,
+    FeatureFlowEnum.Summarizer,
   ]),
 });
 
