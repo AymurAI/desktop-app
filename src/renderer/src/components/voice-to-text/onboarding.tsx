@@ -12,7 +12,7 @@ import MainContent from "@/components/layout/main-content";
 import { FEATURE_ICON, MEDIA_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
-import { addFiles } from "@/reducers/file/actions";
+import { addFiles, removeAllFiles } from "@/reducers/file/actions";
 import { clearTranscriptions } from "@/reducers/transcription/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
 import { HStack, styled } from "@/styled/jsx";
@@ -33,7 +33,12 @@ export default function VoiceOnboarding() {
   const VoiceIcon = FEATURE_ICON.VOICE_TO_TEXT;
 
   const handleAddFiles = async (files: File[]) => {
-    dispatch(addFiles(files));
+    // One file at a time: clear any previous selection, then keep only the
+    // first file. Files live in the FileProvider above this route, so without
+    // clearing, going back to onboarding and picking again would stack the new
+    // file onto the old one.
+    dispatch(removeAllFiles());
+    dispatch(addFiles(files.slice(0, 1)));
     toggleTutorialSeen(FeatureFlowEnum.VoiceToText);
     await navigate({
       to: "/app/$feature/preview",
@@ -96,7 +101,6 @@ export default function VoiceOnboarding() {
         ref={inputRef}
         onChange={handleInputChange}
         extensions={MEDIA_EXTENSIONS}
-        multiple
       />
     </>
   );
