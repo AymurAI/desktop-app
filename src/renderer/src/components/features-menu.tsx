@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from "@aymurai/ui";
 import { useNavigate } from "@tanstack/react-router";
-import { DotsNine, Gear } from "phosphor-react";
+import { Article, DotsNine, Gear } from "phosphor-react";
 import type { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -72,6 +72,11 @@ export default function FeaturesMenu({ trigger }: FeaturesMenuProps) {
               />
             );
           })}
+          <FeaturesMenuItem
+            icon={<Article size={24} />}
+            label={t("featuresMenu.summary")}
+            disabled
+          />
           <FeaturesMenuItem
             icon={<Gear size={24} />}
             label={t("settings")}

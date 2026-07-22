@@ -45,4 +45,18 @@ describe("FeaturesMenu", () => {
     expect(dispatch).toHaveBeenCalledOnce();
     expect(navigate).toHaveBeenCalledWith({ to: "/home/host" });
   });
+
+  it("renders the summary placeholder disabled without side effects", () => {
+    render(<FeaturesMenu />);
+    fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
+
+    const summary = screen.getByRole("button", {
+      name: "common:featuresMenu.summary",
+    });
+    expect(summary).toBeDisabled();
+
+    fireEvent.click(summary);
+    expect(dispatch).not.toHaveBeenCalled();
+    expect(navigate).not.toHaveBeenCalled();
+  });
 });

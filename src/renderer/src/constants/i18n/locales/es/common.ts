@@ -4,6 +4,9 @@ const common = {
   platformBuiltBy: "Plataforma hecha por",
   settings: "Configuración",
   close: "Cerrar",
+  featuresMenu: {
+    summary: "Resumen",
+  },
   header: {
     appsAria: "Abrir aplicaciones",
     homeAria: "Ir al inicio",
