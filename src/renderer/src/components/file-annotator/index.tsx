@@ -70,8 +70,11 @@ const Paragraph = memo(
 
     const splits = generateSplits(children, annotations);
 
+    // A <div>, not <p>: annotations render block content (mark + popover
+    // HStack), which the browser would otherwise reparent out of a <p>,
+    // corrupting the layout (and triggering a React DOM-nesting error).
     return (
-      <p id={paragraph.id} className={S.paragraph}>
+      <div id={paragraph.id} className={S.paragraph}>
         {splits.map((s) => {
           const content = children.slice(s.start, s.end);
           const key = `${s.type}-${s.start}-${s.end}`;
@@ -98,7 +101,7 @@ const Paragraph = memo(
               );
           }
         })}
-      </p>
+      </div>
     );
   },
 );
