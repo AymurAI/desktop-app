@@ -55,19 +55,19 @@ describe("FeaturesMenu — Summarizer", () => {
 
   it("navigates to the Summarizer flow and clears files on click", () => {
     render(<FeaturesMenu />);
+    fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
     fireEvent.click(screen.getByText("summarizer:title"));
 
     expect(dispatch).toHaveBeenCalledOnce();
-    expect(navigate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        to: "/app/$feature",
-        params: { feature: "SUMMARIZER" },
-      }),
-    );
+    expect(navigate).toHaveBeenCalledWith({
+      to: "/app/$feature",
+      params: { feature: "SUMMARIZER" },
+    });
   });
 
   it("no longer renders a separate disabled Summarizer entry", () => {
     render(<FeaturesMenu />);
+    fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
     expect(screen.queryByText("common:featuresMenu.summary")).toBeNull();
   });
 });
