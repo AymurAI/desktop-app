@@ -87,15 +87,13 @@ export default function ConnectToHost({ onBackClick }: ConnectToHostProps) {
             {t("home.host.connectServerExplanation")}
           </h2>
 
-          <Stack gap="1" width="full">
-            <TextField
-              label={t("home.host.connectServerLabel")}
-              placeholder="http://"
-              value={host}
-              onChange={handleChange}
-              error={error ? errorMessage(error) : undefined}
-            />
-          </Stack>
+          <TextField
+            label={t("home.host.connectServerLabel")}
+            placeholder="http://"
+            value={host}
+            onChange={handleChange}
+            error={error ? errorMessage(error) : undefined}
+          />
 
           <Button type="submit" isLoading={isPending}>
             {t("home.host.connectServerSubmit")}
