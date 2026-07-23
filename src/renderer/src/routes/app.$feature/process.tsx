@@ -26,6 +26,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import SummaryProcess from "@/components/summarizer/summary-process";
 import VoiceProcess from "@/components/voice-to-text/process";
 
 export const Route = createFileRoute("/app/$feature/process")({
@@ -37,6 +38,7 @@ function RouteComponent() {
     from: "/app/$feature/process",
   });
   if (feature === FeatureFlowEnum.VoiceToText) return <VoiceProcess />;
+  if (feature === FeatureFlowEnum.Summarizer) return <SummaryProcess />;
   return <DocumentProcess />;
 }
 
