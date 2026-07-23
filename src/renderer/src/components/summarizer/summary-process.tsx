@@ -14,6 +14,7 @@ import { FeatureFlowEnum } from "@/types/features";
 import { Button, Callout, Card, CheckCircle, Spinner } from "@aymurai/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { Info } from "phosphor-react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 const previewFrame = css({
@@ -72,6 +73,26 @@ export default function SummaryProcess() {
   const isError = status === "error";
   const isStopped = status === "stopped";
 
+  // Keep the newest streamed fragment in view by sticking to the bottom,
+  // but stop following once the user scrolls up to re-read earlier text —
+  // same pattern as voice-to-text/process.tsx.
+  const previewRef = useRef<HTMLDivElement>(null);
+  const stickToBottomRef = useRef(true);
+
+  const handlePreviewScroll = () => {
+    const el = previewRef.current;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    stickToBottomRef.current = distanceFromBottom < 40;
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: summary.partialText is the trigger — re-scroll to the bottom whenever new text streams in
+  useEffect(() => {
+    if (!stickToBottomRef.current) return;
+    const el = previewRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [summary.partialText]);
+
   const handleStop = () => abort();
 
   const handlePrevious = () =>
@@ -112,18 +133,27 @@ export default function SummaryProcess() {
                     {t("process.processingSubtitle")}
                   </styled.p>
                 </Stack>
-                <div className={spinnerSlot}>
-                  {!isCompleted && !isError && !isStopped && <Spinner />}
-                  {isCompleted && (
-                    <CheckCircle aria-label={t("process.completedAria")} />
+                <HStack gap="4" alignItems="center">
+                  {!isCompleted && !isError && !isStopped && (
+                    <Button variant="secondary" onClick={handleStop}>
+                      {t("process.stop")}
+                    </Button>
                   )}
-                </div>
+                  <div className={spinnerSlot}>
+                    {!isCompleted && !isError && !isStopped && <Spinner />}
+                    {isCompleted && (
+                      <CheckCircle aria-label={t("process.completedAria")} />
+                    )}
+                  </div>
+                </HStack>
               </HStack>
 
               <Stack gap="3">
                 {!isError ? (
                   <ScrollArea
                     className={previewFrame}
+                    viewportRef={previewRef}
+                    onScroll={handlePreviewScroll}
                     aria-live="polite"
                     aria-label={t("process.previewAriaLabel")}
                   >
@@ -169,11 +199,6 @@ export default function SummaryProcess() {
           <Button variant="secondary" onClick={handlePrevious}>
             {t("process.back")}
           </Button>
-          {!isCompleted && !isError && !isStopped && (
-            <Button variant="secondary" onClick={handleStop}>
-              {t("process.stop")}
-            </Button>
-          )}
           <Button onClick={handleNext} disabled={!isCompleted}>
             {t("process.next")}
           </Button>
