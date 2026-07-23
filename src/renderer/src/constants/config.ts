@@ -53,6 +53,12 @@ export const STT_MOCK_DELAY_MS = Number(
   import.meta.env.VITE_STT_MOCK_DELAY_MS ?? 4000,
 );
 
+export const USE_MOCK_SUMMARIZE =
+  import.meta.env.VITE_USE_MOCK_SUMMARIZE === "true";
+export const SUMMARIZE_MOCK_DELAY_MS = Number(
+  import.meta.env.VITE_SUMMARIZE_MOCK_DELAY_MS ?? 300,
+);
+
 // Cache ON in production, OFF in dev. Override with VITE_ASR_USE_CACHE=true|false.
 export const USE_ASR_CACHE =
   import.meta.env.VITE_ASR_USE_CACHE !== undefined
