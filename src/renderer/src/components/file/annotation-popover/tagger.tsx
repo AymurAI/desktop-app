@@ -27,9 +27,16 @@ const tagger = sva({
   base: {
     container: {
       ...hstack.raw({ alignItems: "center", gap: "1" }),
-      p: "1",
+      // Figma "Tool Bar" (node 40000696:77073): p-[8px], rounded-[8px], plus
+      // the "M3/Elevation Light/1" two-layer shadow — verified against the
+      // literal exported CSS (`0px 1px 2px rgba(0,0,0,0.3), 0px 1px 3px 1px
+      // rgba(0,0,0,0.15)`), not the design-context tool's drop-shadow-[...]
+      // utility, which had mis-converted blur radii and dropped the spread.
+      p: "2",
       bg: "action.alt-default",
-      rounded: "lg",
+      rounded: "md",
+      boxShadow:
+        "[0px 1px 2px rgba(0,0,0,0.3), 0px 1px 3px 1px rgba(0,0,0,0.15)]",
     },
     button: {
       cursor: "pointer",

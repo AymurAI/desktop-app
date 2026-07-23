@@ -52,14 +52,7 @@ export default function FeaturesMenu({ trigger }: FeaturesMenuProps) {
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent
-        align="end"
-        style={{
-          background: "transparent",
-          borderRadius: 0,
-          boxShadow: "none",
-        }}
-      >
+      <PopoverContent align="end" surface={false}>
         <FeaturesMenuGrid>
           {features.map((feature) => {
             const Icon = FEATURE_ICON[feature];

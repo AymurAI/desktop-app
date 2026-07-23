@@ -152,6 +152,7 @@ export default function AnnotationPopover({
         side="top"
         sideOffset={8}
         showArrow={false}
+        surface={false}
         onOpenAutoFocus={(e) => {
           if (!isKeyboardOpen.current) e.preventDefault();
         }}
