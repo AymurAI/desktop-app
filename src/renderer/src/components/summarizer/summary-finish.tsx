@@ -1,5 +1,6 @@
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
+import { DOCUMENT_EXTENSIONS } from "@/constants/config";
 import { useSummary } from "@/context/Summary";
 import { downloadBlob } from "@/services/export/download-blob";
 import {
@@ -8,8 +9,10 @@ import {
 } from "@/services/export/export-summary";
 import { Grid, HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import { sanitizeFileName } from "@/utils/sanitize-file-name";
 import {
   Button,
+  Callout,
   Card,
   RichTextEditor,
   Select,
@@ -25,11 +28,15 @@ const FORMAT_OPTIONS: SelectOption[] = [
   { id: "pdf", text: ".pdf" },
 ];
 
+const DEFAULT_FILE_NAME = "resumen";
+
 export default function SummaryFinish() {
   const { t } = useTranslation("summarizer");
   const navigate = useNavigate();
   const summary = useSummary();
   const [format, setFormat] = useState<SummaryExportFormat>("txt");
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState(false);
 
   const handleBack = () =>
     navigate({
@@ -39,8 +46,21 @@ export default function SummaryFinish() {
 
   const handleExport = async () => {
     if (!summary.document) return;
-    const blob = await exportSummary(summary.document, summary.title, format);
-    downloadBlob(blob, `${summary.title}.${format}`);
+    setIsExporting(true);
+    setExportError(false);
+    try {
+      const blob = await exportSummary(summary.document, summary.title, format);
+      const baseName = sanitizeFileName(
+        summary.title,
+        DOCUMENT_EXTENSIONS,
+        DEFAULT_FILE_NAME,
+      );
+      downloadBlob(blob, `${baseName}.${format}`);
+    } catch {
+      setExportError(true);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   if (!summary.document) return null;
@@ -74,6 +94,14 @@ export default function SummaryFinish() {
                 onChange={(opt) => setFormat(opt.id as SummaryExportFormat)}
                 options={FORMAT_OPTIONS}
               />
+              {exportError && (
+                <Callout
+                  message={t("finish.exportError")}
+                  variant="error"
+                  size="compact"
+                  noBorder
+                />
+              )}
             </Stack>
           </Grid>
         </Card>
@@ -83,7 +111,13 @@ export default function SummaryFinish() {
           <Button variant="secondary" onClick={handleBack}>
             {t("finish.back")}
           </Button>
-          <Button onClick={handleExport}>{t("finish.export")}</Button>
+          <Button
+            onClick={handleExport}
+            disabled={isExporting}
+            isLoading={isExporting}
+          >
+            {t("finish.export")}
+          </Button>
         </HStack>
       </Footer>
     </>

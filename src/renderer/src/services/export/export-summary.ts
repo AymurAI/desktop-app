@@ -14,7 +14,7 @@ export async function exportSummary(
     return new Blob([documentToPlainText(document)], { type: "text/plain" });
   }
 
-  const odtBlob = documentToOdt(document, title);
+  const odtBlob = await documentToOdt(document, title);
   if (format === "odt") return odtBlob;
 
   return convertOdtToPdf(odtBlob);

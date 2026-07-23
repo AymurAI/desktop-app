@@ -79,6 +79,8 @@ const summarizer = {
     formatLabel: "Formato de archivo",
     back: "Volver",
     export: "Exportar",
+    exportError:
+      "No se pudo exportar el resumen. Volvé a intentarlo en unos instantes.",
   },
 };
 
