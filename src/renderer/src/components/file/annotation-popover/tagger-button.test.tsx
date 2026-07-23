@@ -63,7 +63,10 @@ describe("TaggerButton", () => {
     // The button's own accessible name comes from its `aria-label` attribute,
     // not visible text — only the Tooltip's content panel renders the copy
     // as actual text once opened, so this should find exactly one match.
-    fireEvent.mouseEnter(button);
+    // Radix's TooltipTrigger opens on its `onFocus` handler (not on a plain
+    // `mouseenter` DOM event, which it never listens for), so fire a focus
+    // event to reliably trigger the open.
+    fireEvent.focus(button);
     await waitFor(() => {
       expect(screen.getByText("Eliminar esta ocurrencia")).toBeInTheDocument();
     });
