@@ -9,11 +9,11 @@ const summarizer = {
     sectionTitle: "1. Selección de archivo",
     validFormats: documentFormats,
     loadDocuments: "Cargar documento",
-    dropAreaTitle: "Selecciona el archivo para resumir",
+    dropAreaTitle: "Selecciona o arrastra el archivo para\nresumir",
     dropAreaFormats: documentFormats,
   },
   preview: {
-    sectionTitle: "Previsualización",
+    sectionTitle: "1. Selección de archivo",
     filesLabel: "Vista previa del documento",
     validFormats: documentFormats,
     continue: "Continuar",
@@ -49,7 +49,7 @@ const summarizer = {
     previewAriaLabel: "Vista previa del resumen",
     callout:
       "Resumiendo texto. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
-    error: "No se pudo generar el resumen. Intentá nuevamente.",
+    error: "Error de carga de archivo. Volvelo a intentar",
     back: "Volver",
     next: "Siguiente",
     stop: "Detener",
