@@ -69,6 +69,7 @@ const summarizer = {
       "No se pudo guardar la validación. Podés continuar, pero los cambios podrían no quedar persistidos.",
     missingSummary: "No se encontró ningún resumen generado.",
     originalDocumentLabel: "Documento original",
+    summaryLabel: "Resumen editable",
   },
   finish: {
     sectionTitle: "4. Finalización",

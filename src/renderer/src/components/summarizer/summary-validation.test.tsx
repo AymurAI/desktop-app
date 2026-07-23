@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import SummaryValidation from "./summary-validation";
 
 vi.mock("react-i18next", () => ({
@@ -60,6 +60,13 @@ vi.mock("@/components/ui/back-button", () => ({
 }));
 
 describe("SummaryValidation", () => {
+  beforeEach(() => {
+    mockDispatch.mockClear();
+    mockNavigate.mockClear();
+    mockSave.mockClear();
+    mockSave.mockResolvedValue(undefined);
+  });
+
   it("renders both the original document panel and the summary editor", () => {
     render(<SummaryValidation />);
     expect(screen.getByText(/Texto original completo/)).toBeInTheDocument();
@@ -74,6 +81,35 @@ describe("SummaryValidation", () => {
         documentId: "acta.docx",
         title: "Resumen acta.docx",
       }),
+    );
+  });
+
+  it("awaits the save before navigating when Finalizar is clicked", async () => {
+    render(<SummaryValidation />);
+    fireEvent.click(screen.getByText("validation.finish"));
+
+    await waitFor(() => expect(mockSave).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.objectContaining({ to: "/app/$feature/finish" }),
+      ),
+    );
+  });
+
+  it("shows the save-failed error and stays on screen instead of navigating away, but continues on a second click", async () => {
+    mockSave.mockRejectedValueOnce(new Error("network down"));
+    render(<SummaryValidation />);
+
+    fireEvent.click(screen.getByText("validation.finish"));
+
+    await screen.findByText("validation.saveFailed");
+    expect(mockNavigate).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByText("validation.finish"));
+    await waitFor(() =>
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.objectContaining({ to: "/app/$feature/finish" }),
+      ),
     );
   });
 });

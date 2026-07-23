@@ -33,36 +33,51 @@ export default function SummaryValidation() {
   const [saving, setSaving] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
 
-  const handleSave = () => {
-    if (!file || !summary.document) return;
+  // Resolves to `false` only when the save actually failed — lets callers
+  // that navigate away decide whether to wait for a clean save first.
+  const handleSave = async (): Promise<boolean> => {
+    if (!file || !summary.document) return true;
     setSaving(true);
     setSaveFailed(false);
-    summaryValidationClient
-      .save({
+    try {
+      await summaryValidationClient.save({
         documentId: file.data.name,
         title: summary.title,
         generatedSummary: summary.partialText,
         editedSummary: serializeToPlainText(summary.document),
-      })
-      .catch(() => setSaveFailed(true))
-      .finally(() => setSaving(false));
+      });
+      return true;
+    } catch {
+      setSaveFailed(true);
+      return false;
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleBack = () => {
-    handleSave();
-    navigate({
-      to: "/app/$feature/process",
-      params: { feature: FeatureFlowEnum.Summarizer },
-    });
+  // Save-then-navigate for the two "leave the screen" actions. Awaits the
+  // save so the outcome is known (and, on failure, rendered) before we ever
+  // navigate away — a fire-and-forget save here would run its .catch/.finally
+  // against an unmounting component and the saveFailed Callout would never
+  // get a chance to show. If the save fails, we stay on this screen so the
+  // user sees why; a second click (with saveFailed already true) lets them
+  // continue anyway, matching the "podés continuar, pero los cambios podrían
+  // no quedar persistidos" copy.
+  const proceedTo = async (
+    to: "/app/$feature/process" | "/app/$feature/finish",
+  ) => {
+    if (saveFailed) {
+      navigate({ to, params: { feature: FeatureFlowEnum.Summarizer } });
+      return;
+    }
+    const saved = await handleSave();
+    if (saved) {
+      navigate({ to, params: { feature: FeatureFlowEnum.Summarizer } });
+    }
   };
 
-  const handleContinue = () => {
-    handleSave();
-    navigate({
-      to: "/app/$feature/finish",
-      params: { feature: FeatureFlowEnum.Summarizer },
-    });
-  };
+  const handleBack = () => proceedTo("/app/$feature/process");
+  const handleContinue = () => proceedTo("/app/$feature/finish");
 
   if (!summary.document || !file) return null;
 
@@ -87,7 +102,9 @@ export default function SummaryValidation() {
         justifyContent="stretch"
         alignItems="stretch"
       >
-        <DocumentSearchPanel paragraphs={file.paragraphs ?? []} />
+        <section aria-label={t("validation.originalDocumentLabel")}>
+          <DocumentSearchPanel paragraphs={file.paragraphs ?? []} />
+        </section>
         <div onBlur={handleSave}>
           {hasSummary ? (
             <RichTextEditor
@@ -95,7 +112,7 @@ export default function SummaryValidation() {
               onChange={(next) => dispatch(edit(next))}
               title={summary.title}
               onTitleChange={(next) => dispatch(editTitle(next))}
-              aria-label={t("validation.originalDocumentLabel")}
+              aria-label={t("validation.summaryLabel")}
             />
           ) : (
             <Callout message={t("validation.missingSummary")} variant="error" />
