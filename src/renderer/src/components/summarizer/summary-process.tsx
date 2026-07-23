@@ -150,7 +150,7 @@ export default function SummaryProcess() {
           </Button>
           {!isCompleted && !isError && (
             <Button variant="secondary" onClick={handleStop}>
-              {t("process.stop", { defaultValue: "Detener" })}
+              {t("process.stop")}
             </Button>
           )}
           <Button onClick={handleNext} disabled={!isCompleted}>

@@ -51,6 +51,7 @@ const summarizer = {
       "Resumiendo texto. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
     back: "Volver",
     next: "Siguiente",
+    stop: "Detener",
   },
   validation: {
     sectionTitle: "3. Validación",
