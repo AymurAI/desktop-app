@@ -11,7 +11,7 @@ import { SectionTitle } from "@/layout/section-title";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
-import { Button, Callout, Card, Spinner } from "@aymurai/ui";
+import { Button, Callout, Card, CheckCircle, Spinner } from "@aymurai/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { Info } from "phosphor-react";
 import { useTranslation } from "react-i18next";
@@ -114,6 +114,9 @@ export default function SummaryProcess() {
                 </Stack>
                 <div className={spinnerSlot}>
                   {!isCompleted && !isError && !isStopped && <Spinner />}
+                  {isCompleted && (
+                    <CheckCircle aria-label={t("process.completedAria")} />
+                  )}
                 </div>
               </HStack>
 

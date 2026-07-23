@@ -53,6 +53,7 @@ const summarizer = {
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
     waitingForWords: "Esperando las primeras palabras…",
     previewAriaLabel: "Vista previa del resumen",
+    completedAria: "Resumen completado",
     callout:
       "Resumiendo texto. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
     error: "Error de carga de archivo. Volvelo a intentar",
