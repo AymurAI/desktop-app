@@ -20,26 +20,20 @@ import {
 
 import TaggerButton from "./tagger-button";
 
-const IMG_SIZE = 24;
-
 const tagger = sva({
-  slots: ["container", "button", "divider", "tooltipContent"],
+  slots: ["container", "divider", "tooltipContent"],
   base: {
     container: {
       ...hstack.raw({ alignItems: "center", gap: "1" }),
       // Figma "Tool Bar" (node 40000696:77073): p-[8px], rounded-[8px], plus
       // the "M3/Elevation Light/1" two-layer shadow — verified against the
-      // literal exported CSS (`0px 1px 2px rgba(0,0,0,0.3), 0px 1px 3px 1px
-      // rgba(0,0,0,0.15)`), not the design-context tool's drop-shadow-[...]
-      // utility, which had mis-converted blur radii and dropped the spread.
+      // literal exported CSS, not the design-context tool's drop-shadow-[...]
+      // utility (which had mis-converted blur radii and dropped the spread).
       p: "2",
       bg: "action.alt-default",
       rounded: "md",
       boxShadow:
         "[0px 1px 2px rgba(0,0,0,0.3), 0px 1px 3px 1px rgba(0,0,0,0.15)]",
-    },
-    button: {
-      cursor: "pointer",
     },
     divider: {
       alignSelf: "stretch",
@@ -120,60 +114,36 @@ export default function Tagger({
       </TooltipProvider>
       <div className={classes.divider} />
       <TaggerButton
+        action="agregar-etiqueta"
         tooltip="Afectar una ocurrencia"
         onClick={handleClickOne}
         disabled={!activeLabel}
-      >
-        <img
-          src={`${import.meta.env.BASE_URL}button-icons/add-one.svg`}
-          alt="Afectar una ocurrencia"
-          width={IMG_SIZE}
-          height={IMG_SIZE}
-        />
-      </TaggerButton>
+      />
       <div className={classes.divider} />
       <TaggerButton
+        action="agregar-todas"
         tooltip="Afectar todas las ocurrencias"
         onClick={handleClickAll}
         disabled={!activeLabel}
-      >
-        <img
-          src={`${import.meta.env.BASE_URL}button-icons/add-all.svg`}
-          alt="Afectar todas las ocurrencias"
-          width={IMG_SIZE}
-          height={IMG_SIZE}
-        />
-      </TaggerButton>
+      />
       {onDeleteOne && (
         <>
           <div className={classes.divider} />
           <TaggerButton
+            action="eliminar"
             tooltip="Eliminar esta ocurrencia"
             onClick={onDeleteOne}
-          >
-            <img
-              src={`${import.meta.env.BASE_URL}button-icons/delete-one.svg`}
-              alt="Eliminar esta ocurrencia"
-              width={IMG_SIZE}
-              height={IMG_SIZE}
-            />
-          </TaggerButton>
+          />
         </>
       )}
       {onDeleteAll && (
         <>
           <div className={classes.divider} />
           <TaggerButton
+            action="eliminar-todo"
             tooltip="Eliminar todas las ocurrencias"
             onClick={onDeleteAll}
-          >
-            <img
-              src={`${import.meta.env.BASE_URL}button-icons/delete-all.svg`}
-              alt="Eliminar todas las ocurrencias"
-              width={IMG_SIZE}
-              height={IMG_SIZE}
-            />
-          </TaggerButton>
+          />
         </>
       )}
     </div>
