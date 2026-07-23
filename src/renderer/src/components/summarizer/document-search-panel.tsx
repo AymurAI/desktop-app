@@ -97,7 +97,6 @@ export default function DocumentSearchPanel({
 }: DocumentSearchPanelProps) {
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
   const activeMarkRef = useRef<HTMLElement | null>(null);
 
   const matches = useMemo(
@@ -159,7 +158,7 @@ export default function DocumentSearchPanel({
         )}
       </HStack>
 
-      <div ref={containerRef}>
+      <div>
         {paragraphs.map((paragraph, index) => {
           const isActiveParagraph = activeMatch?.paragraphIndex === index;
           return (
