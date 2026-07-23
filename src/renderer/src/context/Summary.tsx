@@ -1,42 +1,13 @@
+import {
+  type RichTextDocument,
+  type RichTextParagraph,
+  type TextMark,
+  type TextRun,
+  documentFromPlainText,
+} from "@aymurai/ui";
 import { createContext, useContext, useReducer } from "react";
 
-// TODO(ui-components): replace with
-// `import { documentFromPlainText, type RichTextDocument, type RichTextParagraph, type TextRun, type TextMark } from "@aymurai/ui"`
-// once the RichTextEditor plan (docs/superpowers/plans/2026-07-22-rich-text-editor.md
-// in the ui-components repo) has landed — identical shape, drop-in swap.
-export type MarkType = "bold" | "italic" | "underline" | "highlight";
-
-export interface TextMark {
-  type: MarkType;
-  color?: string;
-}
-
-export interface TextRun {
-  text: string;
-  marks: TextMark[];
-}
-
-export interface RichTextParagraph {
-  id: string;
-  runs: TextRun[];
-}
-
-export interface RichTextDocument {
-  paragraphs: RichTextParagraph[];
-}
-
-function documentFromPlainText(text: string): RichTextDocument {
-  const blocks = text
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean);
-  return {
-    paragraphs: blocks.map((block, index) => ({
-      id: `p${index}`,
-      runs: [{ text: block, marks: [] }],
-    })),
-  };
-}
+export type { RichTextDocument, RichTextParagraph, TextMark, TextRun };
 
 export type SummaryStatus =
   | "idle"
