@@ -91,18 +91,22 @@ export default function SummaryProcess() {
           </HStack>
           <Card>
             <Stack gap="6">
-              <Stack gap="1">
-                <styled.h2 textStyle="subtitle.md.default">
-                  {t("process.processingTitle")}
-                </styled.h2>
-                <styled.p textStyle="subtitle.sm.default" color="text.lighter">
-                  {t("process.processingSubtitle")}
-                </styled.p>
-              </Stack>
+              <HStack justifyContent="space-between" alignItems="center">
+                <Stack gap="1">
+                  <styled.h2 textStyle="subtitle.md.default">
+                    {t("process.processingTitle")}
+                  </styled.h2>
+                  <styled.p
+                    textStyle="subtitle.sm.default"
+                    color="text.lighter"
+                  >
+                    {t("process.processingSubtitle")}
+                  </styled.p>
+                </Stack>
+                {!isCompleted && !isError && !isStopped && <Spinner />}
+              </HStack>
 
               <Stack gap="3">
-                {!isCompleted && !isError && !isStopped && <Spinner />}
-
                 {!isError ? (
                   <ScrollArea
                     className={previewFrame}
