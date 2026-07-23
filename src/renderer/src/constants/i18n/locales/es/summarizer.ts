@@ -49,6 +49,7 @@ const summarizer = {
     previewAriaLabel: "Vista previa del resumen",
     callout:
       "Resumiendo texto. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
+    error: "No se pudo generar el resumen. Intentá nuevamente.",
     back: "Volver",
     next: "Siguiente",
     stop: "Detener",

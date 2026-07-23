@@ -26,8 +26,9 @@ vi.mock("@/context/Summary", () => ({
   useSummaryDispatch: () => vi.fn(),
 }));
 
+const mockSummarizeState = { status: "processing" };
 vi.mock("@/hooks/useSummarize", () => ({
-  useSummarize: () => ({ status: "processing", abort: vi.fn() }),
+  useSummarize: () => ({ status: mockSummarizeState.status, abort: vi.fn() }),
 }));
 
 vi.mock("@tanstack/react-router", () => ({
@@ -68,5 +69,14 @@ describe("SummaryProcess", () => {
   it("disables the next button until the summary is completed", () => {
     render(<SummaryProcess />);
     expect(screen.getByRole("button", { name: "process.next" })).toBeDisabled();
+  });
+
+  it("shows a real error message instead of the waiting placeholder when the status is error", () => {
+    mockSummarizeState.status = "error";
+    render(<SummaryProcess />);
+    expect(screen.getByText("process.error")).toBeInTheDocument();
+    expect(
+      screen.queryByText("process.waitingForWords"),
+    ).not.toBeInTheDocument();
   });
 });

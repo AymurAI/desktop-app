@@ -122,9 +122,12 @@ export default function SummaryProcess() {
                 ) : (
                   <ScrollArea className={previewFrame}>
                     <div className={previewContent}>
-                      <span className={previewPlaceholder}>
-                        {t("process.waitingForWords")}
-                      </span>
+                      <Callout
+                        message={t("process.error")}
+                        variant="error"
+                        size="compact"
+                        noBorder
+                      />
                     </div>
                   </ScrollArea>
                 )}
@@ -148,7 +151,7 @@ export default function SummaryProcess() {
           <Button variant="secondary" onClick={handlePrevious}>
             {t("process.back")}
           </Button>
-          {!isCompleted && !isError && (
+          {!isCompleted && !isError && !isStopped && (
             <Button variant="secondary" onClick={handleStop}>
               {t("process.stop")}
             </Button>

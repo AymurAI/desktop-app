@@ -19,7 +19,6 @@ const activeHighlight = css({ bg: "category.orange-light" });
 
 interface Match {
   paragraphIndex: number;
-  matchIndex: number; // character offset, kept for potential future use (e.g. scrolling)
   occurrenceIndex: number; // 0-based index of this match among all matches within its own paragraph
 }
 
@@ -35,7 +34,7 @@ function findMatches(paragraphs: Paragraph[], query: string): Match[] {
     for (;;) {
       const index = lowerValue.indexOf(lowerQuery, fromIndex);
       if (index === -1) break;
-      matches.push({ paragraphIndex, matchIndex: index, occurrenceIndex });
+      matches.push({ paragraphIndex, occurrenceIndex });
       fromIndex = index + lowerQuery.length;
       occurrenceIndex++;
     }
