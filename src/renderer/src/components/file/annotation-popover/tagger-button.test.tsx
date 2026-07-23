@@ -1,0 +1,71 @@
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import TaggerButton from "./tagger-button";
+
+describe("TaggerButton", () => {
+  it("renders the ToolButton for the given action, labeled with the tooltip text", () => {
+    render(
+      <TaggerButton
+        action="agregar-etiqueta"
+        tooltip="Afectar una ocurrencia"
+        onClick={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Afectar una ocurrencia" }),
+    ).toBeInTheDocument();
+  });
+
+  it("calls onClick when enabled and clicked", () => {
+    const onClick = vi.fn();
+    render(
+      <TaggerButton
+        action="agregar-todas"
+        tooltip="Afectar todas las ocurrencias"
+        onClick={onClick}
+      />,
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Afectar todas las ocurrencias" }),
+    );
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it("does not call onClick when disabled", () => {
+    const onClick = vi.fn();
+    render(
+      <TaggerButton
+        action="agregar-etiqueta"
+        tooltip="Afectar una ocurrencia"
+        onClick={onClick}
+        disabled
+      />,
+    );
+    const button = screen.getByRole("button", {
+      name: "Afectar una ocurrencia",
+    });
+    expect(button).toBeDisabled();
+    fireEvent.click(button);
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it("shows the tooltip content on hover", async () => {
+    render(
+      <TaggerButton
+        action="eliminar"
+        tooltip="Eliminar esta ocurrencia"
+        onClick={vi.fn()}
+      />,
+    );
+    const button = screen.getByRole("button", {
+      name: "Eliminar esta ocurrencia",
+    });
+    // The button's own accessible name comes from its `aria-label` attribute,
+    // not visible text — only the Tooltip's content panel renders the copy
+    // as actual text once opened, so this should find exactly one match.
+    fireEvent.mouseEnter(button);
+    await waitFor(() => {
+      expect(screen.getByText("Eliminar esta ocurrencia")).toBeInTheDocument();
+    });
+  });
+});
