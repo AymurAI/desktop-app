@@ -66,9 +66,13 @@ export function useSummarize(
         { text, signal: controller.signal },
         {
           onSuccess: (result) => {
+            // Guard against a superseded request: if a newer file/effect run
+            // has replaced controllerRef, this settle is stale — ignore it.
+            if (controllerRef.current !== controller) return;
             dispatchRef.current?.(finish(result.summary));
           },
           onError: (err) => {
+            if (controllerRef.current !== controller) return;
             if (userAbortedRef.current) return;
             dispatchRef.current?.(
               summaryError(

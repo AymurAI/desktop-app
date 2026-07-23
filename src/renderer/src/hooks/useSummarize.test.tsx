@@ -1,3 +1,4 @@
+import { summarizeDocumentStream } from "@/services/aymurai/summarize";
 import type { DocFile } from "@/types/file";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
@@ -74,5 +75,83 @@ describe("useSummarize", () => {
     await waitFor(() => expect(result.current.status).not.toBe("idle"));
     act(() => result.current.abort());
     expect(result.current.status).toBe("stopped");
+  });
+
+  it("ignores a stale mutation settling after a newer file supersedes it", async () => {
+    const dispatch = vi.fn();
+    const fileA = makeFile("a.docx", "Texto A");
+    const fileB = makeFile("b.docx", "Texto B");
+
+    // File A's request never resolves on its own — we control it manually to
+    // simulate it settling *after* file B's session has already started.
+    let resolveA:
+      | ((value: {
+          summary: string;
+          model: string;
+          chunks_used: number;
+          steps: never[];
+        }) => void)
+      | undefined;
+    const pendingA = new Promise((resolve) => {
+      resolveA = resolve;
+    });
+
+    const mockedStream = vi.mocked(summarizeDocumentStream);
+    // Reset call history — the mock is shared module-wide and earlier tests
+    // in this file have already invoked it.
+    mockedStream.mockClear();
+    mockedStream.mockImplementationOnce(async () => pendingA as never);
+
+    const queryClient = new QueryClient();
+    const { rerender } = renderHook(
+      ({ file }: { file: DocFile }) => useSummarize(file, { dispatch }),
+      {
+        initialProps: { file: fileA },
+        wrapper: ({ children }) => (
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        ),
+      },
+    );
+
+    // Wait until file A's mutationFn has actually fired (i.e. the deferred
+    // StrictMode-dodging microtask has flushed and consumed the mocked
+    // implementation) before switching files — otherwise the switch could
+    // race ahead of A's mutate() call and this test would prove nothing.
+    await waitFor(() => expect(mockedStream).toHaveBeenCalledTimes(1));
+
+    dispatch.mockClear();
+
+    // Resolve file A's request and switch to file B back-to-back, with no
+    // await between them. This queues A's success-notification microtasks
+    // *before* B's own deferred mutate() microtask, reproducing the narrow
+    // window where A's mutation observer callback could still be attached
+    // when A's stale result arrives — the exact race under test.
+    resolveA?.({
+      summary: "Stale A summary",
+      model: "mock",
+      chunks_used: 1,
+      steps: [],
+    });
+    rerender({ file: fileB });
+
+    // Flush enough microtask/macrotask turns for both A's stale resolution
+    // and B's own (immediately-resolving, per the default mock) mutation to
+    // fully settle.
+    await waitFor(() =>
+      expect(dispatch).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "finish", summary: "Hola mundo" }),
+      ),
+    );
+
+    // B's own summary must win; A's stale summary must never have been
+    // dispatched as a "finish" for B's session.
+    expect(dispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: "finish", summary: "Stale A summary" }),
+    );
+    expect(dispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: "error" }),
+    );
   });
 });
