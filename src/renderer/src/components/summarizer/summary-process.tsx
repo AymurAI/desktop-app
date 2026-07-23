@@ -47,8 +47,8 @@ const spinnerSlot = css({
   alignItems: "center",
   justifyContent: "center",
   flexShrink: "0",
-  w: "8",
-  h: "8",
+  w: "12",
+  h: "12",
 });
 
 const previewPlaceholder = css({
@@ -113,9 +113,7 @@ export default function SummaryProcess() {
                   </styled.p>
                 </Stack>
                 <div className={spinnerSlot}>
-                  {!isCompleted && !isError && !isStopped && (
-                    <Spinner size={32} />
-                  )}
+                  {!isCompleted && !isError && !isStopped && <Spinner />}
                 </div>
               </HStack>
 
