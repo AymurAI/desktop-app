@@ -2,7 +2,7 @@ import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import type { Paragraph } from "@/types/file";
 import { Button } from "@aymurai/ui";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const searchInput = css({
   border: "primary",
@@ -19,7 +19,8 @@ const activeHighlight = css({ bg: "category.orange-light" });
 
 interface Match {
   paragraphIndex: number;
-  matchIndex: number;
+  matchIndex: number; // character offset, kept for potential future use (e.g. scrolling)
+  occurrenceIndex: number; // 0-based index of this match among all matches within its own paragraph
 }
 
 function findMatches(paragraphs: Paragraph[], query: string): Match[] {
@@ -30,11 +31,13 @@ function findMatches(paragraphs: Paragraph[], query: string): Match[] {
   paragraphs.forEach((paragraph, paragraphIndex) => {
     const lowerValue = paragraph.value.toLowerCase();
     let fromIndex = 0;
+    let occurrenceIndex = 0;
     for (;;) {
       const index = lowerValue.indexOf(lowerQuery, fromIndex);
       if (index === -1) break;
-      matches.push({ paragraphIndex, matchIndex: index });
+      matches.push({ paragraphIndex, matchIndex: index, occurrenceIndex });
       fromIndex = index + lowerQuery.length;
+      occurrenceIndex++;
     }
   });
 
@@ -45,10 +48,12 @@ function HighlightedParagraph({
   text,
   query,
   activeMatchIndex,
+  activeMarkRef,
 }: {
   text: string;
   query: string;
   activeMatchIndex: number | null;
+  activeMarkRef?: (el: HTMLElement | null) => void;
 }) {
   if (!query)
     return <styled.p textStyle="paragraph.md.default">{text}</styled.p>;
@@ -66,12 +71,12 @@ function HighlightedParagraph({
       break;
     }
     parts.push(text.slice(cursor, index));
+    const isActive = occurrence === activeMatchIndex;
     parts.push(
       <mark
         key={occurrence}
-        className={
-          occurrence === activeMatchIndex ? activeHighlight : highlight
-        }
+        ref={isActive ? activeMarkRef : undefined}
+        className={isActive ? activeHighlight : highlight}
       >
         {text.slice(index, index + query.length)}
       </mark>,
@@ -93,6 +98,7 @@ export default function DocumentSearchPanel({
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const activeMarkRef = useRef<HTMLElement | null>(null);
 
   const matches = useMemo(
     () => findMatches(paragraphs, query),
@@ -110,6 +116,11 @@ export default function DocumentSearchPanel({
   };
 
   const activeMatch = matches[activeIndex];
+
+  useEffect(() => {
+    if (!activeMatch) return;
+    activeMarkRef.current?.scrollIntoView({ block: "center" });
+  }, [activeMatch]);
 
   return (
     <Stack gap="4" p="6" overflowY="auto" height="full">
@@ -149,18 +160,26 @@ export default function DocumentSearchPanel({
       </HStack>
 
       <div ref={containerRef}>
-        {paragraphs.map((paragraph, index) => (
-          <HighlightedParagraph
-            key={paragraph.id}
-            text={paragraph.value}
-            query={query}
-            activeMatchIndex={
-              activeMatch?.paragraphIndex === index
-                ? activeMatch.matchIndex
-                : null
-            }
-          />
-        ))}
+        {paragraphs.map((paragraph, index) => {
+          const isActiveParagraph = activeMatch?.paragraphIndex === index;
+          return (
+            <HighlightedParagraph
+              key={paragraph.id}
+              text={paragraph.value}
+              query={query}
+              activeMatchIndex={
+                isActiveParagraph ? activeMatch.occurrenceIndex : null
+              }
+              activeMarkRef={
+                isActiveParagraph
+                  ? (el) => {
+                      activeMarkRef.current = el;
+                    }
+                  : undefined
+              }
+            />
+          );
+        })}
       </div>
     </Stack>
   );
