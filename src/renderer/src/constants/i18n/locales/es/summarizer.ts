@@ -18,6 +18,12 @@ const summarizer = {
     validFormats: documentFormats,
     continue: "Continuar",
   },
+  stepper: {
+    step1: "Selección",
+    step2: "Resumen",
+    step3: "Validación",
+    step4: "Finalización",
+  },
   howItWorks: {
     step1: {
       alt: "Interfaz web con selector y cursor",

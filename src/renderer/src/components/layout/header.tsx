@@ -21,20 +21,22 @@ export default function Header({ title, feature, currentStep }: HeaderProps) {
   );
   const tutorialSeen = useTutorialSeen(feature ?? FeatureFlowEnum.Dataset);
   const isVoiceToText = feature === FeatureFlowEnum.VoiceToText;
+  const isSummarizer = feature === FeatureFlowEnum.Summarizer;
   const featureTitle = title ?? (feature ? featureT("title") : undefined);
-  const steps = isVoiceToText
-    ? [
-        featureT("stepper.step1"),
-        featureT("stepper.step2"),
-        featureT("stepper.step3"),
-        featureT("stepper.step4"),
-      ]
-    : [
-        t("stepper.selection"),
-        t("stepper.extraction"),
-        t("stepper.validation"),
-        t("stepper.finalization"),
-      ];
+  const steps =
+    isVoiceToText || isSummarizer
+      ? [
+          featureT("stepper.step1"),
+          featureT("stepper.step2"),
+          featureT("stepper.step3"),
+          featureT("stepper.step4"),
+        ]
+      : [
+          t("stepper.selection"),
+          t("stepper.extraction"),
+          t("stepper.validation"),
+          t("stepper.finalization"),
+        ];
   const helpLabel = isVoiceToText
     ? featureT("howItWorks.helpAria")
     : t("howItWorks");
