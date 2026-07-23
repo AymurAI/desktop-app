@@ -17,6 +17,16 @@ const tooltipContent = css({
   rounded: "sm",
 });
 
+// ToolButton's default disabled state dims its background (action.disabled).
+// This toolbar wants disabled actions to keep their regular color and only
+// signal disablement via the not-allowed cursor, matching the prior
+// hand-rolled TaggerButton's affordance.
+const keepColorWhenDisabled = css({
+  "&:disabled": {
+    bg: "action.alt-default",
+  },
+});
+
 interface TaggerButtonProps {
   action: ToolButtonAction;
   tooltip: string;
@@ -40,6 +50,7 @@ export default function TaggerButton({
             onClick={disabled ? undefined : onClick}
             disabled={disabled}
             aria-disabled={disabled}
+            className={keepColorWhenDisabled}
           />
         </TooltipTrigger>
         <TooltipContent showArrow={false} sideOffset={12}>
