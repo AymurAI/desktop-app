@@ -20,7 +20,7 @@ import {
   serializeToPlainText,
 } from "@aymurai/ui";
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function SummaryValidation() {
@@ -33,26 +33,42 @@ export default function SummaryValidation() {
   const [saving, setSaving] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
 
+  // The editor's onBlur and the "Volver"/"Finalizar" buttons can both try to
+  // save within the same click (focus leaves the editor, then the click
+  // handler fires its own save) — without dedup that's two independent,
+  // uncoordinated network writes racing each other for the saving/saveFailed
+  // state. Track the in-flight save so a second call while one is pending
+  // reuses it instead of starting another.
+  const inFlightSaveRef = useRef<Promise<boolean> | null>(null);
+
   // Resolves to `false` only when the save actually failed — lets callers
   // that navigate away decide whether to wait for a clean save first.
-  const handleSave = async (): Promise<boolean> => {
-    if (!file || !summary.document) return true;
+  const handleSave = (): Promise<boolean> => {
+    if (inFlightSaveRef.current) return inFlightSaveRef.current;
+    if (!file || !summary.document) return Promise.resolve(true);
+
     setSaving(true);
     setSaveFailed(false);
-    try {
-      await summaryValidationClient.save({
+
+    const promise = summaryValidationClient
+      .save({
         documentId: file.data.name,
         title: summary.title,
         generatedSummary: summary.partialText,
         editedSummary: serializeToPlainText(summary.document),
+      })
+      .then(() => true)
+      .catch(() => {
+        setSaveFailed(true);
+        return false;
+      })
+      .finally(() => {
+        setSaving(false);
+        inFlightSaveRef.current = null;
       });
-      return true;
-    } catch {
-      setSaveFailed(true);
-      return false;
-    } finally {
-      setSaving(false);
-    }
+
+    inFlightSaveRef.current = promise;
+    return promise;
   };
 
   // Save-then-navigate for the two "leave the screen" actions. Awaits the

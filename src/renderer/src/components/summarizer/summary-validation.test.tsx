@@ -112,4 +112,33 @@ describe("SummaryValidation", () => {
       ),
     );
   });
+
+  it("dedupes a save already in flight instead of firing a second network write", async () => {
+    let resolveSave!: () => void;
+    mockSave.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSave = resolve;
+        }),
+    );
+
+    render(<SummaryValidation />);
+
+    // Realistic sequence: finishing an edit blurs the editor (kicking off a
+    // save), then the user immediately clicks "Finalizar" before that save
+    // has resolved — this used to fire a second, uncoordinated
+    // `summaryValidationClient.save()` call.
+    fireEvent.blur(screen.getByRole("textbox"));
+    fireEvent.click(screen.getByText("validation.finish"));
+
+    expect(mockSave).toHaveBeenCalledTimes(1);
+
+    resolveSave();
+    await waitFor(() =>
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.objectContaining({ to: "/app/$feature/finish" }),
+      ),
+    );
+    expect(mockSave).toHaveBeenCalledTimes(1);
+  });
 });
