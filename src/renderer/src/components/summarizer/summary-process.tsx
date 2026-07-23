@@ -42,6 +42,15 @@ const previewText = css({
   whiteSpace: "pre-wrap",
 });
 
+const spinnerSlot = css({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: "0",
+  w: "8",
+  h: "8",
+});
+
 const previewPlaceholder = css({
   fontWeight: "[300]",
   fontSize: "[18px]",
@@ -103,7 +112,11 @@ export default function SummaryProcess() {
                     {t("process.processingSubtitle")}
                   </styled.p>
                 </Stack>
-                {!isCompleted && !isError && !isStopped && <Spinner />}
+                <div className={spinnerSlot}>
+                  {!isCompleted && !isError && !isStopped && (
+                    <Spinner size={32} />
+                  )}
+                </div>
               </HStack>
 
               <Stack gap="3">
