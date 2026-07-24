@@ -103,12 +103,14 @@ export default function Tagger({
               />
             </div>
           </TooltipTrigger>
-          <TooltipContent showArrow={false} sideOffset={12}>
-            <div className={classes.tooltipContent}>
-              <styled.p textStyle="label.sm.default">
-                Selecciona tipo de etiqueta
-              </styled.p>
-            </div>
+          <TooltipContent
+            showArrow={false}
+            sideOffset={12}
+            className={classes.tooltipContent}
+          >
+            <styled.p textStyle="label.sm.default">
+              Selecciona tipo de etiqueta
+            </styled.p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

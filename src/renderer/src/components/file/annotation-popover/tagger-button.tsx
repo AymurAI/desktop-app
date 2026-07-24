@@ -53,10 +53,12 @@ export default function TaggerButton({
             className={keepColorWhenDisabled}
           />
         </TooltipTrigger>
-        <TooltipContent showArrow={false} sideOffset={12}>
-          <div className={tooltipContent}>
-            <styled.p textStyle="label.sm.default">{tooltip}</styled.p>
-          </div>
+        <TooltipContent
+          showArrow={false}
+          sideOffset={12}
+          className={tooltipContent}
+        >
+          <styled.p textStyle="label.sm.default">{tooltip}</styled.p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
