@@ -1,21 +1,52 @@
 import { css } from "@/styled/css";
-import { HStack, Stack, styled } from "@/styled/jsx";
+import { styled } from "@/styled/jsx";
 import type { Paragraph } from "@/types/file";
-import { Button } from "@aymurai/ui";
+import { Toolbar } from "@aymurai/ui";
 import { useEffect, useMemo, useRef, useState } from "react";
-
-const searchInput = css({
-  border: "primary",
-  rounded: "full",
-  px: "4",
-  py: "3",
-  width: "full",
-  outline: "none",
-  "&:focus-visible": { border: "primary-alt" },
-});
 
 const highlight = css({ bg: "category.yellow-light" });
 const activeHighlight = css({ bg: "category.orange-light" });
+
+// Mirrors file-annotator/FileAnnotator.styles.ts `container` exactly — the
+// Set de Datos reference for this pane. No padding here: the Toolbar and
+// the scrollable text area each own their own spacing, so the scrollable
+// div's native scrollbar ends up flush against the grid divider instead of
+// inset by an outer wrapper's padding.
+const container = css({
+  height: "full",
+  minHeight: "[0]",
+  minWidth: "[0]",
+  display: "flex",
+  flexDirection: "column",
+  overflow: "hidden",
+});
+
+// Native (unstyled) scrollbar, matching the Set de Datos / FileAnnotator
+// reference — that pane doesn't override the OS/Chromium scrollbar either.
+// px/pb (not pt — FileAnnotator's `file` class has none either; the Toolbar
+// above already supplies its own bottom padding) match FileAnnotator's
+// `file` class so the text column and scroll edge land in the same place.
+const paragraphList = css({
+  flex: "[1]",
+  minHeight: "[0]",
+  overflowY: "auto",
+  overflowX: "hidden",
+  px: "8",
+  pb: "8",
+});
+
+// Matches FileAnnotator's original-document text exactly (the "Set de
+// Datos" reference for this pane): serif "file" font token, 16px/160%, with
+// 8px vertical spacing between paragraphs — see
+// file-annotator/FileAnnotator.styles.ts. Deliberately not the app's default
+// `paragraph.md.default` textStyle, which is sans-serif/18px/150% and has no
+// paragraph margin of its own.
+const paragraphText = css({
+  fontFamily: "file",
+  fontSize: "[16px]",
+  lineHeight: "[160%]",
+  my: "2",
+});
 
 interface Match {
   paragraphIndex: number;
@@ -54,8 +85,7 @@ function HighlightedParagraph({
   activeMatchIndex: number | null;
   activeMarkRef?: (el: HTMLElement | null) => void;
 }) {
-  if (!query)
-    return <styled.p textStyle="paragraph.md.default">{text}</styled.p>;
+  if (!query) return <styled.p className={paragraphText}>{text}</styled.p>;
 
   const lowerText = text.toLowerCase();
   const lowerQuery = query.toLowerCase();
@@ -84,7 +114,7 @@ function HighlightedParagraph({
     occurrence++;
   }
 
-  return <styled.p textStyle="paragraph.md.default">{parts}</styled.p>;
+  return <styled.p className={paragraphText}>{parts}</styled.p>;
 }
 
 export interface DocumentSearchPanelProps {
@@ -121,43 +151,26 @@ export default function DocumentSearchPanel({
   }, [activeMatch]);
 
   return (
-    <Stack gap="4" p="6" overflowY="auto" height="full">
-      <HStack gap="3">
-        <input
-          role="searchbox"
-          aria-label="Buscar en el documento original"
-          className={searchInput}
-          value={query}
-          onChange={(e) => handleQueryChange(e.target.value)}
-        />
-        {query && (
-          <HStack gap="2">
-            <styled.span textStyle="label.sm.default">
-              {matches.length === 0
-                ? "0 de 0"
-                : `${activeIndex + 1} de ${matches.length}`}
-            </styled.span>
-            <Button
-              variant="none"
-              size="icon-sm"
-              aria-label="Anterior"
-              onClick={() => goToMatch(-1)}
-            >
-              ‹
-            </Button>
-            <Button
-              variant="none"
-              size="icon-sm"
-              aria-label="Siguiente"
-              onClick={() => goToMatch(1)}
-            >
-              ›
-            </Button>
-          </HStack>
-        )}
-      </HStack>
+    <div className={container}>
+      <Toolbar
+        context="anonimizador"
+        searchValue={query}
+        onSearchChange={handleQueryChange}
+        searchPlaceholder="Buscar"
+        searchAriaLabel="Buscar en el documento original"
+        searchResultCount={
+          query
+            ? matches.length === 0
+              ? "0 de 0"
+              : `${activeIndex + 1} de ${matches.length}`
+            : undefined
+        }
+        onSearchPrev={query ? () => goToMatch(-1) : undefined}
+        onSearchNext={query ? () => goToMatch(1) : undefined}
+        onSearchClear={query ? () => handleQueryChange("") : undefined}
+      />
 
-      <div>
+      <div className={paragraphList}>
         {paragraphs.map((paragraph, index) => {
           const isActiveParagraph = activeMatch?.paragraphIndex === index;
           return (
@@ -179,6 +192,6 @@ export default function DocumentSearchPanel({
           );
         })}
       </div>
-    </Stack>
+    </div>
   );
 }

@@ -95,12 +95,6 @@ export default function SummaryProcess() {
 
   const handleStop = () => abort();
 
-  const handlePrevious = () =>
-    navigate({
-      to: "/app/$feature/preview",
-      params: { feature: FeatureFlowEnum.Summarizer },
-    });
-
   const handleNext = () =>
     navigate({
       to: "/app/$feature/validation",
@@ -195,14 +189,9 @@ export default function SummaryProcess() {
         </Stack>
       </MainContent>
       <Footer withBuiltBy>
-        <HStack gap="4">
-          <Button variant="secondary" onClick={handlePrevious}>
-            {t("process.back")}
-          </Button>
-          <Button onClick={handleNext} disabled={!isCompleted}>
-            {t("process.next")}
-          </Button>
-        </HStack>
+        <Button onClick={handleNext} disabled={!isCompleted}>
+          {t("process.next")}
+        </Button>
       </Footer>
     </RequireFile>
   );
