@@ -1,5 +1,6 @@
 import type { JSONContent } from "@aymurai/ui";
 import { describe, expect, it } from "vitest";
+import { SUMMARY_WATERMARK_TEXT } from "../watermark";
 import { documentToPlainText } from "./txt";
 
 describe("documentToPlainText", () => {
@@ -14,6 +15,18 @@ describe("documentToPlainText", () => {
         { type: "paragraph", content: [{ type: "text", text: "Dos." }] },
       ],
     };
-    expect(documentToPlainText(doc)).toBe("Uno.\n\nDos.");
+    expect(documentToPlainText(doc)).toBe(
+      `Uno.\n\nDos.\n\n${SUMMARY_WATERMARK_TEXT}`,
+    );
+  });
+
+  it("always appends the watermark as the final line, blank-line separated", () => {
+    const doc: JSONContent = {
+      type: "doc",
+      content: [{ type: "paragraph", content: [{ type: "text", text: "X" }] }],
+    };
+    expect(documentToPlainText(doc).endsWith(SUMMARY_WATERMARK_TEXT)).toBe(
+      true,
+    );
   });
 });

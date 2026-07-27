@@ -1,6 +1,13 @@
 import type { JSONContent } from "@aymurai/ui";
 import JSZip from "jszip";
 import { describe, expect, it } from "vitest";
+import {
+  SUMMARY_WATERMARK_PREFIX_TEXT,
+  WATERMARK_LINK_COLOR,
+  WATERMARK_LINK_TEXT,
+  WATERMARK_TEXT_COLOR,
+  WATERMARK_URL,
+} from "../watermark";
 import { collectStyles, documentToOdt, paragraphToOdtXml } from "./odt";
 
 // jsdom's Blob has no arrayBuffer()/text(), unlike a real browser's — go
@@ -23,6 +30,24 @@ async function readZipEntry(blob: Blob, path: string): Promise<string> {
 }
 
 const readContentXml = (blob: Blob) => readZipEntry(blob, "content.xml");
+const readStylesXml = (blob: Blob) => readZipEntry(blob, "styles.xml");
+
+// `toContain` checks on raw XML strings (used throughout this file) can't
+// catch a malformed document — they'd happily pass even with an unbound
+// namespace prefix, which is exactly the bug this guards against: `svg`
+// used in FONT_FACE_DECLS but not declared in ODF_NAMESPACES, silently
+// dropped by LibreOffice's lenient recovery parser (no visible error), which
+// fell back to its own built-in defaults — Liberation instead of Archivo —
+// for the *entire* document. A real XML parser catches this immediately.
+function assertWellFormed(xml: string, label: string) {
+  const parsed = new DOMParser().parseFromString(xml, "application/xml");
+  const parserError = parsed.querySelector("parsererror");
+  if (parserError) {
+    throw new Error(
+      `${label} is not well-formed XML: ${parserError.textContent}`,
+    );
+  }
+}
 
 // Tiptap JSONContent fixture builders — mirror what RichTextEditor's
 // `useEditor` actually produces (text nodes carrying a `marks` array, marks
@@ -42,10 +67,10 @@ function doc(...paragraphs: JSONContent[]): JSONContent {
 }
 
 describe("paragraphToOdtXml", () => {
-  it("wraps plain text in a text:p with no span at all", () => {
+  it("wraps plain text in a text:p with no span at all, explicitly styled Standard", () => {
     const p = paragraph(text("hola"));
     expect(paragraphToOdtXml(p, collectStyles(doc(p)))).toBe(
-      "<text:p>hola</text:p>",
+      '<text:p text:style-name="Standard">hola</text:p>',
     );
   });
 
@@ -53,7 +78,7 @@ describe("paragraphToOdtXml", () => {
     const p = paragraph(text("hola", [{ type: "bold" }]));
     const styles = collectStyles(doc(p));
     expect(paragraphToOdtXml(p, styles)).toBe(
-      '<text:p><text:span text:style-name="T0">hola</text:span></text:p>',
+      '<text:p text:style-name="Standard"><text:span text:style-name="T0">hola</text:span></text:p>',
     );
   });
 
@@ -64,17 +89,17 @@ describe("paragraphToOdtXml", () => {
 
     expect(styles.size).toBe(1);
     expect(paragraphToOdtXml(p1, styles)).toBe(
-      '<text:p><text:span text:style-name="T0">uno</text:span></text:p>',
+      '<text:p text:style-name="Standard"><text:span text:style-name="T0">uno</text:span></text:p>',
     );
     expect(paragraphToOdtXml(p2, styles)).toBe(
-      '<text:p><text:span text:style-name="T0">dos</text:span></text:p>',
+      '<text:p text:style-name="Standard"><text:span text:style-name="T0">dos</text:span></text:p>',
     );
   });
 
   it("escapes XML-sensitive characters in the run text", () => {
     const p = paragraph(text("A & B < C"));
     expect(paragraphToOdtXml(p, collectStyles(doc(p)))).toBe(
-      "<text:p>A &amp; B &lt; C</text:p>",
+      '<text:p text:style-name="Standard">A &amp; B &lt; C</text:p>',
     );
   });
 });
@@ -211,8 +236,73 @@ describe("documentToOdt", () => {
     });
     const xml = await readContentXml(await documentToOdt(document, "Resumen"));
 
-    expect(xml).toContain("<text:p>Intro</text:p>");
-    expect(xml).toContain("<text:p>Item uno</text:p>");
-    expect(xml).toContain("<text:p>Item dos</text:p>");
+    expect(xml).toContain('<text:p text:style-name="Standard">Intro</text:p>');
+    expect(xml).toContain(
+      '<text:p text:style-name="Standard">Item uno</text:p>',
+    );
+    expect(xml).toContain(
+      '<text:p text:style-name="Standard">Item dos</text:p>',
+    );
+  });
+
+  it("declares Archivo as the document's font, in both content.xml and styles.xml", async () => {
+    const document = doc(paragraph(text("Hola")));
+    const blob = await documentToOdt(document, "Resumen");
+
+    const contentXml = await readContentXml(blob);
+    const stylesXml = await readStylesXml(blob);
+    expect(contentXml).toContain(
+      '<style:font-face style:name="Archivo" svg:font-family="Archivo"/>',
+    );
+    expect(stylesXml).toContain(
+      '<style:font-face style:name="Archivo" svg:font-family="Archivo"/>',
+    );
+    expect(stylesXml).toContain(
+      '<style:style style:name="Standard" style:family="paragraph">',
+    );
+    expect(stylesXml).toContain('style:font-name="Archivo"');
+  });
+
+  it("renders the title as an explicitly Archivo-styled paragraph, not a bare heading", async () => {
+    // Regression check: a <text:h> with no text:style-name falls back to
+    // the renderer's own built-in default "Heading 1" style (e.g.
+    // LibreOffice's template default, commonly Liberation) instead of
+    // anything this document declares — the title was rendering in the
+    // wrong font until it became a plain, explicitly-styled paragraph, the
+    // same way ../formatters/odt.ts's transcription title already works.
+    const document = doc(paragraph(text("Hola")));
+    const xml = await readContentXml(await documentToOdt(document, "Resumen"));
+
+    expect(xml).not.toContain("<text:h");
+    expect(xml).toContain('<text:p text:style-name="Title">Resumen</text:p>');
+    expect(xml).toContain(
+      '<style:style style:name="Title" style:family="paragraph"><style:text-properties style:font-name="Archivo" fo:font-size="20pt" fo:font-weight="bold"/></style:style>',
+    );
+  });
+
+  it("produces well-formed content.xml and styles.xml (every namespace prefix used is declared)", async () => {
+    const document = doc(
+      paragraph(text("Hola", [{ type: "bold" }, { type: "italic" }])),
+    );
+    const blob = await documentToOdt(document, "Resumen");
+
+    assertWellFormed(await readContentXml(blob), "content.xml");
+    assertWellFormed(await readStylesXml(blob), "styles.xml");
+  });
+
+  it("adds a page footer watermark matching the transcription export's visual style", async () => {
+    const xml = await readStylesXml(
+      await documentToOdt(doc(paragraph(text("Hola"))), "Resumen"),
+    );
+
+    expect(xml).toContain(SUMMARY_WATERMARK_PREFIX_TEXT);
+    expect(xml).toContain(`>${WATERMARK_LINK_TEXT}<`);
+    expect(xml).toContain(`xlink:href="${WATERMARK_URL}"`);
+    expect(xml).toContain(`fo:color="${WATERMARK_TEXT_COLOR}"`);
+    expect(xml).toContain(`fo:color="${WATERMARK_LINK_COLOR}"`);
+    expect(xml).toContain("<style:footer>");
+    expect(xml).toContain(
+      `<text:a xlink:href="${WATERMARK_URL}" text:style-name="FooterWatermarkLink"><text:span text:style-name="FooterWatermarkLink">${WATERMARK_LINK_TEXT}</text:span></text:a>`,
+    );
   });
 });

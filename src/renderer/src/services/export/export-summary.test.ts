@@ -24,10 +24,12 @@ vi.mock("@/services/aymurai/queries", () => ({
 }));
 
 describe("exportSummary", () => {
-  it("returns a plain-text blob for the txt format", async () => {
+  it("returns a plain-text blob for the txt format, ending with the watermark", async () => {
     const blob = await exportSummary(doc, "Resumen", "txt");
     expect(blob.type).toBe("text/plain");
-    expect(await blobToText(blob)).toBe("Texto.");
+    expect(await blobToText(blob)).toBe(
+      "Texto.\n\nResumen generado por AymurAI",
+    );
   });
 
   it("returns an ODT blob for the odt format", async () => {

@@ -1,13 +1,32 @@
 import type { JSONContent } from "@aymurai/ui";
 import JSZip from "jszip";
+import {
+  SUMMARY_WATERMARK_PREFIX_TEXT,
+  WATERMARK_FONT_SIZE_PT,
+  WATERMARK_LINK_COLOR,
+  WATERMARK_LINK_TEXT,
+  WATERMARK_TEXT_COLOR,
+  WATERMARK_URL,
+} from "../watermark";
 
 const ODT_MIME_TYPE = "application/vnd.oasis.opendocument.text";
 
+// Shared between content.xml and styles.xml's root elements — styles.xml
+// additionally needs xlink (for the footer's hyperlink), content.xml doesn't.
+// `svg` is required by FONT_FACE_DECLS's `svg:font-family` attribute — its
+// absence here was an undeclared-namespace-prefix bug: the XML wasn't
+// well-formed, so LibreOffice silently dropped the font-face-decls (and
+// everything referencing them) during its lenient recovery parse instead of
+// erroring, falling back to its own built-in defaults (Liberation) for the
+// whole document, title included, no matter how correct the style
+// declarations otherwise looked.
 const ODF_NAMESPACES =
   'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" ' +
   'xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" ' +
   'xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" ' +
-  'xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0"';
+  'xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" ' +
+  'xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0"';
+const XLINK_NAMESPACE = 'xmlns:xlink="http://www.w3.org/1999/xlink"';
 
 const MANIFEST_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.2">
@@ -16,12 +35,48 @@ const MANIFEST_XML = `<?xml version="1.0" encoding="UTF-8"?>
   <manifest:file-entry manifest:full-path="styles.xml" manifest:media-type="text/xml"/>
 </manifest:manifest>`;
 
-// Minimal but spec-valid — this export doesn't need the watermark/footer
-// content the transcription formatter's styles.xml carries (see
-// ../formatters/odt.ts), just a valid root so the archive isn't malformed.
+// Matches the font used across AymurAI's other generated documents (see
+// ../formatters/odt.ts and the backend's anonymization watermark scripts).
+// Declared via font-face-decls and referenced by name only — if a
+// reader/converter doesn't have Archivo installed, it silently falls back to
+// a substitute rather than failing.
+const DOCUMENT_FONT_NAME = "Archivo";
+const FONT_FACE_DECLS = `<office:font-face-decls><style:font-face style:name="${DOCUMENT_FONT_NAME}" svg:font-family="${DOCUMENT_FONT_NAME}"/></office:font-face-decls>`;
+
+// Footer watermark lives in styles.xml's master-page (ODF's footers are
+// page-master content, not part of the document body) — its visual style
+// mirrors ../formatters/odt.ts's own transcription watermark, which in turn
+// mirrors the anonymizer's document watermark.
 const STYLES_XML = `<?xml version="1.0" encoding="UTF-8"?>
-<office:document-styles ${ODF_NAMESPACES} office:version="1.2">
-  <office:styles/>
+<office:document-styles ${ODF_NAMESPACES} ${XLINK_NAMESPACE} office:version="1.2">
+  ${FONT_FACE_DECLS}
+  <office:styles>
+    <style:style style:name="Standard" style:family="paragraph">
+      <style:text-properties style:font-name="${DOCUMENT_FONT_NAME}"/>
+    </style:style>
+    <style:style style:name="FooterWatermark" style:family="paragraph">
+      <style:paragraph-properties fo:text-align="end"/>
+    </style:style>
+    <style:style style:name="FooterWatermarkText" style:family="text">
+      <style:text-properties style:font-name="${DOCUMENT_FONT_NAME}" fo:font-size="${WATERMARK_FONT_SIZE_PT}pt" fo:color="${WATERMARK_TEXT_COLOR}"/>
+    </style:style>
+    <style:style style:name="FooterWatermarkLink" style:family="text">
+      <style:text-properties style:font-name="${DOCUMENT_FONT_NAME}" fo:font-size="${WATERMARK_FONT_SIZE_PT}pt" fo:color="${WATERMARK_LINK_COLOR}" fo:font-weight="bold" style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="${WATERMARK_LINK_COLOR}"/>
+    </style:style>
+  </office:styles>
+  <office:automatic-styles>
+    <style:page-layout style:name="PM1">
+      <style:page-layout-properties fo:page-width="21.001cm" fo:page-height="29.7cm" style:print-orientation="portrait" fo:margin-top="2cm" fo:margin-bottom="1.1cm" fo:margin-left="2cm" fo:margin-right="2cm"/>
+      <style:footer-style><style:header-footer-properties fo:min-height="0.3in" fo:margin-top="0.15cm" fo:margin-bottom="0cm"/></style:footer-style>
+    </style:page-layout>
+  </office:automatic-styles>
+  <office:master-styles>
+    <style:master-page style:name="Standard" style:page-layout-name="PM1">
+      <style:footer>
+        <text:p text:style-name="FooterWatermark"><text:span text:style-name="FooterWatermarkText">${SUMMARY_WATERMARK_PREFIX_TEXT}</text:span><text:a xlink:href="${WATERMARK_URL}" text:style-name="FooterWatermarkLink"><text:span text:style-name="FooterWatermarkLink">${WATERMARK_LINK_TEXT}</text:span></text:a></text:p>
+      </style:footer>
+    </style:master-page>
+  </office:master-styles>
 </office:document-styles>`;
 
 // `mark.attrs.color` on a highlight mark is a `@aymurai/ui` design-token path
@@ -210,8 +265,25 @@ export function paragraphToOdtXml(
     })
     .join("");
 
-  return `<text:p>${spans}</text:p>`;
+  // Explicit, not relying on an unstyled <text:p> implicitly picking up
+  // "Standard" — LibreOffice does NOT reliably do that (confirmed by
+  // opening a real export: body paragraphs rendered in Liberation Serif,
+  // its own built-in default, even though "Standard" was declared with
+  // Archivo in styles.xml). Every mark span above inherits font-name from
+  // here too, since none of them set their own.
+  return `<text:p text:style-name="Standard">${spans}</text:p>`;
 }
+
+// Matches ../formatters/odt.ts's own "Title" style exactly (20pt bold
+// Archivo). The title is rendered as a plain, explicitly-styled <text:p> —
+// not a <text:h> — for the same reason: an ODF heading with no
+// text:style-name falls back to the renderer's *built-in* default "Heading
+// 1" style (LibreOffice's own template, not anything declared in this
+// document), which ignores our Standard/Archivo declaration entirely and is
+// exactly why the title alone was rendering in Liberation instead of
+// Archivo — every other paragraph here has no style-name either, but that
+// convention only works for the paragraph family, not headings.
+const TITLE_STYLE_XML = `<style:style style:name="Title" style:family="paragraph"><style:text-properties style:font-name="${DOCUMENT_FONT_NAME}" fo:font-size="20pt" fo:font-weight="bold"/></style:style>`;
 
 function buildContentXml(document: JSONContent, title: string): string {
   const styles = collectStyles(document);
@@ -220,11 +292,12 @@ function buildContentXml(document: JSONContent, title: string): string {
     .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<office:document-content ${ODF_NAMESPACES}>
-  <office:automatic-styles>${automaticStylesXml(styles)}</office:automatic-styles>
+<office:document-content ${ODF_NAMESPACES} office:version="1.2">
+  ${FONT_FACE_DECLS}
+  <office:automatic-styles>${TITLE_STYLE_XML}${automaticStylesXml(styles)}</office:automatic-styles>
   <office:body>
     <office:text>
-      <text:h text:outline-level="1">${escapeXml(title)}</text:h>
+      <text:p text:style-name="Title">${escapeXml(title)}</text:p>
       ${bodyXml}
     </office:text>
   </office:body>
@@ -236,8 +309,11 @@ function buildContentXml(document: JSONContent, title: string): string {
  * `JSONContent` document. Marks (bold/italic/underline/highlight+color) are
  * translated into named automatic `<style:style>` definitions referenced via
  * `text:style-name`, per the ODF spec — see collectStyles/paragraphToOdtXml.
- * Packaging mirrors ../formatters/odt.ts's `renderOdt` (mimetype stored
- * uncompressed and first, manifest, content.xml, styles.xml).
+ * The whole document defaults to Archivo (via the "Standard" paragraph
+ * style) and carries a "Resumen generado por AymurAI" footer watermark,
+ * linked to the AymurAI site. Packaging mirrors ../formatters/odt.ts's
+ * `renderOdt` (mimetype stored uncompressed and first, manifest, content.xml,
+ * styles.xml).
  */
 export async function documentToOdt(
   document: JSONContent,
