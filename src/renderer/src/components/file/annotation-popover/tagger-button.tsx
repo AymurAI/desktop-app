@@ -1,77 +1,64 @@
-import { sva } from "@/styled/css";
+import { css } from "@/styled/css";
 import { styled } from "@/styled/jsx";
 import {
+  ToolButton,
+  type ToolButtonAction,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@aymurai/ui";
 
-const button = sva({
-  slots: ["button", "tooltipContent"],
-  base: {
-    button: {
-      p: "0.5",
-      rounded: "[6px]",
-      cursor: "pointer",
-      flexShrink: "0",
-      _hover: {
-        bg: "action.hover",
-      },
-    },
-    tooltipContent: {
-      bg: "action.hover",
-      color: "white",
-      px: "1",
-      py: "0.5",
-      rounded: "sm",
-    },
-  },
-  variants: {
-    disabled: {
-      true: {
-        button: {
-          cursor: "not-allowed",
-          _hover: {
-            bg: "transparent",
-          },
-        },
-      },
-    },
+const tooltipContent = css({
+  bg: "action.hover",
+  color: "white",
+  px: "1",
+  py: "0.5",
+  rounded: "sm",
+});
+
+// ToolButton's default disabled state dims its background (action.disabled).
+// This toolbar wants disabled actions to keep their regular color and only
+// signal disablement via the not-allowed cursor, matching the prior
+// hand-rolled TaggerButton's affordance.
+const keepColorWhenDisabled = css({
+  "&:disabled": {
+    bg: "action.alt-default",
   },
 });
 
 interface TaggerButtonProps {
+  action: ToolButtonAction;
   tooltip: string;
-  children: React.ReactNode;
   onClick: () => void;
   disabled?: boolean;
 }
 export default function TaggerButton({
-  children,
+  action,
   tooltip,
   onClick,
   disabled = false,
 }: TaggerButtonProps) {
-  const classes = button({ disabled });
   return (
     <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
-            type="button"
+          <ToolButton
+            action={action}
+            aria-label={tooltip}
+            title={tooltip}
             onClick={disabled ? undefined : onClick}
             disabled={disabled}
             aria-disabled={disabled}
-            className={classes.button}
-          >
-            {children}
-          </button>
+            className={keepColorWhenDisabled}
+          />
         </TooltipTrigger>
-        <TooltipContent showArrow={false} sideOffset={12}>
-          <div className={classes.tooltipContent}>
-            <styled.p textStyle="label.sm.default">{tooltip}</styled.p>
-          </div>
+        <TooltipContent
+          showArrow={false}
+          sideOffset={12}
+          className={tooltipContent}
+        >
+          <styled.p textStyle="label.sm.default">{tooltip}</styled.p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

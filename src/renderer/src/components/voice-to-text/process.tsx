@@ -11,6 +11,7 @@ import { useTranscribe } from "@/hooks/useTranscribe";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { SectionTitle } from "@/layout/section-title";
 import { addFiles, removeAllFiles } from "@/reducers/file/actions";
+import taskbar from "@/services/taskbar";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
@@ -74,6 +75,7 @@ export default function VoiceProcess() {
   const fileDispatch = useFileDispatch();
 
   const replaceInputRef = useRef<HTMLInputElement>(null);
+  const hasNotified = useRef(false);
 
   const audioFiles = useMemo(
     () =>
@@ -92,6 +94,15 @@ export default function VoiceProcess() {
   const isError = status === "error";
   const isStopped = status === "stopped";
   const progressPercent = Math.round(progress * 100);
+
+  // Play the completion sound + taskbar bounce once when the transcription
+  // finishes, matching the Dataset/Anonimizador pipelines.
+  useEffect(() => {
+    if (isCompleted && !hasNotified.current) {
+      hasNotified.current = true;
+      taskbar.notify();
+    }
+  }, [isCompleted]);
 
   // Map our transcription status onto @aymurai/ui ArchiveProgress states.
   const archiveStatus: ArchiveProgressStatus = isCompleted
@@ -145,12 +156,6 @@ export default function VoiceProcess() {
     fileDispatch(removeAllFiles());
     fileDispatch(addFiles(Array.from(raw)));
   };
-
-  const handlePrevious = () =>
-    navigate({
-      to: "/app/$feature/preview",
-      params: { feature: FeatureFlowEnum.VoiceToText },
-    });
 
   const handleNext = () =>
     navigate({
@@ -233,14 +238,9 @@ export default function VoiceProcess() {
         </Stack>
       </MainContent>
       <Footer withBuiltBy>
-        <HStack gap="4">
-          <Button variant="secondary" onClick={handlePrevious}>
-            {t("process.back")}
-          </Button>
-          <Button onClick={handleNext} disabled={!isCompleted}>
-            {t("process.next")}
-          </Button>
-        </HStack>
+        <Button onClick={handleNext} disabled={!isCompleted}>
+          {t("process.next")}
+        </Button>
       </Footer>
       <HiddenInput
         ref={replaceInputRef}

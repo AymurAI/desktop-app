@@ -229,18 +229,30 @@ export default function reducer(
     case ActionTypes.UPDATE_TURN_START_MS: {
       const { transcriptionId, turnId, startMs } = payload;
       const safeStart = Math.max(0, Math.floor(startMs));
-      return updateTranscription(state, transcriptionId, (t) => ({
-        ...t,
-        turns: t.turns.map((turn) => {
-          if (turn.id !== turnId) return turn;
-          const duration = Math.max(0, turn.endMs - turn.startMs);
-          return {
-            ...turn,
-            startMs: safeStart,
-            endMs: safeStart + duration,
-          };
-        }),
-      }));
+      return updateTranscription(state, transcriptionId, (t) => {
+        const turnIdx = t.turns.findIndex((turn) => turn.id === turnId);
+        if (turnIdx < 0) return t;
+
+        const duration = Math.max(
+          0,
+          t.turns[turnIdx].endMs - t.turns[turnIdx].startMs,
+        );
+        const isLastTurn = turnIdx === t.turns.length - 1;
+        return {
+          ...t,
+          turns: t.turns.map((turn, idx) => {
+            if (idx === turnIdx - 1) {
+              return { ...turn, endMs: safeStart };
+            }
+            if (idx !== turnIdx) return turn;
+            return {
+              ...turn,
+              startMs: safeStart,
+              endMs: isLastTurn ? t.audioDurationMs : safeStart + duration,
+            };
+          }),
+        };
+      });
     }
 
     // ----------------
