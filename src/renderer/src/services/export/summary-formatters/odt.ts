@@ -1,9 +1,4 @@
-import type {
-  MarkType,
-  RichTextDocument,
-  RichTextParagraph,
-  TextMark,
-} from "@aymurai/ui";
+import type { JSONContent } from "@aymurai/ui";
 import JSZip from "jszip";
 
 const ODT_MIME_TYPE = "application/vnd.oasis.opendocument.text";
@@ -29,8 +24,8 @@ const STYLES_XML = `<?xml version="1.0" encoding="UTF-8"?>
   <office:styles/>
 </office:document-styles>`;
 
-// `mark.color` on a highlight mark is a `@aymurai/ui` design-token path (e.g.
-// "category.yellow-light" — see RICH_TEXT_HIGHLIGHT_COLORS in
+// `mark.attrs.color` on a highlight mark is a `@aymurai/ui` design-token path
+// (e.g. "category.yellow-light" — see RICH_TEXT_HIGHLIGHT_COLORS in
 // RichTextEditor.tsx), not a real color ODF's `fo:background-color` can use.
 // This mirrors the hex values baked into the app's Panda preset
 // (node_modules/@aymurai/ui/dist/preset.js) for those same tokens.
@@ -50,7 +45,7 @@ function isHexColor(value: string): boolean {
 }
 
 /**
- * Resolves a highlight mark's `color` to a real hex value ODF can use in
+ * Resolves a highlight mark's color to a real hex value ODF can use in
  * `fo:background-color`. Accepts an already-real hex value as-is (some
  * callers may store one directly), looks up known token paths, and falls
  * back to a sensible default rather than ever emitting an invalid value.
@@ -68,28 +63,34 @@ function escapeXml(text: string): string {
     .replaceAll(">", "&gt;");
 }
 
+/** A Tiptap text-node mark, e.g. `{ type: "bold" }` or `{ type: "highlight", attrs: { color: "..." } }`. */
+interface OdtMark {
+  type: string;
+  attrs?: { color?: string };
+}
+
 // Fixed ordering so a run's mark combination produces the same style
 // regardless of the order marks were applied/stored in.
-const MARK_ORDER: MarkType[] = ["bold", "italic", "underline", "highlight"];
+const MARK_ORDER = ["bold", "italic", "underline", "highlight"];
 
-function sortMarks(marks: TextMark[]): TextMark[] {
+function sortMarks(marks: OdtMark[]): OdtMark[] {
   return [...marks].sort(
     (a, b) => MARK_ORDER.indexOf(a.type) - MARK_ORDER.indexOf(b.type),
   );
 }
 
 /** Stable key identifying a distinct mark combination, for style dedup. */
-function markKey(marks: TextMark[]): string {
+function markKey(marks: OdtMark[]): string {
   return sortMarks(marks)
     .map((mark) =>
       mark.type === "highlight"
-        ? `highlight:${resolveHighlightColor(mark.color)}`
+        ? `highlight:${resolveHighlightColor(mark.attrs?.color)}`
         : mark.type,
     )
     .join("|");
 }
 
-function textPropertiesXml(marks: TextMark[]): string {
+function textPropertiesXml(marks: OdtMark[]): string {
   const properties: string[] = [];
   for (const mark of sortMarks(marks)) {
     switch (mark.type) {
@@ -106,7 +107,7 @@ function textPropertiesXml(marks: TextMark[]): string {
         break;
       case "highlight":
         properties.push(
-          `fo:background-color="${resolveHighlightColor(mark.color)}"`,
+          `fo:background-color="${resolveHighlightColor(mark.attrs?.color)}"`,
         );
         break;
     }
@@ -116,25 +117,60 @@ function textPropertiesXml(marks: TextMark[]): string {
 
 export interface OdtStyleEntry {
   name: string;
-  marks: TextMark[];
+  marks: OdtMark[];
 }
 
 /**
- * Walks every run in the document and assigns one named automatic style per
- * distinct mark combination (e.g. `[bold]`, `[bold,italic]`,
- * `[highlight,color:...]`), so identical combinations share a single
- * `<style:style>` definition instead of duplicating inline styles per run.
+ * A "leaf" block is one whose own children are text nodes (or has no
+ * children at all, e.g. a blank paragraph) — the unit we render as one
+ * `<text:p>`. Recursing through non-leaf children handles content nested
+ * under list items (`bulletList > listItem > paragraph`) or similar
+ * wrappers, so a list created via markdown shortcuts while editing doesn't
+ * silently vanish from the export — this export has no ODF list markup of
+ * its own, so list items just become their own paragraphs.
+ */
+function collectLeafBlocks(node: JSONContent, out: JSONContent[]): void {
+  const content = node.content ?? [];
+  if (content.length === 0) {
+    if (node.type) out.push(node);
+    return;
+  }
+  if (content.every((child) => child.type === "text")) {
+    out.push(node);
+    return;
+  }
+  for (const child of content) collectLeafBlocks(child, out);
+}
+
+function documentLeafBlocks(document: JSONContent): JSONContent[] {
+  const blocks: JSONContent[] = [];
+  for (const child of document.content ?? []) collectLeafBlocks(child, blocks);
+  return blocks;
+}
+
+function blockMarks(block: JSONContent): OdtMark[][] {
+  return (block.content ?? [])
+    .filter((node) => node.type === "text")
+    .map((node) => (node.marks ?? []) as OdtMark[]);
+}
+
+/**
+ * Walks every text node in every (recursively found) leaf block and assigns
+ * one named automatic style per distinct mark combination (e.g. `[bold]`,
+ * `[bold,italic]`, `[highlight,color:...]`), so identical combinations share
+ * a single `<style:style>` definition instead of duplicating inline styles
+ * per run.
  */
 export function collectStyles(
-  document: RichTextDocument,
+  document: JSONContent,
 ): Map<string, OdtStyleEntry> {
   const registry = new Map<string, OdtStyleEntry>();
-  for (const paragraph of document.paragraphs) {
-    for (const run of paragraph.runs) {
-      if (run.marks.length === 0) continue;
-      const key = markKey(run.marks);
+  for (const block of documentLeafBlocks(document)) {
+    for (const marks of blockMarks(block)) {
+      if (marks.length === 0) continue;
+      const key = markKey(marks);
       if (!registry.has(key)) {
-        registry.set(key, { name: `T${registry.size}`, marks: run.marks });
+        registry.set(key, { name: `T${registry.size}`, marks });
       }
     }
   }
@@ -151,19 +187,21 @@ function automaticStylesXml(styles: Map<string, OdtStyleEntry>): string {
 }
 
 /**
- * Renders one paragraph's runs as `<text:p>` with `<text:span
+ * Renders one leaf block's text nodes as `<text:p>` with `<text:span
  * text:style-name="...">` for marked runs — referencing the named styles in
  * `styles` — and no span at all for plain runs.
  */
 export function paragraphToOdtXml(
-  paragraph: RichTextParagraph,
+  block: JSONContent,
   styles: Map<string, OdtStyleEntry>,
 ): string {
-  const spans = paragraph.runs
-    .map((run) => {
-      const text = escapeXml(run.text);
-      if (run.marks.length === 0) return text;
-      const entry = styles.get(markKey(run.marks));
+  const spans = (block.content ?? [])
+    .filter((node) => node.type === "text")
+    .map((node) => {
+      const text = escapeXml(node.text ?? "");
+      const marks = (node.marks ?? []) as OdtMark[];
+      if (marks.length === 0) return text;
+      const entry = styles.get(markKey(marks));
       // `styles` is always built from the same document via collectStyles,
       // so every marked run has a matching entry; this is just a safe
       // fallback in case a caller passes a mismatched registry.
@@ -175,10 +213,10 @@ export function paragraphToOdtXml(
   return `<text:p>${spans}</text:p>`;
 }
 
-function buildContentXml(document: RichTextDocument, title: string): string {
+function buildContentXml(document: JSONContent, title: string): string {
   const styles = collectStyles(document);
-  const bodyXml = document.paragraphs
-    .map((paragraph) => paragraphToOdtXml(paragraph, styles))
+  const bodyXml = documentLeafBlocks(document)
+    .map((block) => paragraphToOdtXml(block, styles))
     .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -194,15 +232,15 @@ function buildContentXml(document: RichTextDocument, title: string): string {
 }
 
 /**
- * Builds a real .odt (zip + valid ODF markup) from a summary's
- * `RichTextDocument`. Marks (bold/italic/underline/highlight+color) are
+ * Builds a real .odt (zip + valid ODF markup) from a summary's Tiptap
+ * `JSONContent` document. Marks (bold/italic/underline/highlight+color) are
  * translated into named automatic `<style:style>` definitions referenced via
  * `text:style-name`, per the ODF spec — see collectStyles/paragraphToOdtXml.
  * Packaging mirrors ../formatters/odt.ts's `renderOdt` (mimetype stored
  * uncompressed and first, manifest, content.xml, styles.xml).
  */
 export async function documentToOdt(
-  document: RichTextDocument,
+  document: JSONContent,
   title: string,
 ): Promise<Blob> {
   const zip = new JSZip();

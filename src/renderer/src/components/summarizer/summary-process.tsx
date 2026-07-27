@@ -8,6 +8,7 @@ import RequireFile from "@/features/RequireFile";
 import { useFiles } from "@/hooks";
 import { useSummarize } from "@/hooks/useSummarize";
 import { SectionTitle } from "@/layout/section-title";
+import taskbar from "@/services/taskbar";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
@@ -72,6 +73,16 @@ export default function SummaryProcess() {
   const isCompleted = status === "completed";
   const isError = status === "error";
   const isStopped = status === "stopped";
+
+  // Play the completion sound + taskbar bounce once when the summary
+  // finishes, matching the Dataset/Anonimizador/Voz a texto pipelines.
+  const hasNotified = useRef(false);
+  useEffect(() => {
+    if (isCompleted && !hasNotified.current) {
+      hasNotified.current = true;
+      taskbar.notify();
+    }
+  }, [isCompleted]);
 
   // Keep the newest streamed fragment in view by sticking to the bottom,
   // but stop following once the user scrolls up to re-read earlier text —

@@ -1,13 +1,5 @@
-import {
-  type RichTextDocument,
-  type RichTextParagraph,
-  type TextMark,
-  type TextRun,
-  documentFromPlainText,
-} from "@aymurai/ui";
+import { type JSONContent, documentFromMarkdown } from "@aymurai/ui";
 import { createContext, useContext, useReducer } from "react";
-
-export type { RichTextDocument, RichTextParagraph, TextMark, TextRun };
 
 export type SummaryStatus =
   | "idle"
@@ -21,7 +13,7 @@ export interface SummaryState {
   sourceFileName: string | null;
   title: string;
   partialText: string;
-  document: RichTextDocument | null;
+  document: JSONContent | null;
   error: string | null;
 }
 
@@ -41,7 +33,7 @@ export type SummaryAction =
   | { type: "finish"; summary: string }
   | { type: "error"; message: string }
   | { type: "stop" }
-  | { type: "edit"; document: RichTextDocument }
+  | { type: "edit"; document: JSONContent }
   | { type: "editTitle"; title: string };
 
 export const reset = (): SummaryAction => ({ type: "reset" });
@@ -62,7 +54,7 @@ export const error = (message: string): SummaryAction => ({
   message,
 });
 export const stop = (): SummaryAction => ({ type: "stop" });
-export const edit = (document: RichTextDocument): SummaryAction => ({
+export const edit = (document: JSONContent): SummaryAction => ({
   type: "edit",
   document,
 });
@@ -91,7 +83,7 @@ function summaryReducer(
       return {
         ...state,
         status: "completed",
-        document: documentFromPlainText(action.summary),
+        document: documentFromMarkdown(action.summary),
       };
     case "error":
       return { ...state, status: "error", error: action.message };

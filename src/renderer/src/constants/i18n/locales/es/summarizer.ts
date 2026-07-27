@@ -1,6 +1,4 @@
-import { DOCUMENT_EXTENSIONS } from "@/constants/config";
-
-const documentFormats = `Formatos válidos: ${DOCUMENT_EXTENSIONS.map((extension) => `.${extension}`).join(", ")}`;
+import { documentFormats } from "./document-formats";
 
 const summarizer = {
   title: "Resumen de Documento",
@@ -28,7 +26,7 @@ const summarizer = {
     step1: {
       alt: "Interfaz web con selector y cursor",
       title: "Sube tu documento",
-      subtitle: "Carga un archivo en formato .doc, .docx",
+      subtitle: "Sube el documento que quieres resumir.",
     },
     step2: {
       alt: "Barra de progreso cargando",
@@ -57,13 +55,11 @@ const summarizer = {
     callout:
       "Resumiendo texto. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
     error: "Error de carga de archivo. Volvelo a intentar",
-    back: "Volver",
     next: "Siguiente",
     stop: "Detener",
   },
   validation: {
     sectionTitle: "3. Validación",
-    back: "Volver",
     finish: "Finalizar",
     saving: "Guardando...",
     saveFailed:
@@ -74,10 +70,15 @@ const summarizer = {
   },
   finish: {
     sectionTitle: "4. Finalización",
-    description: "El resumen del documento ya esta listo.",
-    previewLabel: "Pre-visualización",
+    description: "El resumen del documento ya está listo.",
+    previewLabel: "Vista previa del resumen",
     exportOptionsLabel: "Opciones de exportación",
     formatLabel: "Formato de archivo",
+    formatDescriptions: {
+      txt: ".txt: texto simple, sin formato.",
+      odt: ".odt: documento editable.",
+      pdf: ".pdf: sólo lectura, ideal para archivar o compartir.",
+    },
     back: "Volver",
     export: "Exportar",
     exportError:

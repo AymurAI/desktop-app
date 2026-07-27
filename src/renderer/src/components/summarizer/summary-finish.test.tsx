@@ -7,7 +7,10 @@ vi.mock("react-i18next", () => ({
 }));
 
 const mockDocument = {
-  paragraphs: [{ id: "p0", runs: [{ text: "Resumen final.", marks: [] }] }],
+  type: "doc",
+  content: [
+    { type: "paragraph", content: [{ type: "text", text: "Resumen final." }] },
+  ],
 };
 vi.mock("@/context/Summary", () => ({
   useSummary: () => ({ document: mockDocument, title: "Resumen acta.docx" }),
@@ -29,18 +32,21 @@ vi.mock("@/components/layout/header", () => ({
 }));
 
 describe("SummaryFinish", () => {
-  it("shows the read-only summary as the preview", () => {
+  it("shows the summary's real formatting in the preview, read-only", () => {
     render(<SummaryFinish />);
     expect(screen.getByText("Resumen final.")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Negrita" }),
+    ).not.toBeInTheDocument();
   });
 
-  it("exports in the selected format when 'Exportar' is clicked", async () => {
+  it("exports in the default (.odt) format when 'Exportar' is clicked", async () => {
     render(<SummaryFinish />);
     fireEvent.click(screen.getByRole("button", { name: "finish.export" }));
     expect(mockExportSummary).toHaveBeenCalledWith(
       mockDocument,
       "Resumen acta.docx",
-      "txt",
+      "odt",
     );
   });
 });

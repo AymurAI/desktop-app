@@ -1,12 +1,12 @@
 import { convertOdtToPdf } from "@/services/aymurai/queries";
-import type { RichTextDocument } from "@aymurai/ui";
+import type { JSONContent } from "@aymurai/ui";
 import { documentToOdt } from "./summary-formatters/odt";
 import { documentToPlainText } from "./summary-formatters/txt";
 
 export type SummaryExportFormat = "txt" | "odt" | "pdf";
 
 export async function exportSummary(
-  document: RichTextDocument,
+  document: JSONContent,
   title: string,
   format: SummaryExportFormat,
 ): Promise<Blob> {

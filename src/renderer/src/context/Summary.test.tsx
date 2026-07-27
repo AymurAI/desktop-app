@@ -55,7 +55,7 @@ describe("Summary context", () => {
       result.current.dispatch(finish("Primer párrafo.\n\nSegundo párrafo.")),
     );
     expect(result.current.state.status).toBe("completed");
-    expect(result.current.state.document?.paragraphs).toHaveLength(2);
+    expect(result.current.state.document?.content).toHaveLength(2);
   });
 
   it("error()/stop() set the corresponding status", () => {
@@ -79,12 +79,15 @@ describe("Summary context", () => {
     act(() => result.current.dispatch(start("a.docx")));
     act(() => result.current.dispatch(finish("Texto.")));
     act(() =>
-      result.current.dispatch(edit({ paragraphs: [{ id: "p0", runs: [] }] })),
+      result.current.dispatch(
+        edit({ type: "doc", content: [{ type: "paragraph" }] }),
+      ),
     );
     act(() => result.current.dispatch(editTitle("Nuevo título")));
     expect(result.current.state.status).toBe("completed");
     expect(result.current.state.document).toEqual({
-      paragraphs: [{ id: "p0", runs: [] }],
+      type: "doc",
+      content: [{ type: "paragraph" }],
     });
     expect(result.current.state.title).toBe("Nuevo título");
   });

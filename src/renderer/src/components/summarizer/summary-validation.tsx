@@ -104,7 +104,7 @@ export default function SummaryValidation() {
 
   if (!summary.document || !file) return null;
 
-  const hasSummary = summary.document.paragraphs.length > 0;
+  const hasSummary = (summary.document.content?.length ?? 0) > 0;
 
   return (
     <>

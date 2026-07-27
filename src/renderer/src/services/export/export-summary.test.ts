@@ -1,4 +1,4 @@
-import type { RichTextDocument } from "@aymurai/ui";
+import type { JSONContent } from "@aymurai/ui";
 import { describe, expect, it, vi } from "vitest";
 import { exportSummary } from "./export-summary";
 
@@ -12,8 +12,9 @@ function blobToText(blob: Blob): Promise<string> {
   });
 }
 
-const doc: RichTextDocument = {
-  paragraphs: [{ id: "p0", runs: [{ text: "Texto.", marks: [] }] }],
+const doc: JSONContent = {
+  type: "doc",
+  content: [{ type: "paragraph", content: [{ type: "text", text: "Texto." }] }],
 };
 
 vi.mock("@/services/aymurai/queries", () => ({

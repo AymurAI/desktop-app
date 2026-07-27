@@ -19,7 +19,13 @@ const mockFiles = [
 vi.mock("@/hooks", () => ({ useFiles: () => mockFiles }));
 
 const mockDocument = {
-  paragraphs: [{ id: "p0", runs: [{ text: "Resumen generado.", marks: [] }] }],
+  type: "doc",
+  content: [
+    {
+      type: "paragraph",
+      content: [{ type: "text", text: "Resumen generado." }],
+    },
+  ],
 };
 
 const { mockDispatch, mockSave, mockNavigate } = vi.hoisted(() => ({

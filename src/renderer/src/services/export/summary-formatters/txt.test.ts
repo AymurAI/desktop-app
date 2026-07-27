@@ -1,13 +1,17 @@
-import type { RichTextDocument } from "@aymurai/ui";
+import type { JSONContent } from "@aymurai/ui";
 import { describe, expect, it } from "vitest";
 import { documentToPlainText } from "./txt";
 
 describe("documentToPlainText", () => {
   it("strips all marks, joining paragraphs with a blank line", () => {
-    const doc: RichTextDocument = {
-      paragraphs: [
-        { id: "p0", runs: [{ text: "Uno.", marks: [{ type: "bold" }] }] },
-        { id: "p1", runs: [{ text: "Dos.", marks: [] }] },
+    const doc: JSONContent = {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Uno.", marks: [{ type: "bold" }] }],
+        },
+        { type: "paragraph", content: [{ type: "text", text: "Dos." }] },
       ],
     };
     expect(documentToPlainText(doc)).toBe("Uno.\n\nDos.");
