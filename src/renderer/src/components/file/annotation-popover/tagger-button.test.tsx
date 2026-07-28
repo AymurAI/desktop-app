@@ -61,14 +61,18 @@ describe("TaggerButton", () => {
       name: "Eliminar esta ocurrencia",
     });
     // The button's own accessible name comes from its `aria-label` attribute,
-    // not visible text — only the Tooltip's content panel renders the copy
-    // as actual text once opened, so this should find exactly one match.
+    // not visible text — the Tooltip's content panel renders the copy as
+    // actual text once opened. Radix's newer versions additionally echo that
+    // text into a second, visually-hidden node for screen readers, so two
+    // matches is the correct expectation now, not one.
     // Radix's TooltipTrigger opens on its `onFocus` handler (not on a plain
     // `mouseenter` DOM event, which it never listens for), so fire a focus
     // event to reliably trigger the open.
     fireEvent.focus(button);
     await waitFor(() => {
-      expect(screen.getByText("Eliminar esta ocurrencia")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Eliminar esta ocurrencia").length,
+      ).toBeGreaterThan(0);
     });
   });
 });
