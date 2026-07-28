@@ -15,8 +15,21 @@ pre-commit:
 
     forbidden-patterns:
       glob: "*.{js,jsx,ts,tsx}"
+      # NOTE: POSIX ERE (-E), not PCRE (-P). macOS ships BSD grep, which has no
+      # -P: it exited with a usage error, the `if` saw non-zero, and the hook
+      # reported success while checking nothing. Word boundaries (\b) are also
+      # PCRE-only, so console.log is matched as the literal call instead.
+      # grep exit codes: 0 = matched, 1 = no match, >1 = grep itself failed.
+      # A tool failure must fail the hook, never pass it.
       run: |
-        if grep -Pn 'console\.log\b|debugger;|^<<<<<<< |\.only\(|from ['\''"]react-router-dom|from ['\''"]@stitches/react' {staged_files}; then
+        matches=$(grep -EnH "console\.log[[:space:]]*\(|debugger;|^<<<<<<< |\.only\(|from ['\"]react-router-dom|from ['\"]@stitches/react" {staged_files})
+        rc=$?
+        if [ "$rc" -gt 1 ]; then
+          echo "forbidden-patterns: grep failed (exit $rc) — failing closed."
+          exit 1
+        fi
+        if [ "$rc" -eq 0 ]; then
+          echo "$matches"
           echo ""
           echo "Forbidden pattern found in staged files."
           echo "Banned: console.log, debugger, leftover merge markers, .only( in tests,"
