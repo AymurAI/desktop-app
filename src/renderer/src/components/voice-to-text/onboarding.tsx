@@ -5,21 +5,20 @@ import { useTranslation } from "react-i18next";
 
 import HiddenInput from "@/components/hidden-input";
 import HowItWorks from "@/components/how-it-works";
+import FileSelectionLayout from "@/components/layout/file-selection-layout";
 import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
-import BackButton from "@/components/ui/back-button";
-import VoiceFileDrop from "@/components/voice-to-text/file-drop";
-import VoiceHeader from "@/components/voice-to-text/header";
-import { MEDIA_EXTENSIONS } from "@/constants/config";
+import { FEATURE_ICON, MEDIA_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
-import { SectionTitle } from "@/layout/section-title";
-import { addFiles } from "@/reducers/file/actions";
+import { addFiles, removeAllFiles } from "@/reducers/file/actions";
 import { clearTranscriptions } from "@/reducers/transcription/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
-import { HStack, Stack, styled } from "@/styled/jsx";
+import { HStack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
-import { Button } from "@aymurai/ui";
+import { isAllowed } from "@/utils/file";
+import { Button, FileDropZone } from "@aymurai/ui";
 
 export default function VoiceOnboarding() {
   const { t } = useTranslation("voice-to-text");
@@ -31,9 +30,15 @@ export default function VoiceOnboarding() {
   const transcriptionDispatch = useTranscriptionDispatch();
   const tutorialSeen = useTutorialSeen(FeatureFlowEnum.VoiceToText);
   const toggleTutorialSeen = useSetTutorialSeen();
+  const VoiceIcon = FEATURE_ICON.VOICE_TO_TEXT;
 
   const handleAddFiles = async (files: File[]) => {
-    dispatch(addFiles(files));
+    // One file at a time: clear any previous selection, then keep only the
+    // first file. Files live in the FileProvider above this route, so without
+    // clearing, going back to onboarding and picking again would stack the new
+    // file onto the old one.
+    dispatch(removeAllFiles());
+    dispatch(addFiles(files.slice(0, 1)));
     toggleTutorialSeen(FeatureFlowEnum.VoiceToText);
     await navigate({
       to: "/app/$feature/preview",
@@ -56,19 +61,26 @@ export default function VoiceOnboarding() {
 
   return (
     <>
-      <VoiceHeader currentStep={tutorialSeen ? 1 : undefined} />
-      <MainContent>
+      <Header
+        feature={FeatureFlowEnum.VoiceToText}
+        currentStep={tutorialSeen ? 1 : undefined}
+      />
+      <MainContent full={tutorialSeen}>
         {tutorialSeen ? (
-          <Stack gap="8">
-            <HStack alignItems="center" gap="6">
-              <BackButton to="/home/features" />
-              <SectionTitle>{t("onboarding.sectionTitle")}</SectionTitle>
-            </HStack>
-            <VoiceFileDrop
-              onDropFiles={handleAddFiles}
-              onClickZone={handleOpenInput}
+          <FileSelectionLayout title={t("onboarding.sectionTitle")}>
+            <FileDropZone
+              icon={<VoiceIcon />}
+              title={t("onboarding.dropAreaTitle")}
+              description={t("onboarding.dropAreaFormats")}
+              onDrop={(files) => {
+                const allowedFiles = files.filter((file) =>
+                  isAllowed(file, MEDIA_EXTENSIONS),
+                );
+                if (allowedFiles.length > 0) handleAddFiles(allowedFiles);
+              }}
+              onClick={handleOpenInput}
             />
-          </Stack>
+          </FileSelectionLayout>
         ) : (
           <HowItWorks feature={FeatureFlowEnum.VoiceToText} />
         )}
@@ -89,7 +101,6 @@ export default function VoiceOnboarding() {
         ref={inputRef}
         onChange={handleInputChange}
         extensions={MEDIA_EXTENSIONS}
-        multiple
       />
     </>
   );

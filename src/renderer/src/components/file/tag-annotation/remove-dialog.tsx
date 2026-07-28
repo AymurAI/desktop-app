@@ -1,10 +1,10 @@
-import Button from "@/components/ui/button";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogFooter,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@aymurai/ui";
 
 interface RemoveDialogProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ export default function RemoveDialog({
 }: RemoveDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent size="sm">
         <DialogTitle>Eliminar ocurrencias con este texto</DialogTitle>
         <p id="remove-dialog-description">
           Se eliminarán todas las ocurrencias que coincidan exactamente con el

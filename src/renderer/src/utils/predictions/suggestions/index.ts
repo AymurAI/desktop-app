@@ -1,10 +1,10 @@
-import type { SelectOption } from "@/components/ui/select";
 import {
   type AllLabels,
   type AllLabelsWithSufix,
   LabelDecisiones,
   type PredictLabel,
 } from "@/types/aymurai";
+import type { SelectOption } from "@/types/select";
 import type {
   BooleanSuggestion,
   InputSuggestion,

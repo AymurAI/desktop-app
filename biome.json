@@ -14,7 +14,8 @@
       ".husky",
       "out",
       "routeTree.gen.ts",
-      "src/renderer/src/styled/**"
+      "src/renderer/src/styled/**",
+      ".worktrees"
     ]
   },
   "formatter": {

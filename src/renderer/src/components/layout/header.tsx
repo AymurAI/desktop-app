@@ -1,68 +1,72 @@
 import { useTutorialSeen } from "@/store/useLocal";
-import { css } from "@/styled/css";
-import { Divider, HStack, Stack, styled } from "@/styled/jsx";
-import { FeatureFlowEnum } from "@/types/features";
-import { Link } from "@tanstack/react-router";
+import { FeatureFlowEnum, featureNamespace } from "@/types/features";
+import { AppHeader, type AppHeaderSlots } from "@aymurai/ui";
+import { useTranslation } from "react-i18next";
 import FeaturesMenu from "../features-menu";
 import HowItWorksModal from "../how-it-works-modal";
+import HeaderLogoLink from "./header-logo-link";
 
-const header = css({
-  position: "relative",
-  width: "full",
-  height: "24",
-  py: "6",
-  px: "12",
-  bg: "bg.secondary",
-  borderBottom: "[1px solid #BCBAB8]",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-});
-
-const centerSlot = css({
-  position: "absolute",
-  left: "[50%]",
-  transform: "translateX(-50%)",
-});
+type DocumentStep = 1 | 2 | 3 | 4;
 
 interface HeaderProps {
   title?: string;
-  center?: React.ReactNode;
   feature?: FeatureFlowEnum;
-  right?: React.ReactNode;
+  currentStep?: DocumentStep;
 }
 
-export default function Header({ title, center, feature, right }: HeaderProps) {
+export default function Header({ title, feature, currentStep }: HeaderProps) {
+  const { t } = useTranslation();
+  const { t: featureT } = useTranslation(
+    feature ? featureNamespace[feature] : "common",
+  );
   const tutorialSeen = useTutorialSeen(feature ?? FeatureFlowEnum.Dataset);
+  const isVoiceToText = feature === FeatureFlowEnum.VoiceToText;
+  const featureTitle = title ?? (feature ? featureT("title") : undefined);
+  const steps = isVoiceToText
+    ? [
+        featureT("stepper.step1"),
+        featureT("stepper.step2"),
+        featureT("stepper.step3"),
+        featureT("stepper.step4"),
+      ]
+    : [
+        t("stepper.selection"),
+        t("stepper.extraction"),
+        t("stepper.validation"),
+        t("stepper.finalization"),
+      ];
+  const helpLabel = isVoiceToText
+    ? featureT("howItWorks.helpAria")
+    : t("howItWorks");
+  const slots: AppHeaderSlots = {
+    logo: (logo) => <HeaderLogoLink>{logo}</HeaderLogoLink>,
+    help: (help) => {
+      if (!feature || !tutorialSeen) return null;
+      return <HowItWorksModal feature={feature} trigger={help} />;
+    },
+    apps: (apps) => <FeaturesMenu trigger={apps} />,
+  };
 
-  const img = title
-    ? `${import.meta.env.BASE_URL}brand/aymurai-iso-darkpurple.svg`
-    : `${import.meta.env.BASE_URL}brand/aymurai-hor-darkpurple.svg`;
+  if (currentStep) {
+    return (
+      <AppHeader
+        featureName={featureTitle}
+        helpLabel={helpLabel}
+        appsLabel={t("header.appsAria")}
+        steps={steps}
+        current={currentStep - 1}
+        slots={slots}
+      />
+    );
+  }
 
   return (
-    <header className={header}>
-      <Link to="/home/features">
-        <Stack gap="4" align="center" direction="row">
-          <img height={40} src={img} alt="AymurAI logo" />
-          {title && (
-            <>
-              <Divider
-                orientation="vertical"
-                thickness="[2px]"
-                color="text.default"
-                height="4"
-              />
-              <styled.span textStyle="subtitle.md.strong">{title}</styled.span>
-            </>
-          )}
-        </Stack>
-      </Link>
-      {center && <div className={centerSlot}>{center}</div>}
-      <HStack>
-        {tutorialSeen && feature && <HowItWorksModal feature={feature} />}
-        {right}
-        <FeaturesMenu />
-      </HStack>
-    </header>
+    <AppHeader
+      featureName={featureTitle}
+      logoVariant={featureTitle ? undefined : "logo"}
+      helpLabel={helpLabel}
+      appsLabel={t("header.appsAria")}
+      slots={slots}
+    />
   );
 }

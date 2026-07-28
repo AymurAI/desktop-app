@@ -3,18 +3,19 @@ import { DOCUMENT_EXTENSIONS } from "@/constants/config";
 const documentFormats = `Formatos válidos: ${DOCUMENT_EXTENSIONS.map((extension) => `.${extension}`).join(", ")}`;
 
 const dataset = {
-  title: "Set de datos",
+  title: "Set de Datos",
   subtitle: "Convierte resoluciones judiciales en set de datos estructurados",
   onboarding: {
-    sectionTitle: "1. Selección de Archivos",
+    sectionTitle: "1. Selección de archivo",
     validFormats: documentFormats,
-    loadDocuments: "Cargar documentos",
-    dropAreaTitle: "Selecciona el archivo para\nagregar a la base de datos",
+    loadDocuments: "Cargar documento",
+    dropAreaTitle:
+      "Selecciona o arrastra el archivo para\nagregar al set de datos",
     dropAreaFormats: documentFormats,
   },
   preview: {
-    sectionTitle: "1. Selección de Archivos",
-    filesLabel: "Archivos seleccionados",
+    sectionTitle: "1. Selección de archivo",
+    filesLabel: "Vista previa del documento",
     validFormats: documentFormats,
     loadMore: "Cargar más documentos",
     continue: "Continuar",
@@ -46,7 +47,7 @@ const dataset = {
   },
   process: {
     sectionTitle: "2. Extracción de datos",
-    processingTitle: "AymurAI está extrayendo los datos de los archivos",
+    processingTitle: "AymurAI está extrayendo los datos de los archivos.",
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
     finishText: "Se finalizó el análisis de tus documentos.",
   },

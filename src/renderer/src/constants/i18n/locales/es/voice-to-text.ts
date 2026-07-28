@@ -10,7 +10,7 @@ function formatExtensionList(extensions: string[]) {
 
 const voiceToText = {
   title: "Voz a Texto",
-  subtitle: "Transcribí audios y videos a documentos de texto editables",
+  subtitle: "Transcribe audios y videos a documentos de texto editables",
   stepper: {
     step1: "Selección",
     step2: "Transcripción",
@@ -49,8 +49,7 @@ const voiceToText = {
     sectionTitle: "1. Selección de archivo",
     loadDocuments: "Cargar archivo",
     validFormats: `Formatos válidos: ${formatExtensionList(MEDIA_EXTENSIONS)}`,
-    dropAreaTitle:
-      "Selecciona el archivo que desea transcribir o arrástralo y suéltalo",
+    dropAreaTitle: "Selecciona o arrastra el archivo para\ntranscribir",
     dropAreaFormats: `Formatos válidos: ${formatExtensionList(MEDIA_EXTENSIONS)}`,
   },
   preview: {

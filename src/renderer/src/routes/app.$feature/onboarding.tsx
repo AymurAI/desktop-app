@@ -4,22 +4,22 @@ import {
   useParams,
 } from "@tanstack/react-router";
 
-import DropArea from "@/components/drop-area";
 import HiddenInput from "@/components/hidden-input";
 import HowItWorks from "@/components/how-it-works";
+import FileSelectionLayout from "@/components/layout/file-selection-layout";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
-import BackButton from "@/components/ui/back-button";
 import { DOCUMENT_EXTENSIONS } from "@/constants/config";
 import { useFileDispatch } from "@/hooks";
-import { SectionTitle } from "@/layout/section-title";
-import { addFiles } from "@/reducers/file/actions";
+import { addFiles, removeAllFiles } from "@/reducers/file/actions";
 import { useSetTutorialSeen, useTutorialSeen } from "@/store/useLocal";
-import { HStack, Stack, styled } from "@/styled/jsx";
+import { HStack, styled } from "@/styled/jsx";
 import { featureNamespace } from "@/types/features";
-import { Button } from "@aymurai/ui";
+import { isAllowed } from "@/utils/file";
+import { Button, FileDropZone } from "@aymurai/ui";
 import { useQueryClient } from "@tanstack/react-query";
+import { File as FileIcon } from "phosphor-react";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -52,9 +52,9 @@ function DocumentOnboarding() {
   const dispatch = useFileDispatch();
   const tutorialSeen = useTutorialSeen(feature);
   const toggleTutorialSeen = useSetTutorialSeen();
-
   const handleAddFiles = async (files: File[]) => {
-    dispatch(addFiles(files));
+    dispatch(removeAllFiles());
+    dispatch(addFiles(files.slice(0, 1)));
     await navigate({
       to: "/app/$feature/preview",
       params: { feature },
@@ -79,20 +79,28 @@ function DocumentOnboarding() {
 
   return (
     <>
-      <Header title={t("title")} feature={feature} />
-      <MainContent>
+      <Header
+        title={t("title")}
+        feature={feature}
+        currentStep={tutorialSeen ? 1 : undefined}
+      />
+      <MainContent full={tutorialSeen}>
         {tutorialSeen ? (
-          <Stack gap="8">
-            <HStack alignItems="center" gap="6">
-              <BackButton to="/home/features" />
-              <SectionTitle>{t("onboarding.sectionTitle")}</SectionTitle>
-            </HStack>
-            <DropArea
+          <FileSelectionLayout title={t("onboarding.sectionTitle")}>
+            <FileDropZone
+              icon={<FileIcon />}
               title={t("onboarding.dropAreaTitle")}
               description={t("onboarding.dropAreaFormats")}
-              onDropFiles={handleAddFiles}
+              onDrop={(files) => {
+                const allowedFiles = files.filter((file) =>
+                  isAllowed(file, DOCUMENT_EXTENSIONS),
+                );
+                if (allowedFiles.length > 0)
+                  handleAddFiles(allowedFiles.slice(0, 1));
+              }}
+              onClick={handleOpenInput}
             />
-          </Stack>
+          </FileSelectionLayout>
         ) : (
           <HowItWorks feature={feature} />
         )}

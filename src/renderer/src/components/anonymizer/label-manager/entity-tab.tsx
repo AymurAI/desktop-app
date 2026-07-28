@@ -1,11 +1,5 @@
 import AnonymizerLabelSelect from "@/components/anonymizer/anonymizer-label-select";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
   ANONYMIZER_CATEGORY_NAMES,
   getAnonymizerCategoryForLabel,
   getLabelsPrioritizingCategory,
@@ -23,6 +17,12 @@ import { useHoverState } from "@/store/useHoverState";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import type { AllLabels, AllLabelsWithSufix } from "@/types/aymurai";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@aymurai/ui";
 import {
   DndContext,
   type DragEndEvent,

@@ -1,17 +1,16 @@
 import { useState } from "react";
 
 import Footer from "@/components/layout/footer";
-import Button from "@/components/ui/button";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { SectionTitle } from "@/layout/section-title";
 import { validate } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
-import { HStack, Stack } from "@/styled/jsx";
+import { Grid, HStack, Stack } from "@/styled/jsx";
 import { isFileValidated, isValidationCompleted } from "@/utils/file";
+import { Button } from "@aymurai/ui";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import FileAnnotator from "../file-annotator";
 import FileStepper from "../file-stepper";
-import Grid from "../grid";
 import FormGroup from "./form-group";
 import { moveNext, movePrevious } from "./utils";
 
@@ -62,13 +61,24 @@ export function ValidateDataset() {
   };
 
   return (
-    <Stack gap="0" flex="1" minHeight="0">
+    // Render the Grid and Footer as direct children of the app shell's flex
+    // column (like the Anonimizador validation route) so the shell's 100vh +
+    // overflow:hidden bounds them. An extra wrapping Stack here let content
+    // escape the height constraint and produced a spurious page-level scrollbar.
+    <>
       <Grid
-        columns={2}
-        spacing="none"
-        justify="stretch"
-        align="stretch"
-        css={{ overflow: "hidden", flex: 1, minHeight: 0 }}
+        flex="1"
+        minHeight="0"
+        overflow="hidden"
+        gap="0"
+        gridTemplateColumns={{
+          base: "minmax(0, 1fr)",
+          lg: "repeat(2, minmax(0, 1fr))",
+        }}
+        gridTemplateRows={{
+          base: "repeat(2, minmax(0, 1fr))",
+          lg: "minmax(0, 1fr)",
+        }}
       >
         <FileAnnotator
           key={selectedFile.data.name}
@@ -76,13 +86,19 @@ export function ValidateDataset() {
           isAnnotable={false}
         />
         <Stack
-          px="[100px]"
-          pt="16"
-          pb="16"
-          overflowY="scroll"
-          gap="16"
+          // position:relative makes this scrolling column the containing block
+          // for the Radix Select's hidden absolutely-positioned native <select>
+          // elements. Without it they resolve against <html>, escape this
+          // column's overflow, and stretch the page far past the footer.
+          position="relative"
+          px={{ base: "6", xl: "[100px]" }}
+          py={{ base: "6", xl: "16" }}
+          overflowY="auto"
+          overflowX="hidden"
+          gap={{ base: "8", xl: "16" }}
           bg="bg.primary"
           minHeight="0"
+          minWidth="0"
         >
           <SectionTitle className={css({ whiteSpace: "nowrap" })}>
             3. Validación de datos
@@ -94,7 +110,7 @@ export function ValidateDataset() {
           />
         </Stack>
       </Grid>
-      <Footer>
+      <Footer withBuiltBy>
         <HStack
           alignItems="center"
           width="full"
@@ -120,6 +136,6 @@ export function ValidateDataset() {
           )}
         </HStack>
       </Footer>
-    </Stack>
+    </>
   );
 }

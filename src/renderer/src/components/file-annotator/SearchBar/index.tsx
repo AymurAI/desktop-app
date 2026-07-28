@@ -1,48 +1,36 @@
-import {
-  type ChangeEvent,
-  type KeyboardEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 
 import AnonymizerLabelSelect from "@/components/anonymizer/anonymizer-label-select";
-import Button from "@/components/ui/button";
-import type { SelectOption } from "@/components/ui/select";
 import { useExcludedTagsConfig } from "@/store/useLocal";
-import { sva } from "@/styled/css";
-import { Grid, HStack, styled } from "@/styled/jsx";
-import { hstack } from "@/styled/patterns";
+import { css } from "@/styled/css";
+import { styled } from "@/styled/jsx";
+import type { SelectOption } from "@/types/select";
 import { getActiveAnonymizerLabelOptions } from "@/utils/anonymizer/labels";
-import { MagnifyingGlass } from "phosphor-react";
+import { Button, Toolbar } from "@aymurai/ui";
 import { SEARCH_MIN_LENGTH } from "../annotations";
-import { Counter } from "./Counter";
 
-const searchClasses = sva({
-  slots: ["searchBar", "input", "verticalHr"],
-  base: {
-    searchBar: {
-      ...hstack.raw({ alignItems: "center", gap: "2" }),
-      height: "12",
-      p: "3",
-      rounded: "3xl",
-      // minWidth: "[450px]",
-      width: "full",
-      border: "primary",
-    },
-    input: {
-      outline: "none",
-      width: "full",
-    },
-    verticalHr: {
-      width: "[1px]",
-      alignSelf: "stretch",
-      borderWidth: "0",
-      backgroundColor: "[#BCBAB8]",
-      height: "12",
-    },
-  },
+const toolbarContainer = css({
+  width: "full",
+  minW: "0",
 });
+
+const labelControls = css({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  flexWrap: "wrap",
+  gap: "6",
+  minW: "0",
+  maxW: "full",
+});
+
+const labelSelect = css({
+  flex: "[1 1 150px]",
+  minW: "[150px]",
+  maxW: "[320px]",
+});
+
+const managerButton = css({ whiteSpace: "nowrap" });
 
 interface Props {
   isAnnotable?: boolean;
@@ -74,20 +62,27 @@ export const SearchBar = ({
   const [search, setSearch] = useState("");
   const { tags } = useExcludedTagsConfig();
 
-  const inputSearchRef = useRef<HTMLInputElement>(null);
-
-  const classes = searchClasses();
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const labelOptions = getActiveAnonymizerLabelOptions(tags);
 
   useEffect(() => {
     const isEditableTarget = (target: EventTarget | null) => {
       if (!(target instanceof HTMLElement)) return false;
-      if (target === inputSearchRef.current) return false;
+      if (toolbarRef.current?.contains(target)) return false;
       if (target.isContentEditable) return true;
       return ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName);
     };
 
     const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      const input = toolbarRef.current?.querySelector("input");
+      if (event.key === "Escape" && event.target === input) {
+        event.preventDefault();
+        setSearch("");
+        onSearchChange?.("");
+        onFocusDocument();
+        return;
+      }
+
       const isSearchShortcut =
         (event.ctrlKey || event.metaKey) &&
         !event.altKey &&
@@ -97,24 +92,17 @@ export const SearchBar = ({
       if (!isSearchShortcut || isEditableTarget(event.target)) return;
 
       event.preventDefault();
-      inputSearchRef.current?.focus();
-      inputSearchRef.current?.select();
+      input?.focus();
+      input?.select();
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [onFocusDocument, onSearchChange]);
 
-  const changeSearchHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const text = e.target.value;
-    setSearch(text);
-    onSearchChange?.(e.target.value);
-  };
-
-  const clickSearchHandler = () => {
-    if (inputSearchRef.current) {
-      inputSearchRef.current.select();
-    }
+  const changeSearchHandler = (value: string) => {
+    setSearch(value);
+    onSearchChange?.(value);
   };
 
   const handleClear = () => {
@@ -122,77 +110,69 @@ export const SearchBar = ({
     onSearchChange?.("");
   };
 
-  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== "Escape") return;
-    event.preventDefault();
-    handleClear();
-    onFocusDocument();
-  };
-
-  const searchFocus = () => inputSearchRef.current?.focus();
-
   const changeLabelSelectHandler = (e: SelectOption | undefined) => {
     onLabelChange?.(e);
   };
 
   return (
-    <Grid
-      gridTemplateColumns="minmax(0, 1fr) auto"
-      px="8"
-      py="6"
-      gap="6"
-      alignItems="center"
-    >
-      <div className={classes.searchBar} onClick={searchFocus}>
-        <styled.span flexShrink="0" lineHeight="[0]">
-          <MagnifyingGlass size={24} />
-        </styled.span>
-        <input
-          type="text"
-          placeholder="Buscar"
-          value={search}
-          className={classes.input}
-          onChange={changeSearchHandler}
-          onClick={clickSearchHandler}
-          onKeyDown={handleInputKeyDown}
-        />
-        <Counter
-          clear={handleClear}
-          next={onNext}
-          previous={onPrevious}
-          count={matchesCount}
-          cursor={activeIndex === null ? 0 : activeIndex + 1}
-          isSearching={search.length >= SEARCH_MIN_LENGTH}
-        />
-      </div>
-      {isAnnotable && (
-        <HStack alignItems="center" gap="6">
-          <hr className={classes.verticalHr} />
-          <styled.p textStyle="label.md.strong" whiteSpace="pre-line">
-            Aplicar&#10;etiquetas
-          </styled.p>
-          <div style={{ minWidth: 150 }}>
-            <AnonymizerLabelSelect
-              placeholder="Etiqueta"
-              value={labelValue}
-              options={labelOptions}
-              onChange={changeLabelSelectHandler}
-            />
-          </div>
-          {!isLabelManagerOpen && (
-            <>
-              <hr className={classes.verticalHr} />
-              <Button
-                variant="secondary"
-                onClick={onLabelManagerToggle}
-                style={{ whiteSpace: "nowrap" }}
-              >
-                Gestor de etiquetas
-              </Button>
-            </>
-          )}
-        </HStack>
-      )}
-    </Grid>
+    <div ref={toolbarRef} className={toolbarContainer}>
+      <Toolbar
+        context="anonimizador"
+        searchValue={search}
+        onSearchChange={changeSearchHandler}
+        searchPlaceholder="Buscar"
+        searchAriaLabel="Buscar en el documento"
+        searchLabels={{
+          clear: "Limpiar búsqueda",
+          previous: "Coincidencia anterior",
+          next: "Coincidencia siguiente",
+        }}
+        searchResultCount={
+          search.length >= SEARCH_MIN_LENGTH
+            ? matchesCount === 0
+              ? "0 ocurrencias"
+              : `${activeIndex === null ? 0 : activeIndex + 1} de ${matchesCount}`
+            : undefined
+        }
+        onSearchClear={() => {
+          handleClear();
+          onFocusDocument();
+        }}
+        onSearchPrev={
+          activeIndex !== null && activeIndex > 0 ? onPrevious : undefined
+        }
+        onSearchNext={
+          activeIndex !== null && activeIndex < matchesCount - 1
+            ? onNext
+            : undefined
+        }
+        rightSlot={
+          isAnnotable ? (
+            <div className={labelControls}>
+              <styled.p textStyle="label.md.strong" whiteSpace="pre-line">
+                Aplicar&#10;etiquetas
+              </styled.p>
+              <div className={labelSelect}>
+                <AnonymizerLabelSelect
+                  placeholder="Etiqueta"
+                  value={labelValue}
+                  options={labelOptions}
+                  onChange={changeLabelSelectHandler}
+                />
+              </div>
+              {!isLabelManagerOpen && (
+                <Button
+                  variant="secondary"
+                  onClick={onLabelManagerToggle}
+                  className={managerButton}
+                >
+                  Gestor de etiquetas
+                </Button>
+              )}
+            </div>
+          ) : undefined
+        }
+      />
+    </div>
   );
 };

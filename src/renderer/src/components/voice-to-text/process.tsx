@@ -1,16 +1,6 @@
-import { useNavigate } from "@tanstack/react-router";
-import { Info } from "phosphor-react";
-import {
-  type ChangeEventHandler,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { useTranslation } from "react-i18next";
-
 import HiddenInput from "@/components/hidden-input";
 import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
 import ScrollArea from "@/components/ui/scroll-area";
@@ -21,6 +11,7 @@ import { useTranscribe } from "@/hooks/useTranscribe";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { SectionTitle } from "@/layout/section-title";
 import { addFiles, removeAllFiles } from "@/reducers/file/actions";
+import taskbar from "@/services/taskbar";
 import { css } from "@/styled/css";
 import { HStack, Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
@@ -28,16 +19,19 @@ import {
   ArchiveProgress,
   type ArchiveProgressStatus,
   Button,
+  Callout,
   Card,
 } from "@aymurai/ui";
-import VoiceHeader from "./header";
-
-// @aymurai/ui ArchiveProgress always renders a "Descartar" (✕) button, which the
-// Figma transcription screen does not include. Hide it from the consumer until
-// the library makes it conditional.
-const hideDismiss = css({
-  "& button[aria-label='Descartar']": { display: "none" },
-});
+import { useNavigate } from "@tanstack/react-router";
+import { Info } from "phosphor-react";
+import {
+  type ChangeEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useTranslation } from "react-i18next";
 
 const previewFrame = css({
   alignSelf: "stretch",
@@ -73,21 +67,6 @@ const previewPlaceholder = css({
   fontStyle: "italic",
 });
 
-const processingNotice = css({
-  display: "flex",
-  alignItems: "center",
-  gap: "2",
-  width: "full",
-  p: "4",
-  rounded: "xs",
-  bg: "system.info-secondary",
-  color: "text.default",
-  "& > svg": {
-    flexShrink: "0",
-    color: "system.info",
-  },
-});
-
 export default function VoiceProcess() {
   const { t } = useTranslation("voice-to-text");
   const navigate = useNavigate();
@@ -96,6 +75,7 @@ export default function VoiceProcess() {
   const fileDispatch = useFileDispatch();
 
   const replaceInputRef = useRef<HTMLInputElement>(null);
+  const hasNotified = useRef(false);
 
   const audioFiles = useMemo(
     () =>
@@ -114,6 +94,15 @@ export default function VoiceProcess() {
   const isError = status === "error";
   const isStopped = status === "stopped";
   const progressPercent = Math.round(progress * 100);
+
+  // Play the completion sound + taskbar bounce once when the transcription
+  // finishes, matching the Dataset/Anonimizador pipelines.
+  useEffect(() => {
+    if (isCompleted && !hasNotified.current) {
+      hasNotified.current = true;
+      taskbar.notify();
+    }
+  }, [isCompleted]);
 
   // Map our transcription status onto @aymurai/ui ArchiveProgress states.
   const archiveStatus: ArchiveProgressStatus = isCompleted
@@ -168,12 +157,6 @@ export default function VoiceProcess() {
     fileDispatch(addFiles(Array.from(raw)));
   };
 
-  const handlePrevious = () =>
-    navigate({
-      to: "/app/$feature/preview",
-      params: { feature: FeatureFlowEnum.VoiceToText },
-    });
-
   const handleNext = () =>
     navigate({
       to: "/app/$feature/validation",
@@ -182,7 +165,7 @@ export default function VoiceProcess() {
 
   return (
     <RequireFile>
-      <VoiceHeader currentStep={2} />
+      <Header feature={FeatureFlowEnum.VoiceToText} currentStep={2} />
       <MainContent>
         <Stack gap="10">
           <HStack alignItems="center" gap="6">
@@ -205,7 +188,6 @@ export default function VoiceProcess() {
 
               <Stack gap="3">
                 <ArchiveProgress
-                  className={hideDismiss}
                   fileName={files[0]?.data.name}
                   progress={isCompleted ? 100 : progressPercent}
                   status={archiveStatus}
@@ -242,12 +224,13 @@ export default function VoiceProcess() {
                 )}
 
                 {!isError && !isStopped && (
-                  <div className={processingNotice}>
-                    <Info size={24} />
-                    <styled.span textStyle="subtitle.sm.strong">
-                      {t("process.callout")}
-                    </styled.span>
-                  </div>
+                  <Callout
+                    message={t("process.callout")}
+                    variant="info"
+                    size="compact"
+                    icon={Info}
+                    noBorder
+                  />
                 )}
               </Stack>
             </Stack>
@@ -255,14 +238,9 @@ export default function VoiceProcess() {
         </Stack>
       </MainContent>
       <Footer withBuiltBy>
-        <HStack gap="4">
-          <Button variant="secondary" onClick={handlePrevious}>
-            {t("process.back")}
-          </Button>
-          <Button onClick={handleNext} disabled={!isCompleted}>
-            {t("process.next")}
-          </Button>
-        </HStack>
+        <Button onClick={handleNext} disabled={!isCompleted}>
+          {t("process.next")}
+        </Button>
       </Footer>
       <HiddenInput
         ref={replaceInputRef}

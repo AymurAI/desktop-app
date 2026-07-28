@@ -1,11 +1,11 @@
-import Button from "@/components/ui/button";
+import type { EntityGroup } from "@/hooks/useEntityGroups";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogFooter,
   DialogTitle,
-} from "@/components/ui/dialog";
-import type { EntityGroup } from "@/hooks/useEntityGroups";
+} from "@aymurai/ui";
 
 interface MergeDialogProps {
   source: EntityGroup | null;
@@ -27,7 +27,7 @@ export default function MergeDialog({
         if (!open) onClose();
       }}
     >
-      <DialogContent>
+      <DialogContent size="sm">
         <DialogTitle>Unificar grupos</DialogTitle>
         {source && target && (
           <p>

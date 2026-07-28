@@ -6,8 +6,22 @@ import {
   isValidElement,
 } from "react";
 
+import { css } from "@/styled/css";
 import type { Props as CheckboxProps } from "../checkbox";
-import { Group, Legend } from "./CheckboxGroup.styles";
+
+const group = css({
+  display: "flex",
+  gap: "4",
+  flexWrap: "wrap",
+  borderWidth: "0",
+  p: "0",
+});
+
+const legend = css({
+  textStyle: "subtitle.sm.default",
+  color: "text.lighter",
+  mb: "2",
+});
 
 interface Props {
   children: ReactNode;
@@ -31,9 +45,12 @@ export default function CheckboxGroup({
   });
 
   return (
-    <Group direction={direction}>
-      {title && <Legend>{title}</Legend>}
+    <fieldset
+      className={group}
+      style={{ flexDirection: direction === "vertical" ? "column" : "row" }}
+    >
+      {title && <legend className={legend}>{title}</legend>}
       {checkboxWithName}
-    </Group>
+    </fieldset>
   );
 }

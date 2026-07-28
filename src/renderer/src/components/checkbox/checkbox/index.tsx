@@ -1,15 +1,11 @@
-import { Check } from "phosphor-react";
 import {
-  type ChangeEventHandler,
   type ReactNode,
   forwardRef,
   useImperativeHandle,
   useState,
 } from "react";
 
-import type { CSS } from "@/styles";
-import { colors } from "@/styles/tokens";
-import { Input, Checkbox as StyledCheckbox, Wrapper } from "./Checkbox.styles";
+import { Checkbox as UiCheckbox } from "@aymurai/ui";
 
 export interface Props {
   children?: ReactNode;
@@ -17,15 +13,12 @@ export interface Props {
   checked?: boolean;
   onChange?: (value: boolean) => void;
   name?: string;
-  css?: CSS;
 }
 export default forwardRef<{ value: boolean }, Props>(function Checkbox(
-  { disabled = false, checked = false, name, onChange, children, css },
+  { disabled = false, checked = false, name, onChange, children },
   ref,
 ) {
   const [isChecked, setIsChecked] = useState(checked);
-
-  const hasText = !!children;
 
   // Only exposes `value` object to the parent component
   useImperativeHandle(
@@ -38,28 +31,19 @@ export default forwardRef<{ value: boolean }, Props>(function Checkbox(
     [isChecked],
   );
 
-  const handleToggle: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setIsChecked(e.target.checked);
-    onChange?.(isChecked);
+  const handleToggle = (nextChecked: boolean) => {
+    setIsChecked(nextChecked);
+    onChange?.(nextChecked);
   };
 
-  const iconColor = disabled
-    ? colors.textOnButtonDisabled
-    : colors.textOnButtonAlternative;
-
   return (
-    <Wrapper hasText={hasText} isDisabled={disabled} css={css}>
-      <Input
-        type="checkbox"
-        checked={isChecked}
-        disabled={disabled}
-        onChange={handleToggle}
-        name={name}
-      />
-      <StyledCheckbox>
-        <Check color={iconColor} weight="bold" />
-      </StyledCheckbox>
+    <UiCheckbox
+      checked={isChecked}
+      disabled={disabled}
+      onChange={handleToggle}
+      name={name}
+    >
       {children}
-    </Wrapper>
+    </UiCheckbox>
   );
 });

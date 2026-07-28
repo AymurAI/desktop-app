@@ -1,30 +1,31 @@
-import { styled } from "@/styles";
+import { css } from "@/styled/css";
 
-export const Container = styled("div", {
-  flex: 1,
-  minWidth: 0,
-  // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-
-  zIndex: 1,
+export const container = css({
+  flex: "1",
+  minW: "0",
+  minH: "0",
+  zIndex: "1",
   display: "flex",
   flexDirection: "column",
   overflow: "hidden",
 });
 
-export const File = styled("div", {
-  flex: 1,
-  overflowY: "scroll",
-  px: "$xl",
-  pb: "$xl",
-  // pt: "$l",
+export const file = css({
+  flex: "1",
+  minH: "0",
+  minW: "0",
+  overflowY: "auto",
+  overflowX: "hidden",
+  px: "8",
+  pb: "8",
 
   "& p, & span, & em": {
-    fontFamily: "$file",
-    fontSize: 16,
-    lineHeight: "160%",
+    fontFamily: "file",
+    fontSize: "[16px]",
+    lineHeight: "[160%]",
   },
 });
 
-export const Paragraph = styled("p", {
-  margin: "8px 0px",
+export const paragraph = css({
+  my: "2",
 });

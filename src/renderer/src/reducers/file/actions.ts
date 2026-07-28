@@ -13,9 +13,7 @@ export enum ActionTypes {
   ADD = "ADD",
   ADD_PREDICTIONS = "ADD_PREDICTIONS",
   ADD_PARAGRAPHS = "ADD_PARAGRAPHS",
-  FILTER_UNSELECTED = "FILTER_UNSELECTED",
   FILTER_UNPROCESSED = "FILTER_UNPROCESSED",
-  TOGGLE_SELECTED = "TOGGLE_SELECTED",
   REMOVE_ALL_PREDICTIONS = "REMOVE_ALL_PREDICTIONS",
   REMOVE_PREDICTIONS = "REMOVE_PREDICTIONS",
   REMOVE_ALL_FILES = "REMOVE_ALL_FILES",
@@ -44,21 +42,6 @@ type Action<Type, Payload = Record<string, never>> = {
   payload: Payload;
 };
 
-export type ToggleSelectedAction = Action<
-  ActionTypes.TOGGLE_SELECTED,
-  { fileName: string }
->;
-/**
- * Toggles the `selected` property of the given file
- * @param fileName Name of the file to be toggled
- */
-export function toggleSelected(fileName: string): ToggleSelectedAction {
-  return {
-    type: ActionTypes.TOGGLE_SELECTED,
-    payload: { fileName },
-  };
-}
-
 export type RemoveAllPredictionsAction =
   Action<ActionTypes.REMOVE_ALL_PREDICTIONS>;
 /**
@@ -67,17 +50,6 @@ export type RemoveAllPredictionsAction =
 export function removeAllPredictions(): RemoveAllPredictionsAction {
   return {
     type: ActionTypes.REMOVE_ALL_PREDICTIONS,
-    payload: {},
-  };
-}
-
-export type FilterUnselectedAction = Action<ActionTypes.FILTER_UNSELECTED>;
-/**
- * Removes files from the state whose `selected` property is set on `false`
- */
-export function filterUnselected(): FilterUnselectedAction {
-  return {
-    type: ActionTypes.FILTER_UNSELECTED,
     payload: {},
   };
 }

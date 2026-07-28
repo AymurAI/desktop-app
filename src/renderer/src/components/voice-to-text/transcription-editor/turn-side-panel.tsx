@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import Button from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { formatTime } from "@/components/voice-to-text/format-time";
 import { showToast } from "@/features/showToast";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
@@ -27,7 +19,16 @@ import { SUGGESTED_SPEAKERS } from "@/services/aymurai/fixtures/suggestedSpeaker
 import { css } from "@/styled/css";
 import type { Speaker, Transcription, Turn } from "@/types/transcription";
 import { SPEAKER_PALETTE } from "@/types/transcription";
-import { SidePanel, TooltipProvider } from "@aymurai/ui";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+  SidePanel,
+  TooltipProvider,
+} from "@aymurai/ui";
 import { parseTimestampToMs } from "./parse-timestamp";
 
 // A newly-inserted turn needs a real (non-zero) time span, or it can never
@@ -54,17 +55,15 @@ export function getTimestampBounds(
   };
 }
 
-// The @aymurai/ui SidePanel has no intrinsic width, so constrain it to a fixed
-// right column inside the editor's flex row.
 const panelColumn = css({
   flexShrink: "0",
-  width: "[360px]",
   borderLeft: "[1px solid #BCBAB8]",
   overflowY: "auto",
 });
 
-// Empty-state placeholder shown until a turn is selected. Width/border mirror
-// the SidePanel column so the layout doesn't jump when a turn is picked.
+// SidePanel's size="sm" is 360px; this placeholder isn't a SidePanel (there's
+// no turn selected yet) so it repeats that number directly to avoid a layout
+// jump the moment a turn becomes active.
 const emptyPanel = css({
   flexShrink: "0",
   width: "[360px]",
@@ -77,11 +76,6 @@ const emptyPanel = css({
   fontSize: "[14px]",
   textAlign: "center",
   p: "6",
-});
-
-const dialogContent = css({
-  width: "[min(420px,90vw)]",
-  maxWidth: "[420px]",
 });
 
 // Lightweight text-link Cancel, matching the "Ya existe" Figma reference
@@ -316,6 +310,7 @@ export default function TurnSidePanel({
     <div className={panelColumn}>
       <TooltipProvider>
         <SidePanel
+          size="sm"
           turn={{
             initials: currentSpeaker.initials,
             name: currentSpeaker.label,
@@ -355,7 +350,7 @@ export default function TurnSidePanel({
           if (!open) setScopeChoice(null);
         }}
       >
-        <DialogContent className={dialogContent}>
+        <DialogContent size="sm">
           <DialogTitle>{t("sidePanel.scopeDialog.title")}</DialogTitle>
           <DialogDescription>
             {t("sidePanel.scopeDialog.description", {

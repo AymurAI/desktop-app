@@ -7,6 +7,7 @@ import {
   renameSpeakerGlobal,
   renameTranscription,
   splitTurn,
+  updateTurnStartMs,
 } from "./actions";
 import reducer, { nextPersonaLabel } from "./index";
 
@@ -177,6 +178,99 @@ describe("splitTurn", () => {
     const ids = b[0].turns.map((x) => x.id);
     expect(ids).toContain("ta");
     expect(b[0].turns[b[0].turns.length - 1].id).toBe("ta");
+  });
+});
+
+describe("updateTurnStartMs", () => {
+  it("moves the preceding end to the boundary and extends the last turn to the audio end", () => {
+    const state = [
+      makeTranscription({
+        audioDurationMs: 9000,
+        turns: [
+          {
+            id: "chunk-1",
+            speakerId: "s1",
+            text: "first",
+            startMs: 1000,
+            endMs: 2400,
+          },
+          {
+            id: "chunk-2",
+            speakerId: "s1",
+            text: "second",
+            startMs: 2400,
+            endMs: 8600,
+          },
+        ],
+      }),
+    ];
+
+    const next = reducer(state, updateTurnStartMs("t1", "chunk-2", 2000));
+
+    expect(next[0].turns).toEqual([
+      expect.objectContaining({ id: "chunk-1", startMs: 1000, endMs: 2000 }),
+      expect.objectContaining({ id: "chunk-2", startMs: 2000, endMs: 9000 }),
+    ]);
+    expect(state[0].turns[0].endMs).toBe(2400);
+  });
+
+  it("preserves the edited turn's duration when another turn follows", () => {
+    const state = [
+      makeTranscription({
+        audioDurationMs: 9000,
+        turns: [
+          {
+            id: "chunk-1",
+            speakerId: "s1",
+            text: "first",
+            startMs: 1000,
+            endMs: 2400,
+          },
+          {
+            id: "chunk-2",
+            speakerId: "s1",
+            text: "second",
+            startMs: 2400,
+            endMs: 4400,
+          },
+          {
+            id: "chunk-3",
+            speakerId: "s1",
+            text: "third",
+            startMs: 7000,
+            endMs: 9000,
+          },
+        ],
+      }),
+    ];
+
+    const next = reducer(state, updateTurnStartMs("t1", "chunk-2", 3000));
+
+    expect(next[0].turns[0].endMs).toBe(3000);
+    expect(next[0].turns[1]).toEqual(
+      expect.objectContaining({ startMs: 3000, endMs: 5000 }),
+    );
+    expect(next[0].turns[2].endMs).toBe(9000);
+  });
+
+  it("does not change another turn when the target does not exist", () => {
+    const state = [
+      makeTranscription({
+        turns: [
+          {
+            id: "chunk-1",
+            speakerId: "s1",
+            text: "first",
+            startMs: 1000,
+            endMs: 2400,
+          },
+        ],
+      }),
+    ];
+
+    expect(
+      reducer(state, updateTurnStartMs("t1", "missing", 2000)),
+    ).toStrictEqual(state);
   });
 });
 

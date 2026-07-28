@@ -1,6 +1,5 @@
-import { Button, FilePreview } from "@/components";
-import HiddenInput from "@/components/hidden-input";
-import Stepper from "@/components/home/stepper";
+import { FilePreview } from "@/components";
+import FileSelectionLayout from "@/components/layout/file-selection-layout";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
@@ -8,18 +7,15 @@ import BackButton from "@/components/ui/back-button";
 import RequireFile from "@/features/RequireFile";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { useFileParse } from "@/hooks/useFileParse";
-import { SectionTitle } from "@/layout/section-title";
-import { addFiles, filterUnselected } from "@/reducers/file/actions";
-import { css } from "@/styled/css";
-import { Grid, HStack, Stack, styled } from "@/styled/jsx";
+import { removeAllFiles } from "@/reducers/file/actions";
+import { Stack, styled } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
-import { Card } from "@aymurai/ui";
+import { Button, Card } from "@aymurai/ui";
 import {
   createFileRoute,
   useNavigate,
   useParams,
 } from "@tanstack/react-router";
-import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import VoicePreview from "@/components/voice-to-text/preview";
@@ -43,32 +39,18 @@ function DocumentPreview() {
   const navigate = useNavigate();
   const { t } = useTranslation(featureNamespace[feature]);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const files = useFiles();
   const dispatch = useFileDispatch();
   const parseStatuses = useFileParse(files);
+  const file = files[0];
 
-  const isProcessing = files.some((file) => !file.paragraphs);
+  const isProcessing = Boolean(file && !file.paragraphs);
 
-  const handleAddFiles: React.ChangeEventHandler<HTMLInputElement> = async (
-    e,
-  ) => {
-    const rawFiles = e.target.files;
-    if (rawFiles) {
-      dispatch(addFiles([...rawFiles]));
-      await navigate({
-        to: "/app/$feature/preview",
-        params: { feature },
-      });
-    }
-  };
-  const handleOpenInput = () => {
-    inputRef.current?.click();
+  const handleRemove = () => {
+    dispatch(removeAllFiles());
   };
 
   const handleConfirmFiles = () => {
-    dispatch(filterUnselected());
     navigate({
       to: "/app/$feature/process",
       params: { feature },
@@ -77,59 +59,35 @@ function DocumentPreview() {
 
   return (
     <RequireFile>
-      <Header
-        title={t("title")}
-        center={<Stepper currentStep={1} />}
-        feature={feature}
-      />
-      <MainContent>
-        <Stack gap="8">
-          <HStack alignItems="center" gap="6">
+      <Header title={t("title")} currentStep={1} feature={feature} />
+      <MainContent full>
+        <FileSelectionLayout
+          title={t("preview.sectionTitle")}
+          backButton={
             <BackButton to="/app/$feature/onboarding" params={{ feature }} />
-            <SectionTitle>{t("preview.sectionTitle")}</SectionTitle>
-          </HStack>
+          }
+        >
           <Card>
-            <Stack gap="8">
-              <styled.h2 textStyle="subtitle.md.default">
+            <Stack gap="8" alignItems="center">
+              <styled.h2 textStyle="subtitle.md.default" alignSelf="flex-start">
                 {t("preview.filesLabel")}
               </styled.h2>
-              <Grid columns={5}>
-                {files.map((file) => (
-                  <FilePreview
-                    key={file.data.name}
-                    file={file}
-                    status={
-                      parseStatuses[file.data.name]?.status ?? "processing"
-                    }
-                  />
-                ))}
-              </Grid>
+              {file && (
+                <FilePreview
+                  file={file}
+                  status={parseStatuses[file.data.name]?.status ?? "processing"}
+                  onRemove={handleRemove}
+                />
+              )}
             </Stack>
           </Card>
-        </Stack>
+        </FileSelectionLayout>
       </MainContent>
       <Footer withBuiltBy>
-        <HStack gap="4">
-          {feature === FeatureFlowEnum.Dataset && (
-            <>
-              <styled.p textStyle="paragraph.sm.default" whiteSpace="nowrap">
-                {t("preview.validFormats")}
-              </styled.p>
-              <Button
-                variant="secondary"
-                onClick={handleOpenInput}
-                className={css({ whiteSpace: "nowrap" })}
-              >
-                {t("preview.loadMore")}
-              </Button>
-            </>
-          )}
-          <Button onClick={handleConfirmFiles} disabled={isProcessing}>
-            {t("preview.continue")}
-          </Button>
-        </HStack>
+        <Button onClick={handleConfirmFiles} disabled={isProcessing}>
+          {t("preview.continue")}
+        </Button>
       </Footer>
-      <HiddenInput ref={inputRef} onChange={handleAddFiles} />
     </RequireFile>
   );
 }

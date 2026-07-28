@@ -1,4 +1,4 @@
-import type { SelectOption } from "@/components/ui/select";
+import type { SelectOption } from "@/types/select";
 
 // ------------
 // PREDICTION
@@ -110,7 +110,7 @@ export const anonymizerLabels = [
   { id: "DENUNCIANTE", text: "Denunciante" },
   { id: "ACUSADO/A", text: "Acusado/a" },
   { id: "TESTIGO/A", text: "Testigo/a" },
-  { id: "NIÑO/A_ADOSLECENTE", text: "Niño/a adolescente" },
+  { id: "NIÑO/A_ADOLESCENTE", text: "Niño/a adolescente" },
   { id: "AFILIADO", text: "N° de afiliado" },
   { id: "CAUSA", text: "N° de causa" },
   { id: "INSTITUCION", text: "Nombre de institución" },

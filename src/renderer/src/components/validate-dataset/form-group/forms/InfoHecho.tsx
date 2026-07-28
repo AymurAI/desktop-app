@@ -1,14 +1,13 @@
 import { Plus } from "phosphor-react";
 import { useState } from "react";
 
-import Select from "@/components/ui/select";
 import { css } from "@/styled/css";
 import { LabelDecisiones } from "@/types/aymurai";
 import nArray from "@/utils/nArray";
+import { Button, Select } from "@aymurai/ui";
 import { Checkbox, CheckboxGroup } from "../../../checkbox";
 import { Radio, RadioGroup } from "../../../radio";
 import Stack from "../../../stack";
-import Button from "../../../ui/button";
 import Input from "../../../uncontrolled-input";
 import ValidationForm from "../../../validation-form";
 import type { FormDecisionProps } from "../FormGroup.types";

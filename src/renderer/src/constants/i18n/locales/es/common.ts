@@ -3,9 +3,20 @@ const common = {
   howItWorks: "¿Cómo funciona?",
   platformBuiltBy: "Plataforma hecha por",
   settings: "Configuración",
+  close: "Cerrar",
+  featuresMenu: {
+    summary: "Resumen",
+  },
+  header: {
+    appsAria: "Abrir aplicaciones",
+    homeAria: "Ir al inicio",
+  },
   home: {
     features: {
       greeting: "¡Hola! Selecciona la herramienta a utilizar",
+      summaryTitle: "Resumen de Documentos",
+      summarySubtitle:
+        "Genera síntesis claras de resoluciones judiciales extensas",
     },
     host: {
       howToConnect: "¿Cómo deseas conectarte a Aymurai?",
@@ -33,6 +44,9 @@ const common = {
   },
   filePreview: {
     loadError: "No se pudo cargar el archivo",
+    meta_one: "{{count}} párrafo · {{size}}",
+    meta_other: "{{count}} párrafos · {{size}}",
+    removeAria: "Eliminar {{name}}",
   },
 };
 

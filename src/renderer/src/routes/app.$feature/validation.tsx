@@ -1,11 +1,11 @@
-import { Button, FileAnnotator, ValidateDataset } from "@/components";
-import Stepper from "@/components/home/stepper";
+import { FileAnnotator, ValidateDataset } from "@/components";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import RequireFile from "@/features/RequireFile";
 import { useFiles } from "@/hooks";
-import { Grid, Stack } from "@/styled/jsx";
+import { Grid } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
+import { Button } from "@aymurai/ui";
 import {
   createFileRoute,
   useNavigate,
@@ -43,22 +43,20 @@ function DocumentValidation() {
   if (feature === FeatureFlowEnum.Anonymizer)
     return (
       <RequireFile>
-        <Header
-          title={t("title")}
-          center={<Stepper currentStep={3} />}
-          feature={feature}
-        />
+        <Header title={t("title")} currentStep={3} feature={feature} />
         <Grid
           columns={1}
           gap="0"
+          flex="1"
+          minHeight="0"
+          overflow="hidden"
           justifyContent="stretch"
           alignItems="stretch"
-          style={{ overflow: "hidden" }}
         >
           <FileAnnotator {...{ file }} isAnnotable />
         </Grid>
 
-        <Footer>
+        <Footer withBuiltBy>
           <Button size="md" onClick={handleContinue}>
             Anonimizar documento
           </Button>
@@ -67,14 +65,8 @@ function DocumentValidation() {
     );
   return (
     <RequireFile>
-      <Stack gap="0" height="screen" overflow="hidden">
-        <Header
-          title={t("title")}
-          center={<Stepper currentStep={3} />}
-          feature={feature}
-        />
-        <ValidateDataset />
-      </Stack>
+      <Header title={t("title")} currentStep={3} feature={feature} />
+      <ValidateDataset />
     </RequireFile>
   );
 }

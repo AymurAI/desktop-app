@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
 import BackButton from "@/components/ui/back-button";
 import { USE_MOCK_STT } from "@/constants/config";
 import RequireFile from "@/features/RequireFile";
@@ -14,7 +15,6 @@ import { css } from "@/styled/css";
 import { HStack, Stack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
 import { Button } from "@aymurai/ui";
-import VoiceHeader from "./header";
 import TranscriptionEditor from "./transcription-editor";
 
 const editorWrap = css({
@@ -51,7 +51,7 @@ export default function VoiceValidation() {
   if (!transcription) {
     return (
       <RequireFile>
-        <VoiceHeader currentStep={3} />
+        <Header feature={FeatureFlowEnum.VoiceToText} currentStep={3} />
         <Footer>
           <HStack gap="4">
             <BackButton
@@ -67,7 +67,7 @@ export default function VoiceValidation() {
   return (
     <RequireFile>
       <Stack gap="0" height="screen" overflow="hidden">
-        <VoiceHeader currentStep={3} />
+        <Header feature={FeatureFlowEnum.VoiceToText} currentStep={3} />
         <div className={editorWrap}>
           <TranscriptionEditor
             transcription={transcription}

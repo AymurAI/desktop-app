@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/** Human-readable duration: "46 min. 34 seg." or "9 seg." */
+/** Human-readable duration: "1 h. 0 min. 3 seg.", "46 min. 34 seg." or "9 seg." */
 export function formatDuration(ms: number): string {
   if (!Number.isFinite(ms) || ms <= 0) return "0 seg.";
   const totalSeconds = Math.round(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
+  if (hours > 0) {
+    const hoursLabel = hours === 1 ? "h." : "hs.";
+    return `${hours} ${hoursLabel} ${minutes} min. ${seconds} seg.`;
+  }
   if (minutes === 0) return `${seconds} seg.`;
   return `${minutes} min. ${seconds} seg.`;
 }

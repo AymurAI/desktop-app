@@ -1,6 +1,6 @@
-import type { SelectOption } from "@/components/ui/select";
 import { EXCLUDED_TAGS } from "@/constants/excluded-tags";
 import { type AnonymizerLabels, anonymizerLabels } from "@/types/aymurai";
+import type { SelectOption } from "@/types/select";
 
 export function getActiveAnonymizerLabelOptions(
   excludedTags: Record<AnonymizerLabels, boolean> | null,

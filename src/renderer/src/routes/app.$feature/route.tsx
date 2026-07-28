@@ -40,7 +40,13 @@ function AppLayoutRoute() {
   const { feature } = useParams({ from: "/app/$feature" });
   const isVoice = feature === FeatureFlowEnum.VoiceToText;
   const inner = (
-    <Stack width="screen" height="screen" gap="0">
+    <Stack
+      width="screen"
+      height="screen"
+      minHeight="0"
+      gap="0"
+      overflow="hidden"
+    >
       <FileProvider>
         <Outlet key={feature} />
       </FileProvider>

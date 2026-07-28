@@ -5,12 +5,12 @@ import { downloadBlob } from "@/services/export/download-blob";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import { HStack } from "@/styled/jsx";
 import { FeatureFlowEnum } from "@/types/features";
+import { Button } from "@aymurai/ui";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import FileCheck from "../file-check";
 import Footer from "../layout/footer";
-import Button from "../ui/button";
 import FinishMainContent from "./finish-main-content";
 
 interface FinishAnonymizerProps {

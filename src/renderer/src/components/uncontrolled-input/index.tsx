@@ -1,26 +1,24 @@
 import {
   type ChangeEventHandler,
-  type KeyboardEvent,
+  type KeyboardEventHandler,
+  type MouseEventHandler,
   type ReactNode,
+  useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from "react";
 
-import Suggestion from "@/components/ui/suggestion";
-import type { CSS } from "@/styles";
 import type { NativeComponent } from "@/types/component";
+import { TextField } from "@aymurai/ui";
 import { forwardRef } from "react";
-import Label from "../label";
-import Text from "../text";
-import {
-  Container,
-  InputContainer,
-  Input as StyledInput,
-} from "./UncontrolledInput.styles";
 
 export type InputRefValue = { value: string };
 interface Props
-  extends NativeComponent<"input", "prefix" | "type" | "value" | "onChange"> {
+  extends NativeComponent<
+    "input",
+    "prefix" | "type" | "value" | "onChange" | "size"
+  > {
   label?: string;
   suggestion?: string;
   helper?: string;
@@ -29,7 +27,6 @@ interface Props
   defaultValue?: string;
   onChange?: (value: string) => void;
   type?: "text" | "number";
-  css?: CSS;
   specialCharacters?: string;
 }
 export default forwardRef<{ value: string }, Props>(function UncontrolledInput(
@@ -48,6 +45,7 @@ export default forwardRef<{ value: string }, Props>(function UncontrolledInput(
   ref,
 ) {
   const [value, setValue] = useState<string>(defaultValue ?? "");
+  const rootRef = useRef<HTMLDivElement>(null);
 
   // Only exposes `selected` object to the parent component
   useImperativeHandle(
@@ -59,8 +57,6 @@ export default forwardRef<{ value: string }, Props>(function UncontrolledInput(
     },
     [value],
   );
-
-  const isValueEmpty = !value || value === "";
 
   const updateValue = (newValue: string) => {
     if (type === "number") {
@@ -78,64 +74,58 @@ export default forwardRef<{ value: string }, Props>(function UncontrolledInput(
     onChange?.(newValue);
   };
 
-  const handleClickSuggestion = () => {
-    updateValue(suggestion as string); // We are sure is a string because the button is enabled only in case suggestion = string
-  };
-  const handleKeySuggestion = (e: KeyboardEvent) => {
-    e.preventDefault();
-
-    if (e.code === "Space" || e.code === "Enter")
-      updateValue(suggestion as string); // We are sure is a string because the button is enabled only in case suggestion = string
-  };
-
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     updateValue(e.target.value);
   };
 
+  const isSuggestionTarget = (target: EventTarget | null) =>
+    target instanceof Element && target.closest("mark") !== null;
+
+  const handleSuggestionClick: MouseEventHandler<HTMLDivElement> = (event) => {
+    if (suggestion && !value && isSuggestionTarget(event.target)) {
+      updateValue(suggestion);
+    }
+  };
+
+  const handleSuggestionKeyDown: KeyboardEventHandler<HTMLDivElement> = (
+    event,
+  ) => {
+    if (
+      suggestion &&
+      !value &&
+      isSuggestionTarget(event.target) &&
+      (event.key === "Enter" || event.key === " ")
+    ) {
+      event.preventDefault();
+      updateValue(suggestion);
+    }
+  };
+
+  useEffect(() => {
+    const suggestionMark = rootRef.current?.querySelector("mark");
+    if (suggestionMark && suggestion && !value) {
+      suggestionMark.setAttribute("tabindex", "0");
+      suggestionMark.setAttribute("role", "button");
+    }
+  }, [suggestion, value]);
+
   return (
-    <Container>
-      {/* LABEL */}
-      {label}
-
-      {/* INPUT CONTAINER */}
-      <InputContainer>
-        {/* PREFIX */}
-        {prefix && (
-          <>
-            <Label>{prefix}</Label>
-            <Text css={{ lineHeight: "100%", color: "$secondary" }}>|</Text>
-          </>
-        )}
-
-        {/* INPUT */}
-        <StyledInput
-          value={value}
-          type="text"
-          onChange={handleChange}
-          {...props}
-        />
-
-        {/* SUGGESTION */}
-        {suggestion && isValueEmpty && (
-          <>
-            <Text css={{ lineHeight: "100%" }}>|</Text>
-            <Suggestion
-              onClick={handleClickSuggestion}
-              onKeyDown={handleKeySuggestion}
-              tabIndex={0}
-              clickable
-            >
-              {suggestion}
-            </Suggestion>
-          </>
-        )}
-
-        {/* SUFIX */}
-        {sufix}
-      </InputContainer>
-
-      {/* HELPER */}
-      {helper && <Label size="s">{helper}</Label>}
-    </Container>
+    <div
+      ref={rootRef}
+      onClick={handleSuggestionClick}
+      onKeyDown={handleSuggestionKeyDown}
+    >
+      <TextField
+        value={value}
+        type="text"
+        label={label}
+        helper={helper}
+        suggestion={!value ? suggestion : undefined}
+        prefix={prefix === undefined ? undefined : String(prefix)}
+        suffix={sufix === undefined ? undefined : String(sufix)}
+        onChange={handleChange}
+        {...props}
+      />
+    </div>
   );
 });

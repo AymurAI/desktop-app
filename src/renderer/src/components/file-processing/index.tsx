@@ -1,36 +1,18 @@
-import { ArrowsLeftRight, Stop, X } from "phosphor-react";
-import { type ChangeEventHandler, type MouseEventHandler, useRef } from "react";
+import { type ChangeEventHandler, useRef } from "react";
 
 import HiddenInput from "@/components/hidden-input";
-import Button from "@/components/ui/button";
 import { useFileDispatch } from "@/hooks";
 import type { PredictStatus } from "@/hooks/usePredict";
-import { removeFile, replaceFile } from "@/reducers/file/actions";
-import { css } from "@/styled/css";
-import { Stack } from "@/styled/jsx";
+import { replaceFile } from "@/reducers/file/actions";
+import { ArchiveProgress, type ArchiveProgressStatus } from "@aymurai/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import ProgressBar from "./ProgressBar";
 
-function ActionButton({
-  status,
-  onClick,
-}: { status: PredictStatus; onClick: MouseEventHandler }) {
-  return (
-    <Button onClick={onClick} className={css({ w: "36" })}>
-      {status === "processing" ? (
-        <>
-          <Stop weight="bold" />
-          Detener
-        </>
-      ) : (
-        <>
-          <ArrowsLeftRight weight="bold" />
-          Reemplazar
-        </>
-      )}
-    </Button>
-  );
-}
+const archiveStatus: Record<PredictStatus, ArchiveProgressStatus> = {
+  processing: "default",
+  stopped: "stopped",
+  error: "error",
+  completed: "completed",
+};
 
 interface Props {
   fileName: string;
@@ -81,31 +63,21 @@ export default function FileProcessing({
     onAbort?.();
   };
 
-  const remove = () => {
-    onAbort?.();
-    dispatch(removeFile(fileName));
-  };
-
   return (
-    <Stack align="center" gap="4" width="full" direction="row">
+    <>
       <HiddenInput
         multiple={false}
         style={{ position: "absolute" }}
         ref={inputRef}
         onChange={handleAddedFile}
       />
-      <ProgressBar
-        status={status}
+      <ArchiveProgress
         fileName={fileName}
-        progress={status === "stopped" ? 0 : Math.round(progress * 100)}
+        status={archiveStatus[status]}
+        progress={Math.round(progress * 100)}
+        onStop={handleStop}
+        onReplace={handleOpenFinder}
       />
-      <ActionButton
-        status={status}
-        onClick={status === "processing" ? handleStop : handleOpenFinder}
-      />
-      <Button variant="none" onClick={remove}>
-        <X />
-      </Button>
-    </Stack>
+    </>
   );
 }
