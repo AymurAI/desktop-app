@@ -15,7 +15,13 @@
       "out",
       "routeTree.gen.ts",
       "src/renderer/src/styled/**",
-      ".worktrees"
+      ".worktrees",
+      ".claude/settings.local.json",
+      ".orquestalite",
+      "team.json",
+      "flows.json",
+      "prompts",
+      "schemas"
     ]
   },
   "formatter": {

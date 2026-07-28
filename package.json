@@ -99,7 +99,8 @@
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["electron", "esbuild"]
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=22.13 <23"
   }
 }
