@@ -38,3 +38,13 @@ src/renderer/src/styled
 
 # temporary files
 .tmp
+package-lock.json
+.orquestalite/
+team.json
+prompts/
+schemas/
+flows.json
+node_modules/
+dist/
+.next/
+.cache/
