@@ -66,6 +66,21 @@ function doc(...paragraphs: JSONContent[]): JSONContent {
   return { type: "doc", content: paragraphs };
 }
 
+function tableCell(
+  type: "tableCell" | "tableHeader",
+  ...paragraphs: JSONContent[]
+): JSONContent {
+  return { type, content: paragraphs };
+}
+
+function tableRow(...cells: JSONContent[]): JSONContent {
+  return { type: "tableRow", content: cells };
+}
+
+function table(...rows: JSONContent[]): JSONContent {
+  return { type: "table", content: rows };
+}
+
 describe("paragraphToOdtXml", () => {
   it("wraps plain text in a text:p with no span at all, explicitly styled Standard", () => {
     const p = paragraph(text("hola"));
@@ -304,5 +319,120 @@ describe("documentToOdt", () => {
     expect(xml).toContain(
       `<text:a xlink:href="${WATERMARK_URL}" text:style-name="FooterWatermarkLink"><text:span text:style-name="FooterWatermarkLink">${WATERMARK_LINK_TEXT}</text:span></text:a>`,
     );
+  });
+});
+
+describe("documentToOdt — tables", () => {
+  it("renders a table as real ODF table markup, not a flattened list of paragraphs", async () => {
+    const document = doc(
+      table(
+        tableRow(
+          tableCell("tableHeader", paragraph(text("Medida"))),
+          tableCell("tableHeader", paragraph(text("Plazo"))),
+        ),
+        tableRow(
+          tableCell("tableCell", paragraph(text("Exclusión"))),
+          tableCell("tableCell", paragraph(text("Inmediato"))),
+        ),
+      ),
+    );
+    const xml = await readContentXml(await documentToOdt(document, "Resumen"));
+
+    expect(xml).toContain("<table:table>");
+    expect(xml).toContain(
+      '<table:table-column table:number-columns-repeated="2"/>',
+    );
+    expect(xml.match(/<table:table-row>/g)).toHaveLength(2);
+    expect(xml.match(/<table:table-cell/g)).toHaveLength(4);
+    expect(xml).toContain("Medida");
+    expect(xml).toContain("Exclusión");
+  });
+
+  it("bolds the header row's text via a dedicated paragraph style", async () => {
+    const document = doc(
+      table(
+        tableRow(
+          tableCell("tableHeader", paragraph(text("Medida"))),
+          tableCell("tableHeader", paragraph(text("Plazo"))),
+        ),
+        tableRow(
+          tableCell("tableCell", paragraph(text("Exclusión"))),
+          tableCell("tableCell", paragraph(text("Inmediato"))),
+        ),
+      ),
+    );
+    const xml = await readContentXml(await documentToOdt(document, "Resumen"));
+
+    expect(xml).toContain(
+      '<text:p text:style-name="TableHeaderPara">Medida</text:p>',
+    );
+    expect(xml).toContain(
+      '<text:p text:style-name="Standard">Exclusión</text:p>',
+    );
+  });
+
+  it("preserves marks (bold/highlight/etc.) inside table cells", async () => {
+    const document = doc(
+      table(
+        tableRow(
+          tableCell(
+            "tableCell",
+            paragraph(text("importante", [{ type: "bold" }])),
+          ),
+        ),
+      ),
+    );
+    const xml = await readContentXml(await documentToOdt(document, "Resumen"));
+
+    expect(xml).toContain(
+      '<style:style style:name="T0" style:family="text"><style:text-properties fo:font-weight="bold"/></style:style>',
+    );
+    expect(xml).toContain(
+      '<text:span text:style-name="T0">importante</text:span>',
+    );
+  });
+
+  it("renders an empty cell as an empty, still-styled paragraph, not nothing", async () => {
+    const document = doc(
+      table(tableRow(tableCell("tableCell"), tableCell("tableCell"))),
+    );
+    const xml = await readContentXml(await documentToOdt(document, "Resumen"));
+
+    expect(xml.match(/<text:p text:style-name="Standard"\/>/g)).toHaveLength(2);
+  });
+
+  it("declares the table-cell border/padding style and the table xmlns", async () => {
+    const document = doc(
+      table(tableRow(tableCell("tableCell", paragraph(text("Hola"))))),
+    );
+    const blob = await documentToOdt(document, "Resumen");
+    const contentXml = await readContentXml(blob);
+    const stylesXml = await readStylesXml(blob);
+
+    expect(contentXml).toContain(
+      'xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"',
+    );
+    expect(stylesXml).toContain(
+      '<style:style style:name="TableCell" style:family="table-cell">',
+    );
+  });
+
+  it("stays well-formed XML with a table present", async () => {
+    const document = doc(
+      table(
+        tableRow(
+          tableCell("tableHeader", paragraph(text("A"))),
+          tableCell("tableHeader", paragraph(text("B"))),
+        ),
+        tableRow(
+          tableCell("tableCell", paragraph(text("1"))),
+          tableCell("tableCell", paragraph(text("2"))),
+        ),
+      ),
+    );
+    const blob = await documentToOdt(document, "Resumen");
+
+    assertWellFormed(await readContentXml(blob), "content.xml");
+    assertWellFormed(await readStylesXml(blob), "styles.xml");
   });
 });

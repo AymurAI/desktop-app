@@ -25,7 +25,8 @@ const ODF_NAMESPACES =
   'xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" ' +
   'xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" ' +
   'xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" ' +
-  'xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0"';
+  'xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" ' +
+  'xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"';
 const XLINK_NAMESPACE = 'xmlns:xlink="http://www.w3.org/1999/xlink"';
 
 const MANIFEST_XML = `<?xml version="1.0" encoding="UTF-8"?>
@@ -53,6 +54,12 @@ const STYLES_XML = `<?xml version="1.0" encoding="UTF-8"?>
   <office:styles>
     <style:style style:name="Standard" style:family="paragraph">
       <style:text-properties style:font-name="${DOCUMENT_FONT_NAME}"/>
+    </style:style>
+    <style:style style:name="TableHeaderPara" style:family="paragraph">
+      <style:text-properties style:font-name="${DOCUMENT_FONT_NAME}" fo:font-weight="bold"/>
+    </style:style>
+    <style:style style:name="TableCell" style:family="table-cell">
+      <style:table-cell-properties fo:border="0.018cm solid #BCBAB8" fo:padding="0.15cm"/>
     </style:style>
     <style:style style:name="FooterWatermark" style:family="paragraph">
       <style:paragraph-properties fo:text-align="end"/>
@@ -249,6 +256,7 @@ function automaticStylesXml(styles: Map<string, OdtStyleEntry>): string {
 export function paragraphToOdtXml(
   block: JSONContent,
   styles: Map<string, OdtStyleEntry>,
+  paragraphStyleName = "Standard",
 ): string {
   const spans = (block.content ?? [])
     .filter((node) => node.type === "text")
@@ -271,7 +279,69 @@ export function paragraphToOdtXml(
   // its own built-in default, even though "Standard" was declared with
   // Archivo in styles.xml). Every mark span above inherits font-name from
   // here too, since none of them set their own.
-  return `<text:p text:style-name="Standard">${spans}</text:p>`;
+  return `<text:p text:style-name="${paragraphStyleName}">${spans}</text:p>`;
+}
+
+/**
+ * Renders a `table` node as a real ODF table (`table:table` /
+ * `table:table-row` / `table:table-cell`) instead of letting the generic
+ * leaf-block walk flatten every cell into its own top-level paragraph, which
+ * preserves the text but loses the grid entirely. The first row is bolded
+ * (matching RichTextEditor's own `& th` styling) whenever it's made of
+ * `tableHeader` cells, or whenever there's more than one row — a lone,
+ * header-less single-row table has no "body" to visually distinguish it from.
+ */
+function tableToOdtXml(
+  table: JSONContent,
+  styles: Map<string, OdtStyleEntry>,
+): string {
+  const rows = table.content ?? [];
+  if (rows.length === 0) return "";
+
+  const columnCount = Math.max(
+    1,
+    ...rows.map((row) => (row.content ?? []).length),
+  );
+  const columnsXml = `<table:table-column table:number-columns-repeated="${columnCount}"/>`;
+
+  const rowsXml = rows
+    .map((row, rowIndex) => {
+      const cellsXml = (row.content ?? [])
+        .map((cell) => {
+          const isHeader =
+            cell.type === "tableHeader" || (rowIndex === 0 && rows.length > 1);
+          const paragraphStyleName = isHeader ? "TableHeaderPara" : "Standard";
+          const cellLeaves: JSONContent[] = [];
+          for (const child of cell.content ?? [])
+            collectLeafBlocks(child, cellLeaves);
+          const cellBodyXml =
+            cellLeaves
+              .map((leaf) =>
+                paragraphToOdtXml(leaf, styles, paragraphStyleName),
+              )
+              .join("") || `<text:p text:style-name="${paragraphStyleName}"/>`;
+          return `<table:table-cell table:style-name="TableCell" office:value-type="string">${cellBodyXml}</table:table-cell>`;
+        })
+        .join("");
+      return `<table:table-row>${cellsXml}</table:table-row>`;
+    })
+    .join("");
+
+  return `<table:table>${columnsXml}${rowsXml}</table:table>`;
+}
+
+/** Renders one top-level document block — a table as a real ODF table,
+ * anything else via the generic leaf-block walk (paragraphs, headings, and
+ * list items alike, which this export flattens to plain paragraphs — see
+ * `collectLeafBlocks`). */
+function blockToOdtXml(
+  node: JSONContent,
+  styles: Map<string, OdtStyleEntry>,
+): string {
+  if (node.type === "table") return tableToOdtXml(node, styles);
+  const leaves: JSONContent[] = [];
+  collectLeafBlocks(node, leaves);
+  return leaves.map((leaf) => paragraphToOdtXml(leaf, styles)).join("\n");
 }
 
 // Matches ../formatters/odt.ts's own "Title" style exactly (20pt bold
@@ -287,8 +357,8 @@ const TITLE_STYLE_XML = `<style:style style:name="Title" style:family="paragraph
 
 function buildContentXml(document: JSONContent, title: string): string {
   const styles = collectStyles(document);
-  const bodyXml = documentLeafBlocks(document)
-    .map((block) => paragraphToOdtXml(block, styles))
+  const bodyXml = (document.content ?? [])
+    .map((node) => blockToOdtXml(node, styles))
     .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
