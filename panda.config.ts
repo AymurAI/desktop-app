@@ -98,4 +98,28 @@ export default defineConfig({
 
   // Other configuration
   strictTokens: true,
+
+  theme: {
+    extend: {
+      // Extra breakpoint between the preset's `xl` (1280px) and `2xl`
+      // (1536px), for the responsive-layout plan (tasks/responsive/plan.md).
+      breakpoints: {
+        desktop: "1440px",
+      },
+      tokens: {
+        sizes: {
+          content: {
+            max: { value: "1824px" },
+            split: { value: "1672px" },
+            doc: { value: "1520px" },
+          },
+          panel: {
+            side: { value: "479px" },
+            form: { value: "594px" },
+            sideCompact: { value: "360px" },
+          },
+        },
+      },
+    },
+  },
 });
