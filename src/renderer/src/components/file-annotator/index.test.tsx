@@ -88,13 +88,13 @@ describe("FileAnnotator document column (RSP-07b)", () => {
   });
 
   it("nests the reading column inside the scroll container instead of replacing it", () => {
-    // isAnnotable (panel open) -> variant="doc", a SINGLE element, so
-    // `column.parentElement` is `S.file` directly - unlike full/split's
-    // two-node shape (T17), which would insert a gutter div in between.
+    // ReadingColumn always renders the same two-node shape (T17/RSP-07b fix)
+    // regardless of variant, so `column.parentElement` is ReadingColumn's own
+    // outer gutter node, and `S.file` is one level further up.
     render(<FileAnnotator file={file} isAnnotable />);
 
     const column = screen.getByTestId("anon-reading-column");
-    const scrollContainer = column.parentElement as HTMLElement;
+    const scrollContainer = column.parentElement?.parentElement as HTMLElement;
 
     // S.file - the scroll container and keyboard-focus target - must still
     // own overflow/flex/tabIndex; ReadingColumn nests INSIDE it, it isn't
@@ -113,7 +113,7 @@ describe("FileAnnotator document column (RSP-07b)", () => {
     render(<FileAnnotator file={file} isAnnotable />);
 
     const column = screen.getByTestId("anon-reading-column");
-    const scrollContainer = column.parentElement as HTMLElement;
+    const scrollContainer = column.parentElement?.parentElement as HTMLElement;
 
     expect(scrollContainer.className).toContain("fs_[16px]");
   });
@@ -122,8 +122,10 @@ describe("FileAnnotator document column (RSP-07b)", () => {
     render(<FileAnnotator file={file} isAnnotable />);
 
     const column = screen.getByTestId("anon-reading-column");
-    // container is the ancestor two levels up: S.file > S.container.
-    const container = column.parentElement?.parentElement as HTMLElement;
+    // container is the ancestor three levels up: ReadingColumn's own gutter
+    // node > S.file > S.container.
+    const container = column.parentElement?.parentElement
+      ?.parentElement as HTMLElement;
 
     expect(classTokens(container)).toContain("min-w_[520px]");
   });

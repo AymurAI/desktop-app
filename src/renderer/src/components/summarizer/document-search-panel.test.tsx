@@ -124,7 +124,10 @@ describe("DocumentSearchPanel reading column (RSP-09)", () => {
     render(<DocumentSearchPanel paragraphs={paragraphs} />);
 
     const column = screen.getByTestId("summary-search-reading-column");
-    const scrollContainer = column.parentElement as HTMLElement;
+    // ReadingColumn always renders its own outer gutter node (T17/RSP-07b
+    // fix) regardless of variant, so the real scroll container is one level
+    // further up.
+    const scrollContainer = column.parentElement?.parentElement as HTMLElement;
     const scrollClasses = scrollContainer.className.split(/\s+/);
 
     expect(scrollClasses).not.toContain("px_8");

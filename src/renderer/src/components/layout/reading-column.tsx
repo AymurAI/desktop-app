@@ -19,20 +19,30 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
  * since the cap has engaged and consumes the box before padding) - two
  * different quantities on the same node.
  *
- * Fix: `full`/`split` render TWO nested elements. The OUTER node carries only
- * the responsive gutter (`px`, no cap). The INNER node - "the element that
- * carries the cap" - has `width: full`, `maxWidth: <token>`, `mx: auto` and
- * NO padding of its own, so its border-box and content-box are identical and
- * both equal `min(<available width>, <cap>)` at every viewport. `className`
- * and any forwarded props (including `data-testid`) land on THIS inner node -
- * it is the one downstream tickets (T8/T10) must measure and attach
- * `data-testid` to. `doc` (rule C) stays a single element: it's a percentage
- * of the PANE with no gutter, so it must not gain the wrapper.
+ * Fix: every variant renders the SAME two nested elements - the tree shape
+ * must stay constant across variants, since callers (FileAnnotator, RSP-07b)
+ * flip `variant` at runtime and React unmounts a subtree whenever the
+ * element type at a given position changes across a rerender. The OUTER node
+ * carries only the responsive gutter (`px`, no cap) for `full`/`split`, and
+ * no padding at all for `doc` (rule C has no gutter). The INNER node - "the
+ * element that carries the cap" - has `width: full`, `mx: auto` and NO
+ * padding of its own, so its border-box and content-box are identical and
+ * both equal `min(<available width>, <cap>)` at every viewport; for `full`/
+ * `split` that cap is `maxWidth: <token>`, for `doc` it's the rule-C
+ * percentage-of-pane width. `className` and any forwarded props (including
+ * `data-testid`) land on THIS inner node - it is the one downstream tickets
+ * (T8/T10) must measure and attach `data-testid` to.
  */
 const gutter = cva({
   base: {
     width: "full",
-    px: { base: "4", md: "6", desktop: "12" },
+  },
+  variants: {
+    variant: {
+      full: { px: { base: "4", md: "6", desktop: "12" } },
+      split: { px: { base: "4", md: "6", desktop: "12" } },
+      doc: {},
+    },
   },
 });
 
@@ -45,14 +55,8 @@ const cap = cva({
     variant: {
       full: { maxWidth: "content.max" },
       split: { maxWidth: "content.split" },
+      doc: { width: "[min(88%, token(sizes.content.doc))]" },
     },
-  },
-});
-
-const doc = cva({
-  base: {
-    width: "[min(88%, token(sizes.content.doc))]",
-    mx: "auto",
   },
 });
 
@@ -69,16 +73,8 @@ export default function ReadingColumn({
   className,
   ...rest
 }: ReadingColumnProps) {
-  if (variant === "doc") {
-    return (
-      <div className={cx(doc(), className)} {...rest}>
-        {children}
-      </div>
-    );
-  }
-
   return (
-    <div className={gutter()}>
+    <div className={gutter({ variant })}>
       <div className={cx(cap({ variant }), className)} {...rest}>
         {children}
       </div>
