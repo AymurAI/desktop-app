@@ -71,19 +71,39 @@ export function ValidateDataset() {
         minHeight="0"
         overflow="hidden"
         gap="0"
+        // Rule E: a fluid document pane beside a FIXED 594px form column
+        // (sizes.panel.form) at >=desktop. gridTemplateColumns/Rows have no
+        // token category in this preset (raw CssProperties type, verified in
+        // styled/types/style-props.d.ts) so strictTokens does not require the
+        // [bracket] escape here - it is used anyway for the multi-value CSS
+        // list, consistent with the escape `token()` needs to resolve.
+        // 1024-1439 (`lg`) keeps the pre-existing 50/50 fallback: no design
+        // exists for that range.
         gridTemplateColumns={{
-          base: "minmax(0, 1fr)",
-          lg: "repeat(2, minmax(0, 1fr))",
+          base: "[minmax(0, 1fr)]",
+          lg: "[repeat(2, minmax(0, 1fr))]",
+          desktop: "[minmax(0, 1fr) token(sizes.panel.form)]",
         }}
         gridTemplateRows={{
-          base: "repeat(2, minmax(0, 1fr))",
-          lg: "minmax(0, 1fr)",
+          base: "[repeat(2, minmax(0, 1fr))]",
+          lg: "[minmax(0, 1fr)]",
         }}
       >
         <FileAnnotator
           key={selectedFile.data.name}
           file={selectedFile}
           isAnnotable={false}
+          // Forces ReadingColumn's rule-C ("doc") geometry: a form column
+          // sits beside the document here, unlike the other two screens.
+          // FLAGGED FOR DESIGN: with `isAnnotable={false}` the panel never
+          // opens, so absent this prop the column would render rule A
+          // (`full`, 1824px cap) - but Figma's family-E frames show the
+          // document narrow and centered (rule C) even though no panel is
+          // open. This prop makes the code match the mockups; the
+          // discrepancy between "no panel open -> rule A" and "form beside
+          // document -> rule C" is a real open question for design (see
+          // tasks/responsive/plan.md's RSP-08 section).
+          narrowDocument
         />
         <Stack
           // position:relative makes this scrolling column the containing block
@@ -91,7 +111,7 @@ export function ValidateDataset() {
           // elements. Without it they resolve against <html>, escape this
           // column's overflow, and stretch the page far past the footer.
           position="relative"
-          px={{ base: "6", xl: "[100px]" }}
+          px={{ base: "6", desktop: "12" }}
           py={{ base: "6", xl: "16" }}
           overflowY="auto"
           overflowX="hidden"
