@@ -36,6 +36,11 @@ src/renderer/src/styled
 
 /me/
 
+# Playwright component-test output
+/playwright-report
+/test-results
+playwright/.cache
+
 # temporary files
 .tmp
 package-lock.json

@@ -1,0 +1,46 @@
+import { resolve } from "node:path";
+import { defineConfig } from "@playwright/experimental-ct-react";
+import react from "@vitejs/plugin-react";
+
+/**
+ * Component-test harness for the responsive-layout plan
+ * (tasks/responsive/plan.md). jsdom (Vitest) performs no layout, so numeric
+ * CSS assertions and horizontal-overflow checks need a real browser engine.
+ *
+ * Viewports match the plan's six target widths.
+ */
+const VIEWPORTS: Record<string, { width: number; height: number }> = {
+  "768x1024": { width: 768, height: 1024 },
+  "1024x768": { width: 1024, height: 768 },
+  "1366x768": { width: 1366, height: 768 },
+  "1440x900": { width: 1440, height: 900 },
+  "1920x1080": { width: 1920, height: 1080 },
+  "2560x1440": { width: 2560, height: 1440 },
+};
+
+export default defineConfig({
+  testDir: "./playwright",
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  reporter: "list",
+  use: {
+    trace: "on-first-retry",
+    ctPort: 3100,
+    ctViteConfig: {
+      // Supply our own @vitejs/plugin-react (already a devDependency, pinned
+      // to the version compatible with this repo's vite@6) instead of
+      // letting @playwright/experimental-ct-react pull in its own - that
+      // bundled version requires vite@^8 and crashes against vite@6.4.3.
+      plugins: [react()],
+      resolve: {
+        alias: {
+          "@": resolve(__dirname, "src/renderer/src"),
+        },
+      },
+    },
+  },
+  projects: Object.entries(VIEWPORTS).map(([name, viewport]) => ({
+    name,
+    use: { viewport },
+  })),
+});
