@@ -51,6 +51,8 @@ export default function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1366,
     height: 768,
+    minWidth: 1024,
+    minHeight: 700,
     autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
