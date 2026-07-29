@@ -15,6 +15,11 @@ export default defineConfig({
     tanstackRouter({
       target: "react",
       autoCodeSplitting: true,
+      // Mirror electron.vite.config.ts: co-located *.test.tsx files under
+      // routes/ are not routes. Without this the plugin warns for each one and
+      // keeps regenerating the route tree, so `pnpm dev:web` never becomes
+      // ready (observed pinning a core at 99% CPU).
+      routeFileIgnorePattern: "\\.test\\.tsx$",
     }),
     react(),
   ],
