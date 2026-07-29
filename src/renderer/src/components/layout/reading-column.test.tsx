@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { useEffect } from "react";
 import { describe, expect, it } from "vitest";
 import ReadingColumn from "./reading-column";
 
@@ -91,5 +92,106 @@ describe("ReadingColumn — variant doc (rule C)", () => {
 
     expect(column.className).toContain("extra");
     expect(column.className).toContain("min(88%,_token(sizes.content.doc))");
+  });
+});
+
+// A variant change is a pure STYLE change from the caller's point of view -
+// FileAnnotator flips `doc` <-> `full` on every entities-panel toggle
+// (file-annotator/index.tsx: `variant={narrowDocument || labelManagerOpen ?
+// "doc" : "full"}`). But `doc` renders ONE element and `full`/`split` render
+// TWO nested ones, so the element type at the children's position changes
+// (`children` vs the inner cap `div`) and React unmounts the whole subtree
+// instead of reconciling it: the document DOM is destroyed and rebuilt, every
+// `memo`ised Paragraph loses its cache, and all state inside the subtree
+// (AnnotationProvider's pending manual-entity-resolution request, any open
+// annotation popover, the live text selection an annotation is made from) is
+// discarded. Nothing about rule A/C's geometry requires that: the tree shape
+// must stay constant across variants (e.g. always render the outer node, with
+// the gutter classes only on full/split).
+describe("ReadingColumn — variant transitions preserve the subtree", () => {
+  function MountProbe({ onMount }: { onMount: () => void }) {
+    useEffect(() => {
+      onMount();
+    }, [onMount]);
+
+    return <p data-testid="probe">content</p>;
+  }
+
+  it("does not remount its children when the variant flips from doc to full", () => {
+    let mounts = 0;
+    const onMount = () => {
+      mounts += 1;
+    };
+
+    const { rerender } = render(
+      <ReadingColumn variant="doc">
+        <MountProbe onMount={onMount} />
+      </ReadingColumn>,
+    );
+
+    const before = screen.getByTestId("probe");
+    expect(mounts).toBe(1);
+
+    rerender(
+      <ReadingColumn variant="full">
+        <MountProbe onMount={onMount} />
+      </ReadingColumn>,
+    );
+
+    // Mounted exactly once, and still the same DOM node: a style variant
+    // must not tear the subtree down.
+    expect(mounts).toBe(1);
+    expect(screen.getByTestId("probe")).toBe(before);
+  });
+
+  it("does not remount its children when the variant flips from full to doc", () => {
+    let mounts = 0;
+    const onMount = () => {
+      mounts += 1;
+    };
+
+    const { rerender } = render(
+      <ReadingColumn variant="full">
+        <MountProbe onMount={onMount} />
+      </ReadingColumn>,
+    );
+
+    const before = screen.getByTestId("probe");
+    expect(mounts).toBe(1);
+
+    rerender(
+      <ReadingColumn variant="doc">
+        <MountProbe onMount={onMount} />
+      </ReadingColumn>,
+    );
+
+    expect(mounts).toBe(1);
+    expect(screen.getByTestId("probe")).toBe(before);
+  });
+
+  // Control case: full <-> split share the two-node shape, so this pair
+  // already reconciles. It pins that the fix for doc must not regress it.
+  it("does not remount its children when the variant flips from full to split", () => {
+    let mounts = 0;
+    const onMount = () => {
+      mounts += 1;
+    };
+
+    const { rerender } = render(
+      <ReadingColumn variant="full">
+        <MountProbe onMount={onMount} />
+      </ReadingColumn>,
+    );
+
+    const before = screen.getByTestId("probe");
+
+    rerender(
+      <ReadingColumn variant="split">
+        <MountProbe onMount={onMount} />
+      </ReadingColumn>,
+    );
+
+    expect(mounts).toBe(1);
+    expect(screen.getByTestId("probe")).toBe(before);
   });
 });

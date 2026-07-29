@@ -64,3 +64,54 @@ describe("RSP-01 layout size tokens (folded from styled-tokens.test.ts, RSP-12c)
     expect(token("sizes.panel.side")).toBe("479px");
   });
 });
+
+// Adversary: the describe above states the right principle - only a
+// resolved-value assert can fail - and then applies it to 2 of the 6 layout
+// tokens. Reproduced with a mutation: setting content.split 1672->1200,
+// content.doc 1520->1100, panel.form 594->500, panel.sideCompact 360->300 and
+// breakpoints.desktop 1440px->1400px in panda.config.ts, then re-running
+// `pnpm panda codegen`, leaves `pnpm test` fully green (370 tests) and
+// `pnpm validate` green too - biome and tsc check token NAMES under
+// strictTokens, never their values, and every other layout test asserts
+// generated CLASS NAMES (`max-w_content.split`, `desktop:w_panel.side`,
+// `desktop:grid-tc_[... token(sizes.panel.form)]`), which are identical
+// whatever the token resolves to. The four measured numbers this whole batch
+// exists to establish (rules A/B/C's caps and the two panel widths) plus the
+// breakpoint they hinge on were therefore unguarded by the deterministic
+// gates; only the manual/CI-only `pnpm test:responsive` could see them.
+describe("RSP-01 layout tokens - the remaining measured values", () => {
+  it("content.split resolves to the exact 1672px (rule B's cap)", () => {
+    expect(token("sizes.content.split")).toBe("1672px");
+  });
+
+  it("content.doc resolves to the exact 1520px (rule C's cap)", () => {
+    expect(token("sizes.content.doc")).toBe("1520px");
+  });
+
+  it("panel.form resolves to the exact 594px (Set de Datos' form column)", () => {
+    expect(token("sizes.panel.form")).toBe("594px");
+  });
+
+  it("panel.sideCompact resolves to the exact 360px (the 1024-1439 panel)", () => {
+    expect(token("sizes.panel.sideCompact")).toBe("360px");
+  });
+});
+
+describe("RSP-01 desktop breakpoint", () => {
+  it("resolves to the exact 1440px", () => {
+    expect(token("breakpoints.desktop")).toBe("1440px");
+  });
+
+  it("sits between the preset's xl (1280px) and 2xl (1536px)", () => {
+    // Panda orders breakpoints by numeric value, so this ordering is what
+    // makes `desktop` override `xl` and lose to `2xl` in the cascade.
+    const px = (value: string) => Number.parseInt(value, 10);
+
+    expect(px(token("breakpoints.xl"))).toBeLessThan(
+      px(token("breakpoints.desktop")),
+    );
+    expect(px(token("breakpoints.desktop"))).toBeLessThan(
+      px(token("breakpoints.2xl")),
+    );
+  });
+});

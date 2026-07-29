@@ -1,5 +1,5 @@
 import type { DocFile } from "@/types/file";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import FileAnnotator from ".";
 
@@ -126,6 +126,56 @@ describe("FileAnnotator document column (RSP-07b)", () => {
     const container = column.parentElement?.parentElement as HTMLElement;
 
     expect(classTokens(container)).toContain("min-w_[520px]");
+  });
+});
+
+// Every other test in this file renders ONE fixed initial state; none of them
+// crosses the panel toggle, which is the only path that changes
+// ReadingColumn's variant at runtime (`narrowDocument || labelManagerOpen ?
+// "doc" : "full"`). Because `doc` renders one element and `full` renders two
+// nested ones, that toggle changes the element type at the document's position
+// and React unmounts the whole document instead of restyling it - see
+// layout/reading-column.test.tsx's "variant transitions preserve the subtree".
+describe("FileAnnotator panel toggle (adversary: RSP-07b variant remount)", () => {
+  it("restyles the document instead of destroying and rebuilding it when the entities panel is closed", () => {
+    render(<FileAnnotator file={file} isAnnotable />);
+
+    const paragraphBefore = document.getElementById("p1");
+    expect(paragraphBefore).not.toBeNull();
+
+    // LabelManager's own close button - the only way to close the panel once
+    // it is open (SearchBar renders "Gestor de etiquetas" only while closed).
+    fireEvent.click(screen.getByRole("button", { name: "X" }));
+
+    // Guard against a vacuous pass: the toggle really happened.
+    expect(screen.getByTestId("anon-side-panel")).toHaveAttribute("hidden");
+    expect(classTokens(screen.getByTestId("anon-reading-column"))).toContain(
+      "max-w_content.max",
+    );
+
+    // The document's DOM must survive a width change. Identity, not equality:
+    // a rebuilt paragraph serialises identically but has thrown away every
+    // memoised Paragraph, the live text selection an annotation is made from,
+    // any open annotation popover, and AnnotationProvider's state.
+    expect(document.getElementById("p1")).toBe(paragraphBefore);
+  });
+
+  it("restyles the document instead of destroying and rebuilding it when the entities panel is reopened", () => {
+    render(<FileAnnotator file={file} isAnnotable />);
+
+    // The panel starts open here, so reach the closed state first - only then
+    // does SearchBar offer the "Gestor de etiquetas" reopen button.
+    fireEvent.click(screen.getByRole("button", { name: "X" }));
+
+    const paragraphBefore = document.getElementById("p1");
+    expect(paragraphBefore).not.toBeNull();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /gestor de etiquetas/i }),
+    );
+
+    expect(screen.getByTestId("anon-side-panel")).not.toHaveAttribute("hidden");
+    expect(document.getElementById("p1")).toBe(paragraphBefore);
   });
 });
 
