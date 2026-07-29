@@ -37,7 +37,9 @@ const DEFAULT_FILE_NAME = "resumen";
 // bold, lists…) instead of a flattened image.
 const previewFrame = css({
   w: "full",
-  h: "[357px]",
+  // Responsive height, following file-preview/index.tsx:41-42 - see
+  // process.tsx/summary-process.tsx for the identical pattern (RSP-10).
+  h: "[clamp(200px, 30dvh, 357px)]",
   rounded: "md",
   borderWidth: "[4px]",
   borderStyle: "solid",
@@ -100,7 +102,24 @@ export default function SummaryFinish() {
             </styled.p>
           </Stack>
           <Card>
-            <Grid gridTemplateColumns="1fr auto 1fr" columnGap="12" rowGap="6">
+            {/*
+              No Figma coverage below 1440 - EXTRAPOLATED, pending design
+              review (tasks/responsive/plan.md RSP-10). Stacks to a single
+              column below `lg`; `gridTemplateColumns`/rows have no token
+              category in this preset (raw CssProperties, confirmed against
+              styled/types/style-props.d.ts), so strictTokens does not
+              require the [bracket] escape here - see
+              validate-dataset/index.tsx:74-81 (RSP-08) for the recorded
+              finding.
+            */}
+            <Grid
+              gridTemplateColumns={{
+                base: "minmax(0,1fr)",
+                lg: "1fr auto 1fr",
+              }}
+              columnGap="12"
+              rowGap="6"
+            >
               <Stack gap="4">
                 <styled.h2 textStyle="subtitle.md.strong">
                   {t("finish.previewLabel")}
@@ -115,10 +134,14 @@ export default function SummaryFinish() {
                 </div>
               </Stack>
 
+              {/* #BCBAB8 has no colors.border.* token (only composite
+                  borders.* at 1px, see FileCheck.styles.ts) - one of ~20
+                  sites, flagged for design as a missing token (RSP-12a). */}
               <Divider
                 orientation="vertical"
                 color="[#BCBAB8]"
                 alignSelf="stretch"
+                hideBelow="lg"
               />
 
               <Stack gap="6">

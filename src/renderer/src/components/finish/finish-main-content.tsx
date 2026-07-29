@@ -29,7 +29,19 @@ export default function FinishMainContent({
             <styled.h2 textStyle="subtitle.md.default">
               {t("finish.subtitle")}
             </styled.h2>
-            <Grid columns={4} gap="8" justifyContent="center" width="full">
+            {/*
+              No Figma coverage below 1440 - EXTRAPOLATED, pending design
+              review (tasks/responsive/plan.md RSP-10). `columns` as a
+              responsive object is a proven pattern: summary-validation.tsx
+              shipped `columns={{ base: 1, lg: 2, desktop: 2 }}` (RSP-09) and
+              its tracks were measured in a real browser.
+            */}
+            <Grid
+              columns={{ base: 2, lg: 4 }}
+              gap="8"
+              justifyContent="center"
+              width="full"
+            >
               {children}
             </Grid>
           </Stack>

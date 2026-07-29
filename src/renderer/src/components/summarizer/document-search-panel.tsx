@@ -1,3 +1,4 @@
+import ReadingColumn from "@/components/layout/reading-column";
 import { css } from "@/styled/css";
 import { styled } from "@/styled/jsx";
 import type { Paragraph } from "@/types/file";
@@ -23,15 +24,17 @@ const container = css({
 
 // Native (unstyled) scrollbar, matching the Set de Datos / FileAnnotator
 // reference — that pane doesn't override the OS/Chromium scrollbar either.
-// px/pb (not pt — FileAnnotator's `file` class has none either; the Toolbar
-// above already supplies its own bottom padding) match FileAnnotator's
+// pb (not pt — FileAnnotator's `file` class has none either; the Toolbar
+// above already supplies its own bottom padding) matches FileAnnotator's
 // `file` class so the text column and scroll edge land in the same place.
+// The horizontal gutter/cap come from ReadingColumn (RSP-09), nested inside
+// this scroll container - not from padding here, so rule C's 88% resolves
+// against the pane (this container), not a pre-padded box (RSP-04b).
 const paragraphList = css({
   flex: "[1]",
   minHeight: "[0]",
   overflowY: "auto",
   overflowX: "hidden",
-  px: "8",
   pb: "8",
 });
 
@@ -171,26 +174,31 @@ export default function DocumentSearchPanel({
       />
 
       <div className={paragraphList}>
-        {paragraphs.map((paragraph, index) => {
-          const isActiveParagraph = activeMatch?.paragraphIndex === index;
-          return (
-            <HighlightedParagraph
-              key={paragraph.id}
-              text={paragraph.value}
-              query={query}
-              activeMatchIndex={
-                isActiveParagraph ? activeMatch.occurrenceIndex : null
-              }
-              activeMarkRef={
-                isActiveParagraph
-                  ? (el) => {
-                      activeMarkRef.current = el;
-                    }
-                  : undefined
-              }
-            />
-          );
-        })}
+        <ReadingColumn
+          variant="doc"
+          data-testid="summary-search-reading-column"
+        >
+          {paragraphs.map((paragraph, index) => {
+            const isActiveParagraph = activeMatch?.paragraphIndex === index;
+            return (
+              <HighlightedParagraph
+                key={paragraph.id}
+                text={paragraph.value}
+                query={query}
+                activeMatchIndex={
+                  isActiveParagraph ? activeMatch.occurrenceIndex : null
+                }
+                activeMarkRef={
+                  isActiveParagraph
+                    ? (el) => {
+                        activeMarkRef.current = el;
+                      }
+                    : undefined
+                }
+              />
+            );
+          })}
+        </ReadingColumn>
       </div>
     </div>
   );

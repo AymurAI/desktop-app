@@ -104,3 +104,32 @@ describe("DocumentSearchPanel", () => {
     expect(scrollSpy).toHaveBeenCalledWith({ block: "center" });
   });
 });
+
+describe("DocumentSearchPanel reading column (RSP-09)", () => {
+  it("renders the paragraphs through ReadingColumn variant=doc, a single element with no gutter", () => {
+    render(<DocumentSearchPanel paragraphs={paragraphs} />);
+
+    const column = screen.getByTestId("summary-search-reading-column");
+    const classes = column.className.split(/\s+/);
+
+    // rule C: percentage of the pane, capped by the content.doc token - no
+    // separate cap node (unlike full/split, RSP-04b) and no gutter classes.
+    expect(classes).toContain("w_[min(88%,_token(sizes.content.doc))]");
+    expect(classes).toContain("mx_auto");
+    expect(classes).not.toContain("px_4");
+    expect(classes).not.toContain("max-w_content.max");
+  });
+
+  it("moves the horizontal gutter off the scroll container onto ReadingColumn", () => {
+    render(<DocumentSearchPanel paragraphs={paragraphs} />);
+
+    const column = screen.getByTestId("summary-search-reading-column");
+    const scrollContainer = column.parentElement as HTMLElement;
+    const scrollClasses = scrollContainer.className.split(/\s+/);
+
+    expect(scrollClasses).not.toContain("px_8");
+    // The scroll container itself is unchanged otherwise.
+    expect(scrollClasses).toContain("ov-y_auto");
+    expect(scrollClasses).toContain("pb_8");
+  });
+});
