@@ -1,9 +1,11 @@
-import { styled } from "@/styles";
+import { css } from "@/styled/css";
 
-const Container = styled("div", {
+// 64px (spacing "16") at >=desktop, matching the previous flat Stitches
+// `gap: 64`; tighter (32px, spacing "8") below that width.
+const container = css({
   display: "flex",
   flexDirection: "column",
-  gap: 64,
+  gap: { base: "8", desktop: "16" },
 });
 
-export default Container;
+export default container;

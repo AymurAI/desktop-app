@@ -76,7 +76,10 @@ export default function Decision({
         </Radio>
       </RadioGroup>
       {/* TODO ajustar posicionamiento de estos botones que se ponen en vertical cuando hay una sugerencia */}
-      <Stack spacing="l" css={{ "&>*": { flex: 1 } }}>
+      {/* Panda's `flex` style prop only accepts the literal string "1", not
+      the number 1 that Stitches' `css` prop allowed - same behaviour
+      (equal-width Inputs), typed for strictTokens (T20/RSP-08f). */}
+      <Stack spacing="l" css={{ "&>*": { flex: "1" } }}>
         <Input
           ref={prop(LabelDecisiones.HORA_DE_INICIO)}
           {...suggester.text(LabelDecisiones.HORA_DE_INICIO)}

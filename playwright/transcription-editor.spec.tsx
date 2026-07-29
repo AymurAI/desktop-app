@@ -6,11 +6,12 @@ import { expect, test } from "@playwright/experimental-ct-react";
 const SHOTS_DIR = resolve(__dirname, "../tasks/responsive/shots");
 
 /**
- * RSP-02b red baseline (see tasks/responsive/plan.md). None of these numeric
- * assertions are expected to pass yet - they gate T5-T8, which give this
- * screen a ReadingColumn/SidePanelColumn. `expect.soft` is used for the CSS
- * checks so a failure here doesn't skip the screenshot or the (hard)
- * overflow probe below it.
+ * RSP-02b's original red baseline (see tasks/responsive/plan.md) has long
+ * since gone green: T5-T8 gave this screen a ReadingColumn/SidePanelColumn,
+ * and every numeric assertion below now passes. `expect.soft` is used for
+ * the CSS checks so a failure here doesn't skip the screenshot or the (hard)
+ * overflow probe below it - it still fails the test, it just lets the rest
+ * of the run happen first (RSP-12c).
  */
 test("Voz a Texto transcription editor fits the viewport", async ({
   mount,

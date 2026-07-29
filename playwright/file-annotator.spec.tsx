@@ -90,7 +90,7 @@ test("Anonimizador entities panel fits the viewport", async ({
   await component.getByRole("button", { name: "X" }).click();
   await expect(component.getByTestId("anon-side-panel")).toBeHidden();
 
-  // ReadingColumn's gutter (T17) is responsive, not a flat 96px: 32px total
+  // ReadingColumn's gutter (RSP-04b) is responsive, not a flat 96px: 32px total
   // below `md` (768), 48px from `md` up to `desktop`, 96px only at/above
   // `desktop` (1440) - where the 1824px cap engages anyway.
   const fullGutter = width >= 1440 ? 96 : width >= 768 ? 48 : 32;

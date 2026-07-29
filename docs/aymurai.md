@@ -32,12 +32,14 @@ encontrar en cualquier browser.
 
 Además de las tecnologías principales anteriormente mencionadas se usaron:
 
-- **[Stitches](https://stitches.dev/)**: elegida como librería de estilos, nos
-  permite configurar toda una lista de _tokens_ que pueden ser utilizados a lo
-  largo de toda la aplicación manteniendo una alta consistencia entre los estilos.
-  Esto nos permite configurar y estandarizar colores, espaciados, sombras, etc además
-  de darnos la posibilidad de trabajar con _styled components_ para un
-  ágil desarrollo
+- **[Panda CSS](https://panda-css.com/)**: elegida como librería de estilos (en
+  reemplazo de Stitches, cuya migración ya fue completada), nos permite
+  configurar toda una lista de _tokens_ que pueden ser utilizados a lo largo de
+  toda la aplicación manteniendo una alta consistencia entre los estilos. Esto
+  nos permite configurar y estandarizar colores, espaciados, sombras, etc
+  además de darnos la posibilidad de trabajar con _recipes_ (`cva`/`sva`) para
+  un ágil desarrollo. Ver `.claude/rules/panda-css.md` para el detalle de
+  tokens y el mapeo medido desde Stitches
 - **[Google OAuth2](https://developers.google.com/identity/protocols/oauth2)**:
   sistema de autenticación de usuarios basado en [OAuth](https://oauth.net/) que
   nos permite tener un acceso total a las APIs de _Google_, permitiéndonos editar

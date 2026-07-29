@@ -20,7 +20,8 @@ Quick checklist when you're about to touch styling:
    `brand.primary`) — never raw hex unless bracketed.
 4. **Run `pnpm panda codegen`** after editing `panda.config.ts` (lefthook
    handles this on commit, but the IDE needs it to type-check).
-5. **Don't import from `@stitches/react`**. Migrate any Stitches code you touch.
+5. **Don't import from `@stitches/react`**. The migration to Panda is complete
+   — there is no Stitches code left to touch.
 
 For unfamiliar APIs, query the latest docs:
 `mcp__plugin_context7_context7__query-docs` with library `panda-css`.

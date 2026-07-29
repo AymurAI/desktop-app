@@ -58,6 +58,16 @@
           "level": "error"
         }
       },
+      "nursery": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "@stitches/react": "Stitches has been fully migrated to Panda CSS (RSP-12b). Import from `@/styled/css` or `@/styled/jsx` instead."
+            }
+          }
+        }
+      },
       "suspicious": {
         "noConsoleLog": "warn"
       },

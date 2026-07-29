@@ -16,9 +16,15 @@ import { Button } from "@aymurai/ui";
 
 import { css } from "@/styled/css";
 import { styled } from "@/styled/jsx";
-import { Form } from "./ValidationForm.styles";
 
-interface Props extends NativeComponent<"form"> {
+// `translate` (`"yes" | "no"`) and `color` (React's non-standard legacy DOM
+// attribute, `string`) are both plain HTML attributes on every element, but
+// Panda's styled `form` also defines `translate`/`color` as CSS shorthands
+// (transform and the colour token union respectively) with incompatible
+// types - omit them so spreading `...props` onto `styled.form` below
+// typechecks, same pattern as uncontrolled-input/index.tsx's
+// `NativeComponent<"input", ...>`.
+interface Props extends NativeComponent<"form", "translate" | "color"> {
   children: ReactNode;
   title: string;
   onSubmit: FormEventHandler;
@@ -60,7 +66,16 @@ export default function ValidationForm({
   }, [checked, onCheck]);
 
   return (
-    <Form {...props} onSubmit={handleSubmit}>
+    // Inlined from the deleted ValidationForm.styles.ts (`$l` -> spacing "6",
+    // 24px) - its only consumer already imported Panda's `styled`, so a
+    // separate file bought nothing.
+    <styled.form
+      display="flex"
+      flexDirection="column"
+      gap="6"
+      {...props}
+      onSubmit={handleSubmit}
+    >
       <styled.h3 textStyle="subtitle.md.strong">{title}</styled.h3>
       {childrenWithHandler}
       <Button
@@ -73,6 +88,6 @@ export default function ValidationForm({
         Datos correctos
         {checked && <CheckCircle weight="fill" />}
       </Button>
-    </Form>
+    </styled.form>
   );
 }

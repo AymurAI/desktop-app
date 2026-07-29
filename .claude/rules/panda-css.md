@@ -1,8 +1,13 @@
 # Panda CSS Rules (this repo)
 
 The renderer uses [Panda CSS](https://panda-css.com) for all styling. The legacy
-Stitches setup (`@stitches/react`, `@/styles/stitches.config`) is being phased
-out — do not introduce new stitches usage; migrate any file you touch.
+Stitches setup (`@stitches/react`, `@/styles/stitches.config`) has been fully
+migrated (RSP-08 through RSP-12e): `src/renderer/src/styles/` no longer exists
+and `@stitches/react` is no longer a dependency. The "Quick reference for
+migration from Stitches" section below is the historical record of that
+migration — the full measured value-by-value mapping, kept because in-code
+comments (e.g. `components/stack/index.ts`, `components/tabs/index.ts`) point
+here plus git history for the deleted `styles/tokens.ts`.
 
 ## Setup
 
@@ -32,7 +37,10 @@ Prefer layout primitives from `@/styled/jsx` over raw divs:
 
 ## Tokens
 
-Defined in `panda.config.ts theme.semanticTokens`:
+Colors, borders, gradients and text styles are defined in `panda.config.ts
+theme.semanticTokens` — added by the `@aymurai/ui` preset (`presets:
+[pandaPreset, aymuraiPreset]`, applied in that order so `aymuraiPreset` wins on
+overlap):
 
 - `colors.brand.{primary,secondary,tertiary}`
 - `colors.text.{default,lighter,onbutton-default,onbutton-alternative,onbutton-disabled}`
@@ -48,6 +56,84 @@ Text styles: `title.md.{strong,default}`, `subtitle.{md,sm}.{strong,default}`,
 
 Reference tokens by dotted path: `color: "text.default"`, never raw hex unless
 bracketed (`color: "[#FFE066]"`).
+
+### Layout tokens (responsive-layout plan)
+
+These do **not** live in `semanticTokens` — they live in `theme.extend`
+instead, so following the "Defined in `theme.semanticTokens`" line above for
+these will send you to the wrong block:
+
+- **Breakpoint**: `theme.extend.breakpoints` (`panda.config.ts:132-133`) adds
+  `desktop: "1440px"`, between the base preset's `xl` (1280px) and `2xl`
+  (1536px).
+- **Sizes**: `theme.extend.tokens.sizes` (`panda.config.ts:136-145`):
+  - `sizes.content.max` 1824px, `sizes.content.split` 1672px,
+    `sizes.content.doc` 1520px
+  - `sizes.panel.side` 479px, `sizes.panel.form` 594px,
+    `sizes.panel.sideCompact` 360px
+
+### Other token categories
+
+Not previously documented here; some come from the base `@pandacss/preset-panda`
+preset rather than `@aymurai/ui`, which matters when checking whether a value
+has a token at all:
+
+- `radii.*` — overridden by `@aymurai/ui` to a Figma-matched scale: `xs` 2px /
+  `sm` 4px / `md` 8px / `lg` 16px / `xl` 24px / `full` 9999px. See the Stitches
+  mapping below for the key **name shift** versus the old scale.
+- `spacing.*` — from the base preset, REM-valued (e.g. `spacing.2` = `0.5rem` =
+  8px). See the mapping below for the Stitches space-scale equivalences.
+- `fonts.primary` (Archivo stack, quotes `"Helvetica Neue"`) and `fonts.file`
+  (Times New Roman stack) — from `@aymurai/ui`.
+- `fontSizes.*` — from the base preset only (`@aymurai/ui` does not define this
+  category), e.g. `fontSizes.md` = `1rem` (16px) — a relative unit, not the
+  Stitches literal-px scale.
+- `fontWeights.*` — from the **base preset only** (`@aymurai/ui` does not
+  define this category either): `thin` 100 / `extralight` 200 / `light` 300 /
+  `normal` 400 / `medium` 500 / `semibold` 600 / `bold` 700 / `extrabold` 800 /
+  `black` 900. **Correction**: earlier migration work (RSP-12a/RSP-12e)
+  reported "no `fontWeights` category exists at all" — that's wrong. The
+  category exists, inherited from `@pandacss/preset-panda`, and
+  `fontWeights.extrabold` (800) is an **exact match** for the Stitches
+  `$heavy` weight still hardcoded as a raw `fontWeight: 800` in
+  `panda.config.ts`'s `globalCss` (the `remove-tag`/`add-tag` button rules) —
+  a follow-up could adopt the token there instead of the literal.
+- `shadows.*` — from `@aymurai/ui` (`focus`, `input-focus`, `dropdown`,
+  `card-hover`, `tooltip`, `menu`, `dialog`, `popover`, `card`). None match the
+  legacy Tab focus shadow `2px 2px 10px rgba(17,0,65,0.25)` — see the mapping
+  below.
+
+## Pitfalls learned from the responsive-layout plan
+
+- **Border-box gutter-vs-cap** (RSP-04b): under `preflight: true`, one node
+  cannot supply both a rule's content-box max-width at one breakpoint and its
+  border-box max-width at a wider one, once a border/padding is added at the
+  wider breakpoint — the box model shifts the effective content width. This is
+  why `ReadingColumn` is two nested elements (outer = gutter margin, inner =
+  max-width cap), and why `MainContent full` deliberately supplies neither.
+- **`gridTemplateColumns`/`gridTemplateRows` have no token category** in this
+  preset (plain `CssProperties`, see `styled/types/style-props.d.ts`) —
+  `strictTokens` does not force the `[bracket]` escape for these two
+  properties the way it does for `color`/`width`/etc. `validate-dataset/
+  index.tsx:74-81` still uses the escape, for the multi-value CSS list and the
+  nested `token(sizes.panel.form)` call.
+- **`hideBelow="lg"`** (first used at `voice-to-text/finish.tsx:165` and
+  `summary-finish.tsx:144`) emits `display: none` below the given breakpoint —
+  it does not remove the element from a `Grid`'s track count, so a vertical
+  `Divider` given `hideBelow` leaves no stacked cell behind it below that
+  breakpoint.
+- **`Grid columns={{...}}`** (and `gridTemplateColumns={{...}}`) both accept a
+  responsive object like any other Panda style prop — proven twice:
+  `summary-validation.tsx:122` and `finish-main-content.tsx:32`.
+- **`Stack` (pattern) vs `Flex`**: Panda's own `Stack` pattern (from
+  `@/styled/jsx`) defaults to `direction: "column"` and `gap: "8px"`, and
+  accepts **no** `wrap` prop at all. `Flex` (same import) accepts `wrap` and
+  defaults nothing. This repo's own `components/stack/index.ts` is a Stitches-
+  era wrapping-row component kept as its own `cva`-style recipe rather than
+  switched to Panda's `Stack` pattern, precisely because that pattern would
+  silently flip its row layout to a column. `Flex` is the faithful inline
+  target if it's ever collapsed at call sites — reaching for `Stack` **by
+  name** is the trap.
 
 ## Conditions
 
@@ -74,7 +160,9 @@ const button = cva({
 
 ## Don'ts
 
-- Don't import from `@stitches/react` in new code.
+- Don't import from `@stitches/react` in new code — there is no legacy code
+  left, and both lefthook's pre-commit grep and biome's
+  `linter.rules.nursery.noRestrictedImports` rule block it.
 - Don't inline raw hex without `[bracket]` — strictTokens will reject it.
 - Don't bypass `strictTokens: true` by editing the config; if a value is needed
   often, add a token.
@@ -83,13 +171,99 @@ const button = cva({
 
 ## Quick reference for migration from Stitches
 
+The migration is finished; this is now a historical record for the value-by-
+value mapping (API-shape rows first, then the measured token mapping below).
+
 | Stitches | Panda |
 |---|---|
 | `styled("div", { color: "$primary" })` | inline `<div className={css({ color: "text.default" })}>` |
 | `styled("button", { variants: { ... } })` | `const button = cva({ base, variants })` then `<button className={button({ ... })}>` |
 | `keyframes({ ... })` | `theme.extend.keyframes` in `panda.config.ts` + `animationName: "myAnim"` token |
-| `$primary`, `$primaryAlt`, `$bgSecondary` etc. | semantic tokens in `panda.config.ts` |
 | `css={{ ... }}` JSX prop | `className={css({ ... })}` |
+
+### Measured token mapping
+
+Colors — exact matches:
+
+| Stitches hex | Panda token(s) |
+|---|---|
+| `#DC582E` | `colors.system.error` |
+| `#F6F5F7` | `colors.bg.primary` |
+| `#110041` | `colors.text.default` / `colors.text.onbutton-default` |
+| `#3F479D` | `colors.brand.primary` / `colors.action.pressed` |
+| `#C5CAFF` | `colors.action.focus` |
+| `#FFFFFF` | `colors.bg.secondary` / `colors.text.onbutton-alternative` |
+| `#1B834E` | `colors.system.success` |
+| `#E0DDE2` | **both** `colors.action.disabled` **and** `colors.bg.secondary-highlight` — prefer `bg.secondary-highlight` when the use is a highlighted background rather than a disabled state |
+
+Fonts and borders:
+
+- `'"Times New Roman", Times, serif'` → `fonts.file` (exact).
+- Stitches' bare `Helvetica Neue` in the `$primary` stack → the preset's
+  `fonts.primary` **quotes** it (`'"Archivo", -apple-system, "Helvetica
+  Neue", Helvetica, Roboto, sans-serif'`) — not byte-identical; a deliberate
+  CSS-validity correction (an unquoted multi-word family name isn't strictly
+  valid CSS even though browsers tolerate it).
+- Composite `1px solid #110041` → `borders.primary-alt` (exact).
+
+Weights — Stitches `fontWeights` 400/600 map onto the preset's baked-in
+textStyle recipe variants (`*.default` = 400, `*.strong` = 600), not a
+standalone token. Stitches `$heavy` (800) → `fontWeights.extrabold` **is** an
+exact match — see the correction note under Tokens above.
+
+Space scale (Stitches px → Panda `spacing` key, which is REM-valued):
+
+| Stitches | px | Panda `spacing` key | rem |
+|---|---|---|---|
+| `$xxs` | 2px | `"0.5"` | 0.125rem |
+| `$xs` | 4px | `"1"` | 0.25rem |
+| `$s` | 8px | `"2"` | 0.5rem |
+| `$m` | 16px | `"4"` | 1rem |
+| `$l` | 24px | `"6"` | 1.5rem |
+| `$xl` | 32px | `"8"` | 2rem |
+| `$xxl` | 64px | `"16"` | 4rem |
+
+Radii — **name shift**, silently doubles a radius for anyone pattern-matching
+by key name alone:
+
+| Stitches | px | Panda `radii` key |
+|---|---|---|
+| `$xxs` | 2px | `xs` |
+| `$xs` | 4px | `sm` |
+| `$s` | 8px | `md` |
+
+Gaps and traps:
+
+- **No `colors.border.*` category at all** — only composite `borders.*`, all
+  fixed at 1px width. A border colour that needs a different width (e.g.
+  `FileCheck.styles.ts`'s 4px `#BCBAB8` false-state border) has no token home
+  and stays a raw `[#BCBAB8]` escape; the right fix is a new `colors.border.*`
+  token from design, not more local escapes.
+- **No shadow token matches** the legacy Tab focus shadow `2px 2px 10px
+  rgba(17,0,65,0.25)` — closest is `shadows.focus` (`0px 0px 8px
+  rgba(17,0,65,0.2)`), which differs in offset, blur and alpha.
+- **`fontSizes.md` is `1rem`**, a relative unit, where Stitches gave an
+  absolute px value — only numerically equal in rendered px while the root
+  font-size stays 16px.
+- **Percentage line-heights**: the preset's textStyles bake in a percentage
+  line-height, so rendered px drifts from the old Stitches absolute values —
+  `subtitle.sm.default` computes 16.8px (14px × 120%) where Stitches gave
+  17px; `paragraph.sm.default` computes 22.4px (16px × 140%) where Stitches
+  gave 22px; `label.md.default` computes 19.2px (16px × 120%) where Stitches
+  gave 19px.
+- **Near-miss colours** — kept as deliberate raw escapes, not adopted, each
+  flagged for design rather than reconciled unilaterally:
+  - `#FFECE6` (Stitches `$errorSecondary`) vs. the preset's
+    `system.error-secondary` `#FFECE5` — one hex digit off
+    (`FileCheck.styles.ts`).
+  - `#E6E8FF` (Stitches `$primaryAlt`, default tab background) vs. the
+    preset's `bg.primary-alternative` `#E5E8FF` — one hex digit off, same
+    shape as above; occurs twice (`components/tabs/index.ts` and again inside
+    `panda.config.ts`'s `globalCss` `mark.predicted-word` rule).
+  - The 4px `#BCBAB8` border (`FileCheck.styles.ts`) — see the border-width
+    gap above.
+  - Tab's `focus` status `boxShadow` vs. `shadows.focus` — see the shadow gap
+    above.
 
 When uncertain about a recent Panda CSS API, look it up via
 `mcp__plugin_context7_context7__query-docs` rather than guessing.

@@ -75,9 +75,6 @@ importers:
       '@radix-ui/react-select':
         specifier: ^2.3.0
         version: 2.3.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@stitches/react':
-        specifier: ^1.2.8
-        version: 1.2.8(react@19.2.7)
       '@tanstack/react-form':
         specifier: 1.11.0
         version: 1.11.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -2218,11 +2215,6 @@ packages:
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
-
-  '@stitches/react@1.2.8':
-    resolution: {integrity: sha512-9g9dWI4gsSVe8bNLlb+lMkBYsnIKCZTmvqvDG+Avnn69XfmHZKiaMrx7cgTaddq7aTPPmXiTsbFcUy0xgI4+wA==}
-    peerDependencies:
-      react: '>= 16.3.0'
 
   '@szmarczak/http-timer@4.0.6':
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
@@ -8444,10 +8436,6 @@ snapshots:
   '@sindresorhus/is@4.6.0': {}
 
   '@standard-schema/spec@1.1.0': {}
-
-  '@stitches/react@1.2.8(react@19.2.7)':
-    dependencies:
-      react: 19.2.7
 
   '@szmarczak/http-timer@4.0.6':
     dependencies:
