@@ -21,6 +21,7 @@
       ".worktrees",
       ".claude/settings.local.json",
       ".orquestalite",
+      "tasks",
       "team.json",
       "flows.json",
       "prompts",
