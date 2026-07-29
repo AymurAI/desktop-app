@@ -10,6 +10,8 @@ import {
 
 import { SearchBar } from "./SearchBar";
 
+import ReadingColumn from "@/components/layout/reading-column";
+import SidePanelColumn from "@/components/layout/side-panel-column";
 import AnnotationProvider, { useAnnotation } from "@/context/Annotation";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import { css } from "@/styled/css";
@@ -109,8 +111,19 @@ const Paragraph = memo(
 interface Props {
   file: DocFile;
   isAnnotable?: boolean;
+  // Opt-in only: forces ReadingColumn's rule-C ("doc") variant regardless of
+  // panel state, for hosts that put a fixed-width column (e.g. a form)
+  // beside the document - Set de Datos (RSP-08). Defaults to false so every
+  // existing caller keeps today's behavior (doc when the panel is open,
+  // full otherwise) - see file-annotator/index.test.tsx's
+  // "variant=full (rule A) when the panel starts closed".
+  narrowDocument?: boolean;
 }
-export default function FileAnnotator({ file, isAnnotable = false }: Props) {
+export default function FileAnnotator({
+  file,
+  isAnnotable = false,
+  narrowDocument = false,
+}: Props) {
   const [search, setSearch] = useState("");
   const [activeSearchIndex, setActiveSearchIndex] = useState<number | null>(
     null,
@@ -233,6 +246,7 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
 
   return (
     <HStack
+      position="relative"
       w="full"
       h="full"
       minW="0"
@@ -255,38 +269,38 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
           onPrevious={handleSearchPrevious}
           onFocusDocument={focusDocument}
         />
-        <div
-          ref={fileRef}
-          tabIndex={-1}
-          className={S.file}
-          data-testid="anon-reading-column"
-        >
-          <AnnotationProvider
-            file={file}
-            isAnnotable={isAnnotable}
-            label={label}
+        <div ref={fileRef} tabIndex={-1} className={S.file}>
+          <ReadingColumn
+            variant={narrowDocument || labelManagerOpen ? "doc" : "full"}
+            data-testid="anon-reading-column"
           >
-            {paragraphs.map((p) => (
-              <Paragraph
-                key={p.id}
-                paragraph={p}
-                predictions={predictionsMap.get(p.id) ?? []}
-                searchMatches={searchMatchesMap.get(p.id) ?? []}
-                activeSearchMatchId={activeSearchMatchId}
-              >
-                {p.value}
-              </Paragraph>
-            ))}
-          </AnnotationProvider>
+            <AnnotationProvider
+              file={file}
+              isAnnotable={isAnnotable}
+              label={label}
+            >
+              {paragraphs.map((p) => (
+                <Paragraph
+                  key={p.id}
+                  paragraph={p}
+                  predictions={predictionsMap.get(p.id) ?? []}
+                  searchMatches={searchMatchesMap.get(p.id) ?? []}
+                  activeSearchMatchId={activeSearchMatchId}
+                >
+                  {p.value}
+                </Paragraph>
+              ))}
+            </AnnotationProvider>
+          </ReadingColumn>
         </div>
       </div>
-      <div
+      <SidePanelColumn
         hidden={!labelManagerOpen}
         className={labelManagerWrapper}
         data-testid="anon-side-panel"
       >
         <LabelManager onClose={toggleManagerLabel} />
-      </div>
+      </SidePanelColumn>
     </HStack>
   );
 }

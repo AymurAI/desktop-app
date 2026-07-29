@@ -27,8 +27,10 @@ const styles = sva({
   base: {
     container: {
       ...stack.raw({ gap: "0" }),
-      width: "[clamp(260px,32vw,400px)]",
-      maxWidth: "[45vw]",
+      // Width comes from the SidePanelColumn wrapper (T9,
+      // file-annotator/index.tsx) - this fills whatever box that provides
+      // rather than imposing its own competing width.
+      width: "full",
       h: "full",
       minH: "0",
       flexShrink: "0",

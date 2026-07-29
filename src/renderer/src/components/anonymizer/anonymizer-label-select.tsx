@@ -28,7 +28,7 @@ interface LabelSection {
   labels: SelectOption[];
 }
 
-const select = sva({
+export const select = sva({
   slots: [
     "container",
     "trigger",
@@ -122,7 +122,7 @@ const select = sva({
       },
     },
     viewport: {
-      maxHeight: "[360px]",
+      maxHeight: "[min(360px, 60dvh)]",
       overflowY: "auto",
       py: "1",
     },
