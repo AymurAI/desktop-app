@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import SidePanelColumn from "@/components/layout/side-panel-column";
 import { formatTime } from "@/components/voice-to-text/format-time";
 import { showToast } from "@/features/showToast";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
@@ -55,20 +56,22 @@ export function getTimestampBounds(
   };
 }
 
+// SidePanelColumn (T6) provides position/width/zIndex/shadow/flexShrink/
+// borderLeft; overflowY has no equivalent in the primitive and must be added
+// here so the panel's content scrolls independently of the transcript body.
 const panelColumn = css({
-  flexShrink: "0",
-  borderLeft: "[1px solid #BCBAB8]",
   overflowY: "auto",
 });
 
-// SidePanel's size="sm" is 360px; this placeholder isn't a SidePanel (there's
-// no turn selected yet) so it repeats that number directly to avoid a layout
-// jump the moment a turn becomes active.
+// SidePanel's own recipe always sets `maxW: full` on its root node alongside
+// its fixed `size` width (node_modules/@aymurai/ui/dist/index.js:25478-25489),
+// so nesting `size="lg"` (479px) inside SidePanelColumn does not need a CSS
+// override: at the `lg` tier SidePanelColumn is a literal 360px
+// (`panel.sideCompact`), and the browser resolves `width: 479px` against
+// `max-width: 100%` of that 360px containing block by using the smaller of
+// the two - the panel measures 360px there without any class ever
+// targeting the library's own selector. Measured (see the fixture spec).
 const emptyPanel = css({
-  flexShrink: "0",
-  width: "[360px]",
-  borderLeft: "[1px solid #BCBAB8]",
-  bg: "bg.secondary",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -136,9 +139,9 @@ export default function TurnSidePanel({
 
   if (!activeTurn || !currentSpeaker) {
     return (
-      <aside className={emptyPanel} data-testid="vtt-side-panel">
+      <SidePanelColumn className={emptyPanel} data-testid="vtt-side-panel">
         {t("sidePanel.empty")}
-      </aside>
+      </SidePanelColumn>
     );
   }
 
@@ -311,10 +314,10 @@ export default function TurnSidePanel({
   };
 
   return (
-    <div className={panelColumn} data-testid="vtt-side-panel">
+    <SidePanelColumn className={panelColumn} data-testid="vtt-side-panel">
       <TooltipProvider>
         <SidePanel
-          size="sm"
+          size="lg"
           turn={{
             initials: currentSpeaker.initials,
             name: currentSpeaker.label,
@@ -380,6 +383,6 @@ export default function TurnSidePanel({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </SidePanelColumn>
   );
 }

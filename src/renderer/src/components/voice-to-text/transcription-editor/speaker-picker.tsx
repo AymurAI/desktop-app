@@ -22,6 +22,7 @@ const popover = css({
   boxShadow: "[0 16px 44px rgba(28,26,60,.18),0 0 0 1px rgba(28,26,60,.06)]",
   padding: "2",
   minWidth: "[270px]",
+  maxWidth: "[min(270px, 90vw)]",
   maxHeight: "[440px]",
   overflowY: "auto",
   position: "absolute",

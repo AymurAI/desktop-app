@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 
+import ReadingColumn from "@/components/layout/reading-column";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { renameTranscription } from "@/reducers/transcription/actions";
 import { css, cx } from "@/styled/css";
@@ -49,12 +50,19 @@ const switchLabel = css({
 const body = css({
   flex: "[1]",
   overflowY: "auto",
-  p: "12",
+  py: "12",
+  bg: "bg.secondary",
+  position: "relative",
+});
+
+// The flex/gap that used to live on `body` itself (removed above) rides
+// through here as ReadingColumn's forwarded `className`, onto its capped
+// inner node - otherwise nesting the turn list under ReadingColumn leaves
+// `body` with a single child and every turn loses its 24px gap.
+const transcriptColumn = css({
   display: "flex",
   flexDir: "column",
   gap: "6",
-  bg: "bg.secondary",
-  position: "relative",
 });
 
 const content = css({
@@ -62,6 +70,7 @@ const content = css({
   display: "flex",
   flexDir: "row",
   overflow: "hidden",
+  position: "relative",
 });
 
 // Groups the title/banner and the scrollable transcript into a single
@@ -84,7 +93,6 @@ const titleRow = css({
 
 const titleSection = css({
   bg: "bg.secondary",
-  px: "12",
   pt: "6",
   flexShrink: "0",
 });
@@ -347,11 +355,16 @@ export default function TranscriptionEditor({
   }, [isEditMode]);
 
   const switchId = "transcription-edit-mode";
+  // Title/banner and turn list sit on opposite sides of `body`'s scroll
+  // boundary (see index.tsx's `body`/`titleSection` split above), so they
+  // can't share one ReadingColumn instance - both use this same variant
+  // expression so they still line up to the same cap and gutters.
+  const readingVariant = isEditMode ? "split" : "full";
 
   return (
     <div className={wrap}>
       <div className={content}>
-        <div className={bodyColumn} data-testid="vtt-reading-column">
+        <div className={bodyColumn}>
           <Toolbar
             context="search-switch"
             searchValue={searchQuery}
@@ -392,77 +405,85 @@ export default function TranscriptionEditor({
           />
 
           <div className={titleSection}>
-            <EditableTitle
-              title={transcription.title}
-              onRename={(value) =>
-                dispatch(renameTranscription(transcription.id, value))
-              }
-            />
+            <ReadingColumn variant={readingVariant}>
+              <EditableTitle
+                title={transcription.title}
+                onRename={(value) =>
+                  dispatch(renameTranscription(transcription.id, value))
+                }
+              />
 
-            {isEditMode && (
-              <div className={editBanner}>
-                <Info size={20} color="#3F479D" />
-                <span>{t("editor.editModeBanner")}</span>
-              </div>
-            )}
+              {isEditMode && (
+                <div className={editBanner}>
+                  <Info size={20} color="#3F479D" />
+                  <span>{t("editor.editModeBanner")}</span>
+                </div>
+              )}
+            </ReadingColumn>
           </div>
 
           <div ref={scrollRef} className={body}>
-            {transcription.turns.map((turn) => {
-              const speaker = speakerMap[turn.speakerId];
-              if (!speaker) return null;
+            <ReadingColumn
+              variant={readingVariant}
+              className={transcriptColumn}
+              data-testid="vtt-reading-column"
+            >
+              {transcription.turns.map((turn) => {
+                const speaker = speakerMap[turn.speakerId];
+                if (!speaker) return null;
 
-              // Read mode → @aymurai/ui TranscriptBlock (Figma display component).
-              // Wrapped in a ref'd div so search scroll-to-match and the
-              // playback follow-along both work. Clicking a block seeks the
-              // player to that turn; the active turn is highlighted.
-              if (!isEditMode) {
-                const isActive = turn.id === activeTurnId;
+                // Read mode → @aymurai/ui TranscriptBlock (Figma display component).
+                // Wrapped in a ref'd div so search scroll-to-match and the
+                // playback follow-along both work. Clicking a block seeks the
+                // player to that turn; the active turn is highlighted.
+                if (!isEditMode) {
+                  const isActive = turn.id === activeTurnId;
+                  return (
+                    <div key={turn.id} ref={setTurnRef(turn.id)}>
+                      <TranscriptBlock
+                        initials={speaker.initials}
+                        name={speaker.label}
+                        time={formatTime(turn.startMs)}
+                        text={turn.text}
+                        highlight={searchQuery}
+                        color={speaker.color}
+                        className={cx(readBlock, isActive && readBlockActive)}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={t("editor.seekToTurn", {
+                          time: formatTime(turn.startMs),
+                        })}
+                        onClick={() => handleSeekTo(turn.startMs)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleSeekTo(turn.startMs);
+                          }
+                        }}
+                      />
+                    </div>
+                  );
+                }
+
                 return (
-                  <div key={turn.id} ref={setTurnRef(turn.id)}>
-                    <TranscriptBlock
-                      initials={speaker.initials}
-                      name={speaker.label}
-                      time={formatTime(turn.startMs)}
-                      text={turn.text}
-                      highlight={searchQuery}
-                      color={speaker.color}
-                      className={cx(readBlock, isActive && readBlockActive)}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={t("editor.seekToTurn", {
-                        time: formatTime(turn.startMs),
-                      })}
-                      onClick={() => handleSeekTo(turn.startMs)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          handleSeekTo(turn.startMs);
-                        }
-                      }}
-                    />
-                  </div>
+                  <TurnBlock
+                    key={turn.id}
+                    turn={turn}
+                    speaker={speaker}
+                    transcription={transcription}
+                    isActive={turn.id === activeTurnId}
+                    isSelected={turn.id === selectedTurnId}
+                    isEditing={turn.id === editingTurnId}
+                    highlight={searchQuery}
+                    onSeekTo={handleSeekTo}
+                    onSelect={handleTurnSelect}
+                    onTextSelect={sa.onSelect}
+                    onEditingFocusChange={handleEditingFocusChange}
+                    turnRef={setTurnRef(turn.id)}
+                  />
                 );
-              }
-
-              return (
-                <TurnBlock
-                  key={turn.id}
-                  turn={turn}
-                  speaker={speaker}
-                  transcription={transcription}
-                  isActive={turn.id === activeTurnId}
-                  isSelected={turn.id === selectedTurnId}
-                  isEditing={turn.id === editingTurnId}
-                  highlight={searchQuery}
-                  onSeekTo={handleSeekTo}
-                  onSelect={handleTurnSelect}
-                  onTextSelect={sa.onSelect}
-                  onEditingFocusChange={handleEditingFocusChange}
-                  turnRef={setTurnRef(turn.id)}
-                />
-              );
-            })}
+              })}
+            </ReadingColumn>
 
             {isEditMode && (
               <SelectionToolbar
