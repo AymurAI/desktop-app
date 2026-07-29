@@ -84,7 +84,10 @@ describe("SummaryValidation", () => {
     fireEvent.blur(screen.getByRole("textbox"));
     expect(mockSave).toHaveBeenCalledWith(
       expect.objectContaining({
-        documentId: "acta.docx",
+        // The stable document id (from the file's own paragraphs), not the
+        // display filename "acta.docx" — see the "does not collide" test
+        // below for why the filename cannot be the key.
+        documentId: "d0",
         title: "Resumen acta.docx",
       }),
     );

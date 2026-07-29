@@ -106,14 +106,17 @@ describe("DocumentSearchPanel", () => {
 });
 
 describe("DocumentSearchPanel reading column (RSP-09)", () => {
-  it("renders the paragraphs through ReadingColumn variant=doc, a single element with no gutter", () => {
+  it("renders the paragraphs through ReadingColumn variant=doc, with no gutter padding on the cap node", () => {
     render(<DocumentSearchPanel paragraphs={paragraphs} />);
 
     const column = screen.getByTestId("summary-search-reading-column");
     const classes = column.className.split(/\s+/);
 
-    // rule C: percentage of the pane, capped by the content.doc token - no
-    // separate cap node (unlike full/split, RSP-04b) and no gutter classes.
+    // rule C: percentage of the pane, capped by the content.doc token. This
+    // node still has ReadingColumn's own outer gutter node as its parent
+    // (T17/RSP-07b: every variant renders the same two-node shape) - it just
+    // carries no gutter padding of its own, since rule C is a percentage of
+    // the pane with no gutter.
     expect(classes).toContain("w_[min(88%,_token(sizes.content.doc))]");
     expect(classes).toContain("mx_auto");
     expect(classes).not.toContain("px_4");

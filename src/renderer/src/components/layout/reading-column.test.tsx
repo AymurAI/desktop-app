@@ -61,7 +61,7 @@ describe("ReadingColumn — variant split (rule B)", () => {
 });
 
 describe("ReadingColumn — variant doc (rule C)", () => {
-  it("renders a single element, percentage of the pane, with no gutter wrapper", () => {
+  it("renders the same outer-gutter/inner-cap shape as full/split, with no padding on the outer node", () => {
     render(
       <ReadingColumn variant="doc" data-testid="capped">
         <p>content</p>
@@ -69,10 +69,14 @@ describe("ReadingColumn — variant doc (rule C)", () => {
     );
 
     const capped = screen.getByTestId("capped");
+    const outer = capped.parentElement as HTMLElement;
 
-    // No wrapper: the testid'd node carries the rule-C class directly, and
-    // its parent is not another ReadingColumn-rendered gutter node.
-    expect(capped.parentElement?.className ?? "").not.toContain("px_4");
+    // The outer node EXISTS (T17/RSP-07b: every variant renders the same
+    // two-node shape, or FileAnnotator's runtime doc<->full flip remounts
+    // the subtree) - it just carries no gutter padding for rule C, since
+    // rule C is a percentage of the pane with no gutter of its own.
+    expect(outer.className).toContain("w_full");
+    expect(outer.className).not.toContain("px_4");
 
     expect(capped.className).toContain("min(88%,_token(sizes.content.doc))");
     expect(capped.className).toContain("mx_auto");

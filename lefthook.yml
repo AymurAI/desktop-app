@@ -41,5 +41,3 @@ pre-push:
   commands:
     typecheck:
       run: pnpm typecheck
-    knip:
-      run: pnpm exec knip --no-config-hints

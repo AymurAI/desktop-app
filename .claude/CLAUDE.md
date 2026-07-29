@@ -24,7 +24,9 @@ from training data.
 - Pre-commit gate (lefthook): biome (autoformat + lint), panda codegen,
   forbidden-pattern grep (`console.log`, `debugger`, leftover merge markers,
   `.only(`, `@stitches/react`).
-- Pre-push gate: `pnpm typecheck` and `pnpm knip`.
+- Pre-push gate: `pnpm typecheck`. (`pnpm knip` is informational only — every
+  rule in `knip.json` is severity `warn`, so it can never fail; it is not part
+  of any gate.)
 
 ## Migration complete
 

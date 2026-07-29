@@ -8,6 +8,7 @@ import {
   useSummaryDispatch,
 } from "@/context/Summary";
 import { useFiles } from "@/hooks";
+import type { SummaryValidation as SummaryValidationPayload } from "@/services/aymurai/summaryValidation";
 import { summaryValidationClient } from "@/services/aymurai/summaryValidationClient";
 import { css } from "@/styled/css";
 import { Grid } from "@/styled/jsx";
@@ -48,26 +49,24 @@ export default function SummaryValidation() {
   // within the same click (focus leaves the editor, then the click handler
   // fires its own save) — without dedup that's two independent,
   // uncoordinated network writes racing each other for the saving/saveFailed
-  // state. Track the in-flight save so a second call while one is pending
-  // reuses it instead of starting another.
-  const inFlightSaveRef = useRef<Promise<boolean> | null>(null);
+  // state. Track the in-flight save, keyed by a fingerprint of its payload:
+  // a second call while one is pending reuses it ONLY when the payload is
+  // unchanged (the same-gesture blur+click case). If the content changed
+  // since the in-flight save started — the user went back in, corrected the
+  // summary, and saved again before the first write returned — coalescing
+  // would silently drop that correction, so we chain the new save to run
+  // after the in-flight one settles instead.
+  const inFlightSaveRef = useRef<{
+    promise: Promise<boolean>;
+    fingerprint: string;
+  } | null>(null);
 
-  // Resolves to `false` only when the save actually failed — lets callers
-  // that navigate away decide whether to wait for a clean save first.
-  const handleSave = (): Promise<boolean> => {
-    if (inFlightSaveRef.current) return inFlightSaveRef.current;
-    if (!file || !summary.document) return Promise.resolve(true);
-
+  const runSave = (payload: SummaryValidationPayload): Promise<boolean> => {
     setSaving(true);
     setSaveFailed(false);
 
-    const promise = summaryValidationClient
-      .save({
-        documentId: file.data.name,
-        title: summary.title,
-        generatedSummary: summary.partialText,
-        editedSummary: serializeDocumentToPlainText(summary.document),
-      })
+    const promise: Promise<boolean> = summaryValidationClient
+      .save(payload)
       .then(() => true)
       .catch(() => {
         setSaveFailed(true);
@@ -75,10 +74,45 @@ export default function SummaryValidation() {
       })
       .finally(() => {
         setSaving(false);
-        inFlightSaveRef.current = null;
+        if (inFlightSaveRef.current?.promise === promise) {
+          inFlightSaveRef.current = null;
+        }
       });
 
-    inFlightSaveRef.current = promise;
+    return promise;
+  };
+
+  // Resolves to `false` only when the save actually failed — lets callers
+  // that navigate away decide whether to wait for a clean save first.
+  const handleSave = (): Promise<boolean> => {
+    if (!file || !summary.document) return Promise.resolve(true);
+
+    const payload: SummaryValidationPayload = {
+      // A stable id, not the display filename: two different documents can
+      // share a filename (e.g. two rulings both exported as "sentencia.docx"
+      // from different case folders), and the filename is the entire
+      // storage key downstream.
+      documentId: file.paragraphs?.[0]?.document_id ?? file.data.name,
+      title: summary.title,
+      generatedSummary: summary.partialText,
+      editedSummary: serializeDocumentToPlainText(summary.document),
+    };
+    const fingerprint = JSON.stringify(payload);
+
+    const inFlight = inFlightSaveRef.current;
+    if (inFlight) {
+      if (inFlight.fingerprint === fingerprint) return inFlight.promise;
+
+      const chained = inFlight.promise.then(
+        () => runSave(payload),
+        () => runSave(payload),
+      );
+      inFlightSaveRef.current = { promise: chained, fingerprint };
+      return chained;
+    }
+
+    const promise = runSave(payload);
+    inFlightSaveRef.current = { promise, fingerprint };
     return promise;
   };
 
