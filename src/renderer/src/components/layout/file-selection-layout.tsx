@@ -7,13 +7,15 @@ import type { ReactNode } from "react";
 const viewport = css({
   minH: "full",
   width: "full",
-  px: { base: "4", sm: "6", md: "8" },
+  px: { base: "4", sm: "6", md: "8", desktop: "12" },
   pt: { base: "6", xl: "16" },
 });
 
+// Reading-column rule A (tasks/responsive/plan.md) - `sizes.content.max`,
+// 1824px - rather than the crystallized 1015px Figma once specced at 1440px.
 const content = css({
   width: "full",
-  maxWidth: "[1015px]",
+  maxWidth: "content.max",
   mx: "auto",
 });
 

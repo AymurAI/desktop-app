@@ -14,7 +14,7 @@ const content = cva({
   variants: {
     full: {
       true: {},
-      false: { px: { base: "4", sm: "6", md: "8" } },
+      false: { px: { base: "4", sm: "6", md: "8", desktop: "12" } },
     },
   },
   defaultVariants: {
@@ -33,9 +33,10 @@ const inner = cva({
       false: {
         ...stack.raw({ gap: "0" }),
         // Matches FileSelectionLayout's content width so screens built on
-        // MainContent line up with the FileDropZone flow (and Figma, which
-        // specs a 1014px-wide card in a 1440px frame).
-        maxWidth: "[1015px]",
+        // MainContent line up with the FileDropZone flow. Reading-column
+        // rule A (tasks/responsive/plan.md) - `sizes.content.max`, 1824px -
+        // rather than the crystallized 1015px Figma once specced at 1440px.
+        maxWidth: "content.max",
         mx: "auto",
         pt: { base: "6", xl: "16" },
       },
