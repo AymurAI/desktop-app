@@ -35,7 +35,8 @@
   "ignore": [
     "src/renderer/src/styled/**",
     "src/renderer/src/routeTree.gen.ts",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "playwright/mocks/**"
   ],
   "ignoreDependencies": [
     "@electron-toolkit/preload",

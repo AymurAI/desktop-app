@@ -53,4 +53,15 @@ describe("home/features — Summarizer card", () => {
     const link = screen.getByText("home.features.summaryTitle").closest("a");
     expect(link).toHaveAttribute("href", expect.stringContaining("SUMMARIZER"));
   });
+
+  it("sizes the outer Stack with viewport-safe units, not 100vw/100vh", () => {
+    const RouteComponent = Route.options.component as React.FC;
+    const { container } = render(<RouteComponent />);
+
+    const stack = container.firstElementChild;
+    expect(stack?.className).toContain("w_full");
+    expect(stack?.className).toContain("h_[100dvh]");
+    expect(stack?.className).not.toContain("w_screen");
+    expect(stack?.className).not.toContain("h_screen");
+  });
 });

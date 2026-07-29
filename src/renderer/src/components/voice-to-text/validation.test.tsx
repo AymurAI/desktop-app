@@ -105,4 +105,20 @@ describe("VoiceValidation", () => {
       });
     });
   });
+
+  it("sizes the outer Stack with 100dvh instead of 100vh", () => {
+    const queryClient = new QueryClient({
+      defaultOptions: { mutations: { retry: false } },
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <VoiceValidation />
+      </QueryClientProvider>,
+    );
+
+    const stack = document.querySelector("header")?.parentElement;
+    expect(stack?.className).toContain("h_[100dvh]");
+    expect(stack?.className).not.toContain("h_screen");
+  });
 });

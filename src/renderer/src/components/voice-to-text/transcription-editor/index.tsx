@@ -351,7 +351,7 @@ export default function TranscriptionEditor({
   return (
     <div className={wrap}>
       <div className={content}>
-        <div className={bodyColumn}>
+        <div className={bodyColumn} data-testid="vtt-reading-column">
           <Toolbar
             context="search-switch"
             searchValue={searchQuery}

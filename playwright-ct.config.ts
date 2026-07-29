@@ -35,6 +35,13 @@ export default defineConfig({
       resolve: {
         alias: {
           "@": resolve(__dirname, "src/renderer/src"),
+          // ValidateDataset imports useNavigate/useParams directly; stub
+          // them instead of mounting a real router (see the mock file for
+          // why). Scoped to this CT harness only, not the app build.
+          "@tanstack/react-router": resolve(
+            __dirname,
+            "playwright/mocks/tanstack-router-stub.ts",
+          ),
         },
       },
     },

@@ -255,7 +255,12 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
           onPrevious={handleSearchPrevious}
           onFocusDocument={focusDocument}
         />
-        <div ref={fileRef} tabIndex={-1} className={S.file}>
+        <div
+          ref={fileRef}
+          tabIndex={-1}
+          className={S.file}
+          data-testid="anon-reading-column"
+        >
           <AnnotationProvider
             file={file}
             isAnnotable={isAnnotable}
@@ -275,7 +280,11 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
           </AnnotationProvider>
         </div>
       </div>
-      <div hidden={!labelManagerOpen} className={labelManagerWrapper}>
+      <div
+        hidden={!labelManagerOpen}
+        className={labelManagerWrapper}
+        data-testid="anon-side-panel"
+      >
         <LabelManager onClose={toggleManagerLabel} />
       </div>
     </HStack>

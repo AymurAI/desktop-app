@@ -66,7 +66,7 @@ export default function VoiceValidation() {
 
   return (
     <RequireFile>
-      <Stack gap="0" height="screen" overflow="hidden">
+      <Stack gap="0" height="[100dvh]" overflow="hidden">
         <Header feature={FeatureFlowEnum.VoiceToText} currentStep={3} />
         <div className={editorWrap}>
           <TranscriptionEditor

@@ -135,7 +135,11 @@ export default function TurnSidePanel({
   }, [activeTurnId]);
 
   if (!activeTurn || !currentSpeaker) {
-    return <aside className={emptyPanel}>{t("sidePanel.empty")}</aside>;
+    return (
+      <aside className={emptyPanel} data-testid="vtt-side-panel">
+        {t("sidePanel.empty")}
+      </aside>
+    );
   }
 
   // People pills = existing speakers first, then still-unused suggested roles.
@@ -307,7 +311,7 @@ export default function TurnSidePanel({
   };
 
   return (
-    <div className={panelColumn}>
+    <div className={panelColumn} data-testid="vtt-side-panel">
       <TooltipProvider>
         <SidePanel
           size="sm"
