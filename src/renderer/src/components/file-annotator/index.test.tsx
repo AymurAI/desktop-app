@@ -42,6 +42,26 @@ describe("FileAnnotator entities panel (RSP-07a)", () => {
     expect(html).not.toContain("45vw");
   });
 
+  // Adversary: the G1 stacking fix has two halves that only work together.
+  // SidePanelColumn is `position: static`, full width and `maxWidth: none`
+  // below `lg`; the pane that holds it has to become a `column` there, or that
+  // full-width, `flexShrink: 0` panel stays a sibling in a ROW and claims the
+  // whole width, pushing the document out of an `overflow: hidden` box - worse
+  // than the overlay G1 replaced. side-panel-column.test.tsx pins the panel
+  // half exhaustively; this pins the parent half, which no vitest test covered.
+  it("stacks the panel below the document under lg and restores the row at lg", () => {
+    render(<FileAnnotator file={file} isAnnotable />);
+
+    const pane = screen.getByTestId("anon-side-panel")
+      .parentElement as HTMLElement;
+    const classes = classTokens(pane);
+
+    expect(classes).toContain("flex-d_column");
+    expect(classes).toContain("lg:flex-d_row");
+    // A flat `row` would silently undo the stacking at every width.
+    expect(classes).not.toContain("flex-d_row");
+  });
+
   it("gives the pane HStack position:relative as SidePanelColumn's overlay containing block", () => {
     render(<FileAnnotator file={file} isAnnotable />);
 
