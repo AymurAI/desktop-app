@@ -3,7 +3,10 @@
 This repo's renderer (`src/renderer/`) uses:
 
 - **Panda CSS** for styling. See `.claude/rules/panda-css.md`.
-- **Radix UI** primitives wrapped under `src/renderer/src/components/ui/`.
+- **Radix UI** primitives, mostly consumed straight from `@aymurai/ui` (Dialog,
+  Popover, Select, Switch, Tooltip — the library wraps `@radix-ui/react-*`
+  itself). `src/renderer/src/components/ui/` holds only what the library does
+  not provide (`scroll-area`, `back-button`).
   See `.claude/rules/radix-ui.md`.
 - **TanStack Router** for file-based routing in `src/renderer/src/routes/`.
 - **TanStack React Query** for backend data; query/mutation factories live in
