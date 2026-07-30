@@ -27,10 +27,12 @@ describe("FileAnnotator entities panel (RSP-07a)", () => {
 
     // SidePanelColumn's own recipe classes (side-panel-column.test.tsx
     // asserts these exhaustively) - their presence here is what proves the
-    // wrapper div was actually swapped for the primitive.
-    expect(classes).toContain("max-w_panel.side");
+    // wrapper div was actually swapped for the primitive. G1: `maxWidth`/
+    // `borderLeft` only engage at `lg` and up now (below `lg` the panel is a
+    // stacked row, not a docked column - see side-panel-column.tsx).
+    expect(classes).toContain("lg:max-w_panel.side");
     expect(classes).toContain("flex-sh_0");
-    expect(classes).toContain("bd-l_[1px_solid_#BCBAB8]");
+    expect(classes).toContain("lg:bd-l_[1px_solid_#BCBAB8]");
     expect(classes).toContain("lg:w_panel.sideCompact");
     expect(classes).toContain("desktop:w_panel.side");
 

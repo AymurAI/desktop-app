@@ -56,21 +56,31 @@ export function getTimestampBounds(
   };
 }
 
-// SidePanelColumn (T6) provides position/width/zIndex/shadow/flexShrink/
-// borderLeft; overflowY has no equivalent in the primitive and must be added
-// here so the panel's content scrolls independently of the transcript body.
-const panelColumn = css({
-  overflowY: "auto",
-});
-
+// SidePanelColumn (G1) already provides its own overflowY/maxHeight for the
+// stacked-row case below `lg`, so nothing extra is needed for that here.
+//
 // SidePanel's own recipe always sets `maxW: full` on its root node alongside
-// its fixed `size` width (node_modules/@aymurai/ui/dist/index.js:25478-25489),
-// so nesting `size="lg"` (479px) inside SidePanelColumn does not need a CSS
-// override: at the `lg` tier SidePanelColumn is a literal 360px
+// its fixed `size` width (node_modules/@aymurai/ui/dist/index.js:25478-25489)
+// - a PROP, not CSS this file controls. At/above `lg` that's exactly what we
+// want: at the `lg` tier SidePanelColumn is a literal 360px
 // (`panel.sideCompact`), and the browser resolves `width: 479px` against
 // `max-width: 100%` of that 360px containing block by using the smaller of
 // the two - the panel measures 360px there without any class ever
-// targeting the library's own selector. Measured (see the fixture spec).
+// targeting the library's own selector (measured, see the fixture spec).
+// Below `lg` (G1), SidePanelColumn is now a full-width stacked row - without
+// an override here, `size="lg"`'s own 479px would stay put inside that wider
+// row, leaving empty background space (exactly what the report measured at
+// 768: a 479px panel with 289px of empty background to its side). Forcing
+// this ONE child (`SidePanel`'s root, the wrapper's only element child - see
+// the spec's `toHaveCount(1)` check, kept ahead of any width assertion so a
+// library change that adds a sibling fails with a clear message rather than
+// a silent wrong measurement) to `width: full` below `lg` fixes that; `auto`
+// at/above `lg` leaves the library's own intrinsic sizing in charge.
+const panelColumn = css({
+  "& > div": {
+    width: { base: "full", lg: "[auto]" },
+  },
+});
 const emptyPanel = css({
   display: "flex",
   alignItems: "center",

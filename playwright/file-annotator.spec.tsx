@@ -19,11 +19,16 @@ test("Anonimizador entities panel fits the viewport", async ({
   const ancho = testInfo.project.name.split("x")[0];
   const width = Number(ancho);
 
-  // RSP-07a: SidePanelColumn (T6/T7, same primitive as Voz a Texto's panel)
-  // is 360px at the `lg` tier (1024/1366) and 479px everywhere else (768 via
-  // width:full capped by maxWidth, >=1440 via the `desktop` tier). Mirrors
-  // T7's expectation exactly - it's the identical component/breakpoints.
-  const expectedPanelWidth = width >= 1024 && width < 1440 ? "360px" : "479px";
+  // RSP-07a/G1: SidePanelColumn (T6/T7, same primitive as Voz a Texto's
+  // panel) is 360px at the `lg` tier (1024/1366) and 479px at/above `desktop`
+  // (1440+). Below `lg` (768) the panel is now a full-width STACKED row
+  // (G1, tasks/responsive-fixes/issues/G1-paneles-laterales.md) rather than
+  // an absolute overlay clipped to 479px by a flat `maxWidth` - `maxWidth`
+  // only engages at `lg` and up now, so at 768 the panel measures the full
+  // mounted width. Mirrors T7's expectation exactly at 1024+ - it's the
+  // identical component/breakpoints there.
+  const expectedPanelWidth =
+    width < 1024 ? `${width}px` : width < 1440 ? "360px" : "479px";
 
   const panel = component.getByTestId("anon-side-panel");
   await expect.soft(panel).toHaveCSS("width", expectedPanelWidth);
@@ -42,8 +47,12 @@ test("Anonimizador entities panel fits the viewport", async ({
   // that content box) with no border of its own - so the root resolves to
   // that 1px-narrower box: 478px where the wrapper is 479px, 359px where the
   // wrapper is 360px. A flat 479/360 would fail for a reason unrelated to
-  // this check.
-  const expectedRootWidth = width >= 1024 && width < 1440 ? "359px" : "478px";
+  // this check. Below `lg` (768) `borderLeft` is `none` (G1 puts the border
+  // on `borderTop` instead there, since the panel is a stacked row, not a
+  // docked column) - no 1px discount applies, so the root matches the
+  // wrapper exactly at that width.
+  const expectedRootWidth =
+    width < 1024 ? expectedPanelWidth : width < 1440 ? "359px" : "478px";
   await expect.soft(panelRoot).toHaveCSS("width", expectedRootWidth);
 
   // Document reading column (RSP-07b). `FileAnnotatorFixture` mounts with
@@ -55,8 +64,11 @@ test("Anonimizador entities panel fits the viewport", async ({
   // here - that would be the wrong rule for this fixture's state. The
   // widths are also fractional (88% of an integer pane), so we measure and
   // compare within the contract's +/-10px tolerance instead of an exact
-  // string match. Below `lg` (1024) the panel is an absolute overlay and
-  // does not shrink the pane; at/above `lg` it does.
+  // string match. Below `lg` (1024) the panel stacks in its own row (G1) -
+  // it no longer shrinks the document's WIDTH at all (the pane is the full
+  // mounted width there, since the two now share a column instead of a
+  // row); at/above `lg` the panel docks beside the document and does shrink
+  // its width, same as before.
   const panelWidthAtThisSize = width < 1024 ? 0 : width < 1440 ? 360 : 479;
   const pane = width - panelWidthAtThisSize;
   const expectedDocWidth = Math.min(pane * 0.88, 1520);

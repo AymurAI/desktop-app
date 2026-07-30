@@ -4,8 +4,11 @@ export const container = css({
   flex: "1",
   minH: "0",
   // Guardrail: below this, annotating by clicking words becomes
-  // impractical. The entities panel overlays (not shrinks) the document
-  // below `lg`, so this should never engage - see RSP-07b.
+  // impractical. Below `lg` the entities panel stacks below the document
+  // instead of overlaying it (G1, tasks/responsive-fixes/issues/
+  // G1-paneles-laterales.md), so the document pane is the full row width
+  // there and this guardrail is satisfied trivially (see RSP-07b for the
+  // narrower 1024-1439 hazard, which is unrelated and unchanged below).
   //
   // Used to be duplicated as `minW: "0"` alongside this `minWidth`, both
   // compiling to CSS `min-width` - which one won depended on generated Panda
