@@ -3,8 +3,11 @@
 # `pnpm <script>` pre-run dep-checks succeed for this Electron toolchain.
 blockExoticSubdeps: false
 allowBuilds:
-  '@aymurai/ui': true
-  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/1bbbdf739418ce550344a4ca863074d1c53be389': true
+  # github: shorthand deps resolve through codeload tarball URLs, not git
+  # protocol URLs, so pnpm's repo-URL allowBuilds form (11.11.0+) doesn't
+  # match them — the exact commit hash below must be bumped by hand whenever
+  # @aymurai/ui's pinned tag changes (see package.json).
+  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/93821cce3a0d82198d5acdf5c33cc1d2804cdbec': true
   '@biomejs/biome': true
   agent-browser: false
   electron: true
