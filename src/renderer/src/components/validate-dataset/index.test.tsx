@@ -80,4 +80,19 @@ describe("ValidateDataset layout (RSP-08)", () => {
       "desktop:grid-tc_[minmax(0,_1fr)_token(sizes.panel.form)]",
     );
   });
+
+  it("gives the document row 62% of the stacked height below lg instead of an even 50/50 split (G1 criterion 3)", () => {
+    render(<ValidateDataset />);
+
+    const grid = screen.getByTestId("file-annotator-stub")
+      .parentElement as HTMLElement;
+    const classes = grid.className.split(/\s+/);
+
+    // base (<lg): the document keeps the majority of the stacked row's
+    // height - the old even 50/50 split left less than a line and a half of
+    // the form visible and clipped the document to ~13 lines. lg+: back to a
+    // single row, since the grid becomes 2 columns there instead.
+    expect(classes).toContain("grid-tr_[minmax(0,_62%)_minmax(0,_1fr)]");
+    expect(classes).toContain("lg:grid-tr_[minmax(0,_1fr)]");
+  });
 });
