@@ -66,6 +66,12 @@ const voiceToText = {
     sectionTitle: "2. Transcripción de voz a texto",
     processingTitle: "AymurAI está transcribiendo el archivo.",
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
+    // G8 F3: title/subtitle must reflect the aggregated status
+    // (voice-to-text/process.tsx), not just "processing" forever.
+    finishedTitle: "AymurAI finalizó la transcripción del archivo.",
+    finishedSubtitle: "Podés continuar con la validación de la transcripción.",
+    errorTitle: "Ocurrió un problema al transcribir el archivo.",
+    errorSubtitle: "La transcripción no pudo completarse correctamente.",
     // Progress label / status / stop / replace copy is rendered by the
     // @aymurai/ui ArchiveProgress component (v0.3.0), not here.
     waitingForWords: "Esperando las primeras palabras…",
