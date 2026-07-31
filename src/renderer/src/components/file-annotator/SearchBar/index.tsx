@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import AnonymizerLabelSelect from "@/components/anonymizer/anonymizer-label-select";
 import { useExcludedTagsConfig } from "@/store/useLocal";
@@ -14,6 +15,24 @@ const toolbarContainer = css({
   minW: "0",
 });
 
+// G3 (tasks/responsive-fixes/issues/G3-toolbar-y-cierre-panel.md), issue 05:
+// this group used to be `Toolbar`'s `rightSlot`, which the library wraps in
+// two nested divs before rendering it - the OUTER one carries exactly the
+// two props this recipe is missing (`ml: "auto"`, `flexShrink: "0"`;
+// `minW`/`maxW` were already here) and, for this component's context
+// ("anonimizador"), ALWAYS renders a 1px divider (`Wd`, dist/index.js) as
+// the first child of that wrapper - unconditionally, not just when the row
+// wraps. Passing this group as `Toolbar`'s `children` instead (documented as
+// "fully custom layouts") skips that whole branch, so the divider is gone at
+// every width rather than only hidden when it happens not to orphan - a
+// media query keyed on width couldn't do this correctly anyway, since the
+// wrap point depends on the entities panel's open/closed state, not just
+// viewport width. No `@aymurai/ui` style is being overridden here - this is
+// a straight prop swap - so there is deliberately no cascade trick (no
+// `"&&"`, no child-selector) protecting anything: G2 established the
+// specificity workaround for when one is genuinely needed, and adding one
+// here for a problem that doesn't exist would be a decoration nobody
+// verifies.
 const labelControls = css({
   display: "flex",
   alignItems: "center",
@@ -22,6 +41,8 @@ const labelControls = css({
   gap: "6",
   minW: "0",
   maxW: "full",
+  ml: "auto",
+  flexShrink: "0",
 });
 
 const labelSelect = css({
@@ -59,6 +80,7 @@ export const SearchBar = ({
   onPrevious,
   onFocusDocument,
 }: Props) => {
+  const { t } = useTranslation("anonymizer");
   const [search, setSearch] = useState("");
   const { tags } = useExcludedTagsConfig();
 
@@ -125,7 +147,7 @@ export const SearchBar = ({
         searchValue={search}
         onSearchChange={changeSearchHandler}
         searchPlaceholder="Buscar"
-        searchAriaLabel="Buscar en el documento"
+        searchAriaLabel={t("searchBar.searchAriaLabel")}
         searchLabels={{
           clear: "Limpiar búsqueda",
           previous: "Coincidencia anterior",
@@ -150,33 +172,32 @@ export const SearchBar = ({
             ? onNext
             : undefined
         }
-        rightSlot={
-          isAnnotable ? (
-            <div className={labelControls}>
-              <styled.p textStyle="label.md.strong" whiteSpace="pre-line">
-                Aplicar&#10;etiquetas
-              </styled.p>
-              <div className={labelSelect}>
-                <AnonymizerLabelSelect
-                  placeholder="Etiqueta"
-                  value={labelValue}
-                  options={labelOptions}
-                  onChange={changeLabelSelectHandler}
-                />
-              </div>
-              {!isLabelManagerOpen && (
-                <Button
-                  variant="secondary"
-                  onClick={onLabelManagerToggle}
-                  className={managerButton}
-                >
-                  Gestor de etiquetas
-                </Button>
-              )}
+      >
+        {isAnnotable && (
+          <div className={labelControls}>
+            <styled.p textStyle="label.md.strong" whiteSpace="nowrap">
+              {t("searchBar.applyLabels")}
+            </styled.p>
+            <div className={labelSelect}>
+              <AnonymizerLabelSelect
+                placeholder={t("searchBar.labelPlaceholder")}
+                value={labelValue}
+                options={labelOptions}
+                onChange={changeLabelSelectHandler}
+              />
             </div>
-          ) : undefined
-        }
-      />
+            {!isLabelManagerOpen && (
+              <Button
+                variant="secondary"
+                onClick={onLabelManagerToggle}
+                className={managerButton}
+              >
+                {t("searchBar.manageLabels")}
+              </Button>
+            )}
+          </div>
+        )}
+      </Toolbar>
     </div>
   );
 };

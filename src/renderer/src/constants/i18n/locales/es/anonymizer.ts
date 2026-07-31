@@ -41,6 +41,15 @@ const anonymizer = {
         "Proceso terminado. El documento está listo para ser exportado.",
     },
   },
+  labelManager: {
+    closeAria: "Cerrar gestor de etiquetas",
+  },
+  searchBar: {
+    searchAriaLabel: "Buscar en el documento",
+    applyLabels: "Aplicar etiquetas",
+    labelPlaceholder: "Etiqueta",
+    manageLabels: "Gestor de etiquetas",
+  },
   process: {
     sectionTitle: "2. Procesamiento del archivo",
     processingTitle: "AymurAI está extrayendo los datos del archivo.",

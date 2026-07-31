@@ -24,16 +24,21 @@ test("Anonimizador: toolbar controls are hit-testable with the entities panel op
 }) => {
   const component = await mount(<FileAnnotatorFixture />);
 
-  // Hard-coded in SearchBar/index.tsx (not the locale) - see G1 risk notes.
+  // Sourced from i18next as of G3 issue 05 (constants/i18n/locales/es/
+  // anonymizer.ts's `searchBar.searchAriaLabel` key, via SearchBar/index.tsx's
+  // `useTranslation("anonymizer")`), same Spanish copy as before the
+  // migration.
   const search = component.getByRole("searchbox", {
     name: "Buscar en el documento",
   });
   await expectHitTestable(search, "Anonimizador: search input");
 
-  // `SearchBar/index.tsx:152-154` renders `Aplicar&#10;etiquetas` (an
-  // embedded newline, `whiteSpace: pre-line`) - textContent is really
-  // "Aplicar\netiquetas". Playwright normalizes whitespace when matching
-  // text, so the plain string matches.
+  // G3 issue 05 removed the embedded newline this label used to render
+  // (`SearchBar/index.tsx` used to hard-code `Aplicar&#10;etiquetas` with
+  // `whiteSpace: pre-line`) - it's now the single-line `searchBar.applyLabels`
+  // i18next key with `whiteSpace: nowrap`. Playwright normalizes whitespace
+  // when matching text regardless, so this locator matched both before and
+  // after; kept as a plain string, not a regression guard for the newline.
   const applyLabels = component.getByText("Aplicar etiquetas");
   await expectHitTestable(applyLabels, 'Anonimizador: "Aplicar etiquetas"');
 });

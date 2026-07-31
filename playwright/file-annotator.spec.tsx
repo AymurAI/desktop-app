@@ -124,14 +124,17 @@ test("Anonimizador entities panel fits the viewport", async ({
 
   // Family C / rule A: closing the entities panel is the only way this
   // fixture ever reaches `ReadingColumn variant="full"`. Use LabelManager's
-  // own close ("X") button - it calls the SAME `onLabelManagerToggle`
-  // callback SearchBar's own open button uses (file-annotator/index.tsx's
+  // own close button - it calls the SAME `onLabelManagerToggle` callback
+  // SearchBar's own open button uses (file-annotator/index.tsx's
   // `toggleManagerLabel`); no new state is introduced. Once closed, the
   // panel is removed from layout (`&[hidden]{ display: none }`) so the
   // document pane is the full mounted width and the cap engages exactly
   // like MainContent/FileSelectionLayout's `full` variant: min(width-96,
-  // 1824).
-  await component.getByRole("button", { name: "X" }).click();
+  // 1824). G3 issue 06: the button's accessible name is now the translated
+  // aria-label ("Cerrar gestor de etiquetas"), not the literal "X" glyph.
+  await component
+    .getByRole("button", { name: "Cerrar gestor de etiquetas" })
+    .click();
   await expect(component.getByTestId("anon-side-panel")).toBeHidden();
 
   // ReadingColumn's gutter (RSP-04b) is responsive, not a flat 96px: 32px total

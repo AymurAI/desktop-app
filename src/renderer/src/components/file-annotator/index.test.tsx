@@ -1,7 +1,17 @@
 import type { DocFile } from "@/types/file";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import FileAnnotator from ".";
+
+// G3 issue 06: LabelManager's close button now calls useTranslation
+// ("anonymizer"). Mocked the same way as how-it-works.test.tsx so the
+// locators below don't depend on whether the real i18n instance happens to
+// be initialized in this test's module graph.
+vi.mock("react-i18next", () => ({
+  useTranslation: (namespace?: string) => ({
+    t: (key: string) => `${namespace ?? "common"}:${key}`,
+  }),
+}));
 
 // Panda class names are space-separated atomic tokens; `toContain` on the
 // className STRING is a substring test (e.g. "panel.side" also matches
@@ -190,8 +200,11 @@ describe("FileAnnotator panel toggle (adversary: RSP-07b variant remount)", () =
     expect(paragraphBefore).not.toBeNull();
 
     // LabelManager's own close button - the only way to close the panel once
-    // it is open (SearchBar renders "Gestor de etiquetas" only while closed).
-    fireEvent.click(screen.getByRole("button", { name: "X" }));
+    // it is open (SearchBar renders the "Gestor de etiquetas" button only
+    // while closed).
+    fireEvent.click(
+      screen.getByRole("button", { name: "anonymizer:labelManager.closeAria" }),
+    );
 
     // Guard against a vacuous pass: the toggle really happened.
     expect(screen.getByTestId("anon-side-panel")).toHaveAttribute("hidden");
@@ -210,14 +223,19 @@ describe("FileAnnotator panel toggle (adversary: RSP-07b variant remount)", () =
     render(<FileAnnotator file={file} isAnnotable />);
 
     // The panel starts open here, so reach the closed state first - only then
-    // does SearchBar offer the "Gestor de etiquetas" reopen button.
-    fireEvent.click(screen.getByRole("button", { name: "X" }));
+    // does SearchBar offer the "Gestor de etiquetas" reopen button (G3 issue
+    // 05: now sourced from i18next too, same mock as the close button above).
+    fireEvent.click(
+      screen.getByRole("button", { name: "anonymizer:labelManager.closeAria" }),
+    );
 
     const paragraphBefore = document.getElementById("p1");
     expect(paragraphBefore).not.toBeNull();
 
     fireEvent.click(
-      screen.getByRole("button", { name: /gestor de etiquetas/i }),
+      screen.getByRole("button", {
+        name: "anonymizer:searchBar.manageLabels",
+      }),
     );
 
     expect(screen.getByTestId("anon-side-panel")).not.toHaveAttribute("hidden");
