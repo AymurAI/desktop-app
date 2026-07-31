@@ -50,7 +50,7 @@ describe("home/features — Summarizer card", () => {
     const RouteComponent = Route.options.component as React.FC;
     render(<RouteComponent />);
 
-    const link = screen.getByText("home.features.summaryTitle").closest("a");
+    const link = screen.getByText("summarizer:title").closest("a");
     expect(link).toHaveAttribute("href", expect.stringContaining("SUMMARIZER"));
   });
 });
