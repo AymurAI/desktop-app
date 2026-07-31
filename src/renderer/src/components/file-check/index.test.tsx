@@ -1,6 +1,16 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import FileCheck from "./index";
+
+// Same mock shape as how-it-works.test.tsx: proves the default error
+// message is actually SOURCED from i18next (namespace + key), not read back
+// verbatim - a literal default would render identically under this mock by
+// coincidence only if it happened to equal the mocked string, which it can't.
+vi.mock("react-i18next", () => ({
+  useTranslation: (namespace?: string) => ({
+    t: (key: string) => `${namespace ?? "common"}:${key}`,
+  }),
+}));
 
 // Panda class names are space-separated atomic tokens; match whole tokens
 // rather than substrings (see side-panel-column.test.tsx). `getAttribute`
@@ -51,5 +61,44 @@ describe("FileCheck", () => {
     const svg = container.querySelector("svg");
     expect(svg).not.toBeNull();
     expect(classTokens(svg as Element)).toContain("anim_spin");
+  });
+
+  // Issue 07: the ellipsis treatment used to be a `"& p"` descendant
+  // selector on `Wrapper`, reaching every `<p>` including the error text.
+  it("does not clip a long error message with nowrap/overflow:hidden", () => {
+    const longMessage =
+      "Este es un mensaje de error muy largo que antes se elidia a 150px y ahora tiene que leerse completo en varias lineas sin cortarse.";
+    render(<FileCheck fileName="e.docx" hasError errorMessage={longMessage} />);
+
+    const errorText = screen.getByText(longMessage);
+    expect(classTokens(errorText)).not.toContain("white-space_nowrap");
+    expect(classTokens(errorText)).not.toContain("ov_hidden");
+  });
+
+  it("keeps the ellipsis treatment (and adds a tooltip) on the file name only", () => {
+    render(
+      <FileCheck fileName="e.docx" hasError errorMessage="Custom error" />,
+    );
+
+    const fileName = screen.getByText("e.docx");
+    expect(classTokens(fileName)).toContain("white-space_nowrap");
+    expect(classTokens(fileName)).toContain("ov_hidden");
+    expect(fileName).toHaveAttribute("title", "e.docx");
+  });
+
+  it("sources the default error message from i18next, not a hardcoded literal", () => {
+    render(<FileCheck fileName="f.docx" hasError />);
+
+    expect(
+      screen.getByText("common:fileCheck.defaultError"),
+    ).toBeInTheDocument();
+  });
+
+  it("falls back to the default message instead of rendering an empty error block", () => {
+    render(<FileCheck fileName="g.docx" hasError errorMessage="" />);
+
+    const errorText = screen.getByText("common:fileCheck.defaultError");
+    expect(errorText).toBeInTheDocument();
+    expect(errorText.textContent).not.toBe("");
   });
 });

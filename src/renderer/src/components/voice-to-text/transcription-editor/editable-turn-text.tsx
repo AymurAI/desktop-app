@@ -125,5 +125,8 @@ export const EditableTurnText = memo(
     a.text === b.text &&
     a.turnId === b.turnId &&
     a.ariaLabel === b.ariaLabel &&
-    a.highlight === b.highlight,
+    a.highlight === b.highlight &&
+    a.onCommit === b.onCommit &&
+    a.onSelect === b.onSelect &&
+    a.onFocusChange === b.onFocusChange,
 );

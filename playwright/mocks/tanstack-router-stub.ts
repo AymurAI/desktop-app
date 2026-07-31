@@ -12,6 +12,15 @@
  * the real `Header`, which renders `HeaderLogoLink`'s `<Link to="/home/...">`.
  * A plain anchor is enough for layout/CT purposes - nothing here navigates.
  * Plain `.ts` (no JSX), so `createElement` instead of a `<a>` literal.
+ *
+ * `createLink` (G4/T4): needed once a `preview-fixture.tsx` started mounting
+ * `FileSelectionLayout`, which imports `BackButton` (`components/ui/
+ * back-button.tsx`) at module scope - and that module calls `createLink(...)`
+ * at module scope too, so the import alone crashes without this export, even
+ * for a consumer that never renders the resulting component. Like `Link`
+ * above, this drops the routing behavior (`to`/`params` are stripped, not
+ * resolved to an `href`) and just renders the wrapped component with
+ * whatever's left - enough for layout/CT purposes, nothing here navigates.
  */
 import {
   type AnchorHTMLAttributes,
@@ -36,4 +45,16 @@ export function Link({
   children?: ReactNode;
 } & AnchorHTMLAttributes<HTMLAnchorElement>) {
   return createElement("a", rest, children);
+}
+
+export function createLink<P extends Record<string, unknown>>(
+  Component: (props: P) => ReactNode,
+) {
+  return function CreatedLink({
+    to: _to,
+    params: _params,
+    ...rest
+  }: P & { to?: string; params?: Record<string, unknown> }) {
+    return createElement(Component, rest as P);
+  };
 }

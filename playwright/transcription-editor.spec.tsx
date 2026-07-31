@@ -1,6 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { TranscriptionEditorFixture } from "@/test/playwright-fixtures/transcription-editor-fixture";
+import { TurnSidePanelFixture } from "@/test/playwright-fixtures/turn-side-panel-fixture";
 import { expect, test } from "@playwright/experimental-ct-react";
 
 const SHOTS_DIR = resolve(__dirname, "../tasks/responsive/shots");
@@ -229,4 +230,258 @@ test("Voz a Texto: Modo Edición can be entered and exited at 768 with the mouse
     name: "Título de la transcripción",
   });
   await expect(titleInput).toBeVisible();
+});
+
+/**
+ * G4 issue 12 (tasks/responsive-fixes/issues/G4-anchos-fijos-y-truncados.md):
+ * the title's editing `<input>` had no `width` at all, so it sat at the UA's
+ * intrinsic width (~32px) instead of filling the reading column - measured
+ * fixed at 358px in all six viewports regardless of how much room the
+ * column actually had (up to 1314px unused at 2560).
+ *
+ * A SIBLING test, not appended to the "Modo Edición" test above: that one is
+ * about G1's panel-stacking (whether the switch/pencil are reachable and
+ * toggle correctly), this one is about the input's geometry once it's
+ * visible - different focus, so it gets its own test rather than growing an
+ * unrelated one. It deliberately REUSES that test's exact flow (mount with
+ * `initialEditMode={false}`, `getByRole("switch")`, then the pencil by its
+ * accessible name) rather than inventing a parallel one.
+ *
+ * LOCATOR TRAP the inherited criterion called out: `input[aria-label]` (a
+ * generic attribute selector) matches the Toolbar's OWN search input first
+ * in DOM order, not the title input - and that search input genuinely
+ * varies in width across viewports on its own (up to ~622px from 1366,
+ * via the Toolbar's internal `maxW` in the "search-switch" context), so a
+ * mis-scoped test could appear to pass while measuring the wrong element
+ * entirely. `getByRole("textbox", { name })` scopes by accessible role AND
+ * name - it cannot match the search input (a different accessible name),
+ * so this trap is structurally avoided rather than avoided by convention.
+ */
+test("Voz a Texto: title input fills the reading column width once in edit mode", async ({
+  mount,
+  page,
+}, testInfo) => {
+  const width = Number(testInfo.project.name.split("x")[0]);
+  const component = await mount(
+    <TranscriptionEditorFixture initialEditMode={false} />,
+  );
+
+  await component.getByRole("switch").click();
+  await component
+    .getByRole("button", { name: "Editar título de la transcripción" })
+    .click();
+
+  const titleInput = component.getByRole("textbox", {
+    name: "Título de la transcripción",
+  });
+  await expect(titleInput).toBeVisible();
+
+  // RELATIVE assertion against the measured reading column, not the six
+  // hardcoded widths the intake report measured (720/616/958/865/1345/1672
+  // at 768/1024/1366/1440/1920/2560) - a hardcoded number breaks the instant
+  // the layout changes for an unrelated reason (G1 already changed how these
+  // screens stack once); a measured difference between two elements in the
+  // same column does not. Those six numbers are used below only as a sanity
+  // check while running this test, never as constants it depends on.
+  const SANITY_CHECK_WIDTHS: Record<number, number> = {
+    768: 720,
+    1024: 616,
+    1366: 958,
+    1440: 865,
+    1920: 1345,
+    2560: 1672,
+  };
+
+  const column = component.getByTestId("vtt-reading-column");
+  const [inputBox, columnBox] = await Promise.all([
+    titleInput.boundingBox(),
+    column.boundingBox(),
+  ]);
+
+  expect(inputBox).not.toBeNull();
+  expect(columnBox).not.toBeNull();
+  if (inputBox && columnBox) {
+    // Criterion 2's second clause ("...the input occupies at least the
+    // reading column's width") - the contract offers this as an explicit
+    // alternative to its first clause, not a softened gate. The first
+    // clause (`scrollWidth <= clientWidth` with a 108-character title) is
+    // NOT reachable with the current typography: 108 characters at
+    // 32px/600-weight measure ~2112px, and the column is capped at
+    // `content.split` = 1672px in edit mode - an `<input>` cannot wrap.
+    // Making a 108-character title render whole would need a `<textarea>`
+    // or a smaller edit-mode font-size; that's a separate design decision,
+    // out of this ticket's scope.
+    expect(Math.abs(inputBox.width - columnBox.width)).toBeLessThanOrEqual(1);
+
+    const sanityWidth = SANITY_CHECK_WIDTHS[width];
+    if (sanityWidth !== undefined) {
+      expect(Math.abs(columnBox.width - sanityWidth)).toBeLessThanOrEqual(10);
+    }
+  }
+
+  // Criterion 2, last part: at 768, the full-width input still doesn't
+  // overflow its container.
+  if (width === 768) {
+    const fitsViewport = await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    );
+    expect(fitsViewport).toBe(true);
+  }
+});
+
+// 33 characters ("Nombre Muy Largo Del Locutor Once") - the exact length the
+// G4 intake measured overflowing the library's card by 18px at 1024 (panel)
+// and 50px (the card's own content box).
+const LONG_SPEAKER_NAME = "Nombre Muy Largo Del Locutor Once";
+
+/**
+ * G4 issue 13 (tasks/responsive-fixes/issues/G4-anchos-fijos-y-truncados.md):
+ * @aymurai/ui's "Turno seleccionado" card overflows with a long speaker
+ * name - 100% internal to the library (see `turnCardOverflowFix`'s docblock
+ * in turn-side-panel.tsx for the exact nodes and the selector's reasoning),
+ * fixed by a structural CSS selector passed as `className` on `<SidePanel>`.
+ *
+ * A SECOND, sibling defect shares the same root cause and the same
+ * `currentSpeaker.label`: that same name also drives the speaker's own pill
+ * in the "Personas sugeridas" section below the card (every existing speaker
+ * always renders a pill there - see `turn-side-panel.tsx`'s `people` array,
+ * not a fixture artifact). Fixed by `suggestedPersonPillFix` (see its
+ * docblock in turn-side-panel.tsx) - both fixes are asserted below, on the
+ * literal `vtt-side-panel` node, per the contract's criterion 3.
+ *
+ * Mounted via a standalone fixture (not `TranscriptionEditorFixture` plus
+ * the turn-selection click flow above): `TurnSidePanel` needs no editor
+ * context to render on its own (`useTranscriptionDispatch`'s default is a
+ * no-op, and the component wraps its own `TooltipProvider`), and a
+ * dedicated fixture can set the speaker's `label` to an exact, controlled
+ * length instead of whatever the shared transcription fixture happens to
+ * use.
+ */
+test("Voz a Texto: a long speaker name doesn't overflow the library's turn card or the panel", async ({
+  mount,
+}) => {
+  expect(LONG_SPEAKER_NAME).toHaveLength(33);
+
+  const component = await mount(
+    <TurnSidePanelFixture speakerLabel={LONG_SPEAKER_NAME} />,
+  );
+
+  const panel = component.getByTestId("vtt-side-panel");
+  // `SidePanel` has no rest-prop spread, so its root can't carry a testid
+  // directly - locate it structurally, same pattern (and same
+  // `toHaveCount(1)` check first) as the turn-selection flow above.
+  const sidePanelRoot = panel.locator("> div");
+  await expect(sidePanelRoot).toHaveCount(1);
+  // The card ("Turno seleccionado") is the FIRST child of that root -
+  // exactly the node `turnCardOverflowFix`'s selector targets.
+  const card = sidePanelRoot.locator("> div").first();
+
+  const nameSpan = card.getByText(LONG_SPEAKER_NAME, { exact: true });
+  await expect(nameSpan).toBeVisible();
+  // One assertion per property, as the contract requires: if a future
+  // library bump changes the tree, this says exactly which of the two was
+  // lost, rather than a single compound check hiding which one broke.
+  await expect(nameSpan).toHaveCSS("white-space", "normal");
+  await expect(nameSpan).toHaveCSS("overflow-wrap", "anywhere");
+
+  // The time reads completely ("00:00") - the report's nuance was that the
+  // time span doesn't truncate on its own; it's the CARD overflowing and
+  // an ancestor clipping it that made it look cut off.
+  const timeSpan = card.getByText("00:00", { exact: true });
+  await expect(timeSpan).toBeVisible();
+
+  // The selector reaches THREE spans (initials, name, time), not one - the
+  // avatar's geometry must be asserted unchanged, not assumed: `AvatarPill`
+  // (size "sm") is a fixed 24x24px box (`w:"6"`/`h:"6"`, `flexShrink:"0"`),
+  // so `whiteSpace`/`overflowWrap` on its span cannot visibly affect it
+  // (2 characters never wrap), but this proves it rather than assuming it.
+  const avatarSpan = card.getByText("AB", { exact: true });
+  const avatarBox = await avatarSpan.boundingBox();
+  expect(avatarBox).not.toBeNull();
+  if (avatarBox) {
+    expect(avatarBox.width).toBeCloseTo(24, 0);
+    expect(avatarBox.height).toBeCloseTo(24, 0);
+  }
+
+  const cardOverflows = await card.evaluate(
+    (el) => el.scrollWidth > el.clientWidth,
+  );
+  expect(cardOverflows).toBe(false);
+
+  // The current speaker's own pill in "Personas sugeridas": `people` puts
+  // existing speakers first, and this fixture has exactly one speaker (the
+  // current one), so the FIRST `[data-pill-root]` in DOM order is theirs -
+  // same `LONG_SPEAKER_NAME`, verified with an exact-text match rather than
+  // assumed from ordering.
+  const pillRoots = component.locator("[data-pill-root]");
+  const pillCount = await pillRoots.count();
+  expect(pillCount).toBeGreaterThan(0);
+  const firstPillNameSpan = pillRoots
+    .first()
+    .getByText(LONG_SPEAKER_NAME, { exact: true });
+  await expect(firstPillNameSpan).toBeVisible();
+  // Copying the card's two-property recipe is NOT enough here (measured,
+  // not assumed - see suggestedPersonPillFix's docblock): flexShrink/
+  // minWidth also had to change, so all four properties get their own
+  // assertion.
+  await expect(firstPillNameSpan).toHaveCSS("white-space", "normal");
+  await expect(firstPillNameSpan).toHaveCSS("overflow-wrap", "anywhere");
+  await expect(firstPillNameSpan).toHaveCSS("flex-shrink", "1");
+  await expect(firstPillNameSpan).toHaveCSS("min-width", "0px");
+
+  // Selector node count: `"& [data-pill-root] span"` should reach exactly
+  // 2 spans per pill (the AvatarPill initials span + the name span) and
+  // NOTHING from the "Nuevo" button (a plain `<button>` with an SVG icon and
+  // a bare text child, no `<span>`) - verified here rather than assumed.
+  const pillSpans = component.locator("[data-pill-root] span");
+  await expect(pillSpans).toHaveCount(pillCount * 2);
+
+  // Criterion 3, on the literal node the contract names: the PANEL itself
+  // (not a substitute measurement on the card alone) has no horizontal
+  // overflow, now that both sibling defects (card + pill) are fixed.
+  const panelOverflows = await panel.evaluate(
+    (el) => el.scrollWidth > el.clientWidth,
+  );
+  expect(panelOverflows).toBe(false);
+});
+
+// Sad path the contract calls out explicitly: a single 40-character word
+// with no spaces to wrap at is exactly what `flexWrap: "wrap"` on the row
+// would NOT have covered (there is no space for the row to wrap on), which
+// is why `overflowWrap: "anywhere"` on the spans (breaks mid-word as a last
+// resort) was chosen over it. Covers both fixed nodes (card AND panel, i.e.
+// the pill too), same as the main test above.
+const SINGLE_WORD_NAME = "A".repeat(40);
+
+test("Voz a Texto: a single 40-character word with no spaces still doesn't overflow the turn card or the panel", async ({
+  mount,
+}) => {
+  const component = await mount(
+    <TurnSidePanelFixture speakerLabel={SINGLE_WORD_NAME} />,
+  );
+
+  const panel = component.getByTestId("vtt-side-panel");
+  const card = panel.locator("> div").locator("> div").first();
+
+  const nameSpan = card.getByText(SINGLE_WORD_NAME, { exact: true });
+  await expect(nameSpan).toBeVisible();
+
+  const cardOverflows = await card.evaluate(
+    (el) => el.scrollWidth > el.clientWidth,
+  );
+  expect(cardOverflows).toBe(false);
+
+  // Same single long word also appears in this speaker's own suggested-
+  // people pill (the same mechanism as the main test above) - the panel
+  // must not overflow because of it either.
+  const firstPillNameSpan = component
+    .locator("[data-pill-root]")
+    .first()
+    .getByText(SINGLE_WORD_NAME, { exact: true });
+  await expect(firstPillNameSpan).toBeVisible();
+
+  const panelOverflows = await panel.evaluate(
+    (el) => el.scrollWidth > el.clientWidth,
+  );
+  expect(panelOverflows).toBe(false);
 });

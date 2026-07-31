@@ -69,3 +69,39 @@ describe("EditableTurnText search highlighting", () => {
     expect(el.textContent).toBe("hola mundo nuevo"); // untouched while focused
   });
 });
+
+describe("EditableTurnText memoized callbacks", () => {
+  it("uses the latest commit handler after a memoized rerender", () => {
+    const firstCommit = vi.fn();
+    const secondCommit = vi.fn();
+    const noop = () => {};
+
+    const { rerender } = render(
+      <EditableTurnText
+        turnId="turn-1"
+        text="same text"
+        ariaLabel="Turn text"
+        onCommit={firstCommit}
+        onSelect={noop}
+      />,
+    );
+
+    rerender(
+      <EditableTurnText
+        turnId="turn-1"
+        text="same text"
+        ariaLabel="Turn text"
+        onCommit={secondCommit}
+        onSelect={noop}
+      />,
+    );
+
+    const editor = screen.getByRole("textbox", { name: "Turn text" });
+    fireEvent.focus(editor);
+    editor.textContent = "changed text";
+    fireEvent.blur(editor);
+
+    expect(firstCommit).not.toHaveBeenCalled();
+    expect(secondCommit).toHaveBeenCalledWith("turn-1", "changed text");
+  });
+});

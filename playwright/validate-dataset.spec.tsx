@@ -136,6 +136,79 @@ test("Set de Datos validation screen fits the viewport", async ({
     }
   }
 
+  const formInputLabels = [
+    "Número",
+    "Número de registro",
+    "Tomo",
+    "Fecha de resolución",
+    "Hora de inicio",
+    "Hora de cierre",
+    "Duración",
+    "Edad",
+  ];
+  const formInputBoxes = await Promise.all(
+    formInputLabels.map(async (label) => {
+      const input = component
+        .getByRole("textbox", { exact: true, name: label })
+        .first();
+      await expect(input).toBeVisible();
+
+      return input.evaluate((node, label) => {
+        const control = node.parentElement;
+        const textField = control?.parentElement;
+        const wrapper = textField?.parentElement;
+
+        if (!control || !textField || !wrapper) {
+          throw new Error(`Unexpected TextField DOM for ${label}`);
+        }
+
+        const stylesFor = (el: Element) => {
+          const style = getComputedStyle(el);
+          return {
+            flexShrink: style.flexShrink,
+            maxWidth: style.maxWidth,
+            minWidth: style.minWidth,
+            whiteSpace: style.whiteSpace,
+            width: style.width,
+          };
+        };
+
+        return {
+          label,
+          textField: {
+            styles: stylesFor(textField),
+            width: textField.getBoundingClientRect().width,
+          },
+          wrapper: {
+            styles: stylesFor(wrapper),
+            width: wrapper.getBoundingClientRect().width,
+          },
+        };
+      }, label);
+    }),
+  );
+  const formInputWidths = formInputBoxes.map(
+    ({ textField }) => textField.width,
+  );
+  const maxFormInputWidth = Math.max(...formInputWidths);
+  const minFormInputWidth = Math.min(...formInputWidths);
+
+  for (const { label, textField, wrapper } of formInputBoxes) {
+    expect
+      .soft(
+        Math.abs(textField.width - wrapper.width),
+        `${label} TextField root should fill its own wrapper`,
+      )
+      .toBeLessThanOrEqual(1);
+    expect.soft(textField.styles.width).toBe(wrapper.styles.width);
+  }
+  expect
+    .soft(
+      maxFormInputWidth - minFormInputWidth,
+      `form input widths: ${JSON.stringify(formInputBoxes)}`,
+    )
+    .toBeLessThanOrEqual(2);
+
   mkdirSync(SHOTS_DIR, { recursive: true });
   await page.screenshot({ path: resolve(SHOTS_DIR, `dataset-${ancho}.png`) });
 

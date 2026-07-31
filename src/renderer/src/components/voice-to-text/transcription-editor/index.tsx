@@ -102,6 +102,14 @@ const titleSection = css({
 });
 
 const titleInput = css({
+  // G4 issue 12: no `width` at all left this at the UA's intrinsic input
+  // width (~32px via the default `size` attribute) instead of the row's
+  // full column width. `titleRow` already fills the reading column and this
+  // input is its only child in the editing branch, so `width: full` is
+  // enough - `minWidth: 0` lets it actually shrink below that intrinsic
+  // width in a flex row instead of forcing an overflow.
+  width: "full",
+  minWidth: "0",
   fontSize: "[32px]",
   lineHeight: "[38px]",
   fontWeight: "[600]",
