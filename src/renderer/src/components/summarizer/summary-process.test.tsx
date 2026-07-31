@@ -79,4 +79,28 @@ describe("SummaryProcess", () => {
       screen.queryByText("process.waitingForWords"),
     ).not.toBeInTheDocument();
   });
+
+  it("keeps the Detener button enabled while processing", () => {
+    mockSummarizeState.status = "processing";
+    render(<SummaryProcess />);
+    expect(screen.getByRole("button", { name: "process.stop" })).toBeEnabled();
+  });
+
+  it("keeps the Detener button visible but disabled once completed, matching Voz a Texto", () => {
+    mockSummarizeState.status = "completed";
+    render(<SummaryProcess />);
+    expect(screen.getByRole("button", { name: "process.stop" })).toBeDisabled();
+  });
+
+  it("keeps the Detener button visible but disabled on error, matching Voz a Texto", () => {
+    mockSummarizeState.status = "error";
+    render(<SummaryProcess />);
+    expect(screen.getByRole("button", { name: "process.stop" })).toBeDisabled();
+  });
+
+  it("keeps the Detener button visible but disabled once stopped, matching Voz a Texto", () => {
+    mockSummarizeState.status = "stopped";
+    render(<SummaryProcess />);
+    expect(screen.getByRole("button", { name: "process.stop" })).toBeDisabled();
+  });
 });
