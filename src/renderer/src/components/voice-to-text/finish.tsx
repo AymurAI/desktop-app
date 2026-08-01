@@ -215,7 +215,7 @@ export default function VoiceFinish() {
           )}
         </Stack>
       </MainContent>
-      <Footer withBuiltBy>
+      <Footer withBuiltBy data-testid="vtt-finish-footer">
         <HStack gap="4">
           <Button
             variant="secondary"

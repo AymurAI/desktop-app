@@ -9,7 +9,10 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 
-import ReadingColumn from "@/components/layout/reading-column";
+import ReadingColumn, {
+  readingInsetChildOverride,
+  readingInsetToolbarOverride,
+} from "@/components/layout/reading-column";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { renameTranscription } from "@/reducers/transcription/actions";
 import { css, cx } from "@/styled/css";
@@ -377,8 +380,42 @@ export default function TranscriptionEditor({
     <div className={wrap}>
       <div className={content}>
         <div className={bodyColumn}>
+          {/*
+            G5 (tasks/responsive-fixes/issues/G5-alineacion-cromo.md), issue
+            08: the transcript below (via ReadingColumn) has always been
+            where Figma's A-vtt-sin-panel-2560.png/B-vtt-con-panel-2560.png
+            put it (1824 centered off, 1672-in-pane on) - the Toolbar's own
+            hardcoded `px: "12"` (@aymurai/ui's dist/index.js) is what's
+            wrong. `readingInsetToolbarOverride` reuses ReadingColumn's SAME
+            gutter/cap tokens via `readingInset` (not a copy -
+            CONVENTIONS.md; see that file for why the actual css() call has
+            to live there, not here) so the toolbar always lines up with the
+            transcript, whichever cap it uses.
+
+            The "&&" inside that override is deliberate and necessary: the
+            Toolbar lands our className on the SAME root that carries its
+            own `px: "12"` class (`D(k({...px:"12"...}), h)`), so a flat
+            paddingInline override would be (0,1,0) against the library's
+            own (0,1,0) - and since main.tsx imports ./index.css before
+            @aymurai/ui/styles.css (same @layer order in both), the
+            library's later-imported rule would win the tie. "&&" (Panda
+            emits .class.class, specificity (0,2,0)) wins regardless of
+            import order - same mechanism as how-it-works.tsx's
+            tutorialGridOverride. AudioPlayer's fix (G5 T2, below) also
+            needs raised specificity after a bare child selector ("& > *")
+            measured as a cascade tie that lost to the library import order;
+            there the raised selector is combined with a child combinator
+            because the padding has to land on the wrapper's child rather
+            than the wrapper itself.
+
+            NOT applied to file-annotator/SearchBar/index.tsx's Toolbar
+            instance (context "anonimizador") - that is G3's territory and
+            a different screen; touching it here would be both scope creep
+            and a merge conflict.
+          */}
           <Toolbar
             context="search-switch"
+            className={readingInsetToolbarOverride[readingVariant]}
             searchValue={searchQuery}
             onSearchChange={(value) => {
               setSearchQuery(value);
@@ -518,13 +555,31 @@ export default function TranscriptionEditor({
         )}
       </div>
 
-      <AudioPlayer
-        ref={playerRef}
-        src={transcription.audioObjectUrl}
-        durationMs={transcription.audioDurationMs}
-        onTimeUpdate={(ms) => setCurrentMs(ms)}
-        rightSlot={footerActions}
-      />
+      {/*
+        G5 (tasks/responsive-fixes/issues/G5-alineacion-cromo.md), issue 08,
+        second half: `Player` doesn't accept a `className` at all (verified
+        in @aymurai/ui's Player.d.ts), so its content is aligned to the
+        reading column via a wrapper `<div>` around it instead - the wrapper
+        carries no padding/background/border of its own, only the inset
+        class indexed by `readingVariant` (`&& > *`, see
+        readingInsetChildOverride's docblock for why the child selector also
+        has to raise specificity against the library's root utility class).
+        The player's own root stays
+        full-bleed (viewport-wide background + border-top matching Figma's
+        A/B frames) - only its CONTENT is inset, which is exactly what
+        wrapping the CONTENT rather than the player itself achieves; a
+        `ReadingColumn` around `AudioPlayer` would instead clip the
+        full-bleed chrome.
+      */}
+      <div className={readingInsetChildOverride[readingVariant]}>
+        <AudioPlayer
+          ref={playerRef}
+          src={transcription.audioObjectUrl}
+          durationMs={transcription.audioDurationMs}
+          onTimeUpdate={(ms) => setCurrentMs(ms)}
+          rightSlot={footerActions}
+        />
+      </div>
     </div>
   );
 }

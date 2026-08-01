@@ -2,6 +2,7 @@ import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { TranscriptionEditorFixture } from "@/test/playwright-fixtures/transcription-editor-fixture";
 import { TurnSidePanelFixture } from "@/test/playwright-fixtures/turn-side-panel-fixture";
+import { Button } from "@aymurai/ui";
 import { expect, test } from "@playwright/experimental-ct-react";
 
 const SHOTS_DIR = resolve(__dirname, "../tasks/responsive/shots");
@@ -485,3 +486,242 @@ test("Voz a Texto: a single 40-character word with no spaces still doesn't overf
   );
   expect(panelOverflows).toBe(false);
 });
+
+/**
+ * G5 (tasks/responsive-fixes/issues/G5-alineacion-cromo.md), issue 08: the
+ * Toolbar's search pill used to sit at a flat 48px from the left (its own
+ * `px: "12"`, hardcoded by @aymurai/ui), while the reading column below it
+ * moves with the viewport - 24/24/24/48/48px gutter, then 368px (variant
+ * `full`, cap `content.max` = 1824) or 204.5px (variant `split`, cap
+ * `content.split` = 1672, resolved against `bodyColumn`'s pane, NOT the
+ * viewport) once the cap engages at 2560. That's a mismatch in FOUR of the
+ * six widths (768/1024/1366 by -24px, 2560 by +320px), not just the two the
+ * original report measured (it never checked 768/1024).
+ *
+ * Figma evidence for "the transcript is right, the chrome is wrong": in
+ * `A-vtt-sin-panel-2560.png` (edit mode off) the search bar, title, text and
+ * player bar all start at the same x (~371 in frame coordinates) and the
+ * toolbar->"Modo Edición" group measures ~1824px, exactly rule A's cap
+ * centered ((2560-1824)/2 = 368 ~ 371); in `B-vtt-con-panel-2560.png` (edit
+ * mode on) the search bar and title share that same left edge too. The fix
+ * makes the toolbar ADOPT the transcript's position, not the other way
+ * around.
+ */
+const expectedToolbarPaddingLeft: Record<
+  string,
+  { full: string; split: string }
+> = {
+  "768x1024": { full: "24px", split: "24px" },
+  "1024x768": { full: "24px", split: "24px" },
+  "1366x768": { full: "24px", split: "24px" },
+  "1440x900": { full: "48px", split: "48px" },
+  "1920x1080": { full: "48px", split: "48px" },
+  "2560x1440": { full: "368px", split: "204.5px" },
+};
+
+// The search pill sits 2 DOM hops above the `<input>` (input -> its own
+// icon/text flex wrapper -> the bordered pill) - verified against
+// @aymurai/ui's dist/index.js. NOT the `<input>` itself: it has its own
+// inner padding and starts at x=93 when the pill starts at x=48 (the
+// contract's own pre-fix measurement) - measuring the input would fail (or
+// pass) for a reason unrelated to the toolbar's gutter.
+const TOOLBAR_CONTENT_FROM_INPUT_XPATH = "xpath=../..";
+// The toolbar ROOT - the node the Toolbar library itself appends our
+// `className` to, alongside its own `px: "12"` class - is 3 hops further up
+// from the search pill (pill -> search-container -> row -> root).
+const TOOLBAR_ROOT_FROM_CONTENT_XPATH = "xpath=../../..";
+
+for (const isEditMode of [false, true]) {
+  const variant = isEditMode ? "split" : "full";
+
+  test(`Voz a Texto: toolbar lines up with the reading column (isEditMode=${isEditMode})`, async ({
+    mount,
+  }, testInfo) => {
+    const component = await mount(
+      <TranscriptionEditorFixture initialEditMode={isEditMode} />,
+    );
+
+    const searchInput = component.getByLabel("Buscar en la transcripción");
+    const toolbarContent = searchInput.locator(
+      TOOLBAR_CONTENT_FROM_INPUT_XPATH,
+    );
+    const toolbarContentBox = await toolbarContent.boundingBox();
+    if (!toolbarContentBox) {
+      throw new Error("Toolbar search pill (content) not found");
+    }
+
+    // Same variant expression the toolbar's className is keyed on
+    // (index.tsx's `readingVariant`) - both this ReadingColumn and the
+    // toolbar must move together.
+    const readingColumn = component.getByTestId("vtt-reading-column");
+    const readingColumnBox = await readingColumn.boundingBox();
+    if (!readingColumnBox) throw new Error("Reading column not found");
+
+    expect(
+      Math.abs(toolbarContentBox.x - readingColumnBox.x),
+    ).toBeLessThanOrEqual(2);
+
+    // Criterion 8: one assertion on the actual CSS property, not just the
+    // resulting geometry - if the "&&" override is ever dropped, the
+    // toolbar's own `px: "12"` wins the cascade tie again (silently, since
+    // nothing else here would catch a flat 48px that still happens to be
+    // "close enough" at some width), and this goes red.
+    const toolbarRoot = toolbarContent.locator(TOOLBAR_ROOT_FROM_CONTENT_XPATH);
+    const paddingLeft = await toolbarRoot.evaluate(
+      (el) => getComputedStyle(el).paddingLeft,
+    );
+    const width = testInfo.project.name;
+    expect(paddingLeft).toBe(expectedToolbarPaddingLeft[width][variant]);
+  });
+}
+
+/**
+ * G5 (tasks/responsive-fixes/issues/G5-alineacion-cromo.md), issue 08,
+ * second half: `AudioPlayer` (`@aymurai/ui`'s `Player`) measured the SAME
+ * flat 48px padding as the toolbar - but it can't be fixed the same way.
+ * `Player` doesn't accept a `className` at all (verified in
+ * `dist/components/player/Player.d.ts`), so the content is inset via a
+ * wrapper `<div>` around `<AudioPlayer>` instead
+ * (transcription-editor/index.tsx:553-568), with the inset applied to the
+ * wrapper's single child (the player's own root) via `readingInsetChildOverride`.
+ *
+ * CORRECTION TO THIS TICKET'S OWN PREMISE, measured empirically: the
+ * inherited criteria said a bare `"& > *"` child selector would win against
+ * the library's own utility class without doubling ("(0,1,1) beats
+ * (0,1,0)"). That's incorrect CSS: combinators contribute NOTHING to
+ * specificity, so `.wrapper > *` is (0,1,0) - the exact same bucket as the
+ * library's class, tied and lost to import order (measured: with a bare
+ * `"& > *"`, the player's padding stayed at 48px at every width). The fix
+ * uses `"&& > *"` (specificity (0,2,0)) instead - see
+ * `readingInsetChildOverride`'s docblock in reading-column.tsx for the full
+ * measurement.
+ *
+ * SECOND correction, also measured: `AudioPlayer`'s wrapper sits OUTSIDE
+ * `bodyColumn` (the pane) at full viewport width, while the toolbar sits
+ * INSIDE it - so reusing `readingInset("split")` verbatim for the player
+ * measured 444px at 2560 (viewport-relative), not the reading column's
+ * actual 204.5px (pane-relative, pane = viewport minus the 479px side
+ * panel). `readingInsetChildOverride.split` uses its own
+ * `playerSplitInset` formula instead, which subtracts the side panel's own
+ * width per breakpoint - see that file for the derivation. This is exactly
+ * the "player needs its own viewport-minus-panel variant" scenario this
+ * ticket asked to verify rather than assume; `full` needed no such
+ * adjustment (no side panel exists in that mode at any width, so the pane
+ * equals the viewport and the shared formula is already correct there).
+ */
+const expectedPlayerPaddingLeft: Record<
+  string,
+  { full: string; split: string }
+> = {
+  "768x1024": { full: "24px", split: "24px" },
+  "1024x768": { full: "24px", split: "24px" },
+  "1366x768": { full: "24px", split: "24px" },
+  "1440x900": { full: "48px", split: "48px" },
+  "1920x1080": { full: "48px", split: "48px" },
+  "2560x1440": { full: "368px", split: "204.5px" },
+};
+
+// The rewind-5s button is the player's FIRST control - measured to sit
+// flush against the root's own padding edge with no extra offset of its
+// own (left=48 when the root's own padding-left is 48px). The "Reproducir"
+// (play) button is the SECOND control, offset further by the rewind
+// button's own width plus the row's gap (left=88 when padding is 48) - a
+// naive test that measured the play button instead would report the wrong
+// number for a reason unrelated to the fix, exactly the trap this ticket's
+// objective calls out.
+const REWIND_BUTTON_NAME = "Retroceder 5 segundos";
+// button -> its own 3-button group <div> -> the row <div> -> the player
+// root (verified against the actual rendered DOM).
+const PLAYER_ROOT_FROM_REWIND_BUTTON_XPATH = "xpath=../../..";
+
+for (const isEditMode of [false, true]) {
+  const variant = isEditMode ? "split" : "full";
+
+  test(`Voz a Texto: player content lines up with the reading column, chrome stays full-bleed (isEditMode=${isEditMode})`, async ({
+    mount,
+  }, testInfo) => {
+    const component = await mount(
+      <TranscriptionEditorFixture
+        initialEditMode={isEditMode}
+        footerActions={<Button>Finalizar</Button>}
+      />,
+    );
+
+    const rewindButton = component.getByRole("button", {
+      name: REWIND_BUTTON_NAME,
+    });
+    const playerRoot = rewindButton.locator(
+      PLAYER_ROOT_FROM_REWIND_BUTTON_XPATH,
+    );
+
+    // THE CENTRAL ASSERTION: computed padding, not class presence. A class
+    // can exist with zero matching CSS (reading-column.tsx's own
+    // cross-file trap) or real CSS that still loses a specificity tie (this
+    // ticket's own correction above) - either way a class-presence
+    // assertion would pass while nothing actually moved.
+    const width = testInfo.project.name;
+    const padding = await playerRoot.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { left: s.paddingLeft, right: s.paddingRight };
+    });
+    expect(padding.left).toBe(expectedPlayerPaddingLeft[width][variant]);
+    expect(padding.right).toBe(expectedPlayerPaddingLeft[width][variant]);
+
+    // Criterion 1, player half: the rewind button (the player's actual
+    // first control, not the play button - see the note above) lines up
+    // with the reading column's own left edge.
+    const readingColumn = component.getByTestId("vtt-reading-column");
+    const [rewindBox, readingColumnBox] = await Promise.all([
+      rewindButton.boundingBox(),
+      readingColumn.boundingBox(),
+    ]);
+    expect(rewindBox).not.toBeNull();
+    expect(readingColumnBox).not.toBeNull();
+    if (rewindBox && readingColumnBox) {
+      expect(Math.abs(rewindBox.x - readingColumnBox.x)).toBeLessThanOrEqual(2);
+    }
+
+    // Criterion 3 / full-bleed guard: the player's OWN root - not its
+    // wrapper - still spans the full viewport and keeps its chrome. If
+    // someone "simplifies" this by wrapping `<AudioPlayer>` itself in a
+    // `ReadingColumn` instead of just its content, this goes red: the root
+    // would shrink to the capped column width and lose its edge-to-edge
+    // background/divider.
+    const rootMetrics = await playerRoot.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      const s = getComputedStyle(el);
+      return {
+        left: r.left,
+        width: r.width,
+        backgroundColor: s.backgroundColor,
+        borderTopWidth: s.borderTopWidth,
+      };
+    });
+    expect(rootMetrics.left).toBe(0);
+    expect(rootMetrics.width).toBe(Number(width.split("x")[0]));
+    expect(rootMetrics.backgroundColor).toBe("rgb(255, 255, 255)");
+    expect(rootMetrics.borderTopWidth).toBe("1px");
+
+    // Criterion 5, regression guard: the vertical center shared between the
+    // player and "Finalizar" stays intact once the player's content gets
+    // its own padding-inline - `rightSlotSpacing`'s `marginLeft: "6"`
+    // (audio-player.tsx) is what could get knocked out of alignment by a
+    // wrong padding.
+    if (width === "2560x1440") {
+      const finishButton = component.getByRole("button", {
+        name: "Finalizar",
+      });
+      const [rewindCenterBox, finishBox] = await Promise.all([
+        rewindButton.boundingBox(),
+        finishButton.boundingBox(),
+      ]);
+      expect(rewindCenterBox).not.toBeNull();
+      expect(finishBox).not.toBeNull();
+      if (rewindCenterBox && finishBox) {
+        const rewindCenterY = rewindCenterBox.y + rewindCenterBox.height / 2;
+        const finishCenterY = finishBox.y + finishBox.height / 2;
+        expect(Math.abs(rewindCenterY - finishCenterY)).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+}

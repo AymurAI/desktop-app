@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useState } from "react";
 
 import TranscriptionEditor from "@/components/voice-to-text/transcription-editor";
@@ -14,9 +15,17 @@ interface TranscriptionEditorFixtureProps {
   // side-panel-stacking.spec.tsx both mount this fixture with no prop and
   // depend on starting in edit mode (see G1 T3's ticket notes).
   initialEditMode?: boolean;
+  // G5 T2: optional so every EXISTING test (which never passed this) keeps
+  // rendering the player's `rightSlot` empty exactly as before. Added so a
+  // test can mount a real "Finalizar"-shaped node (matching
+  // voice-to-text/validation.tsx's real usage) to verify criterion 5 - the
+  // player and that button's vertical centers must stay aligned once the
+  // player's content gets its own padding-inline.
+  footerActions?: ReactNode;
 }
 export function TranscriptionEditorFixture({
   initialEditMode = true,
+  footerActions,
 }: TranscriptionEditorFixtureProps = {}) {
   const [transcription] = useState(() =>
     buildFixture(new File([new Uint8Array(1)], "audiencia.webm")),
@@ -29,6 +38,7 @@ export function TranscriptionEditorFixture({
         transcription={transcription}
         isEditMode={isEditMode}
         onEditModeChange={setIsEditMode}
+        footerActions={footerActions}
       />
     </div>
   );

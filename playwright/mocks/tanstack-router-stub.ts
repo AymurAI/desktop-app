@@ -36,6 +36,10 @@ export function useParams() {
   return { feature: "DATA_SET" };
 }
 
+export function Navigate() {
+  return null;
+}
+
 export function Link({
   to: _to,
   children,
