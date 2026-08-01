@@ -1,8 +1,13 @@
-import type { Speaker, Transcription } from "@/types/transcription";
+import {
+  SPEAKER_PALETTE,
+  type Speaker,
+  type Transcription,
+} from "@/types/transcription";
 import { apportionTimeRange } from "@/utils/apportion-time-range";
 
 import {
   ActionTypes,
+  type AddPersonaSpeakerAction,
   type AddSpeakerAction,
   type AddTranscriptionAction,
   type ClearTranscriptionsAction,
@@ -32,6 +37,7 @@ export type TranscriptionAction =
   | InsertTurnAction
   | RemoveTurnAction
   | AddSpeakerAction
+  | AddPersonaSpeakerAction
   | SplitTurnAction
   | MergeTurnWithPreviousAction
   | MergeTurnWithNextAction
@@ -299,6 +305,30 @@ export default function reducer(
         ...t,
         speakers: [...t.speakers, speaker],
       }));
+    }
+
+    // ----------------
+    // ADD PERSONA SPEAKER
+    // ----------------
+    // G7 F4: label/initials/color are derived HERE, from the transcription's
+    // own speakers array at apply time - not by the caller from a `speakers`
+    // prop that every handler in a React batch reads identically. That's
+    // what makes N of these dispatched back-to-back (e.g. N rapid "+ Nuevo"
+    // clicks in the same batch) each see the PREVIOUS dispatch's result and
+    // produce N distinct labels and N distinct colors, instead of all N
+    // colliding on the same "Persona K" / same palette color.
+    case ActionTypes.ADD_PERSONA_SPEAKER: {
+      const { transcriptionId, id } = payload;
+      return updateTranscription(state, transcriptionId, (t) => {
+        const label = nextPersonaLabel(t.speakers);
+        const speaker: Speaker = {
+          id,
+          label,
+          initials: computeInitials(label),
+          color: SPEAKER_PALETTE[t.speakers.length % SPEAKER_PALETTE.length],
+        };
+        return { ...t, speakers: [...t.speakers, speaker] };
+      });
     }
 
     // ----------------

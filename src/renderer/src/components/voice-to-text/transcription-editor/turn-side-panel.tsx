@@ -5,8 +5,8 @@ import SidePanelColumn from "@/components/layout/side-panel-column";
 import { formatTime } from "@/components/voice-to-text/format-time";
 import { showToast } from "@/features/showToast";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
-import { computeInitials, nextPersonaLabel } from "@/reducers/transcription";
 import {
+  addPersonaSpeaker,
   addSpeaker,
   insertTurn,
   mergeTurnWithNext,
@@ -19,7 +19,6 @@ import {
 import { SUGGESTED_SPEAKERS } from "@/services/aymurai/fixtures/suggestedSpeakers";
 import { css, cx } from "@/styled/css";
 import type { Speaker, Transcription, Turn } from "@/types/transcription";
-import { SPEAKER_PALETTE } from "@/types/transcription";
 import {
   Button,
   Dialog,
@@ -351,18 +350,26 @@ export default function TurnSidePanel({
     setScopeChoice(null);
   };
 
+  // G7 F4: label/initials/color used to be computed HERE from the `speakers`
+  // prop, which every "+ Nuevo" handler in the same React batch reads
+  // identically - N rapid clicks produced N speakers with the same label,
+  // initials, AND color (a real collision the original report didn't
+  // mention). Moved into the reducer (`ADD_PERSONA_SPEAKER`, reducers/
+  // transcription/index.ts), which derives them from the transcription's
+  // OWN speakers array at apply time, so each dispatch in a batch sees the
+  // previous one's result. Only the `id` stays here: the caller needs it
+  // immediately for `reassignTurnSpeaker` below.
+  //
+  // NOT fixed here (out of scope for this ticket, left deliberately):
+  // `speaker-picker.tsx`'s `ensureSpeaker` has the same closure-read
+  // mechanism (color from `speakers.length`, dedup by label against the
+  // same closure) and the same theoretical batching collision. No contract
+  // criterion covers it - G7's F4 is specifically about "+ Nuevo" - so it's
+  // left as-is; see the comment there.
   const handleNewPerson = () => {
-    const label = nextPersonaLabel(speakers);
-    const newSpeaker: Speaker = {
-      id: crypto.randomUUID(),
-      label,
-      initials: computeInitials(label),
-      color: SPEAKER_PALETTE[speakers.length % SPEAKER_PALETTE.length],
-    };
-    dispatch(addSpeaker(transcription.id, newSpeaker));
-    dispatch(
-      reassignTurnSpeaker(transcription.id, activeTurn.id, newSpeaker.id),
-    );
+    const id = crypto.randomUUID();
+    dispatch(addPersonaSpeaker(transcription.id, id));
+    dispatch(reassignTurnSpeaker(transcription.id, activeTurn.id, id));
   };
 
   const { minMs, maxMs } = getTimestampBounds(

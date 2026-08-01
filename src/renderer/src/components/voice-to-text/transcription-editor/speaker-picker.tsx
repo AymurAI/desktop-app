@@ -189,6 +189,15 @@ export default function SpeakerPicker({
     (sg) => !usedLabels.has(sg.label.toLowerCase()),
   );
 
+  // G7 F4 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md): this
+  // has the SAME mechanism as the "+ Nuevo" race that ticket fixed in
+  // turn-side-panel.tsx - `color` reads `speakers.length` from this
+  // component's own closure, and the dedup-by-label check just above also
+  // reads that same closure, so two calls batched in the same React update
+  // could collide on color and/or create two speakers sharing a label. NOT
+  // fixed here: G7's contract scopes F4 specifically to "+ Nuevo"
+  // (turn-side-panel.tsx), and no criterion covers this path. Left
+  // deliberately as-is, not overlooked - a candidate for its own ticket.
   function ensureSpeaker(
     label: string,
     fallbackColor?: SpeakerColor,
