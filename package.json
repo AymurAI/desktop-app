@@ -31,7 +31,8 @@
     "knip": "knip",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:responsive": "playwright test --config=playwright-ct.config.ts"
+    "test:responsive": "playwright test --config=playwright-ct.config.ts",
+    "test:e2e:console": "playwright test --config=playwright-e2e.config.ts"
   },
   "dependencies": {
     "@aymurai/ui": "github:AymurAI/ui-components#v0.5.0",

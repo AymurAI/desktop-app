@@ -11,6 +11,12 @@ const common = {
     appsAria: "Abrir aplicaciones",
     homeAria: "Ir al inicio",
   },
+  notFound: {
+    title: "No encontramos esta página",
+    description:
+      "La dirección ingresada no corresponde a una pantalla disponible.",
+    linkLabel: "Volver a las herramientas",
+  },
   home: {
     features: {
       greeting: "¡Hola! Selecciona la herramienta a utilizar",
