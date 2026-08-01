@@ -1,3 +1,4 @@
+import { PERSONA_LABEL_TEMPLATE } from "@/constants/i18n/locales/es/voice-to-text";
 import { SPEAKER_PALETTE, type Transcription } from "@/types/transcription";
 import { describe, expect, it } from "vitest";
 import {
@@ -11,7 +12,7 @@ import {
   splitTurn,
   updateTurnStartMs,
 } from "./actions";
-import reducer, { nextPersonaLabel } from "./index";
+import reducer, { computeInitials, nextPersonaLabel } from "./index";
 
 function makeTranscription(
   overrides: Partial<Transcription> = {},
@@ -411,7 +412,19 @@ describe("renameSpeakerGlobal", () => {
   });
 });
 
-describe("renameSpeakerGlobal renumbering", () => {
+// G7 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md), criterion
+// 2: renaming one speaker must never change another speaker's label. This
+// block used to be "renameSpeakerGlobal renumbering" and its first two
+// cases asserted the OPPOSITE of what's tested now — that a rename/merge
+// renumbered every remaining "Persona N" speaker to stay contiguous. That
+// was `renumberPersonaSpeakers` (removed from `RENAME_SPEAKER_GLOBAL`): a
+// deliberate reversion of intentional behavior, not an accident fix — see
+// the comment at its old call site in index.ts. The contract forbids
+// deleting or skipping tests, so those two assertions are INVERTED here
+// rather than removed; the third case ("leaves numbering untouched...")
+// needed no change and is now the general rule instead of the exception
+// that survives only when no gap is created.
+describe("renameSpeakerGlobal leaves other speakers' labels untouched", () => {
   const baseSpeakers = () => [
     { id: "s1", label: "Persona 1", initials: "P1", color: "violet" as const },
     { id: "s2", label: "Persona 2", initials: "P2", color: "green" as const },
@@ -422,20 +435,20 @@ describe("renameSpeakerGlobal renumbering", () => {
     { id: "turn2", speakerId: "s2", text: "b", startMs: 100, endMs: 200 },
   ];
 
-  it("renumbers remaining Persona speakers after a plain rename", () => {
+  it("does not renumber other Persona speakers after a plain rename", () => {
     const state = [
       makeTranscription({ speakers: baseSpeakers(), turns: baseTurns() }),
     ];
     const next = reducer(state, renameSpeakerGlobal("t1", "s1", "Fiscal"));
     const speakers = next[0].speakers;
     expect(speakers.find((s) => s.id === "s2")).toMatchObject({
-      label: "Persona 1",
-      initials: "P1",
+      label: "Persona 2",
+      initials: "P2",
     });
     expect(speakers.find((s) => s.id === "s3")?.label).toBe("Jueza");
   });
 
-  it("renumbers remaining Persona speakers after a merge-collision rename", () => {
+  it("does not renumber other Persona speakers after a merge-collision rename", () => {
     const state = [
       makeTranscription({
         speakers: [
@@ -457,11 +470,12 @@ describe("renameSpeakerGlobal renumbering", () => {
       }),
     ];
     // "Persona 1" collides with the existing "Fiscal" speaker -> merges s1
-    // into s3 and drops s1, leaving a gap that s2 must fill.
+    // into s3 and drops s1. s2 keeps its own label — no renumbering fills
+    // the gap s1 leaves behind.
     const next = reducer(state, renameSpeakerGlobal("t1", "s1", "Fiscal"));
     const speakers = next[0].speakers;
     expect(speakers.find((s) => s.id === "s1")).toBeUndefined();
-    expect(speakers.find((s) => s.id === "s2")?.label).toBe("Persona 1");
+    expect(speakers.find((s) => s.id === "s2")?.label).toBe("Persona 2");
   });
 
   it("leaves numbering untouched when no gap is created", () => {
@@ -472,6 +486,155 @@ describe("renameSpeakerGlobal renumbering", () => {
     const speakers = next[0].speakers;
     expect(speakers.find((s) => s.id === "s1")?.label).toBe("Persona 1");
     expect(speakers.find((s) => s.id === "s2")?.label).toBe("Persona 2");
+  });
+
+  // Criterion 2, the exact scenario measured against the real defect: with
+  // four "Persona N" speakers, renaming the SECOND one used to shift every
+  // speaker after it down by one (s3 "Persona 3" -> "Persona 2", s4
+  // "Persona 4" -> "Persona 3") - worse than the report described (it said
+  // an upward shift; measured behavior was downward), and a genuine
+  // correctness bug: whoever wrote down "Persona 3" a moment ago is now
+  // looking at a different person.
+  it("renaming the second of four Persona speakers leaves the other three's id and label untouched", () => {
+    const state = [
+      makeTranscription({
+        speakers: [
+          {
+            id: "s1",
+            label: "Persona 1",
+            initials: "P1",
+            color: "violet" as const,
+          },
+          {
+            id: "s2",
+            label: "Persona 2",
+            initials: "P2",
+            color: "green" as const,
+          },
+          {
+            id: "s3",
+            label: "Persona 3",
+            initials: "P3",
+            color: "red" as const,
+          },
+          {
+            id: "s4",
+            label: "Persona 4",
+            initials: "P4",
+            color: "yellow" as const,
+          },
+        ],
+      }),
+    ];
+    const next = reducer(state, renameSpeakerGlobal("t1", "s2", "Testigo"));
+    const speakers = next[0].speakers;
+    expect(speakers.find((s) => s.id === "s1")).toMatchObject({
+      id: "s1",
+      label: "Persona 1",
+    });
+    expect(speakers.find((s) => s.id === "s2")?.label).toBe("Testigo");
+    expect(speakers.find((s) => s.id === "s3")).toMatchObject({
+      id: "s3",
+      label: "Persona 3",
+    });
+    expect(speakers.find((s) => s.id === "s4")).toMatchObject({
+      id: "s4",
+      label: "Persona 4",
+    });
+  });
+
+  // Visible production change (documented, not incidental): without
+  // renumbering, a gap left by a merge-collision drop is never backfilled.
+  // `nextPersonaLabel` already computes "one past the highest existing
+  // number" (never "count + 1"), so the gap can never cause a label
+  // collision - it's just a gap (1, 2, 4, 5 after "Persona 3" is dropped).
+  it("does not fill the gap a merge-collision rename leaves behind", () => {
+    const state = [
+      makeTranscription({
+        speakers: [
+          {
+            id: "s1",
+            label: "Persona 1",
+            initials: "P1",
+            color: "violet" as const,
+          },
+          {
+            id: "s2",
+            label: "Persona 2",
+            initials: "P2",
+            color: "green" as const,
+          },
+          {
+            id: "s3",
+            label: "Persona 3",
+            initials: "P3",
+            color: "red" as const,
+          },
+          {
+            id: "s4",
+            label: "Persona 4",
+            initials: "P4",
+            color: "yellow" as const,
+          },
+        ],
+      }),
+    ];
+    // Renaming s3 to "Persona 2" collides with s2 -> merges s3 into s2 and
+    // drops s3, leaving a gap at 3.
+    const afterMerge = reducer(
+      state,
+      renameSpeakerGlobal("t1", "s3", "Persona 2"),
+    );
+    expect(afterMerge[0].speakers.map((s) => s.id)).toEqual(["s1", "s2", "s4"]);
+    expect(afterMerge[0].speakers.map((s) => s.label)).toEqual([
+      "Persona 1",
+      "Persona 2",
+      "Persona 4",
+    ]);
+
+    // The next auto-created persona is "Persona 5" (one past the max, 4) -
+    // NOT "Persona 3" (filling the gap) and NOT "Persona 4" (speaker count).
+    const next = reducer(afterMerge, addPersonaSpeaker("t1", "new-id"));
+    expect(next[0].speakers.find((s) => s.id === "new-id")?.label).toBe(
+      "Persona 5",
+    );
+  });
+});
+
+// G7 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md), criterion
+// 4: "Persona 10", "Persona 11" and "Persona 12" used to all collapse to the
+// same "P1" (both branches took `slice(0, 2)`), so their avatars were
+// indistinguishable. Only the last-word-numeric branch grows to 3
+// characters — the single-word and non-numeric-multi-word branches must
+// stay at 2 (`index.test.ts:392` already pins "Jueza" -> "JU" after a
+// rename; asserted again here directly).
+describe("computeInitials", () => {
+  it("keeps single-digit numeric labels at 2 characters", () => {
+    expect(computeInitials("Persona 9")).toBe("P9");
+  });
+
+  it("grows to 3 characters once the trailing number reaches double digits", () => {
+    expect(computeInitials("Persona 10")).toBe("P10");
+    expect(computeInitials("Persona 12")).toBe("P12");
+    expect(computeInitials("Locutor 11")).toBe("L11");
+  });
+
+  it("truncates a triple-digit trailing number to 3 characters total (documented collision beyond Persona 99)", () => {
+    // "Persona 100" collides with "Persona 10" on "P10" - a real, accepted
+    // limit: 4 characters would overflow the avatar's 24px circle, so
+    // uniqueness by initials alone is only guaranteed through Persona 99;
+    // beyond that, color and the full label (shown next to the badge)
+    // disambiguate.
+    expect(computeInitials("Persona 100")).toBe("P10");
+  });
+
+  it("still takes the first two characters for a single word", () => {
+    expect(computeInitials("Jueza")).toBe("JU");
+  });
+
+  it("still takes the first letter of the first two words for a multi-word, non-numeric name", () => {
+    expect(computeInitials("Dra. Silva")).toBe("DS");
+    expect(computeInitials("Ministerio Publico Fiscal")).toBe("MP");
   });
 });
 
@@ -497,7 +660,7 @@ describe("nextPersonaLabel", () => {
     expect(nextPersonaLabel(speakers)).toBe("Persona 2");
   });
 
-  it("uses the highest number, not the count, when there's a gap", () => {
+  it("uses the highest number, not the count, when there's a gap (1, 2, 4 -> 5)", () => {
     const speakers = [
       {
         id: "s1",
@@ -505,9 +668,52 @@ describe("nextPersonaLabel", () => {
         initials: "P1",
         color: "violet" as const,
       },
-      { id: "s2", label: "Persona 3", initials: "P3", color: "green" as const },
+      { id: "s2", label: "Persona 2", initials: "P2", color: "green" as const },
+      { id: "s3", label: "Persona 4", initials: "P4", color: "blue" as const },
     ];
-    expect(nextPersonaLabel(speakers)).toBe("Persona 4");
+    expect(nextPersonaLabel(speakers)).toBe("Persona 5");
+  });
+
+  // G7 i18n restriction (tasks/responsive-fixes/issues/G7-modo-edicion-
+  // personas.md): the guard against `nextPersonaLabel`'s recognizer regex
+  // drifting apart from the label it generates, now that both derive from
+  // `PERSONA_LABEL_TEMPLATE` (constants/i18n/locales/es/voice-to-text.ts)
+  // instead of two independently hand-maintained strings. Several
+  // custom-named speakers interleaved with several auto-generated ones -
+  // if the derivation ever broke (e.g. the regex stopped matching the
+  // template's own output), this would silently reset to "Persona 1"
+  // instead of continuing past the highest existing number.
+  it("does not reset the counter when auto-generated speakers are interleaved with several custom-named ones", () => {
+    const speakers = [
+      {
+        id: "s1",
+        label: "Persona 2",
+        initials: "P2",
+        color: "violet" as const,
+      },
+      {
+        id: "s2",
+        label: "Dra. Silva",
+        initials: "DS",
+        color: "green" as const,
+      },
+      { id: "s3", label: "Persona 5", initials: "P5", color: "blue" as const },
+      { id: "s4", label: "Fiscal", initials: "FI", color: "red" as const },
+    ];
+    expect(nextPersonaLabel(speakers)).toBe("Persona 6");
+  });
+
+  // Proves the label RESOLVES to a real string built from
+  // `PERSONA_LABEL_TEMPLATE` - not an i18next key (this reducer never calls
+  // `t()` for this label, by design; see the docblock on
+  // `derivePersonaLabelRegex` in index.ts) and not the raw `{{n}}`
+  // placeholder left unsubstituted.
+  it("resolves the label from PERSONA_LABEL_TEMPLATE, not an i18next key or an unsubstituted placeholder", () => {
+    expect(PERSONA_LABEL_TEMPLATE).toBe("Persona {{n}}");
+    const label = nextPersonaLabel([]);
+    expect(label).toBe(PERSONA_LABEL_TEMPLATE.replace("{{n}}", "1"));
+    expect(label).not.toContain("{{");
+    expect(label).not.toContain("voice-to-text:");
   });
 });
 
@@ -570,6 +776,31 @@ describe("addPersonaSpeaker", () => {
     expect(next[0].speakers.find((s) => s.id === "new-id")?.label).toBe(
       "Persona 1",
     );
+  });
+
+  it("does not collide with an existing Persona label whose casing was changed", () => {
+    const state = [
+      makeTranscription({
+        speakers: [
+          {
+            id: "s1",
+            label: "persona 1",
+            initials: "P1",
+            color: "violet" as const,
+          },
+        ],
+      }),
+    ];
+
+    const next = reducer(state, addPersonaSpeaker("t1", "new-id"));
+    const labels = next[0].speakers.map((speaker) =>
+      speaker.label.toLowerCase(),
+    );
+
+    expect(new Set(labels).size).toBe(labels.length);
+    expect(
+      next[0].speakers.find((speaker) => speaker.id === "new-id")?.label,
+    ).toBe("Persona 2");
   });
 
   it("does not affect other transcriptions or mutate the input state", () => {
@@ -644,11 +875,93 @@ describe("addPersonaSpeaker — turn assignment stays stable by id", () => {
     // The identity assertion this test is actually about: the turn still
     // points to "id-2" by ID, regardless of what happened to "id-1"'s label.
     expect(state[0].turns[0].speakerId).toBe("id-2");
-    // "Persona 1" here (not "Persona 2") is CURRENT, pre-T2 behavior:
-    // `renameSpeakerGlobal` still renumbers remaining "Persona N" labels to
-    // stay contiguous after a rename (`renumberPersonaSpeakers`) - a
-    // deliberate behavior a separate ticket (G7 T2) removes. This test only
-    // asserts on the id, never the label, for exactly that reason.
-    expect(state[0].speakers.find((s) => s.id === "id-2")?.id).toBe("id-2");
+    // "Persona 2" (not "Persona 1"): `RENAME_SPEAKER_GLOBAL` no longer
+    // renumbers remaining "Persona N" labels to stay contiguous after a
+    // rename (G7 criterion 2 - see the removed `renumberPersonaSpeakers`
+    // and its old call site's comment in index.ts). "id-2"'s own label is
+    // therefore stable too, not just its id.
+    expect(state[0].speakers.find((s) => s.id === "id-2")?.label).toBe(
+      "Persona 2",
+    );
   });
+});
+
+// Criterion 5, the "borrar otras" clause: `git grep -n 'REMOVE_SPEAKER\|
+// DELETE_SPEAKER\|removeSpeaker\|deleteSpeaker'` (also run directly against
+// the repo, not just this file) turns up nothing — there is no action or
+// affordance anywhere that deletes a speaker. Enumerating this reducer's own
+// `case`s confirms it: the only way a speaker disappears is the merge
+// collapse inside `RENAME_SPEAKER_GLOBAL` (see the block above), which drops
+// the RENAMED speaker and folds its turns into the one whose label it
+// collided with — that's the "delete" this criterion has to be checked
+// against, and it's deliberately excluded from THIS describe's assertions:
+// it's the point of the merge, not a bystander surviving it.
+// "Otras" in the criterion means a THIRD speaker uninvolved in the merge:
+// with three speakers holding turns, colliding two of them must leave the
+// third's `speakerId` and displayed label completely untouched.
+describe("addPersonaSpeaker — a bystander survives a merge-collision delete (criterion 5)", () => {
+  it("a third speaker's turn keeps its speakerId and label when two OTHER speakers merge", () => {
+    const state = [
+      makeTranscription({
+        speakers: [
+          {
+            id: "s1",
+            label: "Persona 1",
+            initials: "P1",
+            color: "violet" as const,
+          },
+          {
+            id: "s2",
+            label: "Persona 2",
+            initials: "P2",
+            color: "green" as const,
+          },
+          {
+            id: "s3",
+            label: "Persona 3",
+            initials: "P3",
+            color: "red" as const,
+          },
+        ],
+        turns: [
+          { id: "turn1", speakerId: "s1", text: "a", startMs: 0, endMs: 100 },
+          {
+            id: "turn2",
+            speakerId: "s2",
+            text: "b",
+            startMs: 100,
+            endMs: 200,
+          },
+          {
+            id: "turn3",
+            speakerId: "s3",
+            text: "c",
+            startMs: 200,
+            endMs: 300,
+          },
+        ],
+      }),
+    ];
+
+    // s1 renamed to "Persona 2" collides with s2 -> s1 is dropped and its
+    // turn folds into s2. Deliberately NOT asserted here (that's what the
+    // merge exists to do, and T1's merge-collision test already covers it):
+    // turn1 no longer points to s1.
+    const next = reducer(state, renameSpeakerGlobal("t1", "s1", "Persona 2"));
+    const speakers = next[0].speakers;
+    const turns = next[0].turns;
+
+    // The bystander: s3 and turn3 are untouched by a merge between s1 and s2.
+    expect(speakers.find((s) => s.id === "s3")).toMatchObject({
+      id: "s3",
+      label: "Persona 3",
+    });
+    expect(turns.find((t) => t.id === "turn3")?.speakerId).toBe("s3");
+  });
+
+  // The other two clauses of criterion 5 ("crear otras personas" and
+  // "renombrar otras") are already exercised at this reducer level by the
+  // "addPersonaSpeaker — turn assignment stays stable by id" block above
+  // (T1) — not duplicated here. See turn-side-panel.test.tsx for the
+  // component-level test of those two clauses, which had no coverage yet.
 });

@@ -29,7 +29,7 @@ export type TranscriptionSource = "validation" | "transcription" | "asr";
 export interface Speaker {
   id: SpeakerId;
   label: string; // "Locutor 1" | "Juez" | "Dra. Silva"
-  initials: string; // 2 chars derived from label
+  initials: string; // up to 3 chars derived from label (see computeInitials)
   color: SpeakerColor;
 }
 

@@ -34,3 +34,32 @@ describe("speaker colors", () => {
     ).toBe(true);
   });
 });
+
+// G7 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md), criterion
+// 4: the cap grew from 2 to 3 characters so "Persona 10"/"11"/"12" ("P10",
+// "P11", "P12") validate - a relaxation, so 2-char initials like "P1" stay
+// valid too. Still bounded at 3: a 4th character would overflow the
+// avatar's 24px circle.
+describe("speaker initials length", () => {
+  it("accepts 3-character initials", () => {
+    expect(
+      SpeakerSchema.safeParse({
+        id: "s1",
+        label: "Persona 10",
+        initials: "P10",
+        color: "violet",
+      }).success,
+    ).toBe(true);
+  });
+
+  it("rejects 4-character initials", () => {
+    expect(
+      SpeakerSchema.safeParse({
+        id: "s1",
+        label: "Persona 100",
+        initials: "P100",
+        color: "violet",
+      }).success,
+    ).toBe(false);
+  });
+});

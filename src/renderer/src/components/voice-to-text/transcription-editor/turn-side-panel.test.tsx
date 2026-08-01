@@ -2,7 +2,8 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { useReducer } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import reducer from "@/reducers/transcription";
+import reducer, { computeInitials } from "@/reducers/transcription";
+import sampleTranscript from "@/services/aymurai/fixtures/sampleDeepgramTranscription.json";
 import type { Transcription } from "@/types/transcription";
 import TurnSidePanel, { getTimestampBounds } from "./turn-side-panel";
 
@@ -59,6 +60,9 @@ function RealReducerHarness({
     <>
       <div data-testid="debug-speakers" style={{ display: "none" }}>
         {JSON.stringify(state[0].speakers)}
+      </div>
+      <div data-testid="debug-turns" style={{ display: "none" }}>
+        {JSON.stringify(state[0].turns)}
       </div>
       <TurnSidePanel transcription={state[0]} activeTurnId={activeTurnId} />
     </>
@@ -525,5 +529,120 @@ describe("TurnSidePanel new-person sad paths", () => {
     expect(screen.getByTestId("vtt-side-panel")).toBeInTheDocument();
     expect(screen.getByText("sidePanel.empty")).toBeInTheDocument();
     expect(screen.queryByText("Nuevo")).toBeNull();
+  });
+});
+
+// Criterion 5 (this component's half of it — the reducer-level half is
+// already covered by "addPersonaSpeaker — turn assignment stays stable by
+// id" in reducers/transcription/index.test.ts, T1): a turn already assigned
+// to a speaker must keep pointing to that same `speakerId`, with that same
+// speaker's label unchanged, after OTHER personas are created and renamed
+// through this component's own UI. "Nuevo" reassigns the CURRENTLY ACTIVE
+// turn to the persona it creates (see `handleNewPerson`), so the turn this
+// test watches is deliberately a different, non-active one — otherwise
+// "create others" would trivially reassign the very turn under test.
+describe("TurnSidePanel — a bystander speaker survives creates and renames (criterion 5)", () => {
+  it("a turn keeps its speakerId and label after other personas are created and renamed", () => {
+    const initial: Transcription = {
+      ...transcription,
+      speakers: [
+        { id: "s-active", label: "Persona 1", initials: "P1", color: "violet" },
+        {
+          id: "s-bystander",
+          label: "Persona 2",
+          initials: "P2",
+          color: "green",
+        },
+      ],
+      turns: [
+        {
+          id: "active-turn",
+          speakerId: "s-active",
+          text: "uno",
+          startMs: 0,
+          endMs: 1000,
+        },
+        {
+          id: "watched-turn",
+          speakerId: "s-bystander",
+          text: "dos",
+          startMs: 1000,
+          endMs: 2000,
+        },
+      ],
+    };
+
+    render(<RealReducerHarness initial={initial} activeTurnId="active-turn" />);
+
+    // Create two more personas (assigned to the active turn, not the
+    // watched one) and rename one of THEM — never the bystander.
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByText("Nuevo"));
+
+    fireEvent.click(screen.getAllByLabelText("Renombrar")[2]);
+    const input = screen.getByLabelText("Editar nombre de Persona 3");
+    fireEvent.change(input, { target: { value: "Testigo" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    const speakers = JSON.parse(
+      screen.getByTestId("debug-speakers").textContent ?? "[]",
+    );
+    const turns = JSON.parse(
+      screen.getByTestId("debug-turns").textContent ?? "[]",
+    );
+
+    expect(
+      speakers.find((s: { id: string }) => s.id === "s-bystander"),
+    ).toMatchObject({
+      id: "s-bystander",
+      label: "Persona 2",
+    });
+    expect(
+      turns.find((t: { id: string }) => t.id === "watched-turn")?.speakerId,
+    ).toBe("s-bystander");
+  });
+});
+
+// G7 criterion 4 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md):
+// with 12 speakers, each must get a distinct badge - before the fix,
+// "Locutor 1", "Locutor 10" and "Locutor 11" all rendered "L1". The fixture
+// already models this exact three-way collision (`Locutor 1`/`10`/`11`), so
+// it's used as the vehicle (labels/ids/colors) instead of synthesizing 12
+// personas - but `initials` is recomputed here via the real
+// `computeInitials`, not read back from the fixture's own stored field, so
+// this test actually exercises the production function instead of just
+// re-displaying whatever the JSON happens to say.
+describe("TurnSidePanel — 12 distinct persona badges (criterion 4)", () => {
+  it("renders 12 distinct initials, with no collision between Locutor 1/10/11", () => {
+    const fixtureSpeakers =
+      sampleTranscript.speakers as Transcription["speakers"];
+    const twelveSpeakers = fixtureSpeakers.map((s) => ({
+      ...s,
+      initials: computeInitials(s.label),
+    }));
+    const withTwelve: Transcription = {
+      ...transcription,
+      speakers: twelveSpeakers,
+      turns: [
+        {
+          id: "a",
+          speakerId: twelveSpeakers[0].id,
+          text: "uno",
+          startMs: 0,
+          endMs: 1000,
+        },
+      ],
+    };
+
+    render(<TurnSidePanel transcription={withTwelve} activeTurnId="a" />);
+
+    expect(new Set(twelveSpeakers.map((s) => s.initials)).size).toBe(12);
+    for (const s of twelveSpeakers) {
+      expect(screen.getAllByText(s.initials).length).toBeGreaterThan(0);
+    }
+    expect(screen.getByText("L10")).toBeInTheDocument();
+    expect(screen.getByText("L11")).toBeInTheDocument();
+    // Exactly one badge reads "L1" - Locutor 1's own, not shared with 10/11.
+    expect(screen.getAllByText("L1")).toHaveLength(1);
   });
 });
