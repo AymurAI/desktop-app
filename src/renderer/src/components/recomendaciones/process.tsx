@@ -1,0 +1,135 @@
+import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+
+import { FileProcessing } from "@/components";
+import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
+import MainContent from "@/components/layout/main-content";
+import BackButton from "@/components/ui/back-button";
+import RequireFile from "@/features/RequireFile";
+import { useFiles } from "@/hooks";
+import { useDataExtraction } from "@/hooks/useDataExtraction";
+import { useFileParse } from "@/hooks/useFileParse";
+import type { PredictStatus } from "@/hooks/usePredict";
+import { SectionTitle } from "@/layout/section-title";
+import taskbar from "@/services/taskbar";
+import { css } from "@/styled/css";
+import { HStack, Stack, styled } from "@/styled/jsx";
+import { FeatureFlowEnum, featureNamespace } from "@/types/features";
+import { Button, Callout, Card } from "@aymurai/ui";
+import { useNavigate } from "@tanstack/react-router";
+
+/**
+ * Recomendaciones' processing step: a simplified, single-file variant of
+ * `DocumentProcess` (`routes/app.$feature/process.tsx`). There is no
+ * paragraph-by-paragraph prediction here — `useFileParse` gets the document
+ * ready for the backend, then `useDataExtraction` decides whether to reuse a
+ * stored result or run the LLM extraction (see §4.4 of the design doc).
+ */
+export default function RecomendacionesProcess() {
+  const feature = FeatureFlowEnum.Recomendaciones;
+  const { t } = useTranslation(featureNamespace[feature]);
+  const navigate = useNavigate();
+
+  const files = useFiles();
+  const file = files[0];
+
+  const parseStatuses = useFileParse(files);
+  // Safe even before `RequireFile` redirects away on an empty file list: React
+  // Query simply stays disabled (no `documentId` to key off of) until then.
+  const extraction = useDataExtraction(
+    file ?? {
+      data: new File([], ""),
+      selected: false,
+      validationObject: {},
+    },
+  );
+
+  const hasNotified = useRef(false);
+
+  const parseStatus = file
+    ? (parseStatuses[file.data.name]?.status ?? "processing")
+    : "processing";
+
+  const isReady = parseStatus === "completed" && extraction.status === "ready";
+  const isError = extraction.status === "error";
+
+  // Status accounts for both stages so "completed" only shows once the
+  // extraction/retrieval decision has also resolved.
+  const combinedStatus: PredictStatus =
+    parseStatus !== "completed"
+      ? parseStatus
+      : extraction.status === "error"
+        ? "error"
+        : extraction.status === "ready"
+          ? "completed"
+          : "processing";
+
+  // No per-paragraph ratio to weight here: it's a single LLM call, so we
+  // report an indeterminate 0.5 while it runs and 1 once it's done.
+  const progress = isReady ? 1 : 0.5;
+
+  useEffect(() => {
+    if (isReady && !hasNotified.current) {
+      hasNotified.current = true;
+      taskbar.notify();
+    }
+  }, [isReady]);
+
+  const handleNext = () => {
+    navigate({
+      to: "/app/$feature/validation",
+      params: { feature },
+    });
+  };
+
+  return (
+    <RequireFile>
+      <Header title={t("title")} feature={feature} currentStep={2} />
+      <MainContent>
+        <Stack gap="10">
+          <HStack alignItems="center" gap="6">
+            <BackButton to="/app/$feature/preview" params={{ feature }} />
+            <SectionTitle>{t("process.sectionTitle")}</SectionTitle>
+          </HStack>
+          <Card className={css({ alignItems: "stretch" })}>
+            <Stack gap="6" direction="column">
+              <Stack direction="column" gap="1">
+                <styled.h2 textStyle="subtitle.md.default">
+                  {t("process.processingTitle")}
+                </styled.h2>
+                <styled.p textStyle="subtitle.sm.default" color="text.lighter">
+                  {t("process.processingSubtitle")}
+                </styled.p>
+              </Stack>
+              {file && (
+                <FileProcessing
+                  fileName={file.data.name}
+                  status={combinedStatus}
+                  progress={progress}
+                />
+              )}
+              {isError && (
+                <Stack gap="3" direction="column" alignItems="flex-start">
+                  <Callout
+                    message={t("process.errorText")}
+                    variant="error"
+                    noBorder
+                  />
+                  <Button variant="secondary" onClick={extraction.retry}>
+                    {t("process.retry")}
+                  </Button>
+                </Stack>
+              )}
+            </Stack>
+          </Card>
+        </Stack>
+      </MainContent>
+      <Footer withBuiltBy>
+        <Button onClick={handleNext} disabled={!isReady}>
+          {t("process.next")}
+        </Button>
+      </Footer>
+    </RequireFile>
+  );
+}
