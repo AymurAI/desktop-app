@@ -70,11 +70,19 @@ const mergeSearchIntoTags = (tokens: Annotation[]): Annotation[] => {
   );
 
   // Anything that is neither "tag" nor "search" (e.g. "extracted") isn't
-  // part of this merge and must still pass through untouched, or it is
-  // silently dropped before ever reaching the splitting loop below.
-  const others = tokens.filter(
-    (token) => token.type !== "tag" && token.type !== "search",
-  );
+  // part of this merge and must still pass through, or it is silently
+  // dropped before ever reaching the splitting loop below. But a search hit
+  // must never be lost (that's the whole point of this function) and a tag
+  // shouldn't be either: if such a token overlaps a tag or a search, the
+  // tag/search wins and the token is dropped — deliberately, since search is
+  // the user's active intent and tags are the annotator's own labels.
+  const others = tokens
+    .filter((token) => token.type !== "tag" && token.type !== "search")
+    .filter(
+      (token) =>
+        !tags.some((tag) => rangesOverlap(token, tag)) &&
+        !searches.some((search) => rangesOverlap(token, search)),
+    );
 
   return [...enrichedTags, ...visibleSearches, ...others];
 };

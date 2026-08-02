@@ -17,12 +17,11 @@ describe("generateSplits", () => {
 
     const splits = generateSplits(paragraph, [extracted]);
 
-    const extractedSplit = splits.find((s) => s.type === "extracted");
-    expect(extractedSplit).toMatchObject({
-      type: "extracted",
-      start: 16,
-      end: 25,
-    });
+    expect(splits).toEqual([
+      { type: "text", start: 0, end: 16 },
+      { ...extracted },
+      { type: "text", start: 25, end: paragraph.length },
+    ]);
   });
 
   it("produces the same output for a tag-only input as before the fix (regression guard)", () => {
@@ -63,7 +62,39 @@ describe("generateSplits", () => {
     ]);
   });
 
-  it("keeps tag, search and extracted tokens together in a mixed input", () => {
+  it("hoists an overlapping search's identity onto the tag and suppresses the search (mergeSearchIntoTags enrichment path)", () => {
+    const tag: Annotation = {
+      type: "tag",
+      paragraphId: "d:0",
+      tag: "PER_NOMBRE" as AllLabels,
+      start: 10,
+      end: 20,
+    };
+    const search: Annotation = {
+      type: "search",
+      paragraphId: "d:0",
+      start: 15,
+      end: 25,
+      searchMatchId: "match-1",
+      searchIndex: 2,
+      isActive: true,
+    };
+
+    const splits = generateSplits(paragraph, [tag, search]);
+
+    expect(splits).toEqual([
+      { type: "text", start: 0, end: 10 },
+      {
+        ...tag,
+        searchMatchId: "match-1",
+        searchIndex: 2,
+        isActive: true,
+      },
+      { type: "text", start: 20, end: paragraph.length },
+    ]);
+  });
+
+  it("keeps tag, search and extracted tokens together, at their exact offsets, when none overlap", () => {
     const tag: Annotation = {
       type: "tag",
       paragraphId: "d:0",
@@ -90,9 +121,65 @@ describe("generateSplits", () => {
 
     const splits = generateSplits(paragraph, [tag, search, extracted]);
 
-    const types = splits.map((s) => s.type);
-    expect(types).toContain("tag");
-    expect(types).toContain("search");
-    expect(types).toContain("extracted");
+    expect(splits).toEqual([
+      { type: "text", start: 0, end: 16 },
+      { ...tag },
+      { type: "text", start: 25, end: 27 },
+      { ...search },
+      { type: "text", start: 32, end: 33 },
+      { ...extracted },
+    ]);
+  });
+
+  it("drops an extracted token that overlaps a tag, leaving the tag intact (N1: search/tag take precedence over extracted)", () => {
+    const tag: Annotation = {
+      type: "tag",
+      paragraphId: "d:0",
+      tag: "PER_NOMBRE" as AllLabels,
+      start: 16,
+      end: 25,
+    };
+    const extracted: Annotation = {
+      type: "extracted",
+      paragraphId: "d:0",
+      field: "destinatario:x1:nombre",
+      start: 10,
+      end: 20,
+    };
+
+    const splits = generateSplits(paragraph, [tag, extracted]);
+
+    expect(splits).toEqual([
+      { type: "text", start: 0, end: 16 },
+      { ...tag },
+      { type: "text", start: 25, end: paragraph.length },
+    ]);
+  });
+
+  it("drops an extracted token that overlaps a search, leaving the search intact (N1)", () => {
+    const search: Annotation = {
+      type: "search",
+      paragraphId: "d:0",
+      start: 16,
+      end: 25,
+      searchMatchId: "match-1",
+      searchIndex: 0,
+      isActive: false,
+    };
+    const extracted: Annotation = {
+      type: "extracted",
+      paragraphId: "d:0",
+      field: "destinatario:x1:nombre",
+      start: 10,
+      end: 20,
+    };
+
+    const splits = generateSplits(paragraph, [search, extracted]);
+
+    expect(splits).toEqual([
+      { type: "text", start: 0, end: 16 },
+      { ...search },
+      { type: "text", start: 25, end: paragraph.length },
+    ]);
   });
 });
