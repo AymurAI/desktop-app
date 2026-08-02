@@ -69,7 +69,14 @@ const mergeSearchIntoTags = (tokens: Annotation[]): Annotation[] => {
       !search.searchMatchId || !overlappingSearchIds.has(search.searchMatchId),
   );
 
-  return [...enrichedTags, ...visibleSearches];
+  // Anything that is neither "tag" nor "search" (e.g. "extracted") isn't
+  // part of this merge and must still pass through untouched, or it is
+  // silently dropped before ever reaching the splitting loop below.
+  const others = tokens.filter(
+    (token) => token.type !== "tag" && token.type !== "search",
+  );
+
+  return [...enrichedTags, ...visibleSearches, ...others];
 };
 
 /**
