@@ -51,6 +51,42 @@ export function normalizeForMatch(text: string): {
 const similarity = (a: string, b: string) =>
   1 - distance(a, b) / Math.max(a.length, b.length);
 
+/**
+ * A coarse `step`-sampled window can land up to `step - 1` characters off
+ * the true boundary on either side. Refine `start`/`end` by scanning
+ * locally within `±step` of the sampled window and keeping whichever
+ * (start, end) pair maximises similarity against `needle`. This is what
+ * makes `paragraph.value.slice(start, end)` actually equal the located
+ * value instead of a shifted/clipped fragment.
+ */
+function refineWindow(
+  needle: string,
+  normalized: string,
+  sampledStart: number,
+  sampledEnd: number,
+  step: number,
+): { start: number; end: number; score: number } {
+  let best = {
+    start: sampledStart,
+    end: sampledEnd,
+    score: similarity(needle, normalized.slice(sampledStart, sampledEnd)),
+  };
+
+  const startLo = Math.max(0, sampledStart - step);
+  const startHi = Math.min(normalized.length - 1, sampledStart + step);
+  for (let s = startLo; s <= startHi; s++) {
+    const endLo = Math.max(s + 1, sampledEnd - step);
+    const endHi = Math.min(normalized.length, sampledEnd + step);
+    for (let e = endLo; e <= endHi; e++) {
+      const score = similarity(needle, normalized.slice(s, e));
+      if (score > best.score) {
+        best = { start: s, end: e, score };
+      }
+    }
+  }
+  return best;
+}
+
 export function locateValue(
   value: string,
   paragraphs: Paragraph[],
@@ -61,6 +97,10 @@ export function locateValue(
   if (trimmed.length < minLength) return [];
 
   const len = trimmed.length;
+  // An empty needle would make `indexOf("", pos)` never return -1 (it
+  // clamps `pos` to the string length instead), hanging the exact-match
+  // loop below. Only reachable via `minLength: 0`, but guard unconditionally.
+  if (len === 0) return [];
 
   // Pass 1 — exact, over ALL paragraphs.
   const exact: LocatedRange[] = [];
@@ -77,7 +117,9 @@ export function locateValue(
         score: 1,
         exact: true,
       });
-      from = at + 1;
+      // Advance past this match, not just past its start, so overlapping
+      // occurrences aren't reported as separate (nested/duplicated) ranges.
+      from = at + len;
     }
   }
   if (exact.length > 0) return exact.slice(0, maxMatches);
@@ -92,15 +134,17 @@ export function locateValue(
     if (maxStart < 0) continue;
     for (let i = 0; i <= maxStart; i += step) {
       const end = Math.min(i + len, normalized.length);
-      const score = similarity(trimmed, normalized.slice(i, end));
+      const coarseScore = similarity(trimmed, normalized.slice(i, end));
+      if (coarseScore < threshold) continue;
+      const refined = refineWindow(trimmed, normalized, i, end, step);
       // `>` not `>=`: on a tie the first candidate wins, in (paragraph
       // order, start offset) order — determinism required by the spec.
-      if (score >= threshold && (!best || score > best.score)) {
+      if (!best || refined.score > best.score) {
         best = {
           paragraphId: paragraph.id,
-          start: map[i],
-          end: map[end],
-          score,
+          start: map[refined.start],
+          end: map[refined.end],
+          score: refined.score,
           exact: false,
         };
       }

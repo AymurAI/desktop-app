@@ -19,6 +19,34 @@ describe("normalizeForMatch", () => {
     const i = normalized.indexOf("x");
     expect("Añó   X".slice(map[i], map[i] + 1)).toBe("X");
   });
+
+  it("appends a sentinel equal to the original length, so `end` at the string's tail resolves", () => {
+    const text = "abc";
+    const { normalized, map } = normalizeForMatch(text);
+    expect(normalized).toBe("abc");
+    expect(map).toHaveLength(text.length + 1);
+    expect(map[map.length - 1]).toBe(text.length);
+  });
+
+  it("folds a lone combining mark to zero characters (not pushed into the map)", () => {
+    // U+0301 COMBINING ACUTE ACCENT standing alone (already-decomposed,
+    // malformed input) normalizes+strips to the empty string.
+    const text = "áb";
+    const { normalized, map } = normalizeForMatch(text);
+    expect(normalized).toBe("ab");
+    // Only 'a' (index 0) and 'b' (index 2) contribute, plus the sentinel.
+    expect(map).toEqual([0, 2, 3]);
+  });
+
+  it("folds a single character into more than one normalized character", () => {
+    // U+AC00 (Hangul syllable "가") canonically decomposes under NFD into
+    // two Jamo code points, neither of which is a combining mark, so both
+    // survive the \p{Mn} strip: one raw character maps to two normalized ones.
+    const text = "가b";
+    const { normalized, map } = normalizeForMatch(text);
+    expect(normalized).toHaveLength(3);
+    expect(map).toEqual([0, 0, 1, 2]);
+  });
 });
 
 describe("locateValue", () => {
@@ -44,15 +72,57 @@ describe("locateValue", () => {
     expect(matches.map((m) => m.paragraphId)).toEqual(["d:0", "d:1", "d:1"]);
   });
 
-  it("falls back to a single best fuzzy match above the threshold", () => {
+  it("does not report overlapping exact matches (advances past the full match)", () => {
+    // "aaaa" occurs at indices 0, 1 and 2 within "aaaaaa" if the search only
+    // advances by one character; it must advance by the full match length
+    // so overlapping "matches" aren't reported as separate (nested /
+    // duplicated) ranges a highlighter would render incorrectly.
+    const matches = locateValue("aaaa", [p("z", "aaaaaa")]);
+    expect(matches).toHaveLength(1);
+    expect(matches[0].start).toBe(0);
+    expect(matches[0].end).toBe(4);
+  });
+
+  it("falls back to a single best fuzzy match above the threshold, at the correct slice", () => {
     const matches = locateValue(
       "Directora General de Fiscalizacion Urbanaa",
       paragraphs,
     );
     expect(matches).toHaveLength(1);
     expect(matches[0].exact).toBe(false);
-    expect(matches[0].score).toBeGreaterThanOrEqual(0.9);
     expect(matches[0].paragraphId).toBe("d:1");
+    // The contract: slicing the original paragraph at [start, end) must
+    // yield the actual matched text, not a fragment shifted by the fuzzy
+    // window's sampling stride.
+    expect(paragraphs[1].value.slice(matches[0].start, matches[0].end)).toBe(
+      "Directora General de Fiscalización Urbana",
+    );
+    // A specific, falsifiable score — not just ">= threshold", which the
+    // implementation guarantees by construction for anything it returns.
+    expect(matches[0].score).toBeCloseTo(0.976, 2);
+  });
+
+  it("locates a fuzzy match whose span includes an accented character, at the correct slice", () => {
+    const withAccent = [p("d:0", "el requerido es el Área de Fiscalización")];
+    const matches = locateValue("Area de Fiscalizacionn", withAccent);
+    expect(matches).toHaveLength(1);
+    expect(matches[0].exact).toBe(false);
+    expect(withAccent[0].value.slice(matches[0].start, matches[0].end)).toBe(
+      "Área de Fiscalización",
+    );
+  });
+
+  it("picks the strictly better fuzzy candidate even when it is in a later paragraph", () => {
+    const base = "a".repeat(40);
+    const withOneEdit = `${base.slice(0, 15)}b${base.slice(16)}`; // 1 substitution
+    const withThreeEdits = `${base.slice(0, 10)}b${base.slice(11, 20)}b${base.slice(21, 30)}b${base.slice(31)}`; // 3 substitutions
+    const competing = [p("d:0", withThreeEdits), p("d:1", withOneEdit)];
+    const matches = locateValue(base, competing);
+    expect(matches).toHaveLength(1);
+    expect(matches[0].paragraphId).toBe("d:1");
+    expect(competing[1].value.slice(matches[0].start, matches[0].end)).toBe(
+      withOneEdit,
+    );
   });
 
   it("returns nothing when no candidate reaches the threshold", () => {
@@ -67,6 +137,14 @@ describe("locateValue", () => {
 
   it("ignores empty and whitespace-only values", () => {
     expect(locateValue("   ", paragraphs)).toEqual([]);
+  });
+
+  it("does not hang on an empty value even with minLength lowered to 0", () => {
+    // `"".indexOf("", pos)` clamps `pos` to the string length and never
+    // returns -1, so without an explicit empty-needle guard this would loop
+    // forever. `minLength` is a public option, so this must be defended
+    // unconditionally rather than relying on the default of 4.
+    expect(locateValue("", paragraphs, { minLength: 0 })).toEqual([]);
   });
 
   it("breaks fuzzy score ties by picking the first candidate in document order", () => {
@@ -87,5 +165,20 @@ describe("locateValue", () => {
     expect(
       locateValue("un valor mucho mas largo que el parrafo entero", short),
     ).toEqual([]);
+  });
+
+  it("truncates exact matches at maxMatches by default", () => {
+    // 5 occurrences with the default maxMatches (3): distinguishes "returns
+    // every occurrence" from "happens to return exactly 3", which a test
+    // asserting 3 matches out of exactly 3 occurrences cannot do.
+    const five = [p("d:0", "x x x x x")];
+    const matches = locateValue("x", five, { minLength: 1 });
+    expect(matches).toHaveLength(3);
+  });
+
+  it("returns more matches when maxMatches is raised", () => {
+    const five = [p("d:0", "x x x x x")];
+    const matches = locateValue("x", five, { minLength: 1, maxMatches: 5 });
+    expect(matches).toHaveLength(5);
   });
 });
