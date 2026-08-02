@@ -20,6 +20,7 @@ import type { SelectOption } from "@/types/select";
 import { getActiveAnonymizerLabelOptions } from "@/utils/anonymizer/labels";
 import { filterActivePredictions } from "@/utils/anonymizer/predictions";
 import LabelManager from "../anonymizer/label-manager";
+import ExtractedAnnotation from "../file/extracted-annotation";
 import SearchAnnotation from "../file/search-annotation";
 import TagAnnotation from "../file/tag-annotation";
 import * as S from "./FileAnnotator.styles";
@@ -31,6 +32,7 @@ import {
   searchMatchesToMap,
 } from "./annotations";
 import { generateSplits } from "./generateSplits";
+import type { ExtractedValueAnnotation } from "./types";
 
 const labelManagerWrapper = css({
   display: "flex",
@@ -48,6 +50,8 @@ interface ParagraphProps {
   predictions: PredictLabel[];
   searchMatches: SearchMatch[];
   activeSearchMatchId: string | null;
+  extractedAnnotations?: ExtractedValueAnnotation[];
+  activeField?: string | null;
 }
 const Paragraph = memo(
   ({
@@ -56,17 +60,36 @@ const Paragraph = memo(
     predictions,
     searchMatches,
     activeSearchMatchId,
+    extractedAnnotations,
+    activeField,
   }: ParagraphProps) => {
     const { label } = useAnnotation();
 
     const annotations = useMemo(() => {
-      return createAnnotationsWithSearch(
+      const baseAnnotations = createAnnotationsWithSearch(
         predictions,
         searchMatches,
         label,
         activeSearchMatchId,
       );
-    }, [predictions, searchMatches, label, activeSearchMatchId]);
+
+      if (!extractedAnnotations || extractedAnnotations.length === 0)
+        return baseAnnotations;
+
+      const withActiveState = extractedAnnotations.map((annotation) => ({
+        ...annotation,
+        isActive: annotation.field === activeField,
+      }));
+
+      return [...baseAnnotations, ...withActiveState];
+    }, [
+      predictions,
+      searchMatches,
+      label,
+      activeSearchMatchId,
+      extractedAnnotations,
+      activeField,
+    ]);
 
     const splits = generateSplits(children, annotations);
 
@@ -92,6 +115,12 @@ const Paragraph = memo(
                   {content}
                 </TagAnnotation>
               );
+            case "extracted":
+              return (
+                <ExtractedAnnotation key={key} annotation={s}>
+                  {content}
+                </ExtractedAnnotation>
+              );
             case "text":
             default:
               return (
@@ -109,8 +138,15 @@ const Paragraph = memo(
 interface Props {
   file: DocFile;
   isAnnotable?: boolean;
+  extraAnnotations?: Map<string, ExtractedValueAnnotation[]>;
+  activeField?: string | null;
 }
-export default function FileAnnotator({ file, isAnnotable = false }: Props) {
+export default function FileAnnotator({
+  file,
+  isAnnotable = false,
+  extraAnnotations,
+  activeField,
+}: Props) {
   const [search, setSearch] = useState("");
   const [activeSearchIndex, setActiveSearchIndex] = useState<number | null>(
     null,
@@ -268,6 +304,8 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
                 predictions={predictionsMap.get(p.id) ?? []}
                 searchMatches={searchMatchesMap.get(p.id) ?? []}
                 activeSearchMatchId={activeSearchMatchId}
+                extractedAnnotations={extraAnnotations?.get(p.id)}
+                activeField={activeField}
               >
                 {p.value}
               </Paragraph>
