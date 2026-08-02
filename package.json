@@ -42,6 +42,7 @@
     "@electron-toolkit/utils": "^4.0.0",
     "@microsoft/fetch-event-source": "^2.0.1",
     "electron-squirrel-startup": "^1.0.1",
+    "fastest-levenshtein": "^1.0.16",
     "jszip": "^3.10.1"
   },
   "devDependencies": {
