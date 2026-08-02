@@ -38,3 +38,6 @@ src/renderer/src/styled
 
 # temporary files
 .tmp
+
+# subagent-driven-development scratch (ledger, briefs, review packages)
+.superpowers/
