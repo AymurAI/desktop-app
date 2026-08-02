@@ -1,6 +1,7 @@
 import { EXCLUDED_TAGS } from "@/constants/excluded-tags";
 import { disambiguateSchema } from "@/schema/disambiguate";
 import { documentExtractSchema } from "@/schema/extract";
+import type { RecomendacionValidation } from "@/schema/recomendaciones";
 import type {
   AnonymizerLabels,
   PredictLabel,
@@ -18,6 +19,7 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import api from "../api";
 import { saveValidation as postASRValidation } from "./asrValidation";
 import predict from "./predict";
+import { saveRecomendacion } from "./recomendaciones";
 import { type TranscribeFileInput, transcribe } from "./transcribe";
 
 export type SuffixMode = "always" | "when_multiple" | "never";
@@ -365,4 +367,18 @@ export const pdfToOdt = () =>
 
       return response.data;
     },
+  });
+
+/**
+ * Persists the human-validated recomendación for a document.
+ */
+export const recomendacionValidationMutation = () =>
+  mutationOptions({
+    mutationFn: ({
+      documentId,
+      validation,
+    }: {
+      documentId: string;
+      validation: RecomendacionValidation;
+    }) => saveRecomendacion(documentId, validation),
   });
