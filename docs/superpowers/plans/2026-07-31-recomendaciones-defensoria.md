@@ -1216,13 +1216,12 @@ export function locateValue(
   const trimmed = needle.trim();
   if (trimmed.length < minLength) return [];
 
-  const exact: LocatedRange[] = [];
-  let best: LocatedRange | null = null;
+  const len = trimmed.length;
 
+  // Pasada 1 — exacto, sobre TODOS los párrafos.
+  const exact: LocatedRange[] = [];
   for (const paragraph of paragraphs) {
     const { normalized, map } = normalizeForMatch(paragraph.value);
-
-    // Paso 2 — exacto
     let from = 0;
     for (;;) {
       const at = normalized.indexOf(trimmed, from);
@@ -1230,39 +1229,36 @@ export function locateValue(
       exact.push({
         paragraphId: paragraph.id,
         start: map[at],
-        end: map[at + trimmed.length],
+        end: map[at + len],
         score: 1,
         exact: true,
       });
       from = at + 1;
     }
-    if (exact.length > 0) continue;
+  }
+  if (exact.length > 0) return exact.slice(0, maxMatches);
 
-    // Paso 3 — fuzzy
-    const len = trimmed.length;
+  // Pasada 2 — fuzzy, sólo si no hubo NINGÚN exacto en todo el documento.
+  let best: LocatedRange | null = null;
+  const step = Math.max(1, Math.floor(len / 8));
+  for (const paragraph of paragraphs) {
+    const { normalized, map } = normalizeForMatch(paragraph.value);
     if (normalized.length < len * threshold) continue;
-    const step = Math.max(1, Math.floor(len / 8));
-    for (let i = 0; i + 1 <= normalized.length; i += step) {
-      const window = normalized.slice(i, i + len);
-      const score = similarity(trimmed, window);
+    for (let i = 0; i <= normalized.length - Math.ceil(len * threshold); i += step) {
+      const end = Math.min(i + len, normalized.length);
+      const score = similarity(trimmed, normalized.slice(i, end));
+      // `>` y no `>=`: ante empate gana el primero, que es el de menor
+      // (índice de párrafo, start) — determinismo exigido por §5.2 Paso 4.
       if (score >= threshold && (!best || score > best.score)) {
-        best = {
-          paragraphId: paragraph.id,
-          start: map[i],
-          end: map[Math.min(i + len, normalized.length)],
-          score,
-          exact: false,
-        };
+        best = { paragraphId: paragraph.id, start: map[i], end: map[end], score, exact: false };
       }
     }
   }
-
-  if (exact.length > 0) return exact.slice(0, maxMatches);
   return best ? [best] : [];
 }
 ```
 
-> Nota de implementación: el bucle exacto acumula en un array compartido y hace `continue` cuando encuentra algo — eso significa que si el párrafo 1 tiene exacto y el 3 también, ambos entran (correcto), pero un párrafo posterior ya no se evalúa en fuzzy (también correcto: exacto gana siempre). Verificar ese comportamiento con el segundo test.
+> **Nota de implementación (dos pasadas, no una).** Exacto y fuzzy son pasadas separadas sobre el documento completo, no ramas dentro de un mismo bucle. Con un solo bucle, un `continue` tras el primer párrafo con match exacto impediría encontrar las ocurrencias exactas de los párrafos siguientes — y el segundo test (`returns every exact occurrence, in document order`) lo detecta: espera **3** matches repartidos en 2 párrafos. La regla es global: si existe **algún** exacto en el documento, el fuzzy no corre en absoluto.
 
 - [ ] **Paso 5: Correr y ver pasar** — `pnpm test src/renderer/src/utils/recomendaciones/locate-value.test.ts`. Esperado: 7 PASS. Ajustar el refinamiento de bordes si el tercer test devuelve un rango desplazado.
 
@@ -1554,7 +1550,19 @@ Es un selector de **acción**, no de estado: escribe en el `TextField` de al lad
 
 - [ ] **Paso 6: Correr** — `pnpm test src/renderer/src/components/recomendaciones/`. Esperado: 5 PASS.
 
-- [ ] **Paso 7 (opcional): highlight de apoyo para `contenido_para_publicar`** — implementar el Jaccard de §5.3 en `build-annotations.ts` detrás de la constante `ENABLE_SUPPORT_HIGHLIGHTS = true`, con su test. Si en QA resulta ruidoso, poner la constante en `false` en vez de borrar código.
+- [ ] **Paso 7 (opcional): highlight de apoyo para `contenido_para_publicar`** — implementar el Jaccard de §5.3 como una **función separada**, `buildSupportAnnotations(contenido, paragraphs)`, en su propio archivo `utils/recomendaciones/build-support-annotations.ts`, con su test.
+
+  **No** meterlo dentro de `buildExtractedAnnotations`: los tests de la Etapa 6 afirman explícitamente que esa función nunca emite el campo `contenido_para_publicar`, y fusionar las dos lógicas los rompería. `validation.tsx` compone los dos mapas antes de pasarlos a `FileAnnotator`:
+
+```ts
+const annotations = useMemo(() => {
+  const base = buildExtractedAnnotations(deferredValues, paragraphs);
+  if (!ENABLE_SUPPORT_HIGHLIGHTS) return base;
+  return mergeAnnotationMaps(base, buildSupportAnnotations(deferredValues.contenido_para_publicar, paragraphs));
+}, [deferredValues, paragraphs]);
+```
+
+  `ENABLE_SUPPORT_HIGHLIGHTS` vive junto a `buildSupportAnnotations`. Si en QA resulta ruidoso, poner la constante en `false` en vez de borrar código.
 
 - [ ] **Paso 8: Commit**
 
