@@ -1,10 +1,12 @@
-/** Candidato de organigrama sugerido para un nombre o cargo de destinatario. */
+/** Un renglón del organigrama GCBA propuesto por el backend. */
 export interface OrganigramCandidate {
   nombre: string;
   cargo: string;
   sigla: string;
   depende_de_cargo: string | null;
   ruta_cargos: string;
+  /** Escala dependiente del backend de búsqueda (0-100 fuzzy, ~0-1 embeddings/hybrid).
+   *  NO comparar contra umbrales fijos ni mostrar crudo: sólo respetar el orden. */
   score: number;
 }
 
