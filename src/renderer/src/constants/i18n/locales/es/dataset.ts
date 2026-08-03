@@ -48,6 +48,14 @@ const dataset = {
     processingTitle: "AymurAI está extrayendo los datos de los archivos.",
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
     finishText: "Se finalizó el análisis de tus documentos.",
+    // G8 F3: title/subtitle/Callout must reflect the aggregated status
+    // (routes/app.$feature/process.tsx), not just "processing" forever.
+    finishedTitle: "AymurAI finalizó la extracción de datos de los archivos.",
+    finishedSubtitle: "Podés continuar con la validación de los datos.",
+    errorTitle: "Ocurrió un problema al procesar los archivos.",
+    errorSubtitle: "Alguno de los archivos no pudo procesarse correctamente.",
+    errorText: "El procesamiento de los archivos no se completó correctamente.",
+    next: "Siguiente",
   },
   result: { sectionTitle: "" },
   finish: {
