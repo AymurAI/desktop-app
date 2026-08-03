@@ -83,6 +83,12 @@ export default function RecomendacionesProcess() {
     });
   };
 
+  const handleAbort = () => {
+    if (!file) return;
+    parseStatuses[file.data.name]?.abort();
+    extraction.abort();
+  };
+
   return (
     <RequireFile>
       <Header title={t("title")} feature={feature} currentStep={2} />
@@ -107,6 +113,7 @@ export default function RecomendacionesProcess() {
                   fileName={file.data.name}
                   status={combinedStatus}
                   progress={progress}
+                  onAbort={handleAbort}
                 />
               )}
               {isError && (

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { normalizeExtraction } from "@/hooks/useRecomendacionForm";
 import { setRecomendacion } from "@/reducers/file/actions";
@@ -13,7 +13,7 @@ import type {
   DataExtractionResult,
   RecomendacionValues,
 } from "@/types/recomendaciones";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useFileDispatch } from "./useFiles";
 
@@ -23,6 +23,12 @@ interface DataExtractionResultShape {
   status: DataExtractionStatus;
   error: Error | null;
   retry: () => void;
+  /**
+   * Cancels the in-flight GET and/or extraction POST. Not part of the
+   * original interface contract, added so the process screen's Stop button
+   * can actually do something instead of orphaning the request.
+   */
+  abort: () => void;
 }
 
 /**
@@ -82,41 +88,94 @@ function validationToValues(
  *
  * The GET (`loadRecomendacion`) is a `useQuery`; the extraction
  * (`extractRecomendacion`) is a `useMutation` triggered from an effect when
- * the GET resolves `null` — not a chained query, so `retry()` can be exposed.
+ * the GET resolves with nothing usable — not a chained query, so `retry()`
+ * can be exposed.
  */
 export function useDataExtraction(file: DocFile): DataExtractionResultShape {
   const dispatch = useFileDispatch();
+  const queryClient = useQueryClient();
 
   const alreadySet = file.recomendacion !== undefined;
   const documentId = file.paragraphs?.[0]?.document_id;
 
+  const queryKey = ["recomendacion", api.defaults.baseURL, documentId];
+
   const query = useQuery({
-    queryKey: ["recomendacion", api.defaults.baseURL, documentId],
+    queryKey,
     queryFn: ({ signal }) => loadRecomendacion(documentId as string, signal),
     enabled: !alreadySet && documentId !== undefined,
     staleTime: Number.POSITIVE_INFINITY,
     retry: false,
   });
 
+  // Holds the AbortController for the currently in-flight extraction POST, so
+  // it can be cancelled instead of orphaned when the user navigates away
+  // mid-extraction (Stop button, or an unmount before the dispatch lands).
+  const extractionControllerRef = useRef<AbortController | null>(null);
+
   const mutation = useMutation({
-    mutationFn: () =>
-      extractRecomendacion(
+    mutationFn: () => {
+      const controller = new AbortController();
+      extractionControllerRef.current = controller;
+      return extractRecomendacion(
         documentId as string,
         (file.paragraphs ?? []).map((paragraph) => paragraph.value),
-      ),
+        controller.signal,
+      );
+    },
   });
 
-  // Handles the GET's resolution: `null` triggers the extraction mutation;
-  // a stored document is dispatched straight away per the decision table.
+  // Synchronous latch, keyed by documentId, guarding the call to
+  // `mutation.mutate()` below. `mutation.status` is a render snapshot, NOT a
+  // synchronous lock: in React StrictMode the effect's setup function runs
+  // twice against the SAME closure with no re-render in between, so checking
+  // `mutation.status === "idle"` alone lets both invocations see "idle" and
+  // fire two POSTs. This ref is mutated synchronously the first time, so the
+  // second invocation (same tick, same closure) sees it and skips. Mirrors
+  // `useTranscribe.ts`'s `userAbortedRef`/`controllerRef` pattern for the same
+  // StrictMode hazard.
+  const extractionStartedForRef = useRef<string | null>(null);
+
+  // Cancel any in-flight extraction on unmount (or when the target document
+  // changes) instead of leaving it orphaned. This also means a genuine
+  // remount (e.g. navigate to preview and back) never races an old,
+  // still-running request: the old one is aborted first.
+  useEffect(() => {
+    return () => {
+      extractionControllerRef.current?.abort();
+    };
+  }, [documentId]);
+
+  // Handles the GET's resolution: nothing usable stored (`null`, or a stored
+  // document with neither `prediction` nor `validation`) triggers the
+  // extraction mutation; a stored document with usable data is dispatched
+  // straight away per the decision table.
   useEffect(() => {
     if (alreadySet || !query.isSuccess) return;
 
-    if (query.data === null) {
-      if (mutation.status === "idle") mutation.mutate();
+    const stored = query.data;
+
+    const triggerExtraction = () => {
+      if (extractionStartedForRef.current !== documentId) {
+        extractionStartedForRef.current = documentId ?? null;
+        mutation.mutate();
+      }
+    };
+
+    // Nothing stored at all (404/absent).
+    if (stored === null) {
+      triggerExtraction();
       return;
     }
 
-    const { prediction, validation } = query.data;
+    const { prediction, validation } = stored;
+
+    // Stored row exists but carries neither a prior inference nor a manual
+    // validation (schema allows both to be `null`): same as absent, extract.
+    if (prediction == null && validation == null) {
+      triggerExtraction();
+      return;
+    }
 
     if (validation != null) {
       const base = normalizeExtraction(
@@ -176,15 +235,28 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
 
   const status: DataExtractionStatus = alreadySet
     ? "ready"
-    : mutation.isError
+    : mutation.isError || query.isError
       ? "error"
       : documentId === undefined
         ? "idle"
         : "loading";
 
-  return {
-    status,
-    error: mutation.error,
-    retry: () => mutation.mutate(),
+  const error = mutation.error ?? (query.error as Error | null) ?? null;
+
+  const retry = () => {
+    // The GET failed (e.g. it was aborted): re-run it, don't touch the
+    // mutation. The effect above will react to its resolution as usual.
+    if (query.isError) {
+      query.refetch();
+      return;
+    }
+    mutation.mutate();
   };
+
+  const abort = () => {
+    extractionControllerRef.current?.abort();
+    queryClient.cancelQueries({ queryKey });
+  };
+
+  return { status, error, retry, abort };
 }

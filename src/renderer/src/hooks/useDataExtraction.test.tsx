@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from "@testing-library/react";
+import { CanceledError } from "axios";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -101,7 +102,11 @@ describe("useDataExtraction", () => {
 
     await waitFor(() => expect(dispatchMock).toHaveBeenCalledTimes(1));
 
-    expect(extractRecomendacionMock).toHaveBeenCalledWith("doc-1", ["hola"]);
+    expect(extractRecomendacionMock).toHaveBeenCalledWith(
+      "doc-1",
+      ["hola"],
+      expect.any(AbortSignal),
+    );
     const recomendacion = dispatchMock.mock.calls[0][0].payload.recomendacion;
     expect(recomendacion.origin).toBe("inference");
     expect(recomendacion.values.numero_recomendacion).toBe("1/24");
@@ -177,5 +182,46 @@ describe("useDataExtraction", () => {
     expect(recomendacion.origin).toBe("stored-inference");
     expect(recomendacion.values).toEqual(recomendacion.suggestions);
     expect(recomendacion.values.numero_recomendacion).toBe("1/24");
+  });
+
+  // I2(a): a re-thrown `CanceledError` from the GET must not leave the
+  // screen stuck in "loading" forever with no way out.
+  it("surfaces a GET failure (re-thrown CanceledError) as status = error, not a permanent loading state", async () => {
+    loadRecomendacionMock.mockRejectedValue(new CanceledError());
+    const file = makeFile();
+
+    const { result } = renderHook(() => useDataExtraction(file), { wrapper });
+
+    await waitFor(() => expect(result.current.status).toBe("error"));
+
+    expect(extractRecomendacionMock).not.toHaveBeenCalled();
+    expect(dispatchMock).not.toHaveBeenCalled();
+    expect(result.current.error).toBeInstanceOf(CanceledError);
+  });
+
+  // I2(b): the schema allows a stored row with both `prediction` and
+  // `validation` null. That must fall through to extraction, not hang.
+  it("stored document with prediction = null AND validation = null: falls through to extraction", async () => {
+    const stored: RecomendacionDocument = {
+      document_id: "doc-1",
+      prediction: null,
+      validation: null,
+      updated_at: null,
+    };
+    loadRecomendacionMock.mockResolvedValue(stored);
+    extractRecomendacionMock.mockResolvedValue(extraction());
+    const file = makeFile();
+
+    renderHook(() => useDataExtraction(file), { wrapper });
+
+    await waitFor(() => expect(dispatchMock).toHaveBeenCalledTimes(1));
+
+    expect(extractRecomendacionMock).toHaveBeenCalledWith(
+      "doc-1",
+      ["hola"],
+      expect.any(AbortSignal),
+    );
+    const recomendacion = dispatchMock.mock.calls[0][0].payload.recomendacion;
+    expect(recomendacion.origin).toBe("inference");
   });
 });
