@@ -1,5 +1,11 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import type { ChangeEvent, ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -236,6 +242,53 @@ function renderScreen() {
   );
 }
 
+// Both directions of §X4 need candidates on BOTH `nombre` and `cargo`
+// simultaneously, which means two `Select`s share the same
+// "validation.organigramCandidates" label (per the brief's literal
+// OrganigramPicker snippet). Rather than dodging the ambiguity by leaving
+// one side's candidates empty, tests scope their query to the DOM container
+// of the field they care about: `getByLabelText` finds the TextField's
+// `<input>`, `.closest("div")` is the mocked TextField's own wrapper, and
+// `.parentElement` is the `Stack` that also contains that field's (and only
+// that field's) `OrganigramPicker`.
+function fieldContainer(fieldLabel: string): HTMLElement {
+  const input = screen.getByLabelText(fieldLabel);
+  const wrapper = input.closest("div");
+  if (!wrapper?.parentElement) {
+    throw new Error(`No container for ${fieldLabel}`);
+  }
+  return wrapper.parentElement;
+}
+
+function buildStateWithBothCandidates(): RecomendacionState {
+  return buildState({
+    candidates: {
+      d1: {
+        nombre: [
+          {
+            nombre: "Juan Pérez (candidato)",
+            cargo: "Director General",
+            sigla: "DG",
+            depende_de_cargo: null,
+            ruta_cargos: "Ministerio > DG",
+            score: 90,
+          },
+        ],
+        cargo: [
+          {
+            nombre: "Otra Persona",
+            cargo: "Subdirector General",
+            sigla: "SDG",
+            depende_de_cargo: null,
+            ruta_cargos: "Ministerio > SDG",
+            score: 80,
+          },
+        ],
+      },
+    },
+  });
+}
+
 describe("RecomendacionValidation", () => {
   beforeEach(() => {
     navigate.mockReset();
@@ -277,27 +330,13 @@ describe("RecomendacionValidation", () => {
   });
 
   it("picking an organigram candidate for nombre writes into the nombre field and leaves cargo untouched (§X4)", () => {
-    const state = buildState({
-      candidates: {
-        d1: {
-          nombre: [
-            {
-              nombre: "Juan Pérez (candidato)",
-              cargo: "Director General",
-              sigla: "DG",
-              depende_de_cargo: null,
-              ruta_cargos: "Ministerio > DG",
-              score: 90,
-            },
-          ],
-          cargo: [],
-        },
-      },
-    });
-    currentFile = buildFile(state);
+    currentFile = buildFile(buildStateWithBothCandidates());
     renderScreen();
 
-    fireEvent.change(screen.getByLabelText("validation.organigramCandidates"), {
+    const nombrePicker = within(
+      fieldContainer("validation.nombre"),
+    ).getByLabelText("validation.organigramCandidates");
+    fireEvent.change(nombrePicker, {
       target: { value: "Juan Pérez (candidato)" },
     });
 
@@ -305,6 +344,25 @@ describe("RecomendacionValidation", () => {
       "Juan Pérez (candidato)",
     );
     expect(screen.getByLabelText("validation.cargo")).toHaveValue("Director");
+  });
+
+  it("picking an organigram candidate for cargo writes into the cargo field and leaves nombre untouched (§X4, mirror direction)", () => {
+    currentFile = buildFile(buildStateWithBothCandidates());
+    renderScreen();
+
+    const cargoPicker = within(
+      fieldContainer("validation.cargo"),
+    ).getByLabelText("validation.organigramCandidates");
+    fireEvent.change(cargoPicker, {
+      target: { value: "Subdirector General" },
+    });
+
+    expect(screen.getByLabelText("validation.cargo")).toHaveValue(
+      "Subdirector General",
+    );
+    expect(screen.getByLabelText("validation.nombre")).toHaveValue(
+      "Juan Perez",
+    );
   });
 
   it("calls the mutation with a payload containing no id and no candidatos_* keys", async () => {
@@ -317,9 +375,18 @@ describe("RecomendacionValidation", () => {
     const [documentId, validation] = saveRecomendacion.mock.calls[0];
     expect(documentId).toBe("doc-1");
     expect(validation).not.toHaveProperty("id");
+    expect(validation.destinatarios).toHaveLength(2);
+    // The local `id` lives on each DESTINATARIO (not on the top-level
+    // payload, which never had one under any implementation), and
+    // `candidatos_nombre`/`candidatos_cargo` aren't fields of
+    // `DestinatarioValue` at all — they live in `state.candidates`. Asserting
+    // the exact key set on each destinatario catches both: a leaked local
+    // `id` and any accidental `candidatos_*` leak in one shot.
     for (const destinatario of validation.destinatarios) {
-      expect(destinatario).not.toHaveProperty("candidatos_nombre");
-      expect(destinatario).not.toHaveProperty("candidatos_cargo");
+      expect(destinatario).not.toHaveProperty("id");
+      expect(Object.keys(destinatario).sort()).toEqual(
+        ["cargo", "destinatario_principal", "nombre", "sector"].sort(),
+      );
     }
   });
 
@@ -342,6 +409,30 @@ describe("RecomendacionValidation", () => {
     });
   });
 
+  it("disables the validate button while the save is pending, so a second click cannot fire a second mutation (§F2)", async () => {
+    let resolveSave: () => void = () => {};
+    saveRecomendacion.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSave = resolve;
+        }),
+    );
+    renderScreen();
+
+    const button = screen.getByText("validation.validar");
+    fireEvent.click(button);
+
+    await waitFor(() => expect(button).toBeDisabled());
+
+    // A disabled native <button> does not dispatch click events, matching
+    // the precedent in components/voice-to-text/validation.tsx.
+    fireEvent.click(button);
+    expect(saveRecomendacion).toHaveBeenCalledTimes(1);
+
+    resolveSave();
+    await waitFor(() => expect(navigate).toHaveBeenCalled());
+  });
+
   it("(§X5) shows the current value while the suggestion mark carries the original inference", () => {
     const values = buildValues({ numero_recomendacion: "999/2024" });
     const suggestions = buildValues({ numero_recomendacion: "111/2024" });
@@ -359,5 +450,55 @@ describe("RecomendacionValidation", () => {
     expect(
       screen.getByTestId("suggestion:validation.numeroRecomendacion"),
     ).toHaveTextContent("111/2024");
+  });
+
+  it("(§6) keeps an out-of-taxonomy tema, injects it as an extra option, and shows the error", () => {
+    const values = buildValues({ tema: "TEMA INEXISTENTE" });
+    // Leave `suggestions` at the default fixture (SALUD/SAME) so the
+    // injected option's text can't collide with a suggestion mark's text.
+    currentFile = buildFile(buildState({ values }));
+    renderScreen();
+
+    const temaSelect = screen.getByLabelText(
+      "validation.tema",
+    ) as HTMLSelectElement;
+    expect(temaSelect).toHaveValue("TEMA INEXISTENTE");
+    expect(
+      Array.from(temaSelect.options).map((option) => option.value),
+    ).toContain("TEMA INEXISTENTE");
+    expect(
+      screen.getByText("validation.temaOutOfTaxonomy"),
+    ).toBeInTheDocument();
+  });
+
+  it("(§6) keeps an out-of-taxonomy subtema for the current tema, injects it, and shows the error", () => {
+    const values = buildValues({
+      tema: "SALUD",
+      subtema: "SUBTEMA INEXISTENTE",
+    });
+    currentFile = buildFile(buildState({ values }));
+    renderScreen();
+
+    const subtemaSelect = screen.getByLabelText(
+      "validation.subtema",
+    ) as HTMLSelectElement;
+    expect(subtemaSelect).toHaveValue("SUBTEMA INEXISTENTE");
+    expect(
+      Array.from(subtemaSelect.options).map((option) => option.value),
+    ).toContain("SUBTEMA INEXISTENTE");
+    expect(
+      screen.getByText("validation.subtemaOutOfTaxonomy"),
+    ).toBeInTheDocument();
+  });
+
+  it("(§6) renders no out-of-taxonomy error when tema and subtema are both in the taxonomy", () => {
+    renderScreen(); // default fixture: tema SALUD / subtema SAME, both valid
+
+    expect(
+      screen.queryByText("validation.temaOutOfTaxonomy"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("validation.subtemaOutOfTaxonomy"),
+    ).not.toBeInTheDocument();
   });
 });

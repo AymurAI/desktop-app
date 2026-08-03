@@ -143,7 +143,11 @@ export function RecomendacionValidation() {
             </Stack>
           </Grid>
           <Footer withBuiltBy>
-            <Button size="md" onClick={handleValidate}>
+            <Button
+              size="md"
+              onClick={handleValidate}
+              disabled={saveMutation.isPending}
+            >
               {t("validation.validar")}
             </Button>
           </Footer>
