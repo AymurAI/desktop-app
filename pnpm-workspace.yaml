@@ -4,9 +4,10 @@
 blockExoticSubdeps: false
 allowBuilds:
   '@aymurai/ui': true
-  # Must match the tarball SHA pinned in pnpm-lock.yaml. `github:...#v0.5.0` is
-  # a mutable ref, so this has to be re-pointed whenever the lockfile's resolved
-  # SHA changes, or install fails with ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED.
+  # Must match the tarball SHA in pnpm-lock.yaml, or install fails with
+  # ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED. package.json now pins the commit SHA
+  # rather than the mutable `#v0.5.0` tag (which moved once and broke install),
+  # so this only changes when @aymurai/ui is deliberately bumped.
   '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/93821cce3a0d82198d5acdf5c33cc1d2804cdbec': true
   '@biomejs/biome': true
   agent-browser: false
@@ -16,39 +17,3 @@ allowBuilds:
   lefthook: true
 minimumReleaseAgeExclude:
   - agent-browser@0.29.1
-  # @tiptap/* 3.29.2 arrives transitively via @aymurai/ui v0.5.0 and was
-  # published within the minimumReleaseAge window, which blocks `pnpm install`
-  # outright (and with it every `pnpm <script>` pre-run dep check). Pinned to
-  # the exact version so the age policy still applies to future releases.
-  # TODO(2026-08): drop once 3.29.2 is past the age window.
-  - '@tiptap/core@3.29.2'
-  - '@tiptap/extension-blockquote@3.29.2'
-  - '@tiptap/extension-bold@3.29.2'
-  - '@tiptap/extension-bubble-menu@3.29.2'
-  - '@tiptap/extension-bullet-list@3.29.2'
-  - '@tiptap/extension-code-block@3.29.2'
-  - '@tiptap/extension-code@3.29.2'
-  - '@tiptap/extension-document@3.29.2'
-  - '@tiptap/extension-dropcursor@3.29.2'
-  - '@tiptap/extension-floating-menu@3.29.2'
-  - '@tiptap/extension-gapcursor@3.29.2'
-  - '@tiptap/extension-hard-break@3.29.2'
-  - '@tiptap/extension-heading@3.29.2'
-  - '@tiptap/extension-highlight@3.29.2'
-  - '@tiptap/extension-horizontal-rule@3.29.2'
-  - '@tiptap/extension-italic@3.29.2'
-  - '@tiptap/extension-link@3.29.2'
-  - '@tiptap/extension-list-item@3.29.2'
-  - '@tiptap/extension-list-keymap@3.29.2'
-  - '@tiptap/extension-list@3.29.2'
-  - '@tiptap/extension-ordered-list@3.29.2'
-  - '@tiptap/extension-paragraph@3.29.2'
-  - '@tiptap/extension-strike@3.29.2'
-  - '@tiptap/extension-table@3.29.2'
-  - '@tiptap/extension-text@3.29.2'
-  - '@tiptap/extension-underline@3.29.2'
-  - '@tiptap/extensions@3.29.2'
-  - '@tiptap/markdown@3.29.2'
-  - '@tiptap/pm@3.29.2'
-  - '@tiptap/react@3.29.2'
-  - '@tiptap/starter-kit@3.29.2'

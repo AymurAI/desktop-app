@@ -8,21 +8,21 @@
 > that exercises the whole governed flow against real code.
 
 **Stack (fixed):** Electron 42 + React 19 + TypeScript, renderer under
-`src/renderer/src`. Panda CSS for styling, Radix primitives wrapped under
-`components/ui/`, TanStack Router (file-based routes) + TanStack Query,
+`src/renderer/src`. Panda CSS for styling, Radix-backed primitives mostly from
+`@aymurai/ui` (only what it lacks is wrapped in `components/ui/`), TanStack
+Router (file-based routes) + TanStack Query,
 i18next for Spanish UI strings. Package manager is **pnpm** (Node pinned to 22
 via `.nvmrc`). Hard rules live in `CONVENTIONS.md` and are binding.
 
 **Gates:** `pnpm validate` (biome + `tsc --noEmit` on the node and web
-projects) and `pnpm test` (vitest, 57 files / 300 tests) must both exit 0 after
-every feature. At the start of this batch both exit 0 with **14 biome
+projects) and `pnpm test` (vitest) must both exit 0 after
+every feature. At the start of this batch both exit 0 with **13 biome
 warnings**; the goal of the batch is zero.
 
 **Cross-feature rules:**
 
-- No behavior changes. Every feature here is a refactor: the 300 existing tests
-  must still pass, and no test may be deleted, skipped, or weakened to land a
-  change.
+- No behavior changes. Every feature here is a refactor: the existing tests must
+  still pass, and no test may be deleted, skipped, or weakened to land a change.
 - Do not silence a finding with `// biome-ignore` or by downgrading a rule in
   `biome.json`. Fix the code. (The one pre-existing `noExplicitAny` ignore in
   `utils/logger.ts` is out of scope — leave it.)
@@ -31,7 +31,7 @@ warnings**; the goal of the batch is zero.
 
 ## Retire console.log from the renderer
 
-`lint/suspicious/noConsoleLog`, 5 occurrences. `console.log` is also blocked by
+`lint/suspicious/noConsoleLog`, 4 occurrences. `console.log` is also blocked by
 the lefthook pre-commit grep, so these are live violations.
 
 - `src/renderer/src/utils/logger.ts:8` — `logger.info` wraps `console.log`
@@ -40,9 +40,6 @@ the lefthook pre-commit grep, so these are live violations.
 - `src/renderer/src/services/aymurai/useRunLocalServer.ts:36`, `:43`, `:45` —
   replace each `console.log` with `logger.info` (import the default export from
   `@/utils/logger`). Keep the messages byte-identical.
-- `src/renderer/src/components/validate-dataset/form-group/index.tsx:40` —
-  replace with `logger.info`, or delete the statement if it is leftover
-  debugging that logs no value a developer needs.
 - Acceptance: `pnpm lint` reports **0** `lint/suspicious/noConsoleLog`
   diagnostics, and `grep -rn "console\.log" src/` returns no matches.
 
@@ -63,7 +60,7 @@ the lefthook pre-commit grep, so these are live violations.
   fail if the values become undefined; do not replace them with optional
   chaining that makes the test vacuous.
 - Acceptance: `pnpm lint` reports **0** `lint/style/noNonNullAssertion`
-  diagnostics; `pnpm test` still reports 300 passing tests.
+  diagnostics; `pnpm test` still reports every test passing.
 
 ## Clear the performance rule violations
 
