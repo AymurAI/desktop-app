@@ -128,6 +128,23 @@ describe("RecomendacionesProcess", () => {
     expect(screen.queryByText("process.errorText")).not.toBeInTheDocument();
   });
 
+  // `useFileParse` reports "completed" a render before its effect dispatches
+  // `addParagraphs`, so for that one render `file.paragraphs` is still
+  // `undefined` even though parsing already succeeded. `undefined` must not
+  // be treated the same as a genuinely empty `[]`: it should still read as
+  // "processing", not flash the scanned-PDF error.
+  it("(§F2) a completed parse with paragraphs still undefined is treated as still processing, not an error", () => {
+    currentFile = buildFile(undefined);
+
+    render(<RecomendacionesProcess />);
+
+    expect(screen.queryByText("process.noTextError")).not.toBeInTheDocument();
+    expect(screen.getByTestId("file-processing")).toHaveAttribute(
+      "data-status",
+      "processing",
+    );
+  });
+
   it("(§F2) a genuine extraction error still shows the generic error text WITH Reintentar", () => {
     currentFile = buildFile([
       { id: "p1", value: "hola", document_id: "doc-1" },

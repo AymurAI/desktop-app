@@ -13,5 +13,6 @@ export default defineConfig({
     globals: true,
     setupFiles: ["src/renderer/src/test/setup.ts"],
     include: ["src/renderer/src/**/*.{test,spec}.{ts,tsx}"],
+    env: { TZ: "America/Argentina/Buenos_Aires" },
   },
 });

@@ -56,8 +56,14 @@ export default function RecomendacionesProcess() {
   // string[]). `useDataExtraction` then has no `documentId`, reports "idle",
   // and `combinedStatus` would sit on "processing" forever with an inert
   // Stop button. Surface it as a terminal error instead.
+  // `useFileParse` reports "completed" a render before its effect dispatches
+  // the paragraphs, so `?? 0` would flash this error on every normal
+  // document; the explicit `undefined` check distinguishes "not yet
+  // dispatched" from "genuinely empty".
   const hasNoExtractableText =
-    parseStatus === "completed" && (file?.paragraphs?.length ?? 0) === 0;
+    parseStatus === "completed" &&
+    file?.paragraphs !== undefined &&
+    file.paragraphs.length === 0;
 
   const isReady = parseStatus === "completed" && extraction.status === "ready";
   const isError = extraction.status === "error";
