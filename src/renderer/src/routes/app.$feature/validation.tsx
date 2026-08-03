@@ -13,6 +13,7 @@ import {
 } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { RecomendacionValidation } from "@/components/recomendaciones/validation";
 import VoiceValidation from "@/components/voice-to-text/validation";
 
 export const Route = createFileRoute("/app/$feature/validation")({
@@ -24,6 +25,8 @@ function RouteComponent() {
     from: "/app/$feature/validation",
   });
   if (feature === FeatureFlowEnum.VoiceToText) return <VoiceValidation />;
+  if (feature === FeatureFlowEnum.Recomendaciones)
+    return <RecomendacionValidation />;
   return <DocumentValidation />;
 }
 

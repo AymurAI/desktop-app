@@ -57,6 +57,33 @@ const recomendaciones = {
     next: "Siguiente",
   },
   result: { sectionTitle: "" },
+  validation: {
+    sectionTitle: "3. Validación de datos",
+    storedInference: "Se recuperó una extracción previa de este documento.",
+    alreadyValidated:
+      "Este documento ya fue validado. Podés modificar los datos antes de continuar.",
+    numeroRecomendacion: "Número de recomendación",
+    fechaRecomendacion: "Fecha de la recomendación",
+    destinatarioLabel: "Destinatario",
+    nombre: "Nombre",
+    cargo: "Cargo",
+    organigramCandidates: "Sugerencias del organigrama",
+    principal: "¿Es destinatario principal?",
+    principalSi: "Sí",
+    principalNo: "No",
+    sector: "Sector",
+    tema: "Tema",
+    subtema: "Subtema",
+    temaOutOfTaxonomy: "Tema fuera de la taxonomía definida",
+    subtemaOutOfTaxonomy: "Subtema fuera de la taxonomía del tema seleccionado",
+    datosPersonales: "¿El contenido incluye datos personales?",
+    datosPersonalesSi: "Sí",
+    datosPersonalesNo: "No",
+    contenidoParaPublicar: "Contenido para publicar",
+    validar: "Validar documento",
+    saveFailed:
+      "No se pudo guardar la validación. Podés continuar de todos modos.",
+  },
   finish: {
     sectionTitle: "4. Finalización",
     description:
