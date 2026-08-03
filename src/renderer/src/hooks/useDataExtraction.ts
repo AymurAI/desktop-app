@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
+import { USE_MOCK_RECOMENDACIONES } from "@/constants/config";
 import { normalizeExtraction } from "@/hooks/useRecomendacionForm";
 import { setRecomendacion } from "@/reducers/file/actions";
 import type { RecomendacionValidation } from "@/schema/recomendaciones";
@@ -18,6 +19,21 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFileDispatch } from "./useFiles";
 
 type DataExtractionStatus = "idle" | "loading" | "ready" | "error";
+
+/**
+ * TEMPORARY diagnostic instrumentation for the "stuck at 50%" hang (process
+ * screen never leaves "loading"). Silent in normal runs: only fires under the
+ * mock flag or an explicit opt-in env var, never in a real user's session.
+ * Not part of the state machine — do not gate any behavior on this.
+ */
+const DEBUG_RECOMENDACIONES =
+  USE_MOCK_RECOMENDACIONES ||
+  import.meta.env.VITE_DEBUG_RECOMENDACIONES === "true";
+
+function debugLog(...args: unknown[]) {
+  if (!DEBUG_RECOMENDACIONES) return;
+  console.info("[recomendaciones]", ...args);
+}
 
 interface DataExtractionResultShape {
   status: DataExtractionStatus;
@@ -150,6 +166,30 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
   // was in flight when Stop was pressed.
   const [manualStop, setManualStop] = useState(false);
 
+  // Diagnostic: fires on every render (see `DEBUG_RECOMENDACIONES` above).
+  debugLog("render", {
+    alreadySet,
+    documentId,
+    fileName: file.data.name,
+    paragraphsLength: file.paragraphs?.length,
+    queryStatus: query.status,
+    queryFetchStatus: query.fetchStatus,
+    queryIsSuccess: query.isSuccess,
+    queryIsError: query.isError,
+    queryData:
+      query.data === null
+        ? "null"
+        : query.data === undefined
+          ? "undefined"
+          : "object",
+    mutationStatus: mutation.status,
+    mutationIsSuccess: mutation.isSuccess,
+    mutationIsError: mutation.isError,
+    mutationData: mutation.data === undefined ? "undefined" : "object",
+    extractionStartedFor: extractionStartedForRef.current,
+    manualStop,
+  });
+
   // Cancel any in-flight extraction on unmount (or when the target document
   // changes) instead of leaving it orphaned. This also means a genuine
   // remount (e.g. navigate to preview and back) never races an old,
@@ -199,7 +239,15 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
       if (documentId === undefined) return;
       if (extractionStartedForRef.current !== documentId) {
         extractionStartedForRef.current = documentId;
+        debugLog("triggerExtraction: calling mutation.mutate()", {
+          documentId,
+        });
         mutation.mutate();
+      } else {
+        debugLog("triggerExtraction: blocked by latch", {
+          documentId,
+          latchValue: extractionStartedForRef.current,
+        });
       }
     };
 
@@ -225,6 +273,9 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
       const suggestionIds = base.values.destinatarios.map(
         (destinatario) => destinatario.id,
       );
+      debugLog("dispatch: validation branch (stored validation found)", {
+        documentId,
+      });
       dispatch(
         setRecomendacion(file.data.name, {
           documentId: documentId as string,
@@ -240,6 +291,9 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
 
     if (prediction != null) {
       const { values, candidates } = normalizeExtraction(prediction);
+      debugLog("dispatch: stored-inference branch (stored prediction found)", {
+        documentId,
+      });
       dispatch(
         setRecomendacion(file.data.name, {
           documentId: documentId as string,
@@ -268,6 +322,9 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
 
     const result = mutation.data;
     const { values, candidates } = normalizeExtraction(result);
+    debugLog("dispatch: inference branch (fresh extraction result)", {
+      documentId,
+    });
     dispatch(
       setRecomendacion(file.data.name, {
         documentId: documentId as string,

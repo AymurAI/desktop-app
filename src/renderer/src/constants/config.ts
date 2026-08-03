@@ -53,6 +53,17 @@ export const STT_MOCK_DELAY_MS = Number(
   import.meta.env.VITE_STT_MOCK_DELAY_MS ?? 4000,
 );
 
+/**
+ * Development aid for the Recomendaciones flow: when the backend LLM
+ * extraction / persistence endpoints aren't available, short-circuit them
+ * with a realistic fixture instead. Off by default — mirrors `USE_MOCK_STT`.
+ */
+export const USE_MOCK_RECOMENDACIONES =
+  import.meta.env.VITE_USE_MOCK_RECOMENDACIONES === "true";
+export const RECOMENDACIONES_MOCK_DELAY_MS = Number(
+  import.meta.env.VITE_RECOMENDACIONES_MOCK_DELAY_MS ?? 1200,
+);
+
 // Cache ON in production, OFF in dev. Override with VITE_ASR_USE_CACHE=true|false.
 export const USE_ASR_CACHE =
   import.meta.env.VITE_ASR_USE_CACHE !== undefined

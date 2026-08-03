@@ -1,6 +1,10 @@
 import { CanceledError, isAxiosError } from "axios";
 
 import {
+  RECOMENDACIONES_MOCK_DELAY_MS,
+  USE_MOCK_RECOMENDACIONES,
+} from "@/constants/config";
+import {
   type RecomendacionDocument,
   type RecomendacionValidation,
   dataExtractionResultSchema,
@@ -8,8 +12,11 @@ import {
 } from "@/schema/recomendaciones";
 import type { DataExtractionResult } from "@/types/recomendaciones";
 import api from "../api";
+import { mockDataExtractionResult } from "./recomendaciones.mock";
 
 const VALIDATION_PATH = "/llm/recomendaciones/validation/document";
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Sends the document to the backend LLM extraction endpoint.
@@ -22,6 +29,13 @@ export async function extractRecomendacion(
   paragraphs: string[],
   signal?: AbortSignal,
 ): Promise<DataExtractionResult> {
+  if (USE_MOCK_RECOMENDACIONES) {
+    await sleep(RECOMENDACIONES_MOCK_DELAY_MS);
+    // Still validated through the same schema as a real response, so a
+    // malformed fixture fails loudly instead of drifting silently.
+    return dataExtractionResultSchema.parse(mockDataExtractionResult());
+  }
+
   const response = await api.post(
     "/llm/data-extraction",
     { document: { document_id: documentId, document: paragraphs } },
@@ -53,6 +67,12 @@ export async function loadRecomendacion(
   documentId: string,
   signal?: AbortSignal,
 ): Promise<RecomendacionDocument | null> {
+  if (USE_MOCK_RECOMENDACIONES) {
+    // Simulates "nothing stored" — the state the real backend is in today,
+    // which is what drives the extraction path.
+    return null;
+  }
+
   try {
     const response = await api.get(`${VALIDATION_PATH}/${documentId}`, {
       signal,
@@ -91,5 +111,7 @@ export async function saveRecomendacion(
   validation: RecomendacionValidation,
   signal?: AbortSignal,
 ): Promise<void> {
+  if (USE_MOCK_RECOMENDACIONES) return;
+
   await api.post(`${VALIDATION_PATH}/${documentId}`, validation, { signal });
 }

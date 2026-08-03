@@ -1799,3 +1799,47 @@ git commit -m "feat(recomendaciones): export the validated base to Excel"
 7. **Entorno de tests.** **RESUELTO el 2026-08-02.** Se hizo cherry-pick de `d65434b` (PR #92, `fix/pnpm-v11-allowbuilds`) sobre la rama de trabajo y `pnpm install` desde cero. Baseline verificado en el worktree: `pnpm test` → 44 archivos / 223 tests en verde; `pnpm typecheck` → limpio. El problema de dual-React del symlink de `@aymurai/ui` ya no aplica.
 
 **Abiertas — ninguna. Todas las decisiones de §9 están tomadas.**
+
+---
+
+## 10. Modo mock (desarrollo sin backend)
+
+Mientras `POST /misc/document-extract`, `POST /llm/data-extraction` y
+`GET/POST /llm/recomendaciones/validation/document/{id}` (este último aún no
+existe en el backend, ver §4.2) no estén todos disponibles, el flujo completo
+puede ejercitarse localmente con datos de fixture:
+
+```
+VITE_USE_MOCK_RECOMENDACIONES=true pnpm dev:web
+```
+
+Con la flag activa (`USE_MOCK_RECOMENDACIONES` en `constants/config.ts`,
+default `false`):
+
+- `fileParser` (`services/aymurai/queries.ts`), usado por `useFileParse`,
+  devuelve un `DocumentExtract` de fixture en vez de llamar a
+  `/misc/document-extract`. La flag sólo afecta esta función cuando está
+  activa — Set de Datos y Anonimizador (que también usan `fileParser`) quedan
+  intactos porque la flag está apagada por defecto.
+- `extractRecomendacion` (`services/aymurai/recomendaciones.ts`) espera
+  `RECOMENDACIONES_MOCK_DELAY_MS` (default 1200ms, configurable con
+  `VITE_RECOMENDACIONES_MOCK_DELAY_MS`) y devuelve un `DataExtractionResult`
+  de fixture, validado con el mismo `dataExtractionResultSchema.parse` que
+  usaría una respuesta real.
+- `loadRecomendacion` devuelve `null` de inmediato (simula "nada persistido",
+  el estado real del backend hoy).
+- `saveRecomendacion` resuelve sin hacer ningún request.
+
+El fixture (`services/aymurai/recomendaciones.mock.ts`) modela una
+recomendación realista (número `1440/22`, dos destinatarios — uno principal
+GCBA con candidatos de organigrama, otro no principal — `tema`/`subtema`
+verificados contra `constants/recomendaciones/taxonomy.ts`) y los párrafos del
+documento mockeado contienen esos mismos valores verbatim, de modo que el
+resaltado por coincidencia exacta en la pantalla de validación tenga algo que
+encontrar.
+
+Además, `hooks/useDataExtraction.ts` emite logs `console.info` con prefijo
+`[recomendaciones]` cuando `USE_MOCK_RECOMENDACIONES` o
+`VITE_DEBUG_RECOMENDACIONES=true` están activos — instrumentación temporal
+para diagnosticar el hangeo al 50% en `process.tsx` reportado el 2026-08-03
+(ver notas de sesión). No condiciona ningún comportamiento, sólo logging.
