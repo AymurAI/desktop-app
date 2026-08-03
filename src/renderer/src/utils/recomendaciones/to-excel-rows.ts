@@ -37,6 +37,14 @@ function formatDestinatario(destinatario: DestinatarioValue) {
   return destinatario.destinatario_principal ? `${base} [principal]` : base;
 }
 
+// `datos_personales` is `boolean | null`: `null` means "not answered yet",
+// which must stay distinguishable from an explicit "No" in the exported
+// database — mapping it to "no" would silently misrepresent it.
+function formatDatosPersonales(datosPersonales: boolean | null) {
+  if (datosPersonales === null) return "";
+  return datosPersonales ? "si" : "no";
+}
+
 /**
  * Construye la fila de la hoja `recomendaciones` para un documento validado.
  * Pura y sin dependencias de reloj: `validatedAt` viaja como parámetro para
@@ -57,7 +65,7 @@ export function toExcelRow({
     FECHA_RECOMENDACION: values.fecha_recomendacion,
     TEMA: values.tema,
     SUBTEMA: values.subtema,
-    DATOS_PERSONALES: values.datos_personales ? "si" : "no",
+    DATOS_PERSONALES: formatDatosPersonales(values.datos_personales),
     CONTENIDO_PARA_PUBLICAR: values.contenido_para_publicar,
     DESTINATARIO_PRINCIPAL_NOMBRE: principal?.nombre ?? "",
     DESTINATARIO_PRINCIPAL_CARGO: principal?.cargo ?? "",

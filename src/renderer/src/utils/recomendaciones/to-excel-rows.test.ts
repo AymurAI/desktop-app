@@ -78,6 +78,20 @@ describe("toExcelRow", () => {
     );
   });
 
+  it("exports an unanswered datos_personales (null) as an empty string, distinct from an explicit No", () => {
+    const unanswered = {
+      ...input,
+      values: { ...values, datos_personales: null },
+    };
+    expect(toExcelRow(unanswered).DATOS_PERSONALES).toBe("");
+
+    const explicitNo = {
+      ...input,
+      values: { ...values, datos_personales: false },
+    };
+    expect(toExcelRow(explicitNo).DATOS_PERSONALES).toBe("no");
+  });
+
   it("emits exactly one key per declared column", () => {
     expect(Object.keys(toExcelRow(input)).sort()).toEqual(
       [...RECOMENDACIONES_COLUMNS].sort(),

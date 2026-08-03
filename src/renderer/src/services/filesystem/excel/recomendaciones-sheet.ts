@@ -10,7 +10,19 @@ export const RECOMENDACIONES_SHEET = "recomendaciones";
  */
 export function ensureRecomendacionesSheet(workbook: Workbook): Worksheet {
   const existing = workbook.getWorksheet(RECOMENDACIONES_SHEET);
-  if (existing) return existing;
+  if (existing) {
+    // exceljs column `key`s are an in-memory alias only — they are NOT
+    // serialised into the .xlsx. Every `read()` reloads from a Buffer via
+    // `workbook.xlsx.load`, so a sheet coming back from disk has columns
+    // with a header but no `key`, and `getCell(key)` / `addRow(objectByKey)`
+    // silently fail (throw on out-of-bounds, or resolve to blank cells).
+    // Re-attach the keys so key-based access keeps working after a round-trip.
+    existing.columns = RECOMENDACIONES_COLUMNS.map((label) => ({
+      header: label,
+      key: label,
+    }));
+    return existing;
+  }
 
   const worksheet = workbook.addWorksheet(RECOMENDACIONES_SHEET, {
     properties: { tabColor: { argb: "FFE0B2" } },
