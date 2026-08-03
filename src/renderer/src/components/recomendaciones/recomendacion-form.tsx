@@ -211,5 +211,3 @@ export function RecomendacionForm({
     </Stack>
   );
 }
-
-export default RecomendacionForm;

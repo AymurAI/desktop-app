@@ -1,4 +1,4 @@
-import { CanceledError } from "axios";
+import { CanceledError, isAxiosError } from "axios";
 
 import {
   type RecomendacionDocument,
@@ -62,6 +62,20 @@ export async function loadRecomendacion(
   } catch (e) {
     // Propagate request cancellations so React Query can clean up properly.
     if (e instanceof CanceledError) throw e;
+
+    // A 404 is the ordinary "nothing stored for this document" answer (and, as
+    // long as the endpoint is unimplemented, its 404/405 is the normal case),
+    // so it stays silent. Anything else means we may be discarding a STORED
+    // HUMAN VALIDATION and re-running the LLM with no trace — the flow has no
+    // audit trail and no user-visible signal, so a console warning is the
+    // minimum diagnostic. Mirrors `getStoredValidation` in ./validation.ts.
+    const status = isAxiosError(e) ? e.response?.status : undefined;
+    if (status !== 404) {
+      console.warn(
+        "[recomendaciones] Could not load the stored recomendación, falling back to a fresh extraction:",
+        e,
+      );
+    }
 
     // Any other error (endpoint unavailable, unexpected schema, etc.): fail
     // open and let the caller fall back to a fresh extraction.

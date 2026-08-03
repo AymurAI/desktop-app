@@ -9,7 +9,7 @@ import { showToast } from "@/features/showToast";
 import { useFileDispatch, useFiles } from "@/hooks";
 import { toValidationPayload } from "@/hooks/useRecomendacionForm";
 import { SectionTitle } from "@/layout/section-title";
-import { validate } from "@/reducers/file/actions";
+import { setRecomendacion, validate } from "@/reducers/file/actions";
 import { recomendacionValidationMutation } from "@/services/aymurai/queries";
 import { css } from "@/styled/css";
 import { Grid, Stack } from "@/styled/jsx";
@@ -70,6 +70,22 @@ export function RecomendacionValidation() {
       showToast(t("validation.saveFailed"), "warning");
     }
 
+    // Write the edited values BACK into `file.recomendacion`. `values` lives in
+    // this screen's local state, but `finish.tsx` reads
+    // `file.recomendacion.values` to build the Excel row — without this
+    // dispatch the only working persistence path would export the raw LLM
+    // inference and silently drop every human correction. Spreading
+    // `recomendacion` keeps `inference`, `suggestions` and `candidates`
+    // pointing at the very same objects, so the frozen-suggestions invariant
+    // holds and reopening the screen still diffs edits against the original
+    // model output.
+    dispatch(
+      setRecomendacion(file.data.name, {
+        ...recomendacion,
+        origin: "validation",
+        values,
+      }),
+    );
     dispatch(validate(file.data.name));
     navigate({ to: "/app/$feature/finish", params: { feature } });
   };
@@ -156,5 +172,3 @@ export function RecomendacionValidation() {
     </RequireFile>
   );
 }
-
-export default RecomendacionValidation;

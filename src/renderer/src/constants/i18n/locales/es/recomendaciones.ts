@@ -53,6 +53,8 @@ const recomendaciones = {
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
     finishText: "Se finalizó el análisis de tus documentos.",
     errorText: "Ocurrió un error al extraer los datos del documento.",
+    noTextError:
+      "No se pudo extraer texto del documento. Puede tratarse de un PDF escaneado o de imágenes. Volvé atrás y cargá un archivo con texto seleccionable.",
     retry: "Reintentar",
     next: "Siguiente",
   },
@@ -72,6 +74,7 @@ const recomendaciones = {
     principalSi: "Sí",
     principalNo: "No",
     sector: "Sector",
+    sectorOutOfList: "Sector fuera de la lista definida",
     tema: "Tema",
     subtema: "Subtema",
     temaOutOfTaxonomy: "Tema fuera de la taxonomía definida",

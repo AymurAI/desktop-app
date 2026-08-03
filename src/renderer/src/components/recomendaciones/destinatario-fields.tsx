@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 
 import { RadioGroup } from "@/components/ui/radio-group";
 import { SECTOR_OPTIONS } from "@/constants/recomendaciones/sectores";
-import { Stack } from "@/styled/jsx";
+import { Stack, styled } from "@/styled/jsx";
 import type {
   DestinatarioValue,
   OrganigramCandidate,
@@ -38,6 +38,18 @@ export function DestinatarioFields({
   onFocusField,
 }: DestinatarioFieldsProps) {
   const { t } = useTranslation("recomendaciones");
+
+  // §3.5, mirroring the `tema`/`subtema` treatment in `recomendacion-form.tsx`:
+  // a `sector` the model returned that isn't in `SECTOR_OPTIONS` is never
+  // silently discarded (it would render as an empty Select while still being
+  // exported to the .xlsx) — it's kept, injected as an extra option, and
+  // flagged with an error message.
+  const sectorInList =
+    value.sector === "" ||
+    SECTOR_OPTIONS.some((option) => option.id === value.sector);
+  const sectorOptions = sectorInList
+    ? SECTOR_OPTIONS
+    : [...SECTOR_OPTIONS, { id: value.sector, text: value.sector }];
 
   return (
     <Stack gap="4">
@@ -95,15 +107,24 @@ export function DestinatarioFields({
         </Radio>
       </RadioGroup>
 
-      <Select
-        label={t("validation.sector")}
-        options={SECTOR_OPTIONS}
-        value={value.sector || undefined}
-        suggestion={suggestion?.sector ? { id: suggestion.sector } : undefined}
-        onChange={(option) => onChange("sector", option.id)}
-      />
+      <Stack gap="1">
+        <Select
+          label={t("validation.sector")}
+          options={sectorOptions}
+          value={value.sector || undefined}
+          suggestion={
+            suggestion?.sector ? { id: suggestion.sector } : undefined
+          }
+          onChange={(option) => onChange("sector", option.id)}
+        />
+        {/* `Select` (@aymurai/ui) has no `error` prop, unlike `TextField` —
+            render the out-of-list notice as its own text. */}
+        {!sectorInList && (
+          <styled.p textStyle="label.sm.default" color="system.error">
+            {t("validation.sectorOutOfList")}
+          </styled.p>
+        )}
+      </Stack>
     </Stack>
   );
 }
-
-export default DestinatarioFields;

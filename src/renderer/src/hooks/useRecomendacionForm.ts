@@ -77,7 +77,9 @@ export function toValidationPayload(
     })),
     tema: values.tema,
     subtema: values.subtema,
-    datos_personales: values.datos_personales ?? false,
+    // `null` ("sin responder") travels through as-is: coercing it to `false`
+    // would persist an explicit "No" the user never gave.
+    datos_personales: values.datos_personales,
     contenido_para_publicar: values.contenido_para_publicar,
   };
 }

@@ -51,6 +51,14 @@ export default function RecomendacionesProcess() {
     ? (parseStatuses[file.data.name]?.status ?? "processing")
     : "processing";
 
+  // A parse can succeed and still yield zero paragraphs (an image-only /
+  // scanned PDF: `documentExtractSchema.document` is an unconstrained
+  // string[]). `useDataExtraction` then has no `documentId`, reports "idle",
+  // and `combinedStatus` would sit on "processing" forever with an inert
+  // Stop button. Surface it as a terminal error instead.
+  const hasNoExtractableText =
+    parseStatus === "completed" && (file?.paragraphs?.length ?? 0) === 0;
+
   const isReady = parseStatus === "completed" && extraction.status === "ready";
   const isError = extraction.status === "error";
 
@@ -59,11 +67,13 @@ export default function RecomendacionesProcess() {
   const combinedStatus: PredictStatus =
     parseStatus !== "completed"
       ? parseStatus
-      : extraction.status === "error"
+      : hasNoExtractableText
         ? "error"
-        : extraction.status === "ready"
-          ? "completed"
-          : "processing";
+        : extraction.status === "error"
+          ? "error"
+          : extraction.status === "ready"
+            ? "completed"
+            : "processing";
 
   // No per-paragraph ratio to weight here: it's a single LLM call, so we
   // report an indeterminate 0.5 while it runs and 1 once it's done.
@@ -123,16 +133,25 @@ export default function RecomendacionesProcess() {
                   onAbort={handleAbort}
                 />
               )}
-              {isError && (
+              {(isError || hasNoExtractableText) && (
                 <Stack gap="3" direction="column" alignItems="flex-start">
                   <Callout
-                    message={t("process.errorText")}
+                    message={t(
+                      hasNoExtractableText
+                        ? "process.noTextError"
+                        : "process.errorText",
+                    )}
                     variant="error"
                     noBorder
                   />
-                  <Button variant="secondary" onClick={extraction.retry}>
-                    {t("process.retry")}
-                  </Button>
+                  {/* `extraction.retry()` is a no-op without a `documentId`,
+                      which is exactly the zero-paragraph case — rendering
+                      Reintentar there would be a dead control. */}
+                  {isError && !hasNoExtractableText && (
+                    <Button variant="secondary" onClick={extraction.retry}>
+                      {t("process.retry")}
+                    </Button>
+                  )}
                 </Stack>
               )}
             </Stack>

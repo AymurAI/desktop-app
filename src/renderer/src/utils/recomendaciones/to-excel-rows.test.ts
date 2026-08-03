@@ -1,6 +1,10 @@
 import type { RecomendacionValues } from "@/types/recomendaciones";
 import { describe, expect, it } from "vitest";
-import { RECOMENDACIONES_COLUMNS, toExcelRow } from "./to-excel-rows";
+import {
+  RECOMENDACIONES_COLUMNS,
+  localIsoDate,
+  toExcelRow,
+} from "./to-excel-rows";
 
 const values: RecomendacionValues = {
   numero_recomendacion: "1440/22",
@@ -96,5 +100,27 @@ describe("toExcelRow", () => {
     expect(Object.keys(toExcelRow(input)).sort()).toEqual(
       [...RECOMENDACIONES_COLUMNS].sort(),
     );
+  });
+});
+
+// §M5: `FECHA_VALIDACION` is specified as a LOCAL date. The previous
+// `new Date().toISOString().slice(0, 10)` produced a UTC date, so in UTC-3
+// anything validated after 21:00 was recorded with TOMORROW's date.
+describe("localIsoDate", () => {
+  it("formats as YYYY-MM-DD, zero-padded", () => {
+    expect(localIsoDate(new Date(2026, 0, 5, 12, 0, 0))).toBe("2026-01-05");
+    expect(localIsoDate(new Date(2026, 11, 31, 12, 0, 0))).toBe("2026-12-31");
+    expect(localIsoDate()).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("uses the LOCAL calendar day, not the UTC one, late in the evening", () => {
+    // 23:30 local: in any negative UTC offset `toISOString()` has already
+    // rolled over to the next day. The local formatter must not.
+    const lateEvening = new Date(2026, 6, 31, 23, 30, 0);
+    expect(localIsoDate(lateEvening)).toBe("2026-07-31");
+    if (lateEvening.getTimezoneOffset() > 0) {
+      // Negative UTC offsets (e.g. Buenos Aires, UTC-3) — the actual bug.
+      expect(lateEvening.toISOString().slice(0, 10)).not.toBe("2026-07-31");
+    }
   });
 });

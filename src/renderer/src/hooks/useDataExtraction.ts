@@ -17,7 +17,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useFileDispatch } from "./useFiles";
 
-export type DataExtractionStatus = "idle" | "loading" | "ready" | "error";
+type DataExtractionStatus = "idle" | "loading" | "ready" | "error";
 
 interface DataExtractionResultShape {
   status: DataExtractionStatus;
@@ -170,6 +170,12 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
   // set for the request it's supposed to guard, silently no-op, and let a
   // duplicate request through. If that ever needs revisiting, look here
   // first.
+  //
+  // The suppression below must stay a SINGLE-LINE comment immediately above
+  // `useEffect(`: biome anchors the diagnostic at that token, and a
+  // continuation line (`// ...`) between them is a separate comment that
+  // breaks the adjacency, making the suppression inert.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `documentId` is read only by the CLEANUP, which biome does not model — it is what makes the abort fire when the target document changes (see the note above).
   useEffect(() => {
     return () => {
       extractionControllerRef.current?.abort();
@@ -245,8 +251,15 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
         }),
       );
     }
-    // biome-ignore lint/correctness/useExhaustiveDependencies: file/mutation/dispatch are stable enough for this effect's purpose; re-running is guarded by `alreadySet`
-  }, [alreadySet, query.isSuccess, query.data, documentId]);
+  }, [
+    alreadySet,
+    query.isSuccess,
+    query.data,
+    documentId,
+    dispatch,
+    file.data.name,
+    mutation.mutate,
+  ]);
 
   // Handles the mutation's resolution (the "call the LLM" branch).
   useEffect(() => {
@@ -265,8 +278,14 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
         candidates,
       }),
     );
-    // biome-ignore lint/correctness/useExhaustiveDependencies: file/dispatch are stable enough for this effect's purpose; re-running is guarded by `alreadySet`
-  }, [alreadySet, mutation.isSuccess, mutation.data, documentId]);
+  }, [
+    alreadySet,
+    mutation.isSuccess,
+    mutation.data,
+    documentId,
+    dispatch,
+    file.data.name,
+  ]);
 
   // `documentId === undefined` MUST win over `manualStop`: while the parse
   // stage is still running, `file.paragraphs` (and so `documentId`) isn't

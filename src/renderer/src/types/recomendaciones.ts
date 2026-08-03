@@ -10,7 +10,7 @@ export interface OrganigramCandidate {
   score: number;
 }
 
-export interface DestinatarioExtraction {
+interface DestinatarioExtraction {
   nombre: string | null;
   cargo: string | null;
   destinatario_principal: boolean;
@@ -26,7 +26,8 @@ export interface DataExtractionResult {
   destinatarios: DestinatarioExtraction[];
   tema: string | null;
   subtema: string | null;
-  datos_personales: boolean;
+  /** `null` = sin responder; se conserva distinto de un "No" explícito. */
+  datos_personales: boolean | null;
   contenido_para_publicar: string;
 }
 
@@ -55,12 +56,9 @@ export interface RecomendacionValues {
 /** Sugerencias = inferencia original congelada, en el mismo shape que los valores.
  *  Se conserva aparte para (a) alimentar `suggestion` de TextField/Select y
  *  (b) poder diffear inferencia vs validación al persistir. */
-export type RecomendacionSuggestions = RecomendacionValues;
+type RecomendacionSuggestions = RecomendacionValues;
 
-export type RecomendacionOrigin =
-  | "inference"
-  | "stored-inference"
-  | "validation";
+type RecomendacionOrigin = "inference" | "stored-inference" | "validation";
 
 export interface RecomendacionState {
   /** UUID5 del contenido del archivo, devuelto por /misc/document-extract. */

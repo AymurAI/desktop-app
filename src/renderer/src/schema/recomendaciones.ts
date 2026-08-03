@@ -1,18 +1,18 @@
 import z from "zod";
 
-export const organigramCandidateSchema = z.object({
+const organigramCandidateSchema = z.object({
   nombre: z.string(),
   cargo: z.string(),
-  sigla: z.string(),
+  sigla: z.string().default(""),
   depende_de_cargo: z.string().nullable().default(null),
   ruta_cargos: z.string(),
   score: z.number(),
 });
 
-export const destinatarioExtractionSchema = z.object({
+const destinatarioExtractionSchema = z.object({
   nombre: z.string().nullable().default(null),
   cargo: z.string().nullable().default(null),
-  destinatario_principal: z.boolean(),
+  destinatario_principal: z.boolean().default(false),
   sector: z.string().nullable().default(null),
   candidatos_nombre: z.array(organigramCandidateSchema).default([]),
   candidatos_cargo: z.array(organigramCandidateSchema).default([]),
@@ -24,8 +24,10 @@ export const dataExtractionResultSchema = z.object({
   destinatarios: z.array(destinatarioExtractionSchema).default([]),
   tema: z.string().nullable().default(null),
   subtema: z.string().nullable().default(null),
-  datos_personales: z.boolean(),
-  contenido_para_publicar: z.string(),
+  // `null` means "unanswered" and must stay distinguishable from an explicit
+  // "No" all the way to the exported .xlsx (see `formatDatosPersonales`).
+  datos_personales: z.boolean().nullable().default(null),
+  contenido_para_publicar: z.string().default(""),
 });
 
 /** Lo que se persiste como validación manual: el resultado sin los candidatos. */

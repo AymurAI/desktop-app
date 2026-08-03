@@ -13,7 +13,7 @@ export const RECOMENDACIONES_COLUMNS = [
   "FECHA_RECOMENDACION",
   "TEMA",
   "SUBTEMA",
-  "DATOS_PERSONALES", // "si" | "no"
+  "DATOS_PERSONALES", // "si" | "no" | "" (sin responder)
   "CONTENIDO_PARA_PUBLICAR",
   "DESTINATARIO_PRINCIPAL_NOMBRE", // primer principal
   "DESTINATARIO_PRINCIPAL_CARGO",
@@ -24,6 +24,18 @@ export const RECOMENDACIONES_COLUMNS = [
   "DOCUMENT_ID", // UUID5, clave de deduplicación
   "FECHA_VALIDACION", // ISO date local
 ] as const;
+
+/**
+ * `YYYY-MM-DD` en la zona horaria LOCAL. `toISOString().slice(0, 10)` da UTC:
+ * en UTC-3 todo lo validado después de las 21:00 quedaría fechado al día
+ * siguiente. `FECHA_VALIDACION` se especifica como fecha local.
+ */
+export function localIsoDate(date: Date = new Date()): string {
+  const year = `${date.getFullYear()}`.padStart(4, "0");
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 interface ToExcelRowInput {
   values: RecomendacionValues;

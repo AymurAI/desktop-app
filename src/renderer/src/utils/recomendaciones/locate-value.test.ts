@@ -176,6 +176,31 @@ describe("locateValue", () => {
     expect(matches).toHaveLength(3);
   });
 
+  // §F1: the coarse gate used to run at the real `threshold` on an UNREFINED
+  // `step`-sampled window. A window sitting ~step/2 off the true boundary
+  // loses ~2/len of similarity per misaligned character, so genuine
+  // near-matches (~40% of realistic nombre/cargo values) were discarded
+  // BEFORE edge refinement could recover them. The gate is now loose
+  // (threshold - 0.1) with the real threshold applied to the REFINED score.
+  it("(§F1) locates a 75-char cargo with one substituted character, embedded at padding offset 4", () => {
+    const cargo =
+      "Director General de Fiscalizacion y Control de Obras y Catastro Urbanistico";
+    expect(cargo).toHaveLength(75);
+    // One substitution in the middle: best achievable similarity is 74/75.
+    const substituted = `${cargo.slice(0, 40)}X${cargo.slice(41)}`;
+    // Padding offset 4 puts the true start out of phase with the sampling
+    // stride (step = floor(75 / 8) = 9), which is exactly the case the old
+    // gate dropped.
+    const text = `xxxx${substituted} y otras dependencias`;
+
+    const matches = locateValue(cargo, [p("d:0", text)]);
+
+    expect(matches).toHaveLength(1);
+    expect(matches[0].exact).toBe(false);
+    expect(matches[0].score).toBeGreaterThanOrEqual(0.9);
+    expect(text.slice(matches[0].start, matches[0].end)).toBe(substituted);
+  });
+
   it("returns more matches when maxMatches is raised", () => {
     const five = [p("d:0", "x x x x x")];
     const matches = locateValue("x", five, { minLength: 1, maxMatches: 5 });

@@ -78,3 +78,38 @@ describe("recomendacionValidationSchema", () => {
     expect(parsed.destinatarios[0]).not.toHaveProperty("candidatos_cargo");
   });
 });
+
+// §I2: these four fields were the only ones without a `.default()` in an
+// otherwise fail-soft flow, so a backend omitting any single one made the
+// WHOLE extraction throw — and `sigla` is never read by the frontend at all.
+describe("dataExtractionResultSchema fail-soft defaults (§I2)", () => {
+  it("defaults datos_personales to null and contenido_para_publicar to an empty string", () => {
+    const { datos_personales, contenido_para_publicar, ...rest } = FIXTURE;
+    const parsed = dataExtractionResultSchema.parse(rest);
+    expect(parsed.datos_personales).toBeNull();
+    expect(parsed.contenido_para_publicar).toBe("");
+  });
+
+  it("defaults a destinatario's destinatario_principal to false and a candidate's sigla to an empty string", () => {
+    const parsed = dataExtractionResultSchema.parse({
+      ...FIXTURE,
+      destinatarios: [
+        {
+          nombre: "Sin principal",
+          cargo: null,
+          sector: null,
+          candidatos_nombre: [
+            {
+              nombre: "X",
+              cargo: "Y",
+              ruta_cargos: "Z",
+              score: 0.5,
+            },
+          ],
+        },
+      ],
+    });
+    expect(parsed.destinatarios[0].destinatario_principal).toBe(false);
+    expect(parsed.destinatarios[0].candidatos_nombre[0].sigla).toBe("");
+  });
+});

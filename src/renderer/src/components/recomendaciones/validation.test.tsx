@@ -491,6 +491,36 @@ describe("RecomendacionValidation", () => {
     ).toBeInTheDocument();
   });
 
+  // §I3: `sector` lacked the keep-and-flag mitigation `tema`/`subtema` got, so
+  // a model value outside SECTOR_OPTIONS rendered as an EMPTY Select while
+  // `values.sector` silently retained it and shipped it to the save payload
+  // and the Excel columns — the user exported a value they never saw.
+  it("(§I3) keeps an out-of-list sector, injects it as an extra option, and shows the error", () => {
+    const values = buildValues();
+    values.destinatarios[0].sector = "SECTOR INEXISTENTE";
+    // `suggestions` keeps the default fixture (GCBA) so the injected option's
+    // text can't collide with a suggestion mark's text.
+    currentFile = buildFile(buildState({ values }));
+    renderScreen();
+
+    const sectorSelect = screen.getByLabelText(
+      "validation.sector",
+    ) as HTMLSelectElement;
+    expect(sectorSelect).toHaveValue("SECTOR INEXISTENTE");
+    expect(
+      Array.from(sectorSelect.options).map((option) => option.value),
+    ).toContain("SECTOR INEXISTENTE");
+    expect(screen.getByText("validation.sectorOutOfList")).toBeInTheDocument();
+  });
+
+  it("(§I3) renders no out-of-list sector error when the sector is in the list", () => {
+    renderScreen(); // default fixture: sector GCBA
+
+    expect(
+      screen.queryByText("validation.sectorOutOfList"),
+    ).not.toBeInTheDocument();
+  });
+
   it("(§6) renders no out-of-taxonomy error when tema and subtema are both in the taxonomy", () => {
     renderScreen(); // default fixture: tema SALUD / subtema SAME, both valid
 

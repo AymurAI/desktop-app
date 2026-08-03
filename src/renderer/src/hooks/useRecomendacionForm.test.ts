@@ -144,4 +144,23 @@ describe("toValidationPayload", () => {
       sector: "GCBA",
     });
   });
+
+  // Controller ruling / §M8: `datos_personales` is `boolean | null`, where
+  // `null` means "unanswered". Coercing it to `false` on the way out would
+  // persist an explicit "No" the user never gave.
+  it("passes an unanswered datos_personales through as null instead of coercing it to false", () => {
+    const { values } = normalizeExtraction(RESULT);
+    expect(
+      toValidationPayload({ ...values, datos_personales: null })
+        .datos_personales,
+    ).toBeNull();
+    expect(
+      toValidationPayload({ ...values, datos_personales: false })
+        .datos_personales,
+    ).toBe(false);
+    expect(
+      toValidationPayload({ ...values, datos_personales: true })
+        .datos_personales,
+    ).toBe(true);
+  });
 });

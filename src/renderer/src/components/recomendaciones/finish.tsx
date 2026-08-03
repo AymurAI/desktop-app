@@ -9,6 +9,7 @@ import filesystem from "@/services/filesystem";
 import { HStack } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
 import { submitRecomendacion } from "@/utils/recomendaciones/submit-recomendacion";
+import { localIsoDate } from "@/utils/recomendaciones/to-excel-rows";
 import { Button } from "@aymurai/ui";
 
 interface RecomendacionFinishProps {
@@ -75,7 +76,7 @@ export default function RecomendacionFinish({
             values: file.recomendacion.values,
             documentId: file.recomendacion.documentId,
             fileName: file.data.name,
-            validatedAt: new Date().toISOString().slice(0, 10),
+            validatedAt: localIsoDate(),
           });
         } catch {
           if (activeRef.current)

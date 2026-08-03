@@ -57,5 +57,3 @@ export function RadioGroup({
     </fieldset>
   );
 }
-
-export default RadioGroup;
