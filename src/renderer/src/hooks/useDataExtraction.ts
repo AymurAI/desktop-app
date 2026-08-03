@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { normalizeExtraction } from "@/hooks/useRecomendacionForm";
 import { setRecomendacion } from "@/reducers/file/actions";
@@ -136,10 +136,40 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
   // StrictMode hazard.
   const extractionStartedForRef = useRef<string | null>(null);
 
+  // True once the user has explicitly clicked Stop, so `status` can report an
+  // actionable error/stopped state instead of hanging. This matters
+  // specifically for aborting the GET: `queryClient.cancelQueries` does NOT
+  // put a query without prior data into an error state — query-core's
+  // `fetch()` reverts to the pre-fetch state and re-throws without
+  // dispatching `error` (see `Query#onCancel`/`Query#fetch` in
+  // `@tanstack/query-core`), so `query.isError` stays `false` and, left
+  // unaddressed, `status` would compute to `"loading"` forever. Aborting the
+  // extraction mutation instead does naturally produce `mutation.isError`
+  // (axios rejects with `CanceledError`), but we still flip this flag for
+  // both cases so `status`/`retry` behave uniformly regardless of which side
+  // was in flight when Stop was pressed.
+  const [manualStop, setManualStop] = useState(false);
+
   // Cancel any in-flight extraction on unmount (or when the target document
   // changes) instead of leaving it orphaned. This also means a genuine
   // remount (e.g. navigate to preview and back) never races an old,
   // still-running request: the old one is aborted first.
+  //
+  // Ordering note (fragile, load-bearing): this cleanup effect is declared
+  // BEFORE the trigger effect below, but that alone doesn't protect it from
+  // aborting a request the trigger effect just started in the same
+  // StrictMode double-invoke pass. What actually protects it is that
+  // `mutation.mutate()` (called synchronously from the trigger effect) does
+  // not synchronously invoke `mutationFn` — `Mutation#execute` in
+  // `@tanstack/query-core` `await`s `onMutate` before calling
+  // `retryer.start()`, so `mutationFn` (and this hook's
+  // `extractionControllerRef` assignment) only runs a microtask later, after
+  // React has already finished running both effects' synchronous bodies. If
+  // a future query-core version added an `onMutate`-free synchronous fast
+  // path, this effect's cleanup could run BEFORE `extractionControllerRef` is
+  // set for the request it's supposed to guard, silently no-op, and let a
+  // duplicate request through. If that ever needs revisiting, look here
+  // first.
   useEffect(() => {
     return () => {
       extractionControllerRef.current?.abort();
@@ -235,7 +265,7 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
 
   const status: DataExtractionStatus = alreadySet
     ? "ready"
-    : mutation.isError || query.isError
+    : manualStop || mutation.isError || query.isError
       ? "error"
       : documentId === undefined
         ? "idle"
@@ -244,9 +274,14 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
   const error = mutation.error ?? (query.error as Error | null) ?? null;
 
   const retry = () => {
-    // The GET failed (e.g. it was aborted): re-run it, don't touch the
-    // mutation. The effect above will react to its resolution as usual.
-    if (query.isError) {
+    setManualStop(false);
+    // Whichever side hasn't succeeded yet is the one that needs re-running:
+    // the GET (it failed, or it was the one Stop aborted, per the
+    // `cancelQueries` note above) or the extraction mutation. This also
+    // covers the case where Stop landed mid-GET: `query.isError` is false
+    // there (see `manualStop`'s doc comment), but `query.isSuccess` is false
+    // too, so `retry` still refetches the right thing.
+    if (!query.isSuccess) {
       query.refetch();
       return;
     }
@@ -254,6 +289,7 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
   };
 
   const abort = () => {
+    setManualStop(true);
     extractionControllerRef.current?.abort();
     queryClient.cancelQueries({ queryKey });
   };

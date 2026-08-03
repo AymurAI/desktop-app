@@ -85,7 +85,14 @@ export default function RecomendacionesProcess() {
 
   const handleAbort = () => {
     if (!file) return;
-    parseStatuses[file.data.name]?.abort();
+    // `useFileParse`'s abort marks the file as permanently "stopped" (it
+    // disables the query for good, see `useFileParse.ts`), so only call it
+    // while the parse itself is still running. Once parsing has completed,
+    // stopping only concerns the extraction step — aborting the (already
+    // finished) parse too would leave `Siguiente` permanently disabled even
+    // after a successful "Reintentar", since `isReady` requires
+    // `parseStatus === "completed"`.
+    if (parseStatus !== "completed") parseStatuses[file.data.name]?.abort();
     extraction.abort();
   };
 
