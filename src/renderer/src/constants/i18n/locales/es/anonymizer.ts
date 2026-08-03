@@ -49,6 +49,12 @@ const anonymizer = {
     applyLabels: "Aplicar etiquetas",
     labelPlaceholder: "Etiqueta",
     manageLabels: "Gestor de etiquetas",
+    searchPlaceholder: "Buscar",
+    clearSearch: "Limpiar búsqueda",
+    previousMatch: "Coincidencia anterior",
+    nextMatch: "Coincidencia siguiente",
+    noMatches: "0 ocurrencias",
+    matchCount: "{{current}} de {{total}}",
   },
   process: {
     sectionTitle: "2. Procesamiento del archivo",

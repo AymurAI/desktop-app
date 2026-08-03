@@ -48,8 +48,9 @@ test("Voz a Texto: toolbar/header controls are hit-testable with the side panel 
 }) => {
   const component = await mount(<TranscriptionEditorFixture />);
 
-  // `t("editor.searchAria")` from the locale - distinct from Anonimizador's
-  // hard-coded string, same visible "Buscar" placeholder.
+  // `t("editor.searchAria")` from the locale - same i18next-sourced pattern
+  // Anonimizador's search input now uses too (`searchBar.searchAriaLabel`,
+  // G3/G10), just a different namespace; same visible "Buscar" placeholder.
   const search = component.getByRole("searchbox", {
     name: "Buscar en la transcripción",
   });

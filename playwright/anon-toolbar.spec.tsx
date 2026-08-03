@@ -23,8 +23,12 @@ const SHOTS_DIR = resolve(__dirname, "../tasks/responsive/shots");
  * document pane, so its available width - and therefore whether it wraps -
  * differs between them; the divider bug and the reachability check below are
  * both about layout, not about `isAnnotable` (which stays true regardless of
- * panel state, so the label group itself is unaffected by opening/closing
- * the panel).
+ * panel state, so the label group always RENDERS either way). Its WIDTH does
+ * change with panel state though (302.8px open vs 513.1px closed), because
+ * the "Gestor de etiquetas" button (`managerButton` in SearchBar/index.tsx)
+ * only renders while the panel is closed - that width swing is exactly why
+ * G10 (tasks/responsive-fixes/issues/G10-toolbar-wrap-1024.md) has to check
+ * both panel states rather than assuming one implies the other.
  */
 const PANEL_STATES = ["open", "closed"] as const;
 
@@ -133,28 +137,62 @@ for (const panelState of PANEL_STATES) {
       const toolbarStyle = getComputedStyle(toolbarRoot);
       const labelRect = labelGroup.getBoundingClientRect();
       const searchRect = searchItem.getBoundingClientRect();
+      const labelGroupStyle = getComputedStyle(labelGroup);
 
       return {
+        // Same-row detection by VERTICAL OVERLAP, not by comparing `top`s:
+        // this context's `Toolbar` root uses `alignItems: "flex-end"`
+        // (dist/index.js: `alignItems: b ? "center" : "flex-end"`, `b` being
+        // the "search-switch" context), so on a shared row the two items'
+        // BOTTOMS line up while their TOPs can differ (the search input is
+        // 48px tall, the label group 45.2px - a 2.8px top offset that a
+        // `top`-equality check would misreport as "not the same row" in
+        // every healthy panel-open case).
         gap:
           searchRect.top < labelRect.bottom && labelRect.top < searchRect.bottom
             ? labelRect.left - searchRect.right
             : null,
         labelBottom: labelRect.bottom,
         searchBottom: searchRect.bottom,
+        labelLeft: labelRect.left,
+        searchLeft: searchRect.left,
         labelRight: labelRect.right,
         contentRight:
           toolbarRect.right - Number.parseFloat(toolbarStyle.paddingRight),
+        marginLeft: Number.parseFloat(labelGroupStyle.marginLeft),
+        justifyContent: labelGroupStyle.justifyContent,
+        // Controls only - the select's trigger and the manager button - not
+        // the static "Aplicar etiquetas" label text, which isn't a control.
+        groupControlHeights: Array.from(
+          labelGroup.querySelectorAll('[role="combobox"], button'),
+        ).map((control) => control.getBoundingClientRect().height),
       };
     });
     expect(toolbarGeometry).not.toBeNull();
     if (toolbarGeometry) {
-      expect
-        .soft(
-          Math.abs(toolbarGeometry.labelRight - toolbarGeometry.contentRight),
-        )
-        .toBeLessThanOrEqual(1);
+      const sameRow = toolbarGeometry.gap !== null;
+      const sameLeft =
+        Math.abs(toolbarGeometry.labelLeft - toolbarGeometry.searchLeft) <= 1;
 
-      if (toolbarGeometry.gap !== null) {
+      // Criterion 1 (G10, reformulated from the contract's `top`-equality
+      // version - see the comment above on why `top` isn't compared): the
+      // group must either share a row with the search bar (`sameRow`, by
+      // vertical overlap) or, once it wraps to its own row, start at the
+      // search bar's left edge (`sameLeft`) instead of floating unaligned.
+      // What's forbidden is neither of those being true at once.
+      expect(sameRow || sameLeft).toBe(true);
+
+      // G10: this only makes sense as "the group hugs the toolbar's right
+      // edge" when it's sharing a row with the search bar - once it wraps
+      // onto its own row (the two cases this ticket fixes), the group starts
+      // at the left instead, so this assertion is scoped to `sameRow`.
+      if (sameRow) {
+        expect
+          .soft(
+            Math.abs(toolbarGeometry.labelRight - toolbarGeometry.contentRight),
+          )
+          .toBeLessThanOrEqual(1);
+
         expect.soft(Math.abs(toolbarGeometry.gap - 24)).toBeLessThanOrEqual(1);
         expect
           .soft(
@@ -163,6 +201,53 @@ for (const panelState of PANEL_STATES) {
             ),
           )
           .toBeLessThanOrEqual(1);
+      }
+
+      // G10: two SEPARATE computed-style assertions on the group, not one -
+      // `marginLeft` is the property that actually fixes the bug, and
+      // `justifyContent` is a defensive check for the internal-wrap case
+      // (see SearchBar/index.tsx's `labelControls` comment); keeping them
+      // apart means a future regression in either one names itself. Critic
+      // (G10 repair): `marginLeft === 0` is only load-bearing when the group
+      // WRAPS to its own row - on a shared row it's satisfied trivially even
+      // with `ml: "auto"` restored, because the search wrapper's `flex: "1"`
+      // already absorbs all the free space before the auto margin gets a
+      // chance to do anything (same mechanism SearchBar/index.tsx's comment
+      // documents: "computed margin-left measured at 0px in every same-row
+      // case"). `justifyContent === "flex-start"` is the assertion with real
+      // teeth at every width - it isn't neutralised by a shared row the same
+      // way, and it's what actually catches `ml: "auto"` coming back per the
+      // mutation test in SearchBar/index.test.tsx.
+      expect(toolbarGeometry.marginLeft).toBe(0);
+      expect(toolbarGeometry.justifyContent).toBe("flex-start");
+
+      // Critic (G10 repair): a non-empty precondition before criterion 2's
+      // loop - an empty `groupControlHeights` array makes the loop body never
+      // run and the criterion passes green without checking anything. Not
+      // hypothetical: the select trigger's `role="combobox"` is a HAND-WRITTEN
+      // attribute (anonymizer-label-select.tsx, `RadixSelect.Trigger asChild`
+      // wraps a plain `div`, not something Radix supplies), so losing it (or
+      // Radix rendering its own trigger) silently empties this selector. With
+      // the panel OPEN the "Gestor de etiquetas" button isn't rendered
+      // (`{!isLabelManagerOpen && ...}`, SearchBar/index.tsx), so the select
+      // trigger is the ONLY match and losing its role would zero the array
+      // outright; with the panel CLOSED the button still matches, so the loop
+      // would keep running while silently dropping coverage of the control
+      // criterion 2 exists to protect (the ticket's ruled-out option (a) risk
+      // is the select shrinking below its `minW: [150px]` floor). Assert the
+      // exact count, not just non-empty, since it's known per panel state:
+      // the select trigger alone when open, plus the manager button when
+      // closed.
+      expect(toolbarGeometry.groupControlHeights).toHaveLength(
+        panelState === "open" ? 1 : 2,
+      );
+
+      // Criterion 2 (G10, from the contract): no control in the group renders
+      // below 24px tall, as a guard against ever shrinking the select past
+      // its `minW: [150px]` floor to close the 768-closed gap (option (a),
+      // ruled out by this ticket's arithmetic).
+      for (const height of toolbarGeometry.groupControlHeights) {
+        expect(height).toBeGreaterThanOrEqual(24);
       }
     }
 

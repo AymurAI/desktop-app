@@ -46,18 +46,27 @@ describe("document SearchBar", () => {
     fireEvent.change(search, { target: { value: "dato" } });
 
     expect(onSearchChange).toHaveBeenLastCalledWith("dato");
-    expect(screen.getByText("2 de 4")).toBeInTheDocument();
+    // The mocked `t()` (see the module mock above) doesn't interpolate -
+    // it returns the raw key regardless of the options object, same as
+    // every other mocked call in this file.
+    expect(
+      screen.getByText("anonymizer:searchBar.matchCount"),
+    ).toBeInTheDocument();
 
     fireEvent.click(
-      screen.getByRole("button", { name: "Coincidencia anterior" }),
+      screen.getByRole("button", {
+        name: "anonymizer:searchBar.previousMatch",
+      }),
     );
     fireEvent.click(
-      screen.getByRole("button", { name: "Coincidencia siguiente" }),
+      screen.getByRole("button", { name: "anonymizer:searchBar.nextMatch" }),
     );
     expect(onPrevious).toHaveBeenCalledOnce();
     expect(onNext).toHaveBeenCalledOnce();
 
-    fireEvent.click(screen.getByRole("button", { name: "Limpiar búsqueda" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "anonymizer:searchBar.clearSearch" }),
+    );
     expect(onSearchChange).toHaveBeenLastCalledWith("");
     expect(onFocusDocument).toHaveBeenCalledOnce();
 
@@ -113,6 +122,72 @@ describe("document SearchBar", () => {
         name: "anonymizer:searchBar.manageLabels",
       }),
     ).not.toBeInTheDocument();
+  });
+
+  // G10 (tasks/responsive-fixes/issues/G10-toolbar-wrap-1024.md) is measured
+  // with `getBoundingClientRect()` in playwright/anon-toolbar.spec.tsx, and
+  // only `pnpm test:responsive` runs that file: neither declared gate
+  // (`pnpm validate`, `pnpm test`) executes it, and no CI config or lefthook
+  // hook does either, so nothing stops the fix from being reverted green.
+  // jsdom performs no layout, but the two style facts the fix rests on are
+  // class names - checkable here, same precedent as
+  // global-styles-tokens.test.ts, which exists because measured values were
+  // "unguarded by the deterministic gates".
+  it("keeps the label controls group a direct child of the Toolbar root (G3's prop swap)", () => {
+    render(
+      <SearchBar
+        isAnnotable
+        isLabelManagerOpen={false}
+        onLabelManagerToggle={vi.fn()}
+        matchesCount={0}
+        activeIndex={null}
+        onNext={vi.fn()}
+        onPrevious={vi.fn()}
+        onFocusDocument={vi.fn()}
+      />,
+    );
+
+    const group = screen.getByText(
+      "anonymizer:searchBar.applyLabels",
+    ).parentElement;
+
+    // Not decoration: as `Toolbar`'s `children` the group is a direct flex
+    // item of a `justifyContent: "space-between"` root, which is what makes
+    // it start at the LEFT of the second row once it wraps there alone.
+    // Reverting to `rightSlot` would re-nest it inside the library's own
+    // wrapper - the one carrying `ml: "auto"` and the orphaned divider - and
+    // would also make the assertion below inspect the wrong element.
+    expect(group?.parentElement).toBe(
+      screen.getByTestId("anon-toolbar").firstElementChild,
+    );
+  });
+
+  it("does not push the label controls group with an auto left margin", () => {
+    render(
+      <SearchBar
+        isAnnotable
+        isLabelManagerOpen={false}
+        onLabelManagerToggle={vi.fn()}
+        matchesCount={0}
+        activeIndex={null}
+        onNext={vi.fn()}
+        onPrevious={vi.fn()}
+        onFocusDocument={vi.fn()}
+      />,
+    );
+
+    const group = screen.getByText(
+      "anonymizer:searchBar.applyLabels",
+    ).parentElement;
+
+    // `ml: "auto"` is inert on a shared row (the search wrapper is `flex: 1`
+    // and already absorbs the free space) and actively wrong on a wrapped
+    // row, where it drags the group to the far right of an otherwise empty
+    // row - G10's "two unrelated blocks" symptom. The CT spec's
+    // `getComputedStyle(...).marginLeft === 0` check cannot catch a revert on
+    // its own: on a shared row an auto margin resolves to 0px too.
+    expect(group?.className).not.toContain("ml_auto");
+    expect(group?.className).toContain("jc_flex-start");
   });
 
   it("hides the 'Gestor de etiquetas' button while the label manager is open", () => {

@@ -33,15 +33,26 @@ const toolbarContainer = css({
 // specificity workaround for when one is genuinely needed, and adding one
 // here for a problem that doesn't exist would be a decoration nobody
 // verifies.
+//
+// G10 (tasks/responsive-fixes/issues/G10-toolbar-wrap-1024.md): `ml: "auto"`
+// was removed because it was INERT whenever this group shared a row with the
+// search bar - the search wrapper is `flex: "1"`, so it already absorbs all
+// the free space and pushes this group to the right on its own (computed
+// `margin-left` measured at `0px` in every same-row case). The margin only
+// did anything once the group wrapped ALONE onto a second row, and that is
+// exactly where it went wrong: it then pulled the group to the far right of
+// that empty row (265.156px at 1024 with the panel open, 158.938px at 768
+// with the panel closed) instead of letting it start under the search bar
+// like a normal wrapped line. Do not restore it to "fix" right-alignment -
+// the right-alignment on shared rows was never coming from this margin.
 const labelControls = css({
   display: "flex",
   alignItems: "center",
-  justifyContent: "flex-end",
+  justifyContent: "flex-start",
   flexWrap: "wrap",
   gap: "6",
   minW: "0",
   maxW: "full",
-  ml: "auto",
   flexShrink: "0",
 });
 
@@ -146,18 +157,21 @@ export const SearchBar = ({
         context="anonimizador"
         searchValue={search}
         onSearchChange={changeSearchHandler}
-        searchPlaceholder="Buscar"
+        searchPlaceholder={t("searchBar.searchPlaceholder")}
         searchAriaLabel={t("searchBar.searchAriaLabel")}
         searchLabels={{
-          clear: "Limpiar búsqueda",
-          previous: "Coincidencia anterior",
-          next: "Coincidencia siguiente",
+          clear: t("searchBar.clearSearch"),
+          previous: t("searchBar.previousMatch"),
+          next: t("searchBar.nextMatch"),
         }}
         searchResultCount={
           search.length >= SEARCH_MIN_LENGTH
             ? matchesCount === 0
-              ? "0 ocurrencias"
-              : `${activeIndex === null ? 0 : activeIndex + 1} de ${matchesCount}`
+              ? t("searchBar.noMatches")
+              : t("searchBar.matchCount", {
+                  current: activeIndex === null ? 0 : activeIndex + 1,
+                  total: matchesCount,
+                })
             : undefined
         }
         onSearchClear={() => {
