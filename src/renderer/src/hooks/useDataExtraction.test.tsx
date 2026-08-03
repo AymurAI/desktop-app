@@ -346,4 +346,46 @@ describe("useDataExtraction", () => {
     const recomendacion = dispatchMock.mock.calls[0][0].payload.recomendacion;
     expect(recomendacion.origin).toBe("inference");
   });
+
+  // N4: while the parse stage is still running, `file.paragraphs` (and so
+  // `documentId`) is undefined and the GET is `enabled: false`. Stop can
+  // still be clicked in that window (the process screen's Stop button calls
+  // this hook's `abort()` unconditionally). Before this fix, `manualStop`
+  // was checked before the `documentId === undefined` arm, so `status`
+  // became `"error"` — rendering a Reintentar that could never help (the
+  // parse stage's own abort is a PERMANENT "stopped", nothing to retry) and,
+  // if clicked, called `query.refetch()` with `documentId` still
+  // `undefined`: `refetch()` does not honour `enabled: false`, so it ran
+  // `loadRecomendacion(undefined)` -> 404 -> fails open to `null` (by
+  // design) -> the GET-resolution effect saw a "resolved null" GET and fired
+  // a bogus `extractRecomendacion(undefined, [])`.
+  it("N4: Stop during the parse stage (no documentId yet) does not report error, and retry must not extract", async () => {
+    const file = makeFile({ paragraphs: undefined });
+
+    const { result } = renderHook(() => useDataExtraction(file), { wrapper });
+
+    expect(result.current.status).toBe("idle");
+
+    act(() => {
+      result.current.abort();
+    });
+
+    // Must stay "idle", not flip to "error": there is no id to act on yet,
+    // and the parse stage already has its own permanent "stopped" state.
+    expect(result.current.status).toBe("idle");
+
+    act(() => {
+      result.current.retry();
+    });
+
+    // Let any (incorrect) pending GET/POST chain have a chance to run.
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(loadRecomendacionMock).not.toHaveBeenCalled();
+    expect(extractRecomendacionMock).not.toHaveBeenCalled();
+    expect(dispatchMock).not.toHaveBeenCalled();
+  });
 });

@@ -186,8 +186,13 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
     const stored = query.data;
 
     const triggerExtraction = () => {
+      // Defense in depth: never fire an extraction without a document id (in
+      // practice `query.isSuccess` above already can't be true without one,
+      // since the query is `enabled: false` while `documentId` is
+      // `undefined` — but the latch shouldn't rely on that alone).
+      if (documentId === undefined) return;
       if (extractionStartedForRef.current !== documentId) {
-        extractionStartedForRef.current = documentId ?? null;
+        extractionStartedForRef.current = documentId;
         mutation.mutate();
       }
     };
@@ -263,17 +268,38 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
     // biome-ignore lint/correctness/useExhaustiveDependencies: file/dispatch are stable enough for this effect's purpose; re-running is guarded by `alreadySet`
   }, [alreadySet, mutation.isSuccess, mutation.data, documentId]);
 
+  // `documentId === undefined` MUST win over `manualStop`: while the parse
+  // stage is still running, `file.paragraphs` (and so `documentId`) isn't
+  // set yet, the GET is disabled, and `useFileParse`'s own abort has already
+  // put that stage into its own PERMANENT "stopped" state. There is nothing
+  // for this hook to be "in error" about yet, and no id to retry anything
+  // with — reporting `"error"` here would render a Reintentar that (a) can
+  // never make the (permanently stopped) parse stage recover and (b) if
+  // clicked, would call `query.refetch()` with `documentId` still
+  // `undefined`, which does NOT honour `enabled: false`: it runs
+  // `loadRecomendacion(undefined)` -> 404 -> fails open to `null` (by
+  // design) -> the trigger effect above sees a "resolved-null" GET and fires
+  // `mutation.mutate()` -> a bogus `POST /llm/data-extraction` with
+  // `document_id: undefined` and an empty paragraph list. So this ordering
+  // is load-bearing, not cosmetic.
   const status: DataExtractionStatus = alreadySet
     ? "ready"
-    : manualStop || mutation.isError || query.isError
-      ? "error"
-      : documentId === undefined
-        ? "idle"
+    : documentId === undefined
+      ? "idle"
+      : manualStop || mutation.isError || query.isError
+        ? "error"
         : "loading";
 
   const error = mutation.error ?? (query.error as Error | null) ?? null;
 
   const retry = () => {
+    // Defense in depth: nothing should be able to issue a GET or a POST
+    // without a document id (see `status`'s comment above for what goes
+    // wrong otherwise). `status` already gates the retry affordance out of
+    // the UI in this state, but `retry` itself must refuse too, in case a
+    // caller invokes it directly.
+    if (documentId === undefined) return;
+
     setManualStop(false);
     // Whichever side hasn't succeeded yet is the one that needs re-running:
     // the GET (it failed, or it was the one Stop aborted, per the
