@@ -1,22 +1,26 @@
 import Header from "@/components/layout/header";
+import { STEPPER_HIDE_BELOW } from "@/components/layout/stepper-visibility";
 import { FeatureFlowEnum } from "@/types/features";
 import { expect, test } from "@playwright/experimental-ct-react";
 
 /**
  * Issue 01 (docs/responsive-test-2026-07-30/REPORT.md): AppHeader's
- * absolutely-centred stepper lands on top of the feature name below `lg`.
- * The mitigation is the unlayered rule in src/renderer/src/index.css.
+ * absolutely-centred stepper lands on top of a long feature name on narrow
+ * windows. The mitigation is the unlayered, per-tool rules in
+ * src/renderer/src/index.css, keyed on the cutoff class Header emits.
  *
  * This spec is the regression guard for both halves of that rule, and it is
  * deliberately written so it cannot pass vacuously:
  *
- * - below `lg` it asserts the stepper is really gone (computed `display: none`,
- *   per the G2 lesson that a library style can silently win the cascade), so a
- *   rule that stopped matching — because the library renamed the
- *   `aria-label="Progress"` hook the selector depends on, or moved the CSS into
- *   a layer that outranks it — turns this red instead of quietly reappearing;
- * - at `lg` and above it asserts the stepper is still *visible* with all four
- *   badges, so the fix cannot regress into "hidden everywhere";
+ * - below the tool's cutoff it asserts the stepper is really gone (computed
+ *   `display: none`, per the G2 lesson that a library style can silently win
+ *   the cascade), so a rule that stopped matching — because the library renamed
+ *   the `aria-label="Progress"` hook the selector depends on, or moved the CSS
+ *   into a layer that outranks it — turns this red instead of quietly
+ *   reappearing;
+ * - at and above the cutoff it asserts the stepper is still *visible* with all
+ *   four badges, so the fix cannot regress into "hidden everywhere" — which is
+ *   what a single worst-case breakpoint effectively did between 1080 and 1280;
  * - at every width it asserts zero intersection between the title and every
  *   badge, which is the defect the issue actually reported.
  *
@@ -37,12 +41,17 @@ const TOOLS: ReadonlyArray<readonly [FeatureFlowEnum, string]> = [
 ];
 
 /**
- * Widths at and above which the stepper must stay visible — Panda's `xl`, and
- * the same value as index.css's media query. Not `lg`: the longest title,
- * "Resumen de Documento", still overlaps by 12px at 1024 and only clears at
- * 1048 (see the sweep recorded in index.css's comment).
+ * The cutoff is per tool, imported from the same map that emits the class, so
+ * the two cannot state different numbers. That still catches the drift that
+ * matters: if the TS map gains a width with no matching rule in index.css, the
+ * stepper computes to `flex` below the cutoff and the branch below turns red.
+ * What the import can't catch — both sides agreeing on a number that is simply
+ * wrong for the real glyphs — is what the overlap assertion at the end covers,
+ * at every width, regardless of which branch ran.
+ *
+ * With 840/880/920/1080 against the CT project widths, 1024 is the interesting
+ * one: three tools show the stepper there and "Resumen de Documento" does not.
  */
-const XL = 1280;
 
 for (const [feature, title] of TOOLS) {
   test(`${title}: the stepper never overlaps the feature name`, async ({
@@ -64,7 +73,9 @@ for (const [feature, title] of TOOLS) {
     const width = page.viewportSize()?.width ?? 0;
     expect(width, "CT project must define a viewport").toBeGreaterThan(0);
 
-    if (width < XL) {
+    const hideBelow = STEPPER_HIDE_BELOW[feature];
+
+    if (width < hideBelow) {
       // The hook must still exist in the DOM; if the library stopped rendering
       // it the selector in index.css is dead and this must not pass silently.
       await expect(
@@ -77,8 +88,7 @@ for (const [feature, title] of TOOLS) {
       );
       expect(
         display,
-        "stepper must compute to display:none below xl — if this is 'flex' the " +
-          "index.css rule lost the cascade or its aria hook stopped matching",
+        `stepper must compute to display:none below ${hideBelow}px for "${title}" — if this is 'flex' then index.css has no rule for the .stepper-hide-below-${hideBelow} class, or it lost the cascade, or the aria hook stopped matching`,
       ).toBe("none");
     } else {
       // No regression at the widths where the header was always fine.
