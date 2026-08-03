@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FileProcessing } from "@/components";
@@ -6,6 +6,7 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MainContent from "@/components/layout/main-content";
 import BackButton from "@/components/ui/back-button";
+import { formatTime } from "@/components/voice-to-text/format-time";
 import RequireFile from "@/features/RequireFile";
 import { useFiles } from "@/hooks";
 import { useDataExtraction } from "@/hooks/useDataExtraction";
@@ -67,6 +68,26 @@ export default function RecomendacionesProcess() {
 
   const isReady = parseStatus === "completed" && extraction.status === "ready";
   const isError = extraction.status === "error";
+
+  // A real local LLM extraction can take minutes with no numeric progress to
+  // report (see `progress` below). Without any moving signal, a healthy slow
+  // extraction is indistinguishable from a hang — this is purely an
+  // elapsed-time indicator, additive to `progress`/`combinedStatus`.
+  const isExtracting =
+    parseStatus === "completed" && extraction.status === "loading";
+  const [elapsedMs, setElapsedMs] = useState(0);
+  useEffect(() => {
+    if (!isExtracting) {
+      setElapsedMs(0);
+      return;
+    }
+    const startedAt = Date.now();
+    setElapsedMs(0);
+    const interval = setInterval(() => {
+      setElapsedMs(Date.now() - startedAt);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isExtracting]);
 
   // Status accounts for both stages so "completed" only shows once the
   // extraction/retrieval decision has also resolved.
@@ -130,6 +151,16 @@ export default function RecomendacionesProcess() {
                 <styled.p textStyle="subtitle.sm.default" color="text.lighter">
                   {t("process.processingSubtitle")}
                 </styled.p>
+                {isExtracting && (
+                  <styled.p
+                    textStyle="subtitle.sm.default"
+                    color="text.lighter"
+                  >
+                    {t("process.extracting", {
+                      elapsed: formatTime(elapsedMs),
+                    })}
+                  </styled.p>
+                )}
               </Stack>
               {file && (
                 <FileProcessing

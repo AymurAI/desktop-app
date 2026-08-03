@@ -31,6 +31,9 @@ vi.mock("@/layout/section-title", () => ({
   SectionTitle: ({ children }: { children: ReactNode }) => <h1>{children}</h1>,
 }));
 vi.mock("@/services/taskbar", () => ({ default: { notify: vi.fn() } }));
+vi.mock("@/components/voice-to-text/format-time", () => ({
+  formatTime: (ms: number) => `formatted-${ms}`,
+}));
 
 vi.mock("@/components", () => ({
   FileProcessing: ({
@@ -168,5 +171,34 @@ describe("RecomendacionesProcess", () => {
 
     expect(screen.getByText("process.next")).toBeEnabled();
     expect(screen.queryByText("process.noTextError")).not.toBeInTheDocument();
+  });
+
+  // A slow local-LLM extraction has no numeric progress to show, and used to
+  // be indistinguishable from a hang (flat "50%" the whole time). An elapsed
+  // indicator should appear while extraction is loading, and disappear once
+  // it's ready.
+  it("shows an elapsed-time indicator while extraction is loading, and hides it once ready", () => {
+    vi.useFakeTimers();
+    try {
+      currentFile = buildFile([
+        { id: "p1", value: "hola", document_id: "doc-1" },
+      ]);
+      extractionStatus = "loading";
+
+      const { rerender } = render(<RecomendacionesProcess />);
+
+      expect(screen.getByText("process.extracting")).toBeInTheDocument();
+
+      vi.advanceTimersByTime(3000);
+      rerender(<RecomendacionesProcess />);
+      expect(screen.getByText("process.extracting")).toBeInTheDocument();
+
+      extractionStatus = "ready";
+      rerender(<RecomendacionesProcess />);
+
+      expect(screen.queryByText("process.extracting")).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

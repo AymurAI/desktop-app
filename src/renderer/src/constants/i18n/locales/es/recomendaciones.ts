@@ -51,6 +51,7 @@ const recomendaciones = {
     sectionTitle: "2. Extracción de datos",
     processingTitle: "AymurAI está extrayendo los datos de los archivos.",
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
+    extracting: "Extrayendo datos… {{elapsed}}",
     finishText: "Se finalizó el análisis de tus documentos.",
     errorText: "Ocurrió un error al extraer los datos del documento.",
     noTextError:
