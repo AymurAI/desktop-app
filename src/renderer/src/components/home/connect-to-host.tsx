@@ -40,11 +40,16 @@ export default function ConnectToHost() {
           to: "/home/features",
         });
       },
+      onError: (err) => {
+        // Log once, when the error actually occurs — errorMessage below is
+        // called on every render while an error is displayed, so logging
+        // there would re-log on each re-render instead of once per failure.
+        console.error(err);
+      },
     });
   };
 
   const errorMessage = (err: Error | null): string => {
-    console.error(err);
     if (err instanceof AxiosError) {
       if (err.code === "ERR_NETWORK") return t("home.host.errors.network");
       return t("home.host.errors.connection");
