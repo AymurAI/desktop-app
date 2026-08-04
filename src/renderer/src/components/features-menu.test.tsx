@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import FeaturesMenu from "./features-menu";
 
@@ -22,7 +22,7 @@ vi.mock("react-i18next", () => ({
 describe("FeaturesMenu", () => {
   beforeEach(() => {
     dispatch.mockClear();
-    navigate.mockClear();
+    navigate.mockReset();
   });
 
   it("clears files and navigates to the selected feature", () => {
@@ -37,13 +37,25 @@ describe("FeaturesMenu", () => {
     });
   });
 
-  it("renders a full-width settings action", () => {
+  it("navigates to /home/host and clears files only after the navigation resolves", async () => {
+    let resolveNavigate: () => void = () => {};
+    navigate.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveNavigate = resolve;
+        }),
+    );
+
     render(<FeaturesMenu />);
     fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
     fireEvent.click(screen.getByText("common:settings"));
 
-    expect(dispatch).toHaveBeenCalledOnce();
     expect(navigate).toHaveBeenCalledWith({ to: "/home/host" });
+    expect(dispatch).not.toHaveBeenCalled();
+
+    resolveNavigate();
+
+    await waitFor(() => expect(dispatch).toHaveBeenCalledOnce());
   });
 });
 

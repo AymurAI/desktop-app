@@ -34,9 +34,9 @@ export default function FeaturesMenu({ trigger }: FeaturesMenuProps) {
     navigate({ to: "/app/$feature", params: { feature } });
   };
 
-  const goToSettings = () => {
+  const goToSettings = async () => {
+    await navigate({ to: "/home/host" });
     handleClearFiles();
-    navigate({ to: "/home/host" });
   };
 
   return (
