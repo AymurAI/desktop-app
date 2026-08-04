@@ -25,16 +25,28 @@ describe("FeaturesMenu", () => {
     navigate.mockReset();
   });
 
-  it("clears files and navigates to the selected feature", () => {
+  it("clears files and navigates to the selected feature only after the navigation resolves", async () => {
+    let resolveNavigate: () => void = () => {};
+    navigate.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveNavigate = resolve;
+        }),
+    );
+
     render(<FeaturesMenu />);
     fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
     fireEvent.click(screen.getByText("dataset:title"));
 
-    expect(dispatch).toHaveBeenCalledOnce();
     expect(navigate).toHaveBeenCalledWith({
       to: "/app/$feature",
       params: { feature: "DATA_SET" },
     });
+    expect(dispatch).not.toHaveBeenCalled();
+
+    resolveNavigate();
+
+    await waitFor(() => expect(dispatch).toHaveBeenCalledOnce());
   });
 
   it("navigates to /home/host and clears files only after the navigation resolves", async () => {
@@ -65,16 +77,16 @@ describe("FeaturesMenu — Summarizer", () => {
     navigate.mockClear();
   });
 
-  it("navigates to the Summarizer flow with the short label and clears files on click", () => {
+  it("navigates to the Summarizer flow with the short label and clears files on click", async () => {
     render(<FeaturesMenu />);
     fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
     fireEvent.click(screen.getByText("common:featuresMenu.summary"));
 
-    expect(dispatch).toHaveBeenCalledOnce();
     expect(navigate).toHaveBeenCalledWith({
       to: "/app/$feature",
       params: { feature: "SUMMARIZER" },
     });
+    await waitFor(() => expect(dispatch).toHaveBeenCalledOnce());
   });
 
   it("does not render the full Summarizer title in the menu", () => {

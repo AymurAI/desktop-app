@@ -29,9 +29,12 @@ export default function FeaturesMenu({ trigger }: FeaturesMenuProps) {
     dispatch(removeAllFiles());
   };
 
-  const goToFeature = (feature: FeatureFlowEnum) => {
+  // Navigate before clearing files: RequireFile redirects to onboarding the
+  // moment files.length hits 0, and clearing first let that race the
+  // intended navigation.
+  const goToFeature = async (feature: FeatureFlowEnum) => {
+    await navigate({ to: "/app/$feature", params: { feature } });
     handleClearFiles();
-    navigate({ to: "/app/$feature", params: { feature } });
   };
 
   const goToSettings = async () => {
