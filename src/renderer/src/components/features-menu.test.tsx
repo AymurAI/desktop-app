@@ -13,9 +13,9 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 vi.mock("react-i18next", () => ({
-  useTranslation: () => ({
+  useTranslation: (namespace?: string) => ({
     t: (key: string, options?: { ns?: string }) =>
-      `${options?.ns ?? "common"}:${key}`,
+      `${options?.ns ?? namespace ?? "common"}:${key}`,
   }),
 }));
 
@@ -45,18 +45,29 @@ describe("FeaturesMenu", () => {
     expect(dispatch).toHaveBeenCalledOnce();
     expect(navigate).toHaveBeenCalledWith({ to: "/home/host" });
   });
+});
 
-  it("renders the summary placeholder disabled without side effects", () => {
+describe("FeaturesMenu — Summarizer", () => {
+  beforeEach(() => {
+    dispatch.mockClear();
+    navigate.mockClear();
+  });
+
+  it("navigates to the Summarizer flow with the short label and clears files on click", () => {
     render(<FeaturesMenu />);
     fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
+    fireEvent.click(screen.getByText("common:featuresMenu.summary"));
 
-    const summary = screen.getByRole("button", {
-      name: "common:featuresMenu.summary",
+    expect(dispatch).toHaveBeenCalledOnce();
+    expect(navigate).toHaveBeenCalledWith({
+      to: "/app/$feature",
+      params: { feature: "SUMMARIZER" },
     });
-    expect(summary).toBeDisabled();
+  });
 
-    fireEvent.click(summary);
-    expect(dispatch).not.toHaveBeenCalled();
-    expect(navigate).not.toHaveBeenCalled();
+  it("does not render the full Summarizer title in the menu", () => {
+    render(<FeaturesMenu />);
+    fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
+    expect(screen.queryByText("summarizer:title")).toBeNull();
   });
 });

@@ -14,9 +14,6 @@ const common = {
   home: {
     features: {
       greeting: "¡Hola! Selecciona la herramienta a utilizar",
-      summaryTitle: "Resumen de Documentos",
-      summarySubtitle:
-        "Genera síntesis claras de resoluciones judiciales extensas",
     },
     host: {
       howToConnect: "¿Cómo deseas conectarte a Aymurai?",

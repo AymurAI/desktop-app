@@ -1,6 +1,7 @@
+import { MEDIA_EXTENSIONS } from "@/constants/config";
 import { convertOdtToPdf } from "@/services/aymurai/queries";
 import type { Transcription } from "@/types/transcription";
-import { stripKnownMediaExtension } from "@/utils/strip-known-media-extension";
+import { sanitizeFileName } from "@/utils/sanitize-file-name";
 import { buildExportDocument } from "./build-export-document";
 import { renderOdt } from "./formatters/odt";
 import { renderTxt } from "./formatters/txt";
@@ -12,25 +13,6 @@ export interface ExportResult {
 }
 
 const DEFAULT_FILE_NAME = "transcripcion";
-
-// Only characters that are actually illegal in a filename on Windows/macOS/
-// Linux — everything else (accents, º, brackets, dashes, apostrophes...) is
-// kept as-is so the exported file name reads like the transcription's title.
-// biome-ignore lint/suspicious/noControlCharactersInRegex: intentionally stripping control chars, which are also illegal in file names
-const ILLEGAL_FILENAME_CHARS = /[<>:"/\\|?*\x00-\x1F]/g;
-
-// Titles are often seeded from the source audio's file name (see
-// asrMapper.ts's transcriptionTitleFromFile), so strip a trailing
-// ".wav"/".mp3"/etc. before appending our own export extension — otherwise
-// we'd end up with "name.wav.txt".
-function sanitizeFileName(title: string): string {
-  const sanitized = stripKnownMediaExtension(title.trim())
-    .replace(ILLEGAL_FILENAME_CHARS, "")
-    .trim();
-  // A title made up entirely of illegal characters (or an empty title) would
-  // otherwise produce a bare, hidden-looking file name like ".txt".
-  return sanitized || DEFAULT_FILE_NAME;
-}
 
 /**
  * Single entry point for turning a `Transcription` into a downloadable file.
@@ -46,7 +28,15 @@ export async function exportTranscription(
   options: ExportOptions,
 ): Promise<ExportResult> {
   const doc = buildExportDocument(transcription, options);
-  const baseName = sanitizeFileName(transcription.title);
+  // Titles are often seeded from the source audio's file name (see
+  // asrMapper.ts's transcriptionTitleFromFile), so strip a trailing
+  // ".wav"/".mp3"/etc. before appending our own export extension — otherwise
+  // we'd end up with "name.wav.txt".
+  const baseName = sanitizeFileName(
+    transcription.title,
+    MEDIA_EXTENSIONS,
+    DEFAULT_FILE_NAME,
+  );
   const blob = await renderExportBlob(doc, format);
 
   // `format` is already the file extension for every case above.

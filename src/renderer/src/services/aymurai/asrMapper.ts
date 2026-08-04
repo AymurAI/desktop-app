@@ -1,3 +1,4 @@
+import { MEDIA_EXTENSIONS } from "@/constants/config";
 import type { ASRDocument, ASRParagraph, ASRSpeakerTurn } from "@/schema/asr";
 import type {
   Speaker,
@@ -6,7 +7,7 @@ import type {
   Turn,
 } from "@/types/transcription";
 import { SPEAKER_PALETTE } from "@/types/transcription";
-import { stripKnownMediaExtension } from "@/utils/strip-known-media-extension";
+import { stripKnownExtension } from "@/utils/strip-known-extension";
 
 function parseDurationToMs(value: string | number): number {
   if (typeof value === "number") return Math.round(value * 1000);
@@ -123,7 +124,7 @@ export function legacyBuildTurnsFromDocument(document: ASRParagraph[]): Turn[] {
 }
 
 function transcriptionTitleFromFile(file: File): string {
-  return stripKnownMediaExtension(file.name);
+  return stripKnownExtension(file.name, MEDIA_EXTENSIONS);
 }
 
 function transcriptionTitle(doc: ASRDocument, file: File): string {

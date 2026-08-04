@@ -1,5 +1,11 @@
 import { FeatureFlowEnum } from "@/types/features";
-import { Database, Detective, FileAudio, type Icon } from "phosphor-react";
+import {
+  Article,
+  Database,
+  Detective,
+  FileAudio,
+  type Icon,
+} from "phosphor-react";
 
 export const DATAGENERO_URL = "https://www.datagenero.org/";
 
@@ -39,11 +45,18 @@ export const FEATURE_ICON: Record<FeatureFlowEnum, Icon> = {
   [FeatureFlowEnum.Dataset]: Database,
   [FeatureFlowEnum.Anonymizer]: Detective,
   [FeatureFlowEnum.VoiceToText]: FileAudio,
+  [FeatureFlowEnum.Summarizer]: Article,
 };
 
 export const USE_MOCK_STT = import.meta.env.VITE_USE_MOCK_STT === "true";
 export const STT_MOCK_DELAY_MS = Number(
   import.meta.env.VITE_STT_MOCK_DELAY_MS ?? 4000,
+);
+
+export const USE_MOCK_SUMMARIZE =
+  import.meta.env.VITE_USE_MOCK_SUMMARIZE === "true";
+export const SUMMARIZE_MOCK_DELAY_MS = Number(
+  import.meta.env.VITE_SUMMARIZE_MOCK_DELAY_MS ?? 300,
 );
 
 // Cache ON in production, OFF in dev. Override with VITE_ASR_USE_CACHE=true|false.

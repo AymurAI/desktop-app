@@ -18,6 +18,8 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import api from "../api";
 import { saveValidation as postASRValidation } from "./asrValidation";
 import predict from "./predict";
+import type { SummarizationResponse } from "./summarization";
+import { summarizeDocumentStream } from "./summarize";
 import { type TranscribeFileInput, transcribe } from "./transcribe";
 
 export type SuffixMode = "always" | "when_multiple" | "never";
@@ -312,6 +314,26 @@ export const transcribeBatch = ({
         ),
       );
     },
+  });
+
+/**
+ * Streams a single document's summary from the LLM backend, forwarding
+ * incremental partial text via `onPartialText` as it arrives.
+ */
+export const summarizeDocument = ({
+  onPartialText,
+}: {
+  onPartialText?: (text: string) => void;
+} = {}) =>
+  mutationOptions({
+    mutationFn: async ({
+      text,
+      signal,
+    }: {
+      text: string;
+      signal: AbortSignal;
+    }): Promise<SummarizationResponse> =>
+      summarizeDocumentStream(text, { signal, onPartialText }),
   });
 
 /**

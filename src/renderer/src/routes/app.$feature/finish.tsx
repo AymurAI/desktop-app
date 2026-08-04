@@ -2,6 +2,7 @@ import FinishAnonymizer from "@/components/finish/finish-anonymizer";
 import FinishDataset from "@/components/finish/finish-dataset";
 import Header from "@/components/layout/header";
 import RequireFile from "@/features/RequireFile";
+import RequireSummary from "@/features/RequireSummary";
 import { useFileDispatch } from "@/hooks";
 import { removeAllFiles } from "@/reducers/file/actions";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
@@ -12,6 +13,7 @@ import {
 } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import SummaryFinish from "@/components/summarizer/summary-finish";
 import VoiceFinish from "@/components/voice-to-text/finish";
 
 export const Route = createFileRoute("/app/$feature/finish")({
@@ -21,6 +23,14 @@ export const Route = createFileRoute("/app/$feature/finish")({
 function RouteComponent() {
   const params = useParams({ from: "/app/$feature/finish" });
   if (params.feature === FeatureFlowEnum.VoiceToText) return <VoiceFinish />;
+  if (params.feature === FeatureFlowEnum.Summarizer)
+    return (
+      <RequireFile>
+        <RequireSummary>
+          <SummaryFinish />
+        </RequireSummary>
+      </RequireFile>
+    );
   return <DocumentFinish />;
 }
 
