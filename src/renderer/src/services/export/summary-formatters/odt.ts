@@ -333,7 +333,9 @@ function tableToOdtXml(
 /** Renders one top-level document block — a table as a real ODF table,
  * anything else via the generic leaf-block walk (paragraphs, headings, and
  * list items alike, which this export flattens to plain paragraphs — see
- * `collectLeafBlocks`). */
+ * `collectLeafBlocks`). Leaves within the same block (e.g. list items) are
+ * concatenated with no gap between them; the blank-line gap between distinct
+ * top-level blocks is added by the caller, matching ../formatters/odt.ts. */
 function blockToOdtXml(
   node: JSONContent,
   styles: Map<string, OdtStyleEntry>,
@@ -341,7 +343,7 @@ function blockToOdtXml(
   if (node.type === "table") return tableToOdtXml(node, styles);
   const leaves: JSONContent[] = [];
   collectLeafBlocks(node, leaves);
-  return leaves.map((leaf) => paragraphToOdtXml(leaf, styles)).join("\n");
+  return leaves.map((leaf) => paragraphToOdtXml(leaf, styles)).join("");
 }
 
 // Matches ../formatters/odt.ts's own "Title" style exactly (20pt bold
@@ -357,19 +359,25 @@ const TITLE_STYLE_XML = `<style:style style:name="Title" style:family="paragraph
 
 function buildContentXml(document: JSONContent, title: string): string {
   const styles = collectStyles(document);
-  const bodyXml = (document.content ?? [])
-    .map((node) => blockToOdtXml(node, styles))
-    .join("\n");
+  const blocks = (document.content ?? []).map((node) =>
+    blockToOdtXml(node, styles),
+  );
+
+  // An empty paragraph between the title and each top-level block renders as
+  // a blank line, matching ../formatters/odt.ts's transcription export and
+  // the "\n\n" separator the txt export uses — plain adjacent <text:p>
+  // elements alone don't read as visually separated in LibreOffice/Word.
+  const body = [
+    `<text:p text:style-name="Title">${escapeXml(title)}</text:p>`,
+    ...blocks,
+  ].join("<text:p/>");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <office:document-content ${ODF_NAMESPACES} office:version="1.2">
   ${FONT_FACE_DECLS}
   <office:automatic-styles>${TITLE_STYLE_XML}${automaticStylesXml(styles)}</office:automatic-styles>
   <office:body>
-    <office:text>
-      <text:p text:style-name="Title">${escapeXml(title)}</text:p>
-      ${bodyXml}
-    </office:text>
+    <office:text>${body}</office:text>
   </office:body>
 </office:document-content>`;
 }

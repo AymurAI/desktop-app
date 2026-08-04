@@ -2,6 +2,7 @@ import { summarizeDocumentStream } from "@/services/aymurai/summarize";
 import type { DocFile } from "@/types/file";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { CanceledError } from "axios";
 import { describe, expect, it, vi } from "vitest";
 import { useSummarize } from "./useSummarize";
 
@@ -153,5 +154,44 @@ describe("useSummarize", () => {
     expect(dispatch).not.toHaveBeenCalledWith(
       expect.objectContaining({ type: "error" }),
     );
+  });
+
+  it("reports 'stopped' (not 'error') when a file switch aborts an in-flight request", async () => {
+    // Regression test for the CanceledError-conversion fix: the transport
+    // (summarizeStream/mockSummarizeStream) must reject with axios's
+    // CanceledError on abort, matching transcribeStream, so status doesn't
+    // read "error" just because the effect cleanup (not the exposed abort())
+    // cancelled the request while switching files.
+    const fileA = makeFile("a.docx", "Texto A");
+    const fileB = makeFile("b.docx", "Texto B");
+
+    const mockedStream = vi.mocked(summarizeDocumentStream);
+    mockedStream.mockClear();
+    mockedStream.mockImplementationOnce(
+      (_text, { signal }) =>
+        new Promise((_resolve, reject) => {
+          signal?.addEventListener("abort", () => reject(new CanceledError()));
+        }),
+    );
+
+    const queryClient = new QueryClient();
+    const { result, rerender } = renderHook(
+      ({ file }: { file: DocFile }) => useSummarize(file),
+      {
+        initialProps: { file: fileA },
+        wrapper: ({ children }) => (
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        ),
+      },
+    );
+
+    await waitFor(() => expect(mockedStream).toHaveBeenCalledTimes(1));
+
+    rerender({ file: fileB });
+
+    await waitFor(() => expect(result.current.status).not.toBe("idle"));
+    expect(result.current.status).not.toBe("error");
   });
 });

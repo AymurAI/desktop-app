@@ -260,6 +260,41 @@ describe("documentToOdt", () => {
     );
   });
 
+  it("separates the title and each top-level block with a blank-line paragraph, matching the transcription export", async () => {
+    const document = doc(paragraph(text("Primer párrafo")), {
+      type: "bulletList",
+      content: [{ type: "listItem", content: [paragraph(text("Item uno"))] }],
+    });
+    const xml = await readContentXml(await documentToOdt(document, "Resumen"));
+
+    // Same "empty <text:p/> between top-level blocks" convention as
+    // ../formatters/odt.ts, so paragraphs read as visually separated in
+    // LibreOffice/Word instead of running together.
+    expect(xml).toContain(
+      '<text:p text:style-name="Title">Resumen</text:p>' +
+        "<text:p/>" +
+        '<text:p text:style-name="Standard">Primer párrafo</text:p>' +
+        "<text:p/>" +
+        '<text:p text:style-name="Standard">Item uno</text:p>',
+    );
+  });
+
+  it("does not add a blank-line gap between leaves of the same block (e.g. list items)", async () => {
+    const document = doc({
+      type: "bulletList",
+      content: [
+        { type: "listItem", content: [paragraph(text("Item uno"))] },
+        { type: "listItem", content: [paragraph(text("Item dos"))] },
+      ],
+    });
+    const xml = await readContentXml(await documentToOdt(document, "Resumen"));
+
+    expect(xml).toContain(
+      '<text:p text:style-name="Standard">Item uno</text:p>' +
+        '<text:p text:style-name="Standard">Item dos</text:p>',
+    );
+  });
+
   it("declares Archivo as the document's font, in both content.xml and styles.xml", async () => {
     const document = doc(paragraph(text("Hola")));
     const blob = await documentToOdt(document, "Resumen");

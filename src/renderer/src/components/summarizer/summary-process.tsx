@@ -171,11 +171,13 @@ export default function SummaryProcess() {
                   </styled.p>
                 </Stack>
                 <HStack gap="4" alignItems="center">
-                  {!isCompleted && !isError && !isStopped && (
-                    <Button variant="secondary" onClick={handleStop}>
-                      {t("process.stop")}
-                    </Button>
-                  )}
+                  <Button
+                    variant="secondary"
+                    onClick={handleStop}
+                    disabled={isCompleted || isError || isStopped}
+                  >
+                    {t("process.stop")}
+                  </Button>
                   <div className={spinnerSlot}>
                     {!isCompleted && !isError && !isStopped && <Spinner />}
                     {isCompleted && (

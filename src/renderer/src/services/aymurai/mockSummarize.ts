@@ -1,3 +1,5 @@
+import { CanceledError } from "axios";
+
 import { SUMMARIZE_MOCK_DELAY_MS } from "@/constants/config";
 import type {
   SummarizationResponse,
@@ -16,7 +18,7 @@ export async function mockSummarizeStream(
   let acc = "";
 
   for (const word of words) {
-    if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+    if (signal?.aborted) throw new CanceledError();
     await new Promise((resolve) =>
       setTimeout(resolve, SUMMARIZE_MOCK_DELAY_MS),
     );

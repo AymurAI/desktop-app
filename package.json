@@ -2,6 +2,7 @@
   "name": "aymurai",
   "version": "1.5.0",
   "private": true,
+  "packageManager": "pnpm@11.18.0",
   "main": "./out/main/index.js",
   "scripts": {
     "dev:web": "cross-env VITE_APP_MODE=web vite --config vite.config.ts",
@@ -102,7 +103,6 @@
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
-  "packageManager": "pnpm@11.9.0",
   "engines": {
     "node": ">=22.13 <23"
   }

@@ -24,11 +24,11 @@ vi.mock("@/services/aymurai/queries", () => ({
 }));
 
 describe("exportSummary", () => {
-  it("returns a plain-text blob for the txt format, ending with the watermark", async () => {
+  it("returns a plain-text blob for the txt format, with the title first and ending with the watermark", async () => {
     const blob = await exportSummary(doc, "Resumen", "txt");
     expect(blob.type).toBe("text/plain");
     expect(await blobToText(blob)).toBe(
-      "Texto.\n\nResumen generado por AymurAI",
+      "Resumen\n\nTexto.\n\nResumen generado por AymurAI",
     );
   });
 

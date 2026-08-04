@@ -15,8 +15,8 @@ describe("documentToPlainText", () => {
         { type: "paragraph", content: [{ type: "text", text: "Dos." }] },
       ],
     };
-    expect(documentToPlainText(doc)).toBe(
-      `Uno.\n\nDos.\n\n${SUMMARY_WATERMARK_TEXT}`,
+    expect(documentToPlainText(doc, "Resumen")).toBe(
+      `Resumen\n\nUno.\n\nDos.\n\n${SUMMARY_WATERMARK_TEXT}`,
     );
   });
 
@@ -25,8 +25,18 @@ describe("documentToPlainText", () => {
       type: "doc",
       content: [{ type: "paragraph", content: [{ type: "text", text: "X" }] }],
     };
-    expect(documentToPlainText(doc).endsWith(SUMMARY_WATERMARK_TEXT)).toBe(
-      true,
+    expect(
+      documentToPlainText(doc, "Resumen").endsWith(SUMMARY_WATERMARK_TEXT),
+    ).toBe(true);
+  });
+
+  it("puts the title first, blank-line separated from the body, matching the transcription export's layout", () => {
+    const doc: JSONContent = {
+      type: "doc",
+      content: [{ type: "paragraph", content: [{ type: "text", text: "X" }] }],
+    };
+    expect(documentToPlainText(doc, "Audiencia")).toBe(
+      `Audiencia\n\nX\n\n${SUMMARY_WATERMARK_TEXT}`,
     );
   });
 
@@ -87,8 +97,8 @@ describe("documentToPlainText", () => {
         },
       ],
     };
-    expect(documentToPlainText(doc)).toBe(
-      `Medida | Plazo\n--- | ---\nExclusión | Inmediato\n\n${SUMMARY_WATERMARK_TEXT}`,
+    expect(documentToPlainText(doc, "Resumen")).toBe(
+      `Resumen\n\nMedida | Plazo\n--- | ---\nExclusión | Inmediato\n\n${SUMMARY_WATERMARK_TEXT}`,
     );
   });
 });

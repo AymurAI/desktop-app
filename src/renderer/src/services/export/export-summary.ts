@@ -11,7 +11,9 @@ export async function exportSummary(
   format: SummaryExportFormat,
 ): Promise<Blob> {
   if (format === "txt") {
-    return new Blob([documentToPlainText(document)], { type: "text/plain" });
+    return new Blob([documentToPlainText(document, title)], {
+      type: "text/plain",
+    });
   }
 
   const odtBlob = await documentToOdt(document, title);
