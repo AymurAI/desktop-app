@@ -1,7 +1,9 @@
 import { FileAnnotator, ValidateDataset } from "@/components";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
+import SummaryValidation from "@/components/summarizer/summary-validation";
 import RequireFile from "@/features/RequireFile";
+import RequireSummary from "@/features/RequireSummary";
 import { useFiles } from "@/hooks";
 import { Grid } from "@/styled/jsx";
 import { FeatureFlowEnum, featureNamespace } from "@/types/features";
@@ -27,6 +29,14 @@ function RouteComponent() {
   if (feature === FeatureFlowEnum.VoiceToText) return <VoiceValidation />;
   if (feature === FeatureFlowEnum.Recomendaciones)
     return <RecomendacionValidation />;
+  if (feature === FeatureFlowEnum.Summarizer)
+    return (
+      <RequireFile>
+        <RequireSummary>
+          <SummaryValidation />
+        </RequireSummary>
+      </RequireFile>
+    );
   return <DocumentValidation />;
 }
 

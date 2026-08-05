@@ -1,6 +1,4 @@
-import { DOCUMENT_EXTENSIONS } from "@/constants/config";
-
-const documentFormats = `Formatos válidos: ${DOCUMENT_EXTENSIONS.map((extension) => `.${extension}`).join(", ")}`;
+import { documentFormats } from "./document-formats";
 
 const anonymizer = {
   title: "Anonimizador",

@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from "@aymurai/ui";
 import { useNavigate } from "@tanstack/react-router";
-import { Article, DotsNine, Gear } from "phosphor-react";
+import { DotsNine, Gear } from "phosphor-react";
 import type { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -56,20 +56,19 @@ export default function FeaturesMenu({ trigger }: FeaturesMenuProps) {
         <FeaturesMenuGrid>
           {features.map((feature) => {
             const Icon = FEATURE_ICON[feature];
+            const label =
+              feature === FeatureFlowEnum.Summarizer
+                ? t("featuresMenu.summary")
+                : t("title", { ns: featureNamespace[feature] });
             return (
               <FeaturesMenuItem
                 key={feature}
                 icon={<Icon size={24} />}
-                label={t("title", { ns: featureNamespace[feature] })}
+                label={label}
                 onClick={() => goToFeature(feature)}
               />
             );
           })}
-          <FeaturesMenuItem
-            icon={<Article size={24} />}
-            label={t("featuresMenu.summary")}
-            disabled
-          />
           <FeaturesMenuItem
             icon={<Gear size={24} />}
             label={t("settings")}

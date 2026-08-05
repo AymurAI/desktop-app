@@ -33,6 +33,7 @@ const useLocalStore = create<LocalStorageStore>()(
           [FeatureFlowEnum.Dataset]: false,
           [FeatureFlowEnum.VoiceToText]: false,
           [FeatureFlowEnum.Recomendaciones]: false,
+          [FeatureFlowEnum.Summarizer]: false,
         },
         hasSeenTutorial: (feature: FeatureFlowEnum) =>
           get().tutorialsSeen[feature],

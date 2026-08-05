@@ -1,5 +1,6 @@
 import { FeatureFlowEnum } from "@/types/features";
 import {
+  Article,
   Database,
   Detective,
   FileAudio,
@@ -46,6 +47,7 @@ export const FEATURE_ICON: Record<FeatureFlowEnum, Icon> = {
   [FeatureFlowEnum.Anonymizer]: Detective,
   [FeatureFlowEnum.VoiceToText]: FileAudio,
   [FeatureFlowEnum.Recomendaciones]: Megaphone,
+  [FeatureFlowEnum.Summarizer]: Article,
 };
 
 export const USE_MOCK_STT = import.meta.env.VITE_USE_MOCK_STT === "true";
@@ -62,6 +64,12 @@ export const USE_MOCK_RECOMENDACIONES =
   import.meta.env.VITE_USE_MOCK_RECOMENDACIONES === "true";
 export const RECOMENDACIONES_MOCK_DELAY_MS = Number(
   import.meta.env.VITE_RECOMENDACIONES_MOCK_DELAY_MS ?? 1200,
+);
+
+export const USE_MOCK_SUMMARIZE =
+  import.meta.env.VITE_USE_MOCK_SUMMARIZE === "true";
+export const SUMMARIZE_MOCK_DELAY_MS = Number(
+  import.meta.env.VITE_SUMMARIZE_MOCK_DELAY_MS ?? 300,
 );
 
 // Cache ON in production, OFF in dev. Override with VITE_ASR_USE_CACHE=true|false.

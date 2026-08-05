@@ -7,6 +7,7 @@ import {
 import { z } from "zod";
 
 import FileProvider from "@/context/File";
+import SummaryProvider from "@/context/Summary";
 import TranscriptionProvider from "@/context/Transcription";
 import APIProtected from "@/features/APIProtected";
 import { Stack } from "@/styled/jsx";
@@ -19,6 +20,7 @@ const featureParamSchema = z.object({
     FeatureFlowEnum.Anonymizer,
     FeatureFlowEnum.VoiceToText,
     FeatureFlowEnum.Recomendaciones,
+    FeatureFlowEnum.Summarizer,
   ]),
 });
 
@@ -40,6 +42,7 @@ export const Route = createFileRoute("/app/$feature")({
 function AppLayoutRoute() {
   const { feature } = useParams({ from: "/app/$feature" });
   const isVoice = feature === FeatureFlowEnum.VoiceToText;
+  const isSummarizer = feature === FeatureFlowEnum.Summarizer;
   const inner = (
     <Stack
       width="screen"
@@ -53,9 +56,12 @@ function AppLayoutRoute() {
       </FileProvider>
     </Stack>
   );
-  return (
-    <APIProtected>
-      {isVoice ? <TranscriptionProvider>{inner}</TranscriptionProvider> : inner}
-    </APIProtected>
+  const wrapped = isVoice ? (
+    <TranscriptionProvider>{inner}</TranscriptionProvider>
+  ) : isSummarizer ? (
+    <SummaryProvider>{inner}</SummaryProvider>
+  ) : (
+    inner
   );
+  return <APIProtected>{wrapped}</APIProtected>;
 }
