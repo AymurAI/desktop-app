@@ -18,6 +18,7 @@ import {
   type RemovePredictionsByText,
   type ReplaceFileAction,
   type SetDurationAction,
+  type SetRecomendacionAction,
   type UpdatePredictionLabel,
   type UpdatePredictionsByCanonicalId,
   type UpdatePredictionsByText,
@@ -61,7 +62,8 @@ export type Action =
   | RemovePredictionValueByCanonicalId
   | UpdatePredictionsByCanonicalId
   | MoveMentionToGroupAction
-  | MergeGroupsAction;
+  | MergeGroupsAction
+  | SetRecomendacionAction;
 
 /**
  * Reducer function for `DocFile[]` state
@@ -394,8 +396,17 @@ export default function reducer(state: State, action: Action): State {
     }
 
     // ----------------
-    // ADD PARAGRAPHS
+    // SET RECOMENDACION
     // ----------------
+    case ActionTypes.SET_RECOMENDACION: {
+      const { fileName, recomendacion } = payload;
+
+      return update(fileName, (cur) => ({
+        ...cur,
+        recomendacion,
+      }));
+    }
+
     default:
       return state;
   }

@@ -13,6 +13,7 @@ import {
 } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import RecomendacionFinish from "@/components/recomendaciones/finish";
 import SummaryFinish from "@/components/summarizer/summary-finish";
 import VoiceFinish from "@/components/voice-to-text/finish";
 
@@ -23,6 +24,8 @@ export const Route = createFileRoute("/app/$feature/finish")({
 function RouteComponent() {
   const params = useParams({ from: "/app/$feature/finish" });
   if (params.feature === FeatureFlowEnum.VoiceToText) return <VoiceFinish />;
+  if (params.feature === FeatureFlowEnum.Recomendaciones)
+    return <RecomendacionFinishRoute />;
   if (params.feature === FeatureFlowEnum.Summarizer)
     return (
       <RequireFile>
@@ -56,6 +59,26 @@ function DocumentFinish() {
       ) : (
         <FinishAnonymizer onRestart={handleRestart} />
       )}
+    </RequireFile>
+  );
+}
+
+function RecomendacionFinishRoute() {
+  const feature = FeatureFlowEnum.Recomendaciones;
+  const navigate = useNavigate();
+  const params = useParams({ from: "/app/$feature/finish" });
+  const { t } = useTranslation(featureNamespace[feature]);
+  const dispatch = useFileDispatch();
+
+  const handleRestart = () => {
+    dispatch(removeAllFiles());
+    navigate({ to: "/app/$feature/onboarding", params });
+  };
+
+  return (
+    <RequireFile>
+      <Header title={t("title")} currentStep={4} feature={feature} />
+      <RecomendacionFinish onRestart={handleRestart} />
     </RequireFile>
   );
 }

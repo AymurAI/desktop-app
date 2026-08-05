@@ -27,7 +27,19 @@ export interface TextAnnotation extends BaseAnnotation {
   type: "text";
 }
 
-export type Annotation = LabelAnnotation | SearchAnnotation | TextAnnotation;
+export interface ExtractedValueAnnotation extends BaseAnnotation {
+  type: "extracted";
+  paragraphId: string;
+  field: string;
+  variant?: "value" | "support";
+  isActive?: boolean;
+}
+
+export type Annotation =
+  | LabelAnnotation
+  | SearchAnnotation
+  | TextAnnotation
+  | ExtractedValueAnnotation;
 export type Split = Annotation;
 
 export interface Metadata {

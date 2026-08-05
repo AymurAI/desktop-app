@@ -5,6 +5,7 @@ import {
   Detective,
   FileAudio,
   type Icon,
+  Megaphone,
 } from "phosphor-react";
 
 export const DATAGENERO_URL = "https://www.datagenero.org/";
@@ -45,12 +46,24 @@ export const FEATURE_ICON: Record<FeatureFlowEnum, Icon> = {
   [FeatureFlowEnum.Dataset]: Database,
   [FeatureFlowEnum.Anonymizer]: Detective,
   [FeatureFlowEnum.VoiceToText]: FileAudio,
+  [FeatureFlowEnum.Recomendaciones]: Megaphone,
   [FeatureFlowEnum.Summarizer]: Article,
 };
 
 export const USE_MOCK_STT = import.meta.env.VITE_USE_MOCK_STT === "true";
 export const STT_MOCK_DELAY_MS = Number(
   import.meta.env.VITE_STT_MOCK_DELAY_MS ?? 4000,
+);
+
+/**
+ * Development aid for the Recomendaciones flow: when the backend LLM
+ * extraction / persistence endpoints aren't available, short-circuit them
+ * with a realistic fixture instead. Off by default — mirrors `USE_MOCK_STT`.
+ */
+export const USE_MOCK_RECOMENDACIONES =
+  import.meta.env.VITE_USE_MOCK_RECOMENDACIONES === "true";
+export const RECOMENDACIONES_MOCK_DELAY_MS = Number(
+  import.meta.env.VITE_RECOMENDACIONES_MOCK_DELAY_MS ?? 1200,
 );
 
 export const USE_MOCK_SUMMARIZE =

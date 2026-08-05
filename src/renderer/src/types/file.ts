@@ -1,5 +1,6 @@
 import type { FormData } from "@/hooks/useForm";
 import type { PredictLabel } from "./aymurai";
+import type { RecomendacionState } from "./recomendaciones";
 
 export interface Paragraph {
   value: string;
@@ -40,4 +41,10 @@ export type DocFile = {
    * Data from the form
    */
   validationObject: FormData;
+  /**
+   * Recomendaciones flow: result of the retrieval/extraction decision (see
+   * `useDataExtraction`). Presence of this field is the idempotency guard —
+   * once set, the extraction/retrieval sequence must not run again.
+   */
+  recomendacion?: RecomendacionState;
 };

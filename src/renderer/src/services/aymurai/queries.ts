@@ -1,6 +1,8 @@
+import { USE_MOCK_RECOMENDACIONES } from "@/constants/config";
 import { EXCLUDED_TAGS } from "@/constants/excluded-tags";
 import { disambiguateSchema } from "@/schema/disambiguate";
 import { documentExtractSchema } from "@/schema/extract";
+import type { RecomendacionValidation } from "@/schema/recomendaciones";
 import type {
   AnonymizerLabels,
   PredictLabel,
@@ -18,6 +20,8 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import api from "../api";
 import { saveValidation as postASRValidation } from "./asrValidation";
 import predict from "./predict";
+import { saveRecomendacion } from "./recomendaciones";
+import { mockDocumentExtract } from "./recomendaciones.mock";
 import type { SummarizationResponse } from "./summarization";
 import { summarizeDocumentStream } from "./summarize";
 import { type TranscribeFileInput, transcribe } from "./transcribe";
@@ -259,6 +263,14 @@ export const fileParser = (file: File) =>
   queryOptions({
     queryKey: ["file-parser", file.name, file.size],
     queryFn: async () => {
+      // `USE_MOCK_RECOMENDACIONES` is a Recomendaciones development aid (see
+      // `constants/config.ts`), but `fileParser` is shared with Set de Datos
+      // and Anonimizador. It is gated on the flag ONLY — those flows are
+      // unaffected since the flag defaults to off.
+      if (USE_MOCK_RECOMENDACIONES) {
+        return documentExtractSchema.parse(mockDocumentExtract());
+      }
+
       const formData = new FormData();
       formData.append("file", file);
       const response = await api.post("/misc/document-extract", formData, {
@@ -387,4 +399,18 @@ export const pdfToOdt = () =>
 
       return response.data;
     },
+  });
+
+/**
+ * Persists the human-validated recomendación for a document.
+ */
+export const recomendacionValidationMutation = () =>
+  mutationOptions({
+    mutationFn: ({
+      documentId,
+      validation,
+    }: {
+      documentId: string;
+      validation: RecomendacionValidation;
+    }) => saveRecomendacion(documentId, validation),
   });

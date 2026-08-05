@@ -11,7 +11,16 @@ export default async function offline(validations: FormValue[][]) {
   // Opens an already existent Workbook or creates a new one
   const workbook = (await filesystem.excel.read()) ?? filesystem.excel.create();
 
-  const worksheet = workbook.worksheets[0];
+  // Addressed by name, not position: the workbook can now also carry the
+  // `recomendaciones` worksheet (see `services/filesystem/excel/
+  // recomendaciones-sheet.ts`), so `worksheets[0]` is no longer guaranteed
+  // to be the Set de Datos sheet.
+  const worksheet = workbook.getWorksheet("set_de_datos");
+  if (!worksheet) {
+    throw new Error(
+      "offline: the workbook has no 'set_de_datos' worksheet to write to",
+    );
+  }
   worksheet.addRows(validations);
 
   await filesystem.excel.write(workbook);

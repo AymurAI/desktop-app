@@ -5,6 +5,7 @@ import type {
   PredictLabel,
 } from "@/types/aymurai";
 import type { Paragraph } from "@/types/file";
+import type { RecomendacionState } from "@/types/recomendaciones";
 
 /**
  * List of action types.
@@ -32,6 +33,7 @@ export enum ActionTypes {
   UPDATE_PREDICTIONS_BY_CANONICAL_ID = "UPDATE_PREDICTIONS_BY_CANONICAL_ID",
   MOVE_MENTION_TO_GROUP = "MOVE_MENTION_TO_GROUP",
   MERGE_GROUPS = "MERGE_GROUPS",
+  SET_RECOMENDACION = "SET_RECOMENDACION",
 }
 
 /**
@@ -439,5 +441,26 @@ export function mergeGroups(
   return {
     type: ActionTypes.MERGE_GROUPS,
     payload: { sourceCanonicalId, targetCanonicalId, targetLabel },
+  };
+}
+
+export type SetRecomendacionAction = Action<
+  ActionTypes.SET_RECOMENDACION,
+  { fileName: string; recomendacion: RecomendacionState }
+>;
+/**
+ * Attaches the recomendación retrieval/extraction result (see
+ * `useDataExtraction`) to the matching file. Its presence is the idempotency
+ * guard that stops the extraction/retrieval sequence from running again.
+ * @param fileName Name of the file to be modified
+ * @param recomendacion Result of the retrieval/extraction decision
+ */
+export function setRecomendacion(
+  fileName: string,
+  recomendacion: RecomendacionState,
+): SetRecomendacionAction {
+  return {
+    type: ActionTypes.SET_RECOMENDACION,
+    payload: { fileName, recomendacion },
   };
 }

@@ -87,6 +87,7 @@ function RouteComponent() {
     "dataset",
     "anonymizer",
     "voice-to-text",
+    "recomendaciones",
     "summarizer",
   ]);
 
@@ -121,6 +122,13 @@ function RouteComponent() {
                   title={t("voice-to-text:title")}
                   subtitle={t("voice-to-text:subtitle")}
                   icon={FEATURE_ICON.VOICE_TO_TEXT}
+                />
+                <FeatureCardLink
+                  to="/app/$feature"
+                  params={{ feature: FeatureFlowEnum.Recomendaciones }}
+                  title={t("recomendaciones:title")}
+                  subtitle={t("recomendaciones:subtitle")}
+                  icon={FEATURE_ICON.RECOMENDACIONES}
                 />
                 <FeatureCardLink
                   to="/app/$feature"
