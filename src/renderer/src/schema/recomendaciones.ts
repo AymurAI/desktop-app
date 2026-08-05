@@ -1,21 +1,10 @@
 import z from "zod";
 
-const organigramCandidateSchema = z.object({
-  nombre: z.string(),
-  cargo: z.string(),
-  sigla: z.string().default(""),
-  depende_de_cargo: z.string().nullable().default(null),
-  ruta_cargos: z.string(),
-  score: z.number(),
-});
-
 const destinatarioExtractionSchema = z.object({
   nombre: z.string().nullable().default(null),
   cargo: z.string().nullable().default(null),
   destinatario_principal: z.boolean().default(false),
   sector: z.string().nullable().default(null),
-  candidatos_nombre: z.array(organigramCandidateSchema).default([]),
-  candidatos_cargo: z.array(organigramCandidateSchema).default([]),
 });
 
 export const dataExtractionResultSchema = z.object({
@@ -30,15 +19,8 @@ export const dataExtractionResultSchema = z.object({
   contenido_para_publicar: z.string().default(""),
 });
 
-/** Lo que se persiste como validación manual: el resultado sin los candidatos. */
-export const recomendacionValidationSchema = dataExtractionResultSchema.extend({
-  destinatarios: z.array(
-    destinatarioExtractionSchema.omit({
-      candidatos_nombre: true,
-      candidatos_cargo: true,
-    }),
-  ),
-});
+/** Lo que se persiste como validación manual. */
+export const recomendacionValidationSchema = dataExtractionResultSchema;
 
 export const recomendacionDocumentSchema = z.object({
   document_id: z.string(),

@@ -1,11 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  within,
-} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { ChangeEvent, ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -214,7 +208,6 @@ function buildState(
     },
     suggestions: values,
     values,
-    candidates: {},
     ...overrides,
   };
 }
@@ -240,53 +233,6 @@ function renderScreen() {
       <RecomendacionValidation />
     </QueryClientProvider>,
   );
-}
-
-// Both directions of §X4 need candidates on BOTH `nombre` and `cargo`
-// simultaneously, which means two `Select`s share the same
-// "validation.organigramCandidates" label (per the brief's literal
-// OrganigramPicker snippet). Rather than dodging the ambiguity by leaving
-// one side's candidates empty, tests scope their query to the DOM container
-// of the field they care about: `getByLabelText` finds the TextField's
-// `<input>`, `.closest("div")` is the mocked TextField's own wrapper, and
-// `.parentElement` is the `Stack` that also contains that field's (and only
-// that field's) `OrganigramPicker`.
-function fieldContainer(fieldLabel: string): HTMLElement {
-  const input = screen.getByLabelText(fieldLabel);
-  const wrapper = input.closest("div");
-  if (!wrapper?.parentElement) {
-    throw new Error(`No container for ${fieldLabel}`);
-  }
-  return wrapper.parentElement;
-}
-
-function buildStateWithBothCandidates(): RecomendacionState {
-  return buildState({
-    candidates: {
-      d1: {
-        nombre: [
-          {
-            nombre: "Juan Pérez (candidato)",
-            cargo: "Director General",
-            sigla: "DG",
-            depende_de_cargo: null,
-            ruta_cargos: "Ministerio > DG",
-            score: 90,
-          },
-        ],
-        cargo: [
-          {
-            nombre: "Otra Persona",
-            cargo: "Subdirector General",
-            sigla: "SDG",
-            depende_de_cargo: null,
-            ruta_cargos: "Ministerio > SDG",
-            score: 80,
-          },
-        ],
-      },
-    },
-  });
 }
 
 describe("RecomendacionValidation", () => {
@@ -329,43 +275,7 @@ describe("RecomendacionValidation", () => {
     expect(screen.getByLabelText("validation.subtema")).toHaveValue("");
   });
 
-  it("picking an organigram candidate for nombre writes into the nombre field and leaves cargo untouched (§X4)", () => {
-    currentFile = buildFile(buildStateWithBothCandidates());
-    renderScreen();
-
-    const nombrePicker = within(
-      fieldContainer("validation.nombre"),
-    ).getByLabelText("validation.organigramCandidates");
-    fireEvent.change(nombrePicker, {
-      target: { value: "Juan Pérez (candidato)" },
-    });
-
-    expect(screen.getByLabelText("validation.nombre")).toHaveValue(
-      "Juan Pérez (candidato)",
-    );
-    expect(screen.getByLabelText("validation.cargo")).toHaveValue("Director");
-  });
-
-  it("picking an organigram candidate for cargo writes into the cargo field and leaves nombre untouched (§X4, mirror direction)", () => {
-    currentFile = buildFile(buildStateWithBothCandidates());
-    renderScreen();
-
-    const cargoPicker = within(
-      fieldContainer("validation.cargo"),
-    ).getByLabelText("validation.organigramCandidates");
-    fireEvent.change(cargoPicker, {
-      target: { value: "Subdirector General" },
-    });
-
-    expect(screen.getByLabelText("validation.cargo")).toHaveValue(
-      "Subdirector General",
-    );
-    expect(screen.getByLabelText("validation.nombre")).toHaveValue(
-      "Juan Perez",
-    );
-  });
-
-  it("calls the mutation with a payload containing no id and no candidatos_* keys", async () => {
+  it("calls the mutation with a payload containing no id", async () => {
     renderScreen();
 
     fireEvent.click(screen.getByText("validation.validar"));
@@ -376,12 +286,8 @@ describe("RecomendacionValidation", () => {
     expect(documentId).toBe("doc-1");
     expect(validation).not.toHaveProperty("id");
     expect(validation.destinatarios).toHaveLength(2);
-    // The local `id` lives on each DESTINATARIO (not on the top-level
-    // payload, which never had one under any implementation), and
-    // `candidatos_nombre`/`candidatos_cargo` aren't fields of
-    // `DestinatarioValue` at all — they live in `state.candidates`. Asserting
-    // the exact key set on each destinatario catches both: a leaked local
-    // `id` and any accidental `candidatos_*` leak in one shot.
+    // The local `id` lives on each DESTINATARIO, not on the top-level
+    // payload (which never had one under any implementation).
     for (const destinatario of validation.destinatarios) {
       expect(destinatario).not.toHaveProperty("id");
       expect(Object.keys(destinatario).sort()).toEqual(

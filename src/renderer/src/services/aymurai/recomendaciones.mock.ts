@@ -52,45 +52,12 @@ export function mockDataExtractionResult(): DataExtractionResult {
         cargo: "Directora General de Salud Pública",
         destinatario_principal: true,
         sector: "GCBA",
-        candidatos_nombre: [
-          {
-            nombre: "María Rodríguez",
-            cargo: "Directora General de Salud Pública",
-            sigla: "DGSP",
-            depende_de_cargo: "Ministerio de Salud",
-            ruta_cargos:
-              "Ministerio de Salud > Dirección General de Salud Pública",
-            score: 0.94,
-          },
-          {
-            nombre: "María Rodríguez",
-            cargo: "Directora General Adjunta de Salud Pública",
-            sigla: "DGASP",
-            depende_de_cargo: "Dirección General de Salud Pública",
-            ruta_cargos:
-              "Ministerio de Salud > Dirección General de Salud Pública > Dirección General Adjunta de Salud Pública",
-            score: 0.61,
-          },
-        ],
-        candidatos_cargo: [
-          {
-            nombre: "María Rodríguez",
-            cargo: "Directora General de Salud Pública",
-            sigla: "DGSP",
-            depende_de_cargo: "Ministerio de Salud",
-            ruta_cargos:
-              "Ministerio de Salud > Dirección General de Salud Pública",
-            score: 0.94,
-          },
-        ],
       },
       {
         nombre: "Juan Pérez",
         cargo: "Presidente de la Comuna 4",
         destinatario_principal: false,
         sector: null,
-        candidatos_nombre: [],
-        candidatos_cargo: [],
       },
     ],
     tema: "SALUD",

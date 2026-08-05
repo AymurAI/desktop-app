@@ -14,7 +14,7 @@ const extracted = cva({
   },
   variants: {
     variant: {
-      value: { bg: "bg.secondary-highlight" },
+      value: { bg: "bg.primary-alternative" },
       support: { bg: "bg.primary-highlight" },
     },
     active: {

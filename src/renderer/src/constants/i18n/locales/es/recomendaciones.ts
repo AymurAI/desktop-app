@@ -70,7 +70,6 @@ const recomendaciones = {
     destinatarioLabel: "Destinatario",
     nombre: "Nombre",
     cargo: "Cargo",
-    organigramCandidates: "Sugerencias del organigrama",
     principal: "¿Es destinatario principal?",
     principalSi: "Sí",
     principalNo: "No",

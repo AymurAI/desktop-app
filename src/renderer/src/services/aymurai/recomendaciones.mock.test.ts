@@ -21,12 +21,12 @@ describe("mockDataExtractionResult", () => {
     expect(TAXONOMY[tema as string]).toContain(subtema);
   });
 
-  it("has a destinatario_principal GCBA destinatario with organigram candidates", () => {
+  it("has a destinatario_principal GCBA destinatario", () => {
     const { destinatarios } = mockDataExtractionResult();
     const principal = destinatarios.find((d) => d.destinatario_principal);
     expect(principal?.sector).toBe("GCBA");
-    expect(principal?.candidatos_nombre.length).toBeGreaterThan(0);
-    expect(principal?.candidatos_cargo.length).toBeGreaterThan(0);
+    expect(principal?.nombre).toBe("María Rodríguez");
+    expect(principal?.cargo).toBe("Directora General de Salud Pública");
   });
 
   it("has a non-principal second destinatario", () => {

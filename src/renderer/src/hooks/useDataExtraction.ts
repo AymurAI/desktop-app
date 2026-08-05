@@ -10,10 +10,7 @@ import {
   loadRecomendacion,
 } from "@/services/aymurai/recomendaciones";
 import type { DocFile } from "@/types/file";
-import type {
-  DataExtractionResult,
-  RecomendacionValues,
-} from "@/types/recomendaciones";
+import type { RecomendacionValues } from "@/types/recomendaciones";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useFileDispatch } from "./useFiles";
@@ -45,26 +42,6 @@ interface DataExtractionResultShape {
    * can actually do something instead of orphaning the request.
    */
   abort: () => void;
-}
-
-/**
- * Adapts a persisted validation (which never carries organigram candidates)
- * into the shape `normalizeExtraction` expects, so both `prediction` and
- * `validation` can share the same normalization path. The `candidatos_*`
- * arrays are always empty here — real candidates only ever come from a
- * `prediction`.
- */
-function asExtractionResult(
-  validation: RecomendacionValidation,
-): DataExtractionResult {
-  return {
-    ...validation,
-    destinatarios: validation.destinatarios.map((destinatario) => ({
-      ...destinatario,
-      candidatos_nombre: [],
-      candidatos_cargo: [],
-    })),
-  };
 }
 
 /**
@@ -267,10 +244,8 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
     }
 
     if (validation != null) {
-      const base = normalizeExtraction(
-        prediction ?? asExtractionResult(validation),
-      );
-      const suggestionIds = base.values.destinatarios.map(
+      const suggestions = normalizeExtraction(prediction ?? validation);
+      const suggestionIds = suggestions.destinatarios.map(
         (destinatario) => destinatario.id,
       );
       debugLog("dispatch: validation branch (stored validation found)", {
@@ -280,17 +255,16 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
         setRecomendacion(file.data.name, {
           documentId: documentId as string,
           origin: "validation",
-          inference: prediction ?? asExtractionResult(validation),
-          suggestions: base.values,
+          inference: prediction ?? validation,
+          suggestions,
           values: validationToValues(validation, suggestionIds),
-          candidates: prediction ? base.candidates : {},
         }),
       );
       return;
     }
 
     if (prediction != null) {
-      const { values, candidates } = normalizeExtraction(prediction);
+      const values = normalizeExtraction(prediction);
       debugLog("dispatch: stored-inference branch (stored prediction found)", {
         documentId,
       });
@@ -301,7 +275,6 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
           inference: prediction,
           suggestions: values,
           values,
-          candidates,
         }),
       );
     }
@@ -321,7 +294,7 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
       return;
 
     const result = mutation.data;
-    const { values, candidates } = normalizeExtraction(result);
+    const values = normalizeExtraction(result);
     debugLog("dispatch: inference branch (fresh extraction result)", {
       documentId,
     });
@@ -332,7 +305,6 @@ export function useDataExtraction(file: DocFile): DataExtractionResultShape {
         inference: result,
         suggestions: values,
         values,
-        candidates,
       }),
     );
   }, [

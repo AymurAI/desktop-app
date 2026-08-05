@@ -1,22 +1,8 @@
-/** Un renglón del organigrama GCBA propuesto por el backend. */
-export interface OrganigramCandidate {
-  nombre: string;
-  cargo: string;
-  sigla: string;
-  depende_de_cargo: string | null;
-  ruta_cargos: string;
-  /** Escala dependiente del backend de búsqueda (0-100 fuzzy, ~0-1 embeddings/hybrid).
-   *  NO comparar contra umbrales fijos ni mostrar crudo: sólo respetar el orden. */
-  score: number;
-}
-
 interface DestinatarioExtraction {
   nombre: string | null;
   cargo: string | null;
   destinatario_principal: boolean;
   sector: string | null;
-  candidatos_nombre: OrganigramCandidate[];
-  candidatos_cargo: OrganigramCandidate[];
 }
 
 /** Respuesta cruda de POST /llm/data-extraction. */
@@ -64,14 +50,8 @@ export interface RecomendacionState {
   /** UUID5 del contenido del archivo, devuelto por /misc/document-extract. */
   documentId: string;
   origin: RecomendacionOrigin;
-  /** Inferencia cruda, incluidos los candidatos de organigrama. */
+  /** Inferencia cruda. */
   inference: DataExtractionResult;
   suggestions: RecomendacionSuggestions;
   values: RecomendacionValues;
-  /** Candidatos indexados por `DestinatarioValue.id`. Fuera de `values` porque
-   *  no son datos editables ni se persisten como validación. */
-  candidates: Record<
-    string,
-    { nombre: OrganigramCandidate[]; cargo: OrganigramCandidate[] }
-  >;
 }

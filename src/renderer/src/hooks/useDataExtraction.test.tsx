@@ -47,17 +47,6 @@ function extraction(
         cargo: "Cargo original",
         destinatario_principal: true,
         sector: "Sector original",
-        candidatos_nombre: [
-          {
-            nombre: "Candidato",
-            cargo: "Cargo candidato",
-            sigla: "CC",
-            depende_de_cargo: null,
-            ruta_cargos: "ruta",
-            score: 1,
-          },
-        ],
-        candidatos_cargo: [],
       },
     ],
     tema: "Tema",
@@ -168,11 +157,6 @@ describe("useDataExtraction", () => {
     expect(recomendacion.suggestions.numero_recomendacion).toBe("1/24");
     expect(recomendacion.suggestions.tema).toBe("Tema");
     expect(recomendacion.suggestions.destinatarios[0].nombre).toBe("Original");
-
-    // Candidates come from the prediction when present.
-    expect(
-      recomendacion.candidates[recomendacion.values.destinatarios[0].id].nombre,
-    ).toHaveLength(1);
   });
 
   it("validation == null, prediction != null: origin = stored-inference; suggestions = values = normalize(prediction)", async () => {

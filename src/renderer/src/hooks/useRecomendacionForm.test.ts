@@ -16,17 +16,6 @@ const RESULT: DataExtractionResult = {
       cargo: null,
       destinatario_principal: true,
       sector: "GCBA",
-      candidatos_nombre: [
-        {
-          nombre: "Ana Perez",
-          cargo: "DG",
-          sigla: "DG",
-          depende_de_cargo: null,
-          ruta_cargos: "A>DG",
-          score: 0.9,
-        },
-      ],
-      candidatos_cargo: [],
     },
   ],
   tema: "AMBIENTE y CAMBIO CLIMÁTICO",
@@ -36,33 +25,26 @@ const RESULT: DataExtractionResult = {
 };
 
 const state = () => {
-  const { values, candidates } = normalizeExtraction(RESULT);
+  const values = normalizeExtraction(RESULT);
   return {
     documentId: "d1",
     origin: "inference" as const,
     inference: RESULT,
     suggestions: values,
     values,
-    candidates,
   };
 };
 
 describe("normalizeExtraction", () => {
   it("maps nulls to empty strings and assigns stable destinatario ids", () => {
-    const { values } = normalizeExtraction(RESULT);
+    const values = normalizeExtraction(RESULT);
     expect(values.fecha_recomendacion).toBe("");
     expect(values.destinatarios[0].cargo).toBe("");
     expect(values.destinatarios[0].id).toMatch(/[0-9a-f-]{36}/);
   });
 
-  it("indexes candidates by destinatario id", () => {
-    const { values, candidates } = normalizeExtraction(RESULT);
-    expect(candidates[values.destinatarios[0].id].nombre).toHaveLength(1);
-    expect(candidates[values.destinatarios[0].id].cargo).toEqual([]);
-  });
-
   it("seeds one empty destinatario when the LLM returned none", () => {
-    const { values } = normalizeExtraction({ ...RESULT, destinatarios: [] });
+    const values = normalizeExtraction({ ...RESULT, destinatarios: [] });
     expect(values.destinatarios).toHaveLength(1);
     expect(values.destinatarios[0].nombre).toBe("");
   });
@@ -134,8 +116,8 @@ describe("useRecomendacionForm", () => {
 });
 
 describe("toValidationPayload", () => {
-  it("strips local ids and candidate lists", () => {
-    const { values } = normalizeExtraction(RESULT);
+  it("strips local ids", () => {
+    const values = normalizeExtraction(RESULT);
     const payload = toValidationPayload(values);
     expect(payload.destinatarios[0]).toEqual({
       nombre: "Ana Pérez",
@@ -149,7 +131,7 @@ describe("toValidationPayload", () => {
   // `null` means "unanswered". Coercing it to `false` on the way out would
   // persist an explicit "No" the user never gave.
   it("passes an unanswered datos_personales through as null instead of coercing it to false", () => {
-    const { values } = normalizeExtraction(RESULT);
+    const values = normalizeExtraction(RESULT);
     expect(
       toValidationPayload({ ...values, datos_personales: null })
         .datos_personales,

@@ -9,14 +9,10 @@ import type {
 import { useRef, useState } from "react";
 
 /** Normaliza la respuesta cruda del backend al shape editable del formulario:
- *  `null` -> `""`, asigna ids locales estables y arma el índice de
- *  candidatos de organigrama por destinatario en el mismo recorrido. */
-export function normalizeExtraction(result: DataExtractionResult): {
-  values: RecomendacionValues;
-  candidates: RecomendacionState["candidates"];
-} {
-  const candidates: RecomendacionState["candidates"] = {};
-
+ *  `null` -> `""` y asigna ids locales estables a cada destinatario. */
+export function normalizeExtraction(
+  result: DataExtractionResult,
+): RecomendacionValues {
   const sourceDestinatarios =
     result.destinatarios.length > 0
       ? result.destinatarios
@@ -26,29 +22,20 @@ export function normalizeExtraction(result: DataExtractionResult): {
             cargo: null,
             destinatario_principal: true,
             sector: null,
-            candidatos_nombre: [],
-            candidatos_cargo: [],
           },
         ];
 
   const destinatarios: DestinatarioValue[] = sourceDestinatarios.map(
-    (destinatario) => {
-      const id = crypto.randomUUID();
-      candidates[id] = {
-        nombre: destinatario.candidatos_nombre,
-        cargo: destinatario.candidatos_cargo,
-      };
-      return {
-        id,
-        nombre: destinatario.nombre ?? "",
-        cargo: destinatario.cargo ?? "",
-        destinatario_principal: destinatario.destinatario_principal,
-        sector: destinatario.sector ?? "",
-      };
-    },
+    (destinatario) => ({
+      id: crypto.randomUUID(),
+      nombre: destinatario.nombre ?? "",
+      cargo: destinatario.cargo ?? "",
+      destinatario_principal: destinatario.destinatario_principal,
+      sector: destinatario.sector ?? "",
+    }),
   );
 
-  const values: RecomendacionValues = {
+  return {
     numero_recomendacion: result.numero_recomendacion ?? "",
     fecha_recomendacion: result.fecha_recomendacion ?? "",
     destinatarios,
@@ -57,12 +44,9 @@ export function normalizeExtraction(result: DataExtractionResult): {
     datos_personales: result.datos_personales,
     contenido_para_publicar: result.contenido_para_publicar,
   };
-
-  return { values, candidates };
 }
 
-/** Payload a persistir como validación manual: sin `id` local ni las listas
- *  `candidatos_*` (esas viven aparte, indexadas por id, en `candidates`). */
+/** Payload a persistir como validación manual: sin `id` local. */
 export function toValidationPayload(
   values: RecomendacionValues,
 ): RecomendacionValidation {
@@ -101,9 +85,6 @@ export function useRecomendacionForm(initial: RecomendacionState) {
   const suggestions = suggestionsRef.current;
 
   const [values, setValues] = useState<RecomendacionValues>(initial.values);
-  const [candidates] = useState<RecomendacionState["candidates"]>(
-    initial.candidates,
-  );
 
   function setField<K extends keyof RecomendacionValues>(
     key: K,
@@ -183,7 +164,6 @@ export function useRecomendacionForm(initial: RecomendacionState) {
   return {
     values,
     suggestions,
-    candidates,
     setField,
     setDestinatarioField,
     addDestinatario,

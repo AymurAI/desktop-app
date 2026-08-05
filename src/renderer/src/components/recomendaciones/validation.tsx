@@ -75,10 +75,10 @@ export function RecomendacionValidation() {
     // `file.recomendacion.values` to build the Excel row — without this
     // dispatch the only working persistence path would export the raw LLM
     // inference and silently drop every human correction. Spreading
-    // `recomendacion` keeps `inference`, `suggestions` and `candidates`
-    // pointing at the very same objects, so the frozen-suggestions invariant
-    // holds and reopening the screen still diffs edits against the original
-    // model output.
+    // `recomendacion` keeps `inference` and `suggestions` pointing at the
+    // very same objects, so the frozen-suggestions invariant holds and
+    // reopening the screen still diffs edits against the original model
+    // output.
     dispatch(
       setRecomendacion(file.data.name, {
         ...recomendacion,

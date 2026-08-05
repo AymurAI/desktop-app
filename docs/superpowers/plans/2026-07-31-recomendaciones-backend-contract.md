@@ -23,6 +23,15 @@ desde cero. Es decir: **hoy nada se rompe por la ausencia de estos endpoints**,
 el usuario sólo pierde la ventaja de no tener que re-extraer y de retomar una
 validación previa. Este issue es para cerrar esa brecha.
 
+> **Nota post-implementación:** el plan de diseño original (referenciado más
+> abajo) incluía un mecanismo de "candidatos de organigrama"
+> (`candidatos_nombre`/`candidatos_cargo` por destinatario, con un
+> `OrganigramPicker` en el formulario) para sugerir `nombre`/`cargo` a partir
+> de un ranking del organigrama del GCBA. El dueño de producto lo eliminó del
+> frontend después de probar la feature a mano, por no aportar valor en la
+> pantalla de validación. Este contrato ya no lo menciona como requisito;
+> donde el documento original lo daba por sentado, está señalado explícitamente.
+
 ## 2. Endpoints requeridos
 
 Mismo patrón exacto que ya existe para `datapublic` y `asr`
@@ -55,18 +64,7 @@ POST /llm/recomendaciones/validation/document/{document_id}
         "nombre": "Valeria Romina Focaraccio",
         "cargo": "Directora General de Fiscalización Urbana",
         "destinatario_principal": true,
-        "sector": "GCBA",
-        "candidatos_nombre": [
-          {
-            "nombre": "Valeria R. Focaraccio",
-            "cargo": "Directora General de Fiscalización Urbana",
-            "sigla": "DGFU",
-            "depende_de_cargo": null,
-            "ruta_cargos": "MEPHU > SSMU > DGFU",
-            "score": 0.91
-          }
-        ],
-        "candidatos_cargo": []
+        "sector": "GCBA"
       }
     ],
     "tema": "DERECHOS URBANOS, ESPACIO PÚBLICO Y CONTROL COMUNAL",
@@ -94,8 +92,7 @@ not a 200 with nulls, when the document has never been processed.
 ### 2.2 `POST /llm/recomendaciones/validation/document/{document_id}`
 
 Request body — `RecomendacionValidation` (see §3 for the exact zod-validated
-shape; it is `DataExtractionResult` minus the two `candidatos_*` arrays per
-destinatario):
+shape; it is structurally identical to `DataExtractionResult`):
 
 ```jsonc
 {
@@ -146,14 +143,15 @@ class RecomendacionDocument(RecomendacionDocumentBase, table=True):
     )
 ```
 
-`DataExtractionResult` and `OrganigramCandidate` already exist as pydantic
-models — see `git show 013e86ea:aymurai/api/endpoints/routers/llm/data_extraction/schemas.py`
-(that commit is not on `main` yet; the endpoint itself is assumed to already
-exist wherever this issue is implemented). `RecomendacionValidation` is a new
-pydantic model: same shape as `DataExtractionResult`, but each
-`destinatario` entry omits `candidatos_nombre`/`candidatos_cargo` (those are
-inference scaffolding, not user-validated data — see the zod mirror in §3
-below).
+`DataExtractionResult` already exists as a pydantic model — see `git show
+013e86ea:aymurai/api/endpoints/routers/llm/data_extraction/schemas.py` (that
+commit is not on `main` yet; the endpoint itself is assumed to already exist
+wherever this issue is implemented; note that commit predates the frontend's
+removal of the organigram-candidate fields — see the note in §1 — so its
+`destinatario` model may still list `candidatos_nombre`/`candidatos_cargo`,
+which the frontend no longer sends or expects). `RecomendacionValidation` is
+a new pydantic model, structurally identical to `DataExtractionResult` (see
+the zod mirror in §3 below).
 
 **Important divergence from the datapublic/asr precedent's response shape:**
 `datapublic_read_document_validation` (`datapublic.py:124`) returns only the
@@ -204,17 +202,17 @@ una re-exportación del mismo documento produce un id distinto — limitación
 aceptada para el MVP (§9 del plan de diseño), no algo que este issue deba
 resolver.
 
-### b. `prediction` DEBE guardar el `DataExtractionResult` completo, incluidos `candidatos_nombre` y `candidatos_cargo` por cada destinatario
+### b. (ELIMINADO) ~~`prediction` DEBE guardar `candidatos_nombre`/`candidatos_cargo` por destinatario~~
 
-Esta es una decisión explícita del usuario del producto (§9, punto 2 del plan
-de diseño), no una preferencia técnica. El frontend recupera los selectores
-de organigrama ("¿es esta persona del organigrama?") a partir de `prediction`
-al reabrir un documento ya validado. Si el backend descarta o trunca
-`candidatos_nombre`/`candidatos_cargo` antes de guardar, esos desplegables
-desaparecen silenciosamente al reabrir — sin error visible — y el usuario
-queda escribiendo nombre y cargo a mano, como texto libre, perdiendo la ayuda
-que tuvo en la primera pasada. Guardar el objeto tal cual lo devolvió
-`/llm/data-extraction`, sin recortar campos.
+Este requisito, tal como estaba redactado en una versión anterior de este
+documento, exigía con lenguaje de "DEBE" que el backend persistiera
+`candidatos_nombre`/`candidatos_cargo` sin recortar. Ya no es así: la
+feature de candidatos de organigrama fue eliminada del frontend después de
+que el dueño de producto la probara y decidiera que no aportaba valor (ver la
+nota en §1). `DataExtractionResult` ya no tiene esos campos en absoluto, así
+que `prediction` no necesita guardar nada relacionado con candidatos de
+organigrama — guardar el objeto tal cual lo devuelve `/llm/data-extraction`
+sigue siendo la recomendación general, simplemente ya no incluye esos campos.
 
 ### c. El payload de `validation` DEBE poder ir y volver con un identificador estable por destinatario
 
@@ -226,9 +224,7 @@ borra un destinatario antes de guardar: los índices se corren, y al reabrir:
 - la marca de "esto lo sugirió el modelo, esto lo corrigió el humano" compara
   el destinatario equivocado contra otro,
 - el resaltado en el documento (`FileAnnotator`) le atribuye a un destinatario
-  el texto de otro,
-- los candidatos de organigrama que se ofrecen para "editar" un destinatario
-  salen del `prediction[i]` incorrecto.
+  el texto de otro.
 
 Este bug **es latente hoy** (no se manifiesta porque no hay persistencia real
 todavía) y **se activa el día que este contrato se implemente**. Pedimos al
@@ -289,10 +285,6 @@ rompe al cliente:
 | `destinatarios[].cargo` | `null` |
 | `destinatarios[].destinatario_principal` | `false` |
 | `destinatarios[].sector` | `null` |
-| `destinatarios[].candidatos_nombre` | `[]` |
-| `destinatarios[].candidatos_cargo` | `[]` |
-| `candidatos_*[].sigla` | `""` |
-| `candidatos_*[].depende_de_cargo` | `null` |
 | `datos_personales` | `null` |
 | `contenido_para_publicar` | `""` |
 | `prediction` (en el documento completo) | `null` |
@@ -300,11 +292,9 @@ rompe al cliente:
 | `updated_at` | `null` |
 
 Campos **sin** default, es decir obligatorios si el objeto está presente:
-`document_id` (a nivel documento), y dentro de cada `OrganigramCandidate`:
-`nombre`, `cargo`, `ruta_cargos`, `score` (todos `z.string()`/`z.number()`
-sin `.default(...)`). Si esos faltan, el `parse()` de zod tira y el cliente
-lo trata como un error de `GET` genérico (fallback a re-extracción, con
-`console.warn`).
+`document_id` (a nivel documento). Si falta, el `parse()` de zod tira y el
+cliente lo trata como un error de `GET` genérico (fallback a re-extracción,
+con `console.warn`).
 
 ### f. `POST` es un upsert sin versionado
 

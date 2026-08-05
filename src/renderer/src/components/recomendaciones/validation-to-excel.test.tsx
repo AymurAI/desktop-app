@@ -200,7 +200,6 @@ function buildState(): RecomendacionState {
     },
     suggestions: values,
     values,
-    candidates: {},
   };
 }
 

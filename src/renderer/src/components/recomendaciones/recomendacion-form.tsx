@@ -44,7 +44,6 @@ export function RecomendacionForm({
   const {
     values,
     suggestions,
-    candidates,
     setField,
     setDestinatarioField,
     addDestinatario,
@@ -135,7 +134,6 @@ export function RecomendacionForm({
           <DestinatarioFields
             value={selectedDestinatario}
             suggestion={suggestedDestinatario}
-            candidates={candidates[selectedDestinatario.id]}
             onChange={(key, value) =>
               setDestinatarioField(selectedDestinatario.id, key, value)
             }
@@ -202,7 +200,6 @@ export function RecomendacionForm({
       <Textarea
         label={t("validation.contenidoParaPublicar")}
         value={values.contenido_para_publicar}
-        suggestion={suggestions.contenido_para_publicar}
         onChange={(event) =>
           setField("contenido_para_publicar", event.target.value)
         }

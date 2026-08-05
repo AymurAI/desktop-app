@@ -3,20 +3,14 @@ import { useTranslation } from "react-i18next";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { SECTOR_OPTIONS } from "@/constants/recomendaciones/sectores";
 import { Stack, styled } from "@/styled/jsx";
-import type {
-  DestinatarioValue,
-  OrganigramCandidate,
-} from "@/types/recomendaciones";
+import type { DestinatarioValue } from "@/types/recomendaciones";
 import { Radio, Select, TextField } from "@aymurai/ui";
-import { OrganigramPicker } from "./organigram-picker";
 
 export interface DestinatarioFieldsProps {
   value: DestinatarioValue;
   /** Frozen inference for this same destinatario id, if any (a hand-added
    *  destinatario has none — see §X5/hook doc). */
   suggestion?: DestinatarioValue;
-  /** May be undefined/empty — §X2: never index blindly. */
-  candidates?: { nombre: OrganigramCandidate[]; cargo: OrganigramCandidate[] };
   onChange: <K extends keyof DestinatarioValue>(
     key: K,
     value: DestinatarioValue[K],
@@ -25,15 +19,15 @@ export interface DestinatarioFieldsProps {
 }
 
 /**
- * Editable fields for a single destinatario. `nombre` and `cargo` each get
- * their own INDEPENDENT organigram picker (§X4): picking a candidate for one
- * must never write into the other, since the backend ranks them separately
- * (a person may no longer hold the cargo the organigram lists for them).
+ * Editable fields for a single destinatario: `nombre`, `cargo`,
+ * `destinatario_principal` and `sector`. `sector` handles the out-of-list
+ * case (§3.5): a value the model returned that isn't in `SECTOR_OPTIONS` is
+ * never silently discarded — it's kept, injected as an extra option, and
+ * flagged with an error message.
  */
 export function DestinatarioFields({
   value,
   suggestion,
-  candidates,
   onChange,
   onFocusField,
 }: DestinatarioFieldsProps) {
@@ -61,13 +55,6 @@ export function DestinatarioFields({
           onChange={(event) => onChange("nombre", event.target.value)}
           onFocus={() => onFocusField(`destinatario:${value.id}:nombre`)}
         />
-        {candidates?.nombre && candidates.nombre.length > 0 && (
-          <OrganigramPicker
-            field="nombre"
-            candidates={candidates.nombre}
-            onPick={(picked) => onChange("nombre", picked)}
-          />
-        )}
       </Stack>
 
       <Stack gap="2">
@@ -78,13 +65,6 @@ export function DestinatarioFields({
           onChange={(event) => onChange("cargo", event.target.value)}
           onFocus={() => onFocusField(`destinatario:${value.id}:cargo`)}
         />
-        {candidates?.cargo && candidates.cargo.length > 0 && (
-          <OrganigramPicker
-            field="cargo"
-            candidates={candidates.cargo}
-            onPick={(picked) => onChange("cargo", picked)}
-          />
-        )}
       </Stack>
 
       <RadioGroup
