@@ -140,6 +140,10 @@ const voiceToText = {
   sidePanel: {
     empty: "Seleccioná un turno para editar sus propiedades.",
     selectedTurn: "Turno seleccionado",
+    changeApplied_one:
+      "Se aplicó con éxito el cambio de {{from}} a {{to}} · 1 turno actualizado",
+    changeApplied_other:
+      "Se aplicó con éxito el cambio de {{from}} a {{to}} · {{count}} turnos actualizados",
     startsAt: "Inicia en {{time}}",
     renameAria: "Renombrar locutor en todos los turnos",
     renamePlaceholder: "Nombre del locutor",

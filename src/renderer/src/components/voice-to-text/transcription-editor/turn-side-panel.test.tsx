@@ -14,7 +14,10 @@ vi.stubGlobal(
 );
 
 vi.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: () => ({
+    t: (key: string, opts?: Record<string, unknown>) =>
+      opts ? `${key}:${JSON.stringify(opts)}` : key,
+  }),
 }));
 
 const dispatch = vi.fn();
@@ -89,7 +92,7 @@ describe("TurnSidePanel timestamp editing", () => {
     fireEvent.change(input, { target: { value: "00:30" } }); // 30s, past "c" at 20s
     expect(dispatch).not.toHaveBeenCalled();
     expect(showToast).toHaveBeenCalledWith(
-      "sidePanel.timestampOutOfRange",
+      expect.stringContaining("sidePanel.timestampOutOfRange"),
       "warning",
     );
   });
@@ -300,7 +303,7 @@ describe("TurnSidePanel bulk-apply scope prompt", () => {
       />,
     );
     fireEvent.click(screen.getByText("Persona 2"));
-    fireEvent.click(screen.getByText("sidePanel.scopeDialog.allTurns"));
+    fireEvent.click(screen.getByText(/sidePanel\.scopeDialog\.allTurns/));
 
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -439,7 +442,7 @@ describe("TurnSidePanel role options menu", () => {
     fireEvent.click(screen.getByRole("button", { name: "Juez/a" }));
 
     expect(screen.getByText("sidePanel.scopeDialog.title")).toBeTruthy();
-    fireEvent.click(screen.getByText("sidePanel.scopeDialog.allTurns"));
+    fireEvent.click(screen.getByText(/sidePanel\.scopeDialog\.allTurns/));
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "RENAME_SPEAKER_GLOBAL",
@@ -463,5 +466,84 @@ describe("TurnSidePanel role options menu", () => {
     // (index 1) is used to disambiguate from the header (index 0).
     fireEvent.click(screen.getAllByText("Persona 1")[1]); // s1 ya es el orador del turno "a"
     expect(dispatch).not.toHaveBeenCalled();
+  });
+});
+
+describe("TurnSidePanel apply-change toast", () => {
+  beforeEach(() => {
+    dispatch.mockClear();
+    showToast.mockClear();
+  });
+
+  it("reports a single updated turn when there is no scope prompt", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b" // único turno de s2
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 1"));
+
+    expect(showToast).toHaveBeenCalledTimes(1);
+    const [message, variant] = showToast.mock.calls[0];
+    expect(variant).toBe("success");
+    expect(message).toContain("sidePanel.changeApplied");
+    expect(message).toContain('"count":1');
+  });
+
+  it("reports the real turn count when applying to all of the speaker's turns", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a" // s1 tiene los turnos a y c
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2"));
+    fireEvent.click(screen.getByText(/sidePanel\.scopeDialog\.allTurns/));
+
+    expect(showToast).toHaveBeenCalledTimes(1);
+    expect(showToast.mock.calls[0][0]).toContain('"count":2');
+  });
+
+  it("reports one turn when only this turn is changed", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2"));
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
+
+    expect(showToast).toHaveBeenCalledTimes(1);
+    expect(showToast.mock.calls[0][0]).toContain('"count":1');
+  });
+
+  it("names the speaker being replaced as `from`, and the new one as `to`", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a" // orador actual: "Persona 1"
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2"));
+    fireEvent.click(screen.getByText(/sidePanel\.scopeDialog\.allTurns/));
+
+    const message = showToast.mock.calls[0][0];
+    expect(message).toContain('"from":"Persona 1"');
+    expect(message).toContain('"to":"Persona 2"');
+  });
+
+  it("reports the role name when the change comes from the 'Nuevo' menu", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b" // único turno de s2, así que no hay diálogo
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Juez/a" }));
+
+    expect(showToast.mock.calls[0][0]).toContain('"to":"Juez/a"');
   });
 });

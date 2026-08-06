@@ -193,6 +193,23 @@ export default function TurnSidePanel({
     (t) => t.speakerId === currentSpeaker.id,
   ).length;
 
+  /**
+   * Toast de confirmación (Figma nodo 40002383:73634). Se llama dentro del
+   * mismo handler que despacha, para que `currentSpeaker.label` siga siendo el
+   * valor de este render: después del dispatch el componente se re-renderiza y
+   * el mensaje diría "de Fiscal a Fiscal".
+   */
+  const notifyApplied = (targetLabel: string, count: number) => {
+    showToast(
+      t("sidePanel.changeApplied", {
+        from: currentSpeaker.label,
+        to: targetLabel,
+        count,
+      }),
+      "success",
+    );
+  };
+
   /** Decide entre aplicar directo o pedir alcance. Común a los dos caminos. */
   const requestSelection = (pending: PendingSelection, targetLabel: string) => {
     if (currentSpeakerTurnCount > 1) {
@@ -200,6 +217,7 @@ export default function TurnSidePanel({
       return;
     }
     applySelection(pending);
+    notifyApplied(targetLabel, 1);
   };
 
   /** Click en una pill de la grilla (un orador existente). */
@@ -222,6 +240,7 @@ export default function TurnSidePanel({
   const handleApplyToThisTurnOnly = () => {
     if (!scopeChoice) return;
     applySelection(scopeChoice.pending);
+    notifyApplied(scopeChoice.targetLabel, 1);
     setScopeChoice(null);
   };
 
@@ -234,6 +253,7 @@ export default function TurnSidePanel({
         scopeChoice.targetLabel,
       ),
     );
+    notifyApplied(scopeChoice.targetLabel, currentSpeakerTurnCount);
     setScopeChoice(null);
   };
 
