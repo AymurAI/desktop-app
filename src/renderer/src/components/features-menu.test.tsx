@@ -39,8 +39,9 @@ describe("FeaturesMenu", () => {
     fireEvent.click(screen.getByText("dataset:title"));
 
     expect(navigate).toHaveBeenCalledWith({
-      to: "/app/$feature",
+      to: "/app/$feature/onboarding",
       params: { feature: "DATA_SET" },
+      viewTransition: false,
     });
     expect(dispatch).not.toHaveBeenCalled();
 
@@ -62,7 +63,10 @@ describe("FeaturesMenu", () => {
     fireEvent.click(screen.getByRole("button", { name: "Ir al inicio" }));
     fireEvent.click(screen.getByText("common:settings"));
 
-    expect(navigate).toHaveBeenCalledWith({ to: "/home/host" });
+    expect(navigate).toHaveBeenCalledWith({
+      to: "/home/host",
+      viewTransition: false,
+    });
     expect(dispatch).not.toHaveBeenCalled();
 
     resolveNavigate();
@@ -83,8 +87,9 @@ describe("FeaturesMenu — Summarizer", () => {
     fireEvent.click(screen.getByText("common:featuresMenu.summary"));
 
     expect(navigate).toHaveBeenCalledWith({
-      to: "/app/$feature",
+      to: "/app/$feature/onboarding",
       params: { feature: "SUMMARIZER" },
+      viewTransition: false,
     });
     await waitFor(() => expect(dispatch).toHaveBeenCalledOnce());
   });
