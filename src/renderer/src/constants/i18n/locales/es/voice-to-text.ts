@@ -130,6 +130,7 @@ const voiceToText = {
   speakerPicker: {
     people: "Personas",
     suggested: "Roles sugeridos",
+    new: "Nuevo",
     newPerson: "Nueva persona",
     newPersonPlaceholder: "Nombre de la persona",
     create: "Crear",
