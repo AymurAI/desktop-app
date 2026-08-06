@@ -342,6 +342,7 @@ describe("TurnSidePanel new-person numbering", () => {
     };
     render(<TurnSidePanel transcription={renamedOnly} activeTurnId="a" />);
     fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
 
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -368,6 +369,7 @@ describe("TurnSidePanel new-person numbering", () => {
       <TurnSidePanel transcription={withCustomAndPersona} activeTurnId="a" />,
     );
     fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
 
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -377,5 +379,89 @@ describe("TurnSidePanel new-person numbering", () => {
         }),
       }),
     );
+  });
+});
+
+describe("TurnSidePanel role options menu", () => {
+  beforeEach(() => dispatch.mockClear());
+
+  it("lists only the roles whose label is not already taken", () => {
+    const withFiscal: Transcription = {
+      ...multiSpeakerTranscription,
+      speakers: [
+        { id: "s1", label: "Persona 1", initials: "P1", color: "violet" },
+        { id: "s2", label: "Fiscal", initials: "FI", color: "green" },
+      ],
+    };
+    render(<TurnSidePanel transcription={withFiscal} activeTurnId="a" />);
+    fireEvent.click(screen.getByText("Nuevo"));
+
+    expect(screen.getByRole("button", { name: "Juez/a" })).toBeTruthy();
+    // "Fiscal" ya existe como orador: aparece como pill, no como opción.
+    expect(screen.queryByRole("button", { name: "Fiscal" })).toBeNull();
+  });
+
+  it("creates the speaker and reassigns when the current speaker has a single turn", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b" // "b" es el único turno de s2
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Juez/a" }));
+
+    expect(screen.queryByText("sidePanel.scopeDialog.title")).toBeNull();
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "ADD_SPEAKER",
+        payload: expect.objectContaining({
+          speaker: expect.objectContaining({ label: "Juez/a" }),
+        }),
+      }),
+    );
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "REASSIGN_TURN_SPEAKER",
+        payload: expect.objectContaining({ turnId: "b" }),
+      }),
+    );
+  });
+
+  it("prompts for scope when picking a role for a speaker with several turns", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a" // s1 tiene los turnos a y c
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Juez/a" }));
+
+    expect(screen.getByText("sidePanel.scopeDialog.title")).toBeTruthy();
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.allTurns"));
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "RENAME_SPEAKER_GLOBAL",
+        payload: expect.objectContaining({
+          speakerId: "s1",
+          newLabel: "Juez/a",
+        }),
+      }),
+    );
+  });
+
+  it("does not dispatch when the already-current speaker's pill is clicked", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    // "Persona 1" also appears in the "Turno seleccionado" header (it always
+    // shows the current speaker's name), so getAllByText + the pill instance
+    // (index 1) is used to disambiguate from the header (index 0).
+    fireEvent.click(screen.getAllByText("Persona 1")[1]); // s1 ya es el orador del turno "a"
+    expect(dispatch).not.toHaveBeenCalled();
   });
 });

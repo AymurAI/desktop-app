@@ -17,7 +17,12 @@ import {
 } from "@/reducers/transcription/actions";
 import { SUGGESTED_SPEAKERS } from "@/services/aymurai/fixtures/suggestedSpeakers";
 import { css } from "@/styled/css";
-import type { Speaker, Transcription, Turn } from "@/types/transcription";
+import type {
+  Speaker,
+  SuggestedSpeaker,
+  Transcription,
+  Turn,
+} from "@/types/transcription";
 import { SPEAKER_PALETTE } from "@/types/transcription";
 import {
   Button,
@@ -98,6 +103,10 @@ export interface TurnSidePanelProps {
   activeTurnId: string | null;
 }
 
+type PendingSelection =
+  | { kind: "existing"; speakerId: string }
+  | { kind: "role"; role: SuggestedSpeaker };
+
 /**
  * Edit-mode side panel. Thin adapter that wires the transcription reducer to
  * the @aymurai/ui SidePanel component (Figma-aligned). The library component
@@ -125,7 +134,7 @@ export default function TurnSidePanel({
   // the handlers that use it, so every render calls the same hooks in the
   // same order regardless of whether activeTurn/currentSpeaker are set.
   const [scopeChoice, setScopeChoice] = useState<{
-    personIndex: number;
+    pending: PendingSelection;
     targetLabel: string;
   } | null>(null);
 
@@ -138,46 +147,41 @@ export default function TurnSidePanel({
     return <aside className={emptyPanel}>{t("sidePanel.empty")}</aside>;
   }
 
-  // People pills = existing speakers first, then still-unused suggested roles.
+  // Pills = sólo los oradores detectados. Los roles ya no van acá: viven en el
+  // desplegable de "Nuevo".
+  const people = speakers.map((s) => ({
+    id: s.id,
+    initials: s.initials,
+    name: s.label,
+    color: s.color,
+    renamable: true,
+  }));
+  const selectedIndex = speakers.findIndex((s) => s.id === currentSpeaker.id);
+
+  // Roles todavía no usados, para el desplegable.
   const usedLabels = new Set(speakers.map((s) => s.label.toLowerCase()));
   const availableSuggested = SUGGESTED_SPEAKERS.filter(
     (sg) => !usedLabels.has(sg.label.toLowerCase()),
   );
-  const people = [
-    ...speakers.map((s) => ({
-      kind: "existing" as const,
-      id: s.id,
-      initials: s.initials,
-      name: s.label,
-      color: s.color,
-      renamable: true,
-    })),
-    ...availableSuggested.map((sg) => ({
-      kind: "suggested" as const,
-      id: sg.id,
-      sg,
-      initials: sg.initials,
-      name: sg.label,
-      color: sg.color,
-      renamable: false,
-    })),
-  ];
-  const selectedIndex = people.findIndex(
-    (p) => p.kind === "existing" && p.id === currentSpeaker.id,
-  );
+  const newPersonOptions = availableSuggested.map((sg) => ({
+    id: sg.id,
+    initials: sg.initials,
+    name: sg.label,
+    color: sg.color,
+  }));
 
-  const applySelection = (i: number) => {
-    const p = people[i];
-    if (!p) return;
-    if (p.kind === "existing") {
-      dispatch(reassignTurnSpeaker(transcription.id, activeTurn.id, p.id));
+  const applySelection = (pending: PendingSelection) => {
+    if (pending.kind === "existing") {
+      dispatch(
+        reassignTurnSpeaker(transcription.id, activeTurn.id, pending.speakerId),
+      );
       return;
     }
     const newSpeaker: Speaker = {
       id: crypto.randomUUID(),
-      label: p.sg.label,
-      initials: p.sg.initials,
-      color: p.sg.color,
+      label: pending.role.label,
+      initials: pending.role.initials,
+      color: pending.role.color,
     };
     dispatch(addSpeaker(transcription.id, newSpeaker));
     dispatch(
@@ -185,32 +189,44 @@ export default function TurnSidePanel({
     );
   };
 
-  const handleSelectPerson = (i: number) => {
-    const p = people[i];
-    if (!p || !currentSpeaker) return;
+  const currentSpeakerTurnCount = turns.filter(
+    (t) => t.speakerId === currentSpeaker.id,
+  ).length;
 
-    const targetLabel = p.kind === "existing" ? p.name : p.sg.label;
-    const isDifferentIdentity =
-      p.kind === "suggested" || p.id !== currentSpeaker.id;
-    const currentSpeakerTurnCount = turns.filter(
-      (t) => t.speakerId === currentSpeaker.id,
-    ).length;
-
-    if (isDifferentIdentity && currentSpeakerTurnCount > 1) {
-      setScopeChoice({ personIndex: i, targetLabel });
+  /** Decide entre aplicar directo o pedir alcance. Común a los dos caminos. */
+  const requestSelection = (pending: PendingSelection, targetLabel: string) => {
+    if (currentSpeakerTurnCount > 1) {
+      setScopeChoice({ pending, targetLabel });
       return;
     }
-    applySelection(i);
+    applySelection(pending);
+  };
+
+  /** Click en una pill de la grilla (un orador existente). */
+  const handleSelectPerson = (index: number) => {
+    const speaker = speakers[index];
+    if (!speaker || speaker.id === currentSpeaker.id) return;
+    requestSelection(
+      { kind: "existing", speakerId: speaker.id },
+      speaker.label,
+    );
+  };
+
+  /** Click en un rol del desplegable de "Nuevo". */
+  const handleSelectNewPersonOption = (index: number) => {
+    const role = availableSuggested[index];
+    if (!role) return;
+    requestSelection({ kind: "role", role }, role.label);
   };
 
   const handleApplyToThisTurnOnly = () => {
     if (!scopeChoice) return;
-    applySelection(scopeChoice.personIndex);
+    applySelection(scopeChoice.pending);
     setScopeChoice(null);
   };
 
   const handleApplyToAllTurns = () => {
-    if (!scopeChoice || !currentSpeaker) return;
+    if (!scopeChoice) return;
     dispatch(
       renameSpeakerGlobal(
         transcription.id,
@@ -269,16 +285,16 @@ export default function TurnSidePanel({
     : undefined;
 
   const handleRenamePerson = (personIndex: number, name: string) => {
-    const person = people[personIndex];
-    if (person?.kind !== "existing") return;
-    dispatch(renameSpeakerGlobal(transcription.id, person.id, name));
+    const speaker = speakers[personIndex];
+    if (!speaker) return;
+    dispatch(renameSpeakerGlobal(transcription.id, speaker.id, name));
   };
 
   const handleMergePeople = (sourceIndex: number, targetIndex: number) => {
-    const source = people[sourceIndex];
-    const target = people[targetIndex];
-    if (source?.kind !== "existing" || target?.kind !== "existing") return;
-    dispatch(renameSpeakerGlobal(transcription.id, source.id, target.name));
+    const source = speakers[sourceIndex];
+    const target = speakers[targetIndex];
+    if (!source || !target) return;
+    dispatch(renameSpeakerGlobal(transcription.id, source.id, target.label));
   };
 
   const handleAddBelow = () => {
@@ -317,15 +333,11 @@ export default function TurnSidePanel({
             time: formatTime(activeTurn.startMs),
             color: currentSpeaker.color,
           }}
-          people={people.map((p) => ({
-            id: p.id,
-            initials: p.initials,
-            name: p.name,
-            color: p.color,
-            renamable: p.renamable,
-          }))}
+          people={people}
           selectedIndex={selectedIndex >= 0 ? selectedIndex : undefined}
           onSelectPerson={handleSelectPerson}
+          newPersonOptions={newPersonOptions}
+          onSelectNewPersonOption={handleSelectNewPersonOption}
           onNewPerson={handleNewPerson}
           onRenamePerson={handleRenamePerson}
           onMergePeople={handleMergePeople}
