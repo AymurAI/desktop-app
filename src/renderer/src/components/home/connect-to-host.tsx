@@ -1,7 +1,7 @@
 import { useConnectToHost } from "@/services/aymurai";
 import * as localStore from "@/store/useLocal";
 import { css } from "@/styled/css";
-import { Stack } from "@/styled/jsx";
+import { Stack, styled } from "@/styled/jsx";
 import { isElectronApp } from "@/utils/app-mode";
 import { Button, TextField } from "@aymurai/ui";
 import { useNavigate } from "@tanstack/react-router";
@@ -67,24 +67,31 @@ export default function ConnectToHost() {
   };
 
   return (
-    <form onSubmit={tryConnection}>
-      <Stack justify="center" gap="3" width="[400px]">
-        <h2 className={css({ textStyle: "subtitle.sm.strong" })}>
-          {t("home.host.connectServerExplanation")}
-        </h2>
+    <Stack align="center" gap={{ base: "[1rem]", xl: "12" }} width="[400px]">
+      <styled.img
+        src={`${import.meta.env.BASE_URL}brand/aymurai-vert-darkpurple.svg`}
+        alt="Logotipo AymurAI"
+        width={{ base: "[100px]", xl: "[180px]" }}
+      />
+      <form onSubmit={tryConnection} className={css({ width: "full" })}>
+        <Stack justify="center" gap="3" width="full">
+          <h2 className={css({ textStyle: "subtitle.sm.strong" })}>
+            {t("home.host.connectServerExplanation")}
+          </h2>
 
-        <TextField
-          label={t("home.host.connectServerLabel")}
-          placeholder="http://"
-          value={host}
-          onChange={handleChange}
-          error={error ? errorMessage(error) : undefined}
-        />
+          <TextField
+            label={t("home.host.connectServerLabel")}
+            placeholder="http://"
+            value={host}
+            onChange={handleChange}
+            error={error ? errorMessage(error) : undefined}
+          />
 
-        <Button type="submit" isLoading={isPending}>
-          {t("home.host.connectServerSubmit")}
-        </Button>
-      </Stack>
-    </form>
+          <Button type="submit" isLoading={isPending}>
+            {t("home.host.connectServerSubmit")}
+          </Button>
+        </Stack>
+      </form>
+    </Stack>
   );
 }

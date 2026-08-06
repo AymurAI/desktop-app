@@ -35,6 +35,14 @@ describe("ConnectToHost — default server address", () => {
     vi.unstubAllEnvs();
   });
 
+  it("renders the AymurAI brand logo above the form", () => {
+    vi.stubEnv("VITE_APP_MODE", "web");
+
+    render(<ConnectToHost />);
+
+    expect(screen.getByAltText("Logotipo AymurAI")).toBeInTheDocument();
+  });
+
   it("prefills the field with the web app's own origin when no host is saved yet", () => {
     vi.stubEnv("VITE_APP_MODE", "web");
 
