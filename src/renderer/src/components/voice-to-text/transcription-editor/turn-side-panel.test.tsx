@@ -373,6 +373,13 @@ describe("TurnSidePanel new-person numbering", () => {
     render(<TurnSidePanel transcription={renamedOnly} activeTurnId="a" />);
     fireEvent.click(screen.getByText("Nuevo"));
     fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+    // "a" is one of this fixture's 3 turns for "s1" (unlike `withCustomAndPersona`
+    // below, which trims turns down to 1), so with the scope-prompt behavior
+    // added in this change, choosing "Nueva persona" now opens the scope
+    // dialog first — same as any other identity change for a multi-turn
+    // speaker. Resolve it via "Sólo este turno" to reach the dispatch this
+    // regression test cares about.
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
 
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -493,6 +500,123 @@ describe("TurnSidePanel role options menu", () => {
     // (index 1) is used to disambiguate from the header (index 0).
     fireEvent.click(screen.getAllByText("Persona 1")[1]); // s1 ya es el orador del turno "a"
     expect(dispatch).not.toHaveBeenCalled();
+  });
+});
+
+describe("TurnSidePanel 'Nueva persona' from the Nuevo menu", () => {
+  beforeEach(() => {
+    dispatch.mockClear();
+    showToast.mockClear();
+  });
+
+  it("applies immediately with no prompt when the current speaker has only one turn", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b" // s2's only turn
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+
+    expect(screen.queryByText("sidePanel.scopeDialog.title")).toBeNull();
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "ADD_SPEAKER",
+        payload: expect.objectContaining({
+          speaker: expect.objectContaining({ label: "Persona 3" }),
+        }),
+      }),
+    );
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "REASSIGN_TURN_SPEAKER",
+        payload: expect.objectContaining({ turnId: "b" }),
+      }),
+    );
+  });
+
+  it("prompts for scope when the current speaker has more than one turn", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a" // s1's turns: a, c
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+
+    expect(screen.getByText("sidePanel.scopeDialog.title")).toBeTruthy();
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it("creates a new speaker and reassigns only this turn on 'Sólo este turno'", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "ADD_SPEAKER",
+        payload: expect.objectContaining({
+          speaker: expect.objectContaining({ label: "Persona 3" }),
+        }),
+      }),
+    );
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "REASSIGN_TURN_SPEAKER",
+        payload: expect.objectContaining({ turnId: "a" }),
+      }),
+    );
+  });
+
+  it("renames the current speaker's every turn on 'Todas las de X'", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+    fireEvent.click(screen.getByText(/sidePanel\.scopeDialog\.allTurns/));
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "RENAME_SPEAKER_GLOBAL",
+        payload: expect.objectContaining({
+          speakerId: "s1",
+          newLabel: "Persona 3",
+        }),
+      }),
+    );
+    expect(dispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: "ADD_SPEAKER" }),
+    );
+  });
+
+  it("shows a success toast after creating a new person, with the real turn count", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
+
+    expect(showToast).toHaveBeenCalledTimes(1);
+    const message = showToast.mock.calls[0][0];
+    expect(message).toContain('"to":"Persona 3"');
+    expect(message).toContain('"count":1');
   });
 });
 

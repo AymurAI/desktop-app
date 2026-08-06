@@ -112,7 +112,8 @@ export interface TurnSidePanelProps {
 
 type PendingSelection =
   | { kind: "existing"; speakerId: string }
-  | { kind: "role"; role: SuggestedSpeaker };
+  | { kind: "role"; role: SuggestedSpeaker }
+  | { kind: "new" };
 
 /**
  * Edit-mode side panel. Thin adapter that wires the transcription reducer to
@@ -177,6 +178,16 @@ export default function TurnSidePanel({
     color: sg.color,
   }));
 
+  const buildNewPersonSpeaker = (): Speaker => {
+    const label = nextPersonaLabel(speakers);
+    return {
+      id: crypto.randomUUID(),
+      label,
+      initials: computeInitials(label),
+      color: SPEAKER_PALETTE[speakers.length % SPEAKER_PALETTE.length],
+    };
+  };
+
   const applySelection = (pending: PendingSelection) => {
     if (pending.kind === "existing") {
       dispatch(
@@ -184,12 +195,15 @@ export default function TurnSidePanel({
       );
       return;
     }
-    const newSpeaker: Speaker = {
-      id: crypto.randomUUID(),
-      label: pending.role.label,
-      initials: pending.role.initials,
-      color: pending.role.color,
-    };
+    const newSpeaker: Speaker =
+      pending.kind === "role"
+        ? {
+            id: crypto.randomUUID(),
+            label: pending.role.label,
+            initials: pending.role.initials,
+            color: pending.role.color,
+          }
+        : buildNewPersonSpeaker();
     dispatch(addSpeaker(transcription.id, newSpeaker));
     dispatch(
       reassignTurnSpeaker(transcription.id, activeTurn.id, newSpeaker.id),
@@ -265,17 +279,7 @@ export default function TurnSidePanel({
   };
 
   const handleNewPerson = () => {
-    const label = nextPersonaLabel(speakers);
-    const newSpeaker: Speaker = {
-      id: crypto.randomUUID(),
-      label,
-      initials: computeInitials(label),
-      color: SPEAKER_PALETTE[speakers.length % SPEAKER_PALETTE.length],
-    };
-    dispatch(addSpeaker(transcription.id, newSpeaker));
-    dispatch(
-      reassignTurnSpeaker(transcription.id, activeTurn.id, newSpeaker.id),
-    );
+    requestSelection({ kind: "new" }, nextPersonaLabel(speakers));
   };
 
   const { minMs, maxMs } = getTimestampBounds(
