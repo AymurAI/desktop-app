@@ -7,7 +7,7 @@ allowBuilds:
   # protocol URLs, so pnpm's repo-URL allowBuilds form (11.11.0+) doesn't
   # match them — the exact commit hash below must be bumped by hand whenever
   # @aymurai/ui's pinned tag changes (see package.json).
-  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/93821cce3a0d82198d5acdf5c33cc1d2804cdbec': true
+  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/0ea4007e50475c216d4240a26a4915571f8c9ef4': true
   '@biomejs/biome': true
   agent-browser: false
   electron: true
