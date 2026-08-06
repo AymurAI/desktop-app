@@ -96,6 +96,21 @@ export default defineConfig({
   // Global styles (migrated from Stitches globalStyles.ts)
   globalCss,
 
+  // Theme extensions
+  theme: {
+    extend: {
+      semanticTokens: {
+        colors: {
+          // Superficie oscura de la barra flotante de selección del editor de
+          // Voz a Texto. No está en el preset porque es el único elemento
+          // sobre fondo oscuro de la app.
+          "bg.overlay-dark": { value: "#26244A" },
+          "text.on-overlay-dark": { value: "#FFFFFF" },
+        },
+      },
+    },
+  },
+
   // Other configuration
   strictTokens: true,
 });
