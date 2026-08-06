@@ -319,7 +319,7 @@ describe("TurnSidePanel bulk-apply scope prompt", () => {
     );
   });
 
-  it("dismisses without dispatching on cancel", () => {
+  it("dismisses without dispatching when the dialog is closed with Escape", () => {
     render(
       <TurnSidePanel
         transcription={multiSpeakerTranscription}
@@ -327,8 +327,35 @@ describe("TurnSidePanel bulk-apply scope prompt", () => {
       />,
     );
     fireEvent.click(screen.getByText("Persona 2"));
-    fireEvent.click(screen.getByText("sidePanel.scopeDialog.cancel"));
+    expect(screen.getByText("sidePanel.scopeDialog.title")).toBeTruthy();
+
+    fireEvent.keyDown(document.activeElement ?? document.body, {
+      key: "Escape",
+      code: "Escape",
+    });
+
+    expect(screen.queryByText("sidePanel.scopeDialog.title")).toBeNull();
     expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it("puts the bulk action first, as the primary choice", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2"));
+
+    const buttons = screen.getAllByRole("button");
+    const labels = buttons.map((b) => b.textContent);
+    const allIdx = labels.findIndex((l) => l?.includes("scopeDialog.allTurns"));
+    const oneIdx = labels.findIndex((l) =>
+      l?.includes("scopeDialog.thisTurnOnly"),
+    );
+    expect(allIdx).toBeGreaterThanOrEqual(0);
+    expect(allIdx).toBeLessThan(oneIdx);
+    expect(labels.some((l) => l?.includes("scopeDialog.cancel"))).toBe(false);
   });
 });
 

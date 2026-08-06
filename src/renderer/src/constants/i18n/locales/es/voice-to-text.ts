@@ -166,7 +166,6 @@ const voiceToText = {
         '"{{current}}" tiene más de una intervención en esta transcripción. ¿Aplicás el cambio sólo a este turno o a todas las intervenciones de "{{current}}"?',
       thisTurnOnly: "Sólo este turno",
       allTurns: "Todas las de {{current}}",
-      cancel: "Cancelar",
     },
   },
 };

@@ -17,6 +17,7 @@ import {
 } from "@/reducers/transcription/actions";
 import { SUGGESTED_SPEAKERS } from "@/services/aymurai/fixtures/suggestedSpeakers";
 import { css } from "@/styled/css";
+import { stack } from "@/styled/patterns";
 import type {
   Speaker,
   SuggestedSpeaker,
@@ -29,7 +30,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogTitle,
   SidePanel,
   TooltipProvider,
@@ -83,19 +83,26 @@ const emptyPanel = css({
   p: "6",
 });
 
-// Lightweight text-link Cancel, matching the "Ya existe" Figma reference
-// (bordered buttons for the real actions, plain text for Cancelar) instead of
-// a third equally-weighted bordered button crowding the footer.
-const cancelLink = css({
-  color: "text.lighter",
-  textStyle: "label.md.default",
-  textDecoration: "underline",
-  cursor: "pointer",
-  bg: "transparent",
-  border: "[none]",
-  p: "[0]",
-  mr: "auto",
-  "&:hover": { color: "brand.primary" },
+// Tratamiento de confirmación del Figma nodo 40002384:38487 — el mismo que
+// usa el ConfirmDialog interno de @aymurai/ui para el conflicto de nombres.
+// Se replica en vez de importarse porque ese componente no es público y trae
+// los labels "Combinar"/"Cancelar" hardcodeados.
+const confirmCard = css({ ...stack.raw({ gap: "4" }), maxW: "[389px]" });
+const confirmTextBlock = css({ ...stack.raw({ gap: "1" }) });
+const confirmTitle = css({
+  margin: "0",
+  textStyle: "subtitle.md.strong",
+  color: "text.default",
+});
+const confirmDescription = css({
+  margin: "0",
+  textStyle: "subtitle.sm.default",
+  color: "text.default",
+});
+const confirmButtons = css({
+  display: "flex",
+  alignItems: "center",
+  gap: "3", // 12px
 });
 
 export interface TurnSidePanelProps {
@@ -382,30 +389,33 @@ export default function TurnSidePanel({
           if (!open) setScopeChoice(null);
         }}
       >
-        <DialogContent size="sm">
-          <DialogTitle>{t("sidePanel.scopeDialog.title")}</DialogTitle>
-          <DialogDescription>
-            {t("sidePanel.scopeDialog.description", {
-              current: currentSpeaker?.label,
-            })}
-          </DialogDescription>
-          <DialogFooter>
-            <button
-              type="button"
-              className={cancelLink}
-              onClick={() => setScopeChoice(null)}
-            >
-              {t("sidePanel.scopeDialog.cancel")}
-            </button>
-            <Button variant="secondary" onClick={handleApplyToThisTurnOnly}>
-              {t("sidePanel.scopeDialog.thisTurnOnly")}
-            </Button>
-            <Button onClick={handleApplyToAllTurns}>
+        <DialogContent className={confirmCard}>
+          <div className={confirmTextBlock}>
+            <DialogTitle asChild>
+              <p className={confirmTitle}>{t("sidePanel.scopeDialog.title")}</p>
+            </DialogTitle>
+            <DialogDescription asChild>
+              <p className={confirmDescription}>
+                {t("sidePanel.scopeDialog.description", {
+                  current: currentSpeaker.label,
+                })}
+              </p>
+            </DialogDescription>
+          </div>
+          <div className={confirmButtons}>
+            <Button variant="primary" size="sm" onClick={handleApplyToAllTurns}>
               {t("sidePanel.scopeDialog.allTurns", {
-                current: currentSpeaker?.label,
+                current: currentSpeaker.label,
               })}
             </Button>
-          </DialogFooter>
+            <Button
+              variant="tertiary"
+              size="sm"
+              onClick={handleApplyToThisTurnOnly}
+            >
+              {t("sidePanel.scopeDialog.thisTurnOnly")}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
