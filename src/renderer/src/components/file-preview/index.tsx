@@ -83,7 +83,7 @@ export default function FilePreview({ file, status, onRemove }: Props) {
     );
   }
 
-  const paragraphCount = file.paragraphs.length;
+  const pageCount = file.pageCount ?? file.paragraphs.length;
 
   return (
     <div className={layout}>
@@ -100,7 +100,7 @@ export default function FilePreview({ file, status, onRemove }: Props) {
         icon={<FileIcon size={24} />}
         title={file.data.name}
         description={t("filePreview.meta", {
-          count: paragraphCount,
+          count: pageCount,
           size: formatFileSize(file.data.size),
         })}
         trailingAction={

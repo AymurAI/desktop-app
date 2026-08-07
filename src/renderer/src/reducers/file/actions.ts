@@ -203,20 +203,23 @@ export type AddParagraphsAction = Action<
   {
     paragraphs: Paragraph[];
     fileName: string;
+    pageCount?: number | null;
   }
 >;
 /**
  * Adds paragraphs to the state from the endpoint `/document-extract`
  * @param paragraphs List of paragraphs to be added
  * @param fileName Name of the file to be modified
+ * @param pageCount Page count reported by the endpoint, if any
  */
 export function addParagraphs(
   paragraphs: Paragraph[],
   fileName: string,
+  pageCount?: number | null,
 ): AddParagraphsAction {
   return {
     type: ActionTypes.ADD_PARAGRAPHS,
-    payload: { paragraphs, fileName },
+    payload: { paragraphs, fileName, pageCount },
   };
 }
 
