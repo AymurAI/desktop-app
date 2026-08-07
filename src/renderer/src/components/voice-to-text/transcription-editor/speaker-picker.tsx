@@ -149,7 +149,7 @@ export default function SpeakerPicker({
     onClose();
   };
 
-  // Contenedor externo: sólo posicionamiento. La card la trae PersonMenu.
+  // Outer container: positioning only. PersonMenu brings its own card.
   const anchor = css({ position: "absolute", zIndex: "50" });
 
   const nameInput = (

@@ -83,10 +83,10 @@ const emptyPanel = css({
   p: "6",
 });
 
-// Tratamiento de confirmación del Figma nodo 40002384:38487 — el mismo que
-// usa el ConfirmDialog interno de @aymurai/ui para el conflicto de nombres.
-// Se replica en vez de importarse porque ese componente no es público y trae
-// los labels "Combinar"/"Cancelar" hardcodeados.
+// Confirmation treatment from Figma node 40002384:38487 — the same one
+// @aymurai/ui's internal ConfirmDialog uses for the name-conflict prompt.
+// Replicated instead of imported because that component isn't public and
+// hardcodes the "Combinar"/"Cancelar" labels.
 const confirmCard = css({ ...stack.raw({ gap: "4" }), maxW: "[389px]" });
 const confirmTextBlock = css({ ...stack.raw({ gap: "1" }) });
 const confirmTitle = css({
@@ -155,8 +155,8 @@ export default function TurnSidePanel({
     return <aside className={emptyPanel}>{t("sidePanel.empty")}</aside>;
   }
 
-  // Pills = sólo los oradores detectados. Los roles ya no van acá: viven en el
-  // desplegable de "Nuevo".
+  // Pills = only the detected speakers. Roles no longer go here: they live
+  // in the "Nuevo" dropdown.
   const people = speakers.map((s) => ({
     id: s.id,
     initials: s.initials,
@@ -166,7 +166,7 @@ export default function TurnSidePanel({
   }));
   const selectedIndex = speakers.findIndex((s) => s.id === currentSpeaker.id);
 
-  // Roles todavía no usados, para el desplegable.
+  // Roles not yet used, for the dropdown.
   const usedLabels = new Set(speakers.map((s) => s.label.toLowerCase()));
   const availableSuggested = SUGGESTED_SPEAKERS.filter(
     (sg) => !usedLabels.has(sg.label.toLowerCase()),
@@ -215,10 +215,10 @@ export default function TurnSidePanel({
   ).length;
 
   /**
-   * Toast de confirmación (Figma nodo 40002383:73634). Se llama dentro del
-   * mismo handler que despacha, para que `currentSpeaker.label` siga siendo el
-   * valor de este render: después del dispatch el componente se re-renderiza y
-   * el mensaje diría "de Fiscal a Fiscal".
+   * Confirmation toast (Figma node 40002383:73634). Called inside the same
+   * handler that dispatches, so `currentSpeaker.label` still reads this
+   * render's value: after the dispatch the component re-renders and the
+   * message would say "from Fiscal to Fiscal".
    */
   const notifyApplied = (targetLabel: string, count: number) => {
     showToast(
@@ -231,7 +231,7 @@ export default function TurnSidePanel({
     );
   };
 
-  /** Decide entre aplicar directo o pedir alcance. Común a los dos caminos. */
+  /** Decides between applying directly or asking for scope. Shared by both paths. */
   const requestSelection = (pending: PendingSelection, targetLabel: string) => {
     if (currentSpeakerTurnCount > 1) {
       setScopeChoice({ pending, targetLabel });

@@ -102,9 +102,9 @@ export default defineConfig({
       semanticTokens: {
         colors: {
           bg: {
-            // Superficie oscura de la barra flotante de selección del editor
-            // de Voz a Texto. No está en el preset porque es el único
-            // elemento sobre fondo oscuro de la app.
+            // Dark surface for the Voz a Texto editor's floating selection
+            // toolbar. Not in the preset because it's the only dark-surface
+            // element in the app.
             "overlay-dark": { value: "#26244A" },
           },
           text: {

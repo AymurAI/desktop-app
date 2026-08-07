@@ -434,7 +434,7 @@ describe("TurnSidePanel role options menu", () => {
     fireEvent.click(screen.getByText("Nuevo"));
 
     expect(screen.getByRole("button", { name: "Juez/a" })).toBeTruthy();
-    // "Fiscal" ya existe como orador: aparece como pill, no como opción.
+    // "Fiscal" already exists as a speaker: it shows up as a pill, not an option.
     expect(screen.queryByRole("button", { name: "Fiscal" })).toBeNull();
   });
 
@@ -442,7 +442,7 @@ describe("TurnSidePanel role options menu", () => {
     render(
       <TurnSidePanel
         transcription={multiSpeakerTranscription}
-        activeTurnId="b" // "b" es el único turno de s2
+        activeTurnId="b" // "b" is s2's only turn
       />,
     );
     fireEvent.click(screen.getByText("Nuevo"));
@@ -469,7 +469,7 @@ describe("TurnSidePanel role options menu", () => {
     render(
       <TurnSidePanel
         transcription={multiSpeakerTranscription}
-        activeTurnId="a" // s1 tiene los turnos a y c
+        activeTurnId="a" // s1 has turns a and c
       />,
     );
     fireEvent.click(screen.getByText("Nuevo"));
@@ -630,7 +630,7 @@ describe("TurnSidePanel apply-change toast", () => {
     render(
       <TurnSidePanel
         transcription={multiSpeakerTranscription}
-        activeTurnId="b" // único turno de s2
+        activeTurnId="b" // s2's only turn
       />,
     );
     fireEvent.click(screen.getByText("Persona 1"));
@@ -646,7 +646,7 @@ describe("TurnSidePanel apply-change toast", () => {
     render(
       <TurnSidePanel
         transcription={multiSpeakerTranscription}
-        activeTurnId="a" // s1 tiene los turnos a y c
+        activeTurnId="a" // s1 has turns a and c
       />,
     );
     fireEvent.click(screen.getByText("Persona 2"));
@@ -674,7 +674,7 @@ describe("TurnSidePanel apply-change toast", () => {
     render(
       <TurnSidePanel
         transcription={multiSpeakerTranscription}
-        activeTurnId="a" // orador actual: "Persona 1"
+        activeTurnId="a" // current speaker: "Persona 1"
       />,
     );
     fireEvent.click(screen.getByText("Persona 2"));
@@ -689,7 +689,7 @@ describe("TurnSidePanel apply-change toast", () => {
     render(
       <TurnSidePanel
         transcription={multiSpeakerTranscription}
-        activeTurnId="b" // único turno de s2, así que no hay diálogo
+        activeTurnId="b" // s2's only turn, so no dialog
       />,
     );
     fireEvent.click(screen.getByText("Nuevo"));

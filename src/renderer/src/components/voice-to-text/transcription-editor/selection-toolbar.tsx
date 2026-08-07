@@ -198,8 +198,8 @@ const assignBtn = css({
   borderRadius: "sm",
   whiteSpace: "nowrap",
   "&:hover": {
-    // NOTE: bracketed — un token de hover sobre superficie oscura para un solo
-    // componente sería sobre-ingeniería.
+    // NOTE: bracketed — a hover token for a dark surface used by a single
+    // component would be over-engineering.
     bg: "[rgba(255,255,255,0.12)]",
   },
 });
