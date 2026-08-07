@@ -60,7 +60,7 @@ const voiceToText = {
     removeAria: "Eliminar {{name}}",
     playAria: "Reproducir 10 segundos de {{name}}",
     pauseAria: "Pausar {{name}}",
-    meta: "{{duration}} - {{size}}",
+    meta: "{{duration}} · {{size}}",
   },
   process: {
     sectionTitle: "2. Transcripción de voz a texto",
