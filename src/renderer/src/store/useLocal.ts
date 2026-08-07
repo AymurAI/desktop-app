@@ -75,6 +75,9 @@ export const useServerHostActions = () => {
   };
 };
 
+/** Non-hook read for use outside React (e.g. the axios client's module-load default). */
+export const getServerHost = () => useLocalStore.getState().serverHost;
+
 export const useTutorialSeen = (feature: FeatureFlowEnum) =>
   useLocalStore((state) => state.tutorialsSeen[feature]);
 export const useSetTutorialSeen = () =>

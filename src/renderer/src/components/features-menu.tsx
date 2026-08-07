@@ -29,14 +29,32 @@ export default function FeaturesMenu({ trigger }: FeaturesMenuProps) {
     dispatch(removeAllFiles());
   };
 
-  const goToFeature = (feature: FeatureFlowEnum) => {
+  // Navigate before clearing files, and skip the view transition: RequireFile
+  // redirects to onboarding the moment files.length hits 0. Clearing first
+  // let that race the intended navigation outright; awaiting `navigate()`
+  // alone isn't enough either, because with the router's default view
+  // transition on, the actual route/match swap runs inside
+  // `document.startViewTransition()`, which resolves *after* `navigate()`'s
+  // own promise — so the old, still-mounted route could still see the
+  // cleared files and fire its guard. `viewTransition: false` makes this
+  // specific navigation commit synchronously, closing that gap.
+  //
+  // Target onboarding directly (not `/app/$feature`, whose own `beforeLoad`
+  // redirects there): a `redirect()` thrown from `beforeLoad` starts a new
+  // commit that doesn't inherit this call's `viewTransition: false`, which
+  // would reopen the exact gap this fix closes.
+  const goToFeature = async (feature: FeatureFlowEnum) => {
+    await navigate({
+      to: "/app/$feature/onboarding",
+      params: { feature },
+      viewTransition: false,
+    });
     handleClearFiles();
-    navigate({ to: "/app/$feature", params: { feature } });
   };
 
-  const goToSettings = () => {
+  const goToSettings = async () => {
+    await navigate({ to: "/home/host", viewTransition: false });
     handleClearFiles();
-    navigate({ to: "/home/host" });
   };
 
   return (

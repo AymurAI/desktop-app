@@ -1,4 +1,5 @@
 import Loading from "@/layout/loading";
+import { isWebApp } from "@/utils/app-mode";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 
@@ -9,14 +10,15 @@ export const Route = createFileRoute("/")({
 const TIMING = 2000;
 function RouteComponent() {
   const navigate = useNavigate();
+  const target = isWebApp() ? "/home/features" : "/home";
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate({ to: "/home" });
+      navigate({ to: target });
     }, TIMING);
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate, target]);
 
   return <Loading />;
 }
