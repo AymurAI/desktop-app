@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@aymurai/ui':
-        specifier: github:AymurAI/ui-components#0ea4007e50475c216d4240a26a4915571f8c9ef4
-        version: https://codeload.github.com/AymurAI/ui-components/tar.gz/0ea4007e50475c216d4240a26a4915571f8c9ef4(@floating-ui/dom@1.7.5)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: github:AymurAI/ui-components#v0.6.0
+        version: https://codeload.github.com/AymurAI/ui-components/tar.gz/5125acfc2b2de1ff996cbf46d6eaefb08cc0204c(@floating-ui/dom@1.7.5)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -210,8 +210,8 @@ packages:
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
 
-  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/0ea4007e50475c216d4240a26a4915571f8c9ef4':
-    resolution: {gitHosted: true, integrity: sha512-U5GDvzW1CbG94rsvWZuYk+FQnl2suE7Kzp7DKqm69dltEGNQ6F+hxgF0nPMgoIC+2fnrLKxOOPf5OUK0bcwlXA==, tarball: https://codeload.github.com/AymurAI/ui-components/tar.gz/0ea4007e50475c216d4240a26a4915571f8c9ef4}
+  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/5125acfc2b2de1ff996cbf46d6eaefb08cc0204c':
+    resolution: {gitHosted: true, integrity: sha512-2e2OLYoZZZ1MkhkbwXAiNjzNv/UenekwHKOc4qobQJep3pE9AtNOu4QmVEcK+/o40BhOt+e7xpbl0YW8onZmcw==, tarball: https://codeload.github.com/AymurAI/ui-components/tar.gz/5125acfc2b2de1ff996cbf46d6eaefb08cc0204c}
     version: 0.6.0
     peerDependencies:
       react: ^18 || ^19
@@ -6091,7 +6091,7 @@ snapshots:
       '@csstools/css-tokenizer': 3.0.4
       lru-cache: 10.4.3
 
-  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/0ea4007e50475c216d4240a26a4915571f8c9ef4(@floating-ui/dom@1.7.5)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@aymurai/ui@https://codeload.github.com/AymurAI/ui-components/tar.gz/5125acfc2b2de1ff996cbf46d6eaefb08cc0204c(@floating-ui/dom@1.7.5)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@phosphor-icons/react': 2.1.10(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@radix-ui/react-context-menu': 2.3.7(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)

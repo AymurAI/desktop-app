@@ -34,7 +34,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@aymurai/ui": "github:AymurAI/ui-components#0ea4007e50475c216d4240a26a4915571f8c9ef4",
+    "@aymurai/ui": "github:AymurAI/ui-components#v0.6.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
