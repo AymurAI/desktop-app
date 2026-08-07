@@ -37,6 +37,7 @@ export function useFileParse(
             id: `${query.data.document_id}:${paragraphIndex}`,
           })),
           file.data.name,
+          query.data.page_count,
         ),
       );
     });
