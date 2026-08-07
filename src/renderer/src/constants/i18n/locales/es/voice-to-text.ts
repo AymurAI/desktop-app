@@ -130,6 +130,7 @@ const voiceToText = {
   speakerPicker: {
     people: "Personas",
     suggested: "Roles sugeridos",
+    new: "Nuevo",
     newPerson: "Nueva persona",
     newPersonPlaceholder: "Nombre de la persona",
     create: "Crear",
@@ -140,6 +141,10 @@ const voiceToText = {
   sidePanel: {
     empty: "Seleccioná un turno para editar sus propiedades.",
     selectedTurn: "Turno seleccionado",
+    changeApplied_one:
+      "Se aplicó con éxito el cambio de {{from}} a {{to}} · 1 turno actualizado",
+    changeApplied_other:
+      "Se aplicó con éxito el cambio de {{from}} a {{to}} · {{count}} turnos actualizados",
     startsAt: "Inicia en {{time}}",
     renameAria: "Renombrar locutor en todos los turnos",
     renamePlaceholder: "Nombre del locutor",
@@ -162,7 +167,6 @@ const voiceToText = {
         '"{{current}}" tiene más de una intervención en esta transcripción. ¿Aplicás el cambio sólo a este turno o a todas las intervenciones de "{{current}}"?',
       thisTurnOnly: "Sólo este turno",
       allTurns: "Todas las de {{current}}",
-      cancel: "Cancelar",
     },
   },
 };

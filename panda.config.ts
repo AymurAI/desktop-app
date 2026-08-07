@@ -96,6 +96,25 @@ export default defineConfig({
   // Global styles (migrated from Stitches globalStyles.ts)
   globalCss,
 
+  // Theme extensions
+  theme: {
+    extend: {
+      semanticTokens: {
+        colors: {
+          bg: {
+            // Dark surface for the Voz a Texto editor's floating selection
+            // toolbar. Not in the preset because it's the only dark-surface
+            // element in the app.
+            "overlay-dark": { value: "#26244A" },
+          },
+          text: {
+            "on-overlay-dark": { value: "#FFFFFF" },
+          },
+        },
+      },
+    },
+  },
+
   // Other configuration
   strictTokens: true,
 });

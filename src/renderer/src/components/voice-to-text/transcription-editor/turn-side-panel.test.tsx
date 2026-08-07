@@ -14,7 +14,10 @@ vi.stubGlobal(
 );
 
 vi.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: () => ({
+    t: (key: string, opts?: Record<string, unknown>) =>
+      opts ? `${key}:${JSON.stringify(opts)}` : key,
+  }),
 }));
 
 const dispatch = vi.fn();
@@ -89,7 +92,7 @@ describe("TurnSidePanel timestamp editing", () => {
     fireEvent.change(input, { target: { value: "00:30" } }); // 30s, past "c" at 20s
     expect(dispatch).not.toHaveBeenCalled();
     expect(showToast).toHaveBeenCalledWith(
-      "sidePanel.timestampOutOfRange",
+      expect.stringContaining("sidePanel.timestampOutOfRange"),
       "warning",
     );
   });
@@ -300,7 +303,7 @@ describe("TurnSidePanel bulk-apply scope prompt", () => {
       />,
     );
     fireEvent.click(screen.getByText("Persona 2"));
-    fireEvent.click(screen.getByText("sidePanel.scopeDialog.allTurns"));
+    fireEvent.click(screen.getByText(/sidePanel\.scopeDialog\.allTurns/));
 
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -316,7 +319,7 @@ describe("TurnSidePanel bulk-apply scope prompt", () => {
     );
   });
 
-  it("dismisses without dispatching on cancel", () => {
+  it("dismisses without dispatching when the dialog is closed with Escape", () => {
     render(
       <TurnSidePanel
         transcription={multiSpeakerTranscription}
@@ -324,8 +327,35 @@ describe("TurnSidePanel bulk-apply scope prompt", () => {
       />,
     );
     fireEvent.click(screen.getByText("Persona 2"));
-    fireEvent.click(screen.getByText("sidePanel.scopeDialog.cancel"));
+    expect(screen.getByText("sidePanel.scopeDialog.title")).toBeTruthy();
+
+    fireEvent.keyDown(document.activeElement ?? document.body, {
+      key: "Escape",
+      code: "Escape",
+    });
+
+    expect(screen.queryByText("sidePanel.scopeDialog.title")).toBeNull();
     expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it("puts the bulk action first, as the primary choice", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2"));
+
+    const buttons = screen.getAllByRole("button");
+    const labels = buttons.map((b) => b.textContent);
+    const allIdx = labels.findIndex((l) => l?.includes("scopeDialog.allTurns"));
+    const oneIdx = labels.findIndex((l) =>
+      l?.includes("scopeDialog.thisTurnOnly"),
+    );
+    expect(allIdx).toBeGreaterThanOrEqual(0);
+    expect(allIdx).toBeLessThan(oneIdx);
+    expect(labels.some((l) => l?.includes("scopeDialog.cancel"))).toBe(false);
   });
 });
 
@@ -342,6 +372,14 @@ describe("TurnSidePanel new-person numbering", () => {
     };
     render(<TurnSidePanel transcription={renamedOnly} activeTurnId="a" />);
     fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+    // "a" is one of this fixture's 3 turns for "s1" (unlike `withCustomAndPersona`
+    // below, which trims turns down to 1), so with the scope-prompt behavior
+    // added in this change, choosing "Nueva persona" now opens the scope
+    // dialog first — same as any other identity change for a multi-turn
+    // speaker. Resolve it via "Sólo este turno" to reach the dispatch this
+    // regression test cares about.
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
 
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -368,6 +406,7 @@ describe("TurnSidePanel new-person numbering", () => {
       <TurnSidePanel transcription={withCustomAndPersona} activeTurnId="a" />,
     );
     fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
 
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -377,5 +416,285 @@ describe("TurnSidePanel new-person numbering", () => {
         }),
       }),
     );
+  });
+});
+
+describe("TurnSidePanel role options menu", () => {
+  beforeEach(() => dispatch.mockClear());
+
+  it("lists only the roles whose label is not already taken", () => {
+    const withFiscal: Transcription = {
+      ...multiSpeakerTranscription,
+      speakers: [
+        { id: "s1", label: "Persona 1", initials: "P1", color: "violet" },
+        { id: "s2", label: "Fiscal", initials: "FI", color: "green" },
+      ],
+    };
+    render(<TurnSidePanel transcription={withFiscal} activeTurnId="a" />);
+    fireEvent.click(screen.getByText("Nuevo"));
+
+    expect(screen.getByRole("button", { name: "Juez/a" })).toBeTruthy();
+    // "Fiscal" already exists as a speaker: it shows up as a pill, not an option.
+    expect(screen.queryByRole("button", { name: "Fiscal" })).toBeNull();
+  });
+
+  it("creates the speaker and reassigns when the current speaker has a single turn", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b" // "b" is s2's only turn
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Juez/a" }));
+
+    expect(screen.queryByText("sidePanel.scopeDialog.title")).toBeNull();
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "ADD_SPEAKER",
+        payload: expect.objectContaining({
+          speaker: expect.objectContaining({ label: "Juez/a" }),
+        }),
+      }),
+    );
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "REASSIGN_TURN_SPEAKER",
+        payload: expect.objectContaining({ turnId: "b" }),
+      }),
+    );
+  });
+
+  it("prompts for scope when picking a role for a speaker with several turns", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a" // s1 has turns a and c
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Juez/a" }));
+
+    expect(screen.getByText("sidePanel.scopeDialog.title")).toBeTruthy();
+    fireEvent.click(screen.getByText(/sidePanel\.scopeDialog\.allTurns/));
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "RENAME_SPEAKER_GLOBAL",
+        payload: expect.objectContaining({
+          speakerId: "s1",
+          newLabel: "Juez/a",
+        }),
+      }),
+    );
+  });
+
+  it("does not dispatch when the already-current speaker's pill is clicked", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    // "Persona 1" also appears in the "Turno seleccionado" header (it always
+    // shows the current speaker's name), so getAllByText + the pill instance
+    // (index 1) is used to disambiguate from the header (index 0).
+    fireEvent.click(screen.getAllByText("Persona 1")[1]); // s1 ya es el orador del turno "a"
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+});
+
+describe("TurnSidePanel 'Nueva persona' from the Nuevo menu", () => {
+  beforeEach(() => {
+    dispatch.mockClear();
+    showToast.mockClear();
+  });
+
+  it("applies immediately with no prompt when the current speaker has only one turn", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b" // s2's only turn
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+
+    expect(screen.queryByText("sidePanel.scopeDialog.title")).toBeNull();
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "ADD_SPEAKER",
+        payload: expect.objectContaining({
+          speaker: expect.objectContaining({ label: "Persona 3" }),
+        }),
+      }),
+    );
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "REASSIGN_TURN_SPEAKER",
+        payload: expect.objectContaining({ turnId: "b" }),
+      }),
+    );
+  });
+
+  it("prompts for scope when the current speaker has more than one turn", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a" // s1's turns: a, c
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+
+    expect(screen.getByText("sidePanel.scopeDialog.title")).toBeTruthy();
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it("creates a new speaker and reassigns only this turn on 'Sólo este turno'", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "ADD_SPEAKER",
+        payload: expect.objectContaining({
+          speaker: expect.objectContaining({ label: "Persona 3" }),
+        }),
+      }),
+    );
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "REASSIGN_TURN_SPEAKER",
+        payload: expect.objectContaining({ turnId: "a" }),
+      }),
+    );
+  });
+
+  it("renames the current speaker's every turn on 'Todas las de X'", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+    fireEvent.click(screen.getByText(/sidePanel\.scopeDialog\.allTurns/));
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "RENAME_SPEAKER_GLOBAL",
+        payload: expect.objectContaining({
+          speakerId: "s1",
+          newLabel: "Persona 3",
+        }),
+      }),
+    );
+    expect(dispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: "ADD_SPEAKER" }),
+    );
+  });
+
+  it("shows a success toast after creating a new person, with the real turn count", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
+
+    expect(showToast).toHaveBeenCalledTimes(1);
+    const message = showToast.mock.calls[0][0];
+    expect(message).toContain('"to":"Persona 3"');
+    expect(message).toContain('"count":1');
+  });
+});
+
+describe("TurnSidePanel apply-change toast", () => {
+  beforeEach(() => {
+    dispatch.mockClear();
+    showToast.mockClear();
+  });
+
+  it("reports a single updated turn when there is no scope prompt", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b" // s2's only turn
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 1"));
+
+    expect(showToast).toHaveBeenCalledTimes(1);
+    const [message, variant] = showToast.mock.calls[0];
+    expect(variant).toBe("success");
+    expect(message).toContain("sidePanel.changeApplied");
+    expect(message).toContain('"count":1');
+  });
+
+  it("reports the real turn count when applying to all of the speaker's turns", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a" // s1 has turns a and c
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2"));
+    fireEvent.click(screen.getByText(/sidePanel\.scopeDialog\.allTurns/));
+
+    expect(showToast).toHaveBeenCalledTimes(1);
+    expect(showToast.mock.calls[0][0]).toContain('"count":2');
+  });
+
+  it("reports one turn when only this turn is changed", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a"
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2"));
+    fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
+
+    expect(showToast).toHaveBeenCalledTimes(1);
+    expect(showToast.mock.calls[0][0]).toContain('"count":1');
+  });
+
+  it("names the speaker being replaced as `from`, and the new one as `to`", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="a" // current speaker: "Persona 1"
+      />,
+    );
+    fireEvent.click(screen.getByText("Persona 2"));
+    fireEvent.click(screen.getByText(/sidePanel\.scopeDialog\.allTurns/));
+
+    const message = showToast.mock.calls[0][0];
+    expect(message).toContain('"from":"Persona 1"');
+    expect(message).toContain('"to":"Persona 2"');
+  });
+
+  it("reports the role name when the change comes from the 'Nuevo' menu", () => {
+    render(
+      <TurnSidePanel
+        transcription={multiSpeakerTranscription}
+        activeTurnId="b" // s2's only turn, so no dialog
+      />,
+    );
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Juez/a" }));
+
+    expect(showToast.mock.calls[0][0]).toContain('"to":"Juez/a"');
   });
 });

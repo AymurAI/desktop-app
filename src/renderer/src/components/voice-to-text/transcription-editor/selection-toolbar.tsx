@@ -169,10 +169,9 @@ const toolbar = css({
   display: "flex",
   alignItems: "center",
   gap: "2",
-  // NOTE: bracketed hex — no dark-surface token exists; flagged for future tokenisation
-  bg: "[#26244a]",
-  borderRadius: "[11px]",
-  boxShadow: "[0 8px 24px rgba(28,26,60,.28)]",
+  bg: "bg.overlay-dark",
+  borderRadius: "md",
+  boxShadow: "menu",
   px: "3",
   py: "2",
   zIndex: "100",
@@ -191,15 +190,16 @@ const assignBtn = css({
   gap: "[6px]",
   bg: "transparent",
   border: "[none]",
-  // NOTE: bracketed hex — white text on dark toolbar; no onbutton token for dark surface
-  color: "[#ffffff]",
+  color: "text.on-overlay-dark",
   fontSize: "[14px]",
   fontWeight: "[600]",
   cursor: "pointer",
   padding: "[4px 8px]",
-  borderRadius: "[7px]",
+  borderRadius: "sm",
   whiteSpace: "nowrap",
   "&:hover": {
+    // NOTE: bracketed — a hover token for a dark surface used by a single
+    // component would be over-engineering.
     bg: "[rgba(255,255,255,0.12)]",
   },
 });
