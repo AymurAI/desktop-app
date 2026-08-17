@@ -15,26 +15,15 @@
  * hide the stepper below `xl`: it removes the overlap and lets the title render
  * in full, at the cost of the progress indicator on narrow windows.
  *
- * The cutoff is PER TOOL, because the overlap depends on how wide the title is.
- * A single breakpoint has to be calibrated to the worst case, and doing that
- * (this rule was `xl`/1280px until 2026-08-03) hid the stepper on the three
- * shorter names for hundreds of pixels where they fit perfectly — visible on a
- * ~1217px window, where every tool has zero overlap and the stepper was gone
- * anyway.
- *
- * Widths at which the title↔badge intersection first reaches 0, swept in
- * Chromium at 4px steps with this rule neutralised:
- *
- *   Voz a Texto          ~800px    →  hidden below 840
- *   Set de Datos         ~840px    →  hidden below 880
- *   Anonimizador         ~880px    →  hidden below 920
- *   Resumen de Documento ~1048px   →  hidden below 1080
- *
- * Each cutoff carries ~40px over its measurement so a font fallback or slightly
- * wider glyphs cannot silently reintroduce the overlap. The tool→width mapping
- * lives in components/layout/header.tsx (`STEPPER_HIDE_BELOW`), which emits the
- * class; these rules are deliberately mechanical so the two cannot drift in
- * meaning — only in whether a class has a matching rule, which the spec catches.
+ * Why `xl` (1280px) and not `lg` (1024px), which is where the QA report said the
+ * header was already fine: that report measured "Anonimizador". Sweeping the
+ * longest title, "Resumen de Documento", shows the overlap only reaching zero at
+ * **1048px** (12px at 1024, 4px at 1040, 2px at 1044) — so `lg` misses it by
+ * 24px. 1048 itself is not used as the cutoff: it is the exact width at which
+ * today's longest name stops colliding, leaving no margin, so any font fallback
+ * or a longer future feature name silently reintroduces the bug. `xl` is an
+ * existing token and clears the measured worst case with room to spare; the cost
+ * is that 1024–1279 loses the stepper even for the shorter names that fit there.
  *
  * Deliberately UNLAYERED, not in panda.config.ts's `globalCss`. globalCss is
  * emitted into `@layer base`, and the library's atomic `aym-*` classes live in
@@ -48,32 +37,10 @@
  * documented API. playwright/header-stepper.spec.tsx fails if it ever stops
  * matching, which is the point.
  */
-/* The abs-positioned wrapper, plus the list itself; `div` keeps the `:has()`
- * subject off <html>. Each block is the same pair scoped to one cutoff class. */
-@media (max-width: 839.98px) {
-  .stepper-hide-below-840 div:has(> [role="list"][aria-label="Progress"]),
-  .stepper-hide-below-840 [role="list"][aria-label="Progress"] {
-    display: none;
-  }
-}
-
-@media (max-width: 879.98px) {
-  .stepper-hide-below-880 div:has(> [role="list"][aria-label="Progress"]),
-  .stepper-hide-below-880 [role="list"][aria-label="Progress"] {
-    display: none;
-  }
-}
-
-@media (max-width: 919.98px) {
-  .stepper-hide-below-920 div:has(> [role="list"][aria-label="Progress"]),
-  .stepper-hide-below-920 [role="list"][aria-label="Progress"] {
-    display: none;
-  }
-}
-
-@media (max-width: 1079.98px) {
-  .stepper-hide-below-1080 div:has(> [role="list"][aria-label="Progress"]),
-  .stepper-hide-below-1080 [role="list"][aria-label="Progress"] {
+@media (max-width: 1279.98px) {
+  /* The abs-positioned wrapper; `div` keeps the `:has()` subject off <html>. */
+  div:has(> [role="list"][aria-label="Progress"]),
+  [role="list"][aria-label="Progress"] {
     display: none;
   }
 }
