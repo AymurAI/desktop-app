@@ -37,14 +37,12 @@ describe("FileAnnotator entities panel (RSP-07a)", () => {
 
     // SidePanelColumn's own recipe classes (side-panel-column.test.tsx
     // asserts these exhaustively) - their presence here is what proves the
-    // wrapper div was actually swapped for the primitive. G1: `maxWidth`/
-    // `borderLeft` only engage at `lg` and up now (below `lg` the panel is a
-    // stacked row, not a docked column - see side-panel-column.tsx).
-    expect(classes).toContain("lg:max-w_panel.side");
+    // wrapper div was actually swapped for the primitive. Scoped version: a
+    // flat `panel.side` with no responsive tier, which is all the Figma
+    // frames describe.
+    expect(classes).toContain("w_panel.side");
     expect(classes).toContain("flex-sh_0");
-    expect(classes).toContain("lg:bd-l_[1px_solid_#BCBAB8]");
-    expect(classes).toContain("lg:w_panel.sideCompact");
-    expect(classes).toContain("desktop:w_panel.side");
+    expect(classes).toContain("bd-l_[1px_solid_#BCBAB8]");
 
     // The old self-imposed width is gone from the tree entirely.
     const html = panel.outerHTML;
@@ -192,7 +190,7 @@ describe("FileAnnotator panel toggle (adversary: RSP-07b variant remount)", () =
 
     fireEvent.click(
       screen.getByRole("button", {
-        name: "anonymizer:searchBar.manageLabels",
+        name: "Gestor de etiquetas",
       }),
     );
 

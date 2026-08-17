@@ -1,7 +1,6 @@
-import { useTranslation } from "react-i18next";
 import Text from "../text";
 import ErrorText from "./ErrorText";
-import { Card, Wrapper, fileNameEllipsis } from "./FileCheck.styles";
+import { Card, Wrapper } from "./FileCheck.styles";
 import Icon from "./Icon";
 
 interface Props {
@@ -14,23 +13,15 @@ export default function FileCheck({
   fileName,
   hasError = false,
   isLoading = false,
-  errorMessage,
+  errorMessage = "Error de guardado\nVolvé a cargar el archivo",
 }: Props) {
-  const { t } = useTranslation("common");
-  // `errorMessage` is a caller-supplied override (both call sites that
-  // matter pass one); an empty string falls back to the default too, so
-  // `hasError` never renders an empty, borderless-looking error line.
-  const message = errorMessage || t("fileCheck.defaultError");
-
   return (
     <Wrapper>
       <Card {...{ hasError }}>
         <Icon {...{ hasError, isLoading }} />
       </Card>
-      <Text size="s" className={fileNameEllipsis} title={fileName}>
-        {fileName}
-      </Text>
-      {hasError && <ErrorText>{message}</ErrorText>}
+      <Text size="s">{fileName}</Text>
+      {hasError && <ErrorText>{errorMessage}</ErrorText>}
     </Wrapper>
   );
 }

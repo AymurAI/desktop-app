@@ -32,11 +32,13 @@ const inner = cva({
       true: {},
       false: {
         ...stack.raw({ gap: "0" }),
-        // Matches FileSelectionLayout's content width so screens built on
-        // MainContent line up with the FileDropZone flow. Reading-column
-        // rule A (tasks/responsive/plan.md) - `sizes.content.max`, 1824px -
-        // rather than the crystallized 1015px Figma once specced at 1440px.
-        maxWidth: "content.max",
+        // Scoped version (tasks/responsive-fixes/plan-version-acotada.md):
+        // back to the 1015px cap Figma specced at 1440px. The Responsive page
+        // covers only the three validation screens, and none of them goes
+        // through MainContent - verified: routes/app.$feature/validation.tsx
+        // builds its own layout. So widening this would upscale onboarding,
+        // preview, process and finish, which have no design at any width.
+        maxWidth: "[1015px]",
         mx: "auto",
         pt: { base: "6", xl: "16" },
       },

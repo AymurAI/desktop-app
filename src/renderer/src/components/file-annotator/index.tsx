@@ -36,12 +36,7 @@ import { generateSplits } from "./generateSplits";
 
 const labelManagerWrapper = css({
   display: "flex",
-  // G1: below `lg` the panel is a stacked row, not a column-filling sibling -
-  // `h: "full"` here (with the panel's own `flexShrink: 0`) would force it to
-  // claim 100% of a `flexDirection: column` parent's height and collapse the
-  // document to zero. At/above `lg` the parent is back to a `row`, where
-  // `h: "full"` correctly makes the panel span the pane's full height.
-  h: { base: "auto", lg: "full" },
+  h: "full",
   minH: "0",
   flexShrink: "0",
   "&[hidden]": {
@@ -259,11 +254,6 @@ export default function FileAnnotator({
       gap="0"
       alignItems="stretch"
       overflow="hidden"
-      // G1: below `lg` there's no room for a side-by-side panel, so the
-      // entities panel stacks below the document instead of overlaying it
-      // (SidePanelColumn is `position: static` unconditionally now) - the
-      // layout has to actually reserve a row for it.
-      flexDirection={{ base: "column", lg: "row" }}
     >
       <div className={S.container}>
         <SearchBar

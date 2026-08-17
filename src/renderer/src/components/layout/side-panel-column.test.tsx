@@ -2,98 +2,66 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import SidePanelColumn from "./side-panel-column";
 
-// Panda class names are space-separated atomic tokens. `toContain` on the
-// className STRING is a substring test, so a check for "panel.side" also
-// matches "panel.sideCompact" (a literal prefix) - a mutation that silently
-// swaps one token for the other would still pass. Every positive assertion
-// here therefore matches a WHOLE class token via the split class list.
-// No numeric assertions here: jsdom does not do layout, so the geometry
-// this recipe produces (stacked below `lg`, docked column at/above it) is
-// verified in the Playwright CT specs instead.
-function classTokens(el: HTMLElement) {
-  return el.className.split(/\s+/);
-}
-
+/**
+ * Scoped version (tasks/responsive-fixes/plan-version-acotada.md).
+ *
+ * The Figma Responsive page specifies exactly one thing about this panel:
+ * `sizes.panel.side` (479px), fixed, docked right, unchanged across
+ * 1440/1920/2560 — all the extra room goes to the content pane. So the
+ * contract here is the ABSENCE of breakpoints as much as the width itself:
+ * every earlier variant of this primitive invented a narrow-window behaviour
+ * (an absolute overlay, then a stacked row with a 360px `lg` tier) that no
+ * frame ever described.
+ *
+ * These assertions are on emitted Panda classes rather than computed styles
+ * because jsdom does not evaluate media queries — a responsive tier would show
+ * up as a `lg:`/`desktop:`-prefixed class here whether or not it ever applies,
+ * which is precisely what makes the "no tiers" half testable at this level.
+ */
 describe("SidePanelColumn", () => {
-  it("is static at every width (G1: stacked, not an absolute overlay)", () => {
+  const classesOf = (el: HTMLElement) => el.className.split(/\s+/);
+
+  it("is a fixed 479px static column at every width", () => {
     render(<SidePanelColumn data-testid="panel" />);
+    const classes = classesOf(screen.getByTestId("panel"));
 
-    const panel = screen.getByTestId("panel");
-    const classes = classTokens(panel);
-
+    expect(classes).toContain("w_panel.side");
     expect(classes).toContain("pos_static");
-    // No conditional (breakpoint-prefixed) position class anywhere - it's a
-    // single flat value now, not a per-breakpoint variant.
-    expect(classes.some((c) => /:pos_/.test(c))).toBe(false);
-    expect(classes).not.toContain("pos_absolute");
-    expect(classes).not.toContain("inset_0");
-    expect(classes).not.toContain("left_[auto]");
-    expect(classes).not.toContain("z_10");
-  });
-
-  it("is a full-width stacked row below lg, capped to half its column's height with its own scroll", () => {
-    render(<SidePanelColumn data-testid="panel" />);
-
-    const panel = screen.getByTestId("panel");
-    const classes = classTokens(panel);
-
-    expect(classes).toContain("w_full");
-    expect(classes).toContain("max-w_[none]");
-    expect(classes).toContain("max-h_[50%]");
-    expect(classes).toContain("ov-y_auto");
-  });
-
-  it("becomes a static docked column at lg, sized to the compact token and capped by the side token", () => {
-    render(<SidePanelColumn data-testid="panel" />);
-
-    const panel = screen.getByTestId("panel");
-    const classes = classTokens(panel);
-
-    expect(classes).toContain("lg:w_panel.sideCompact");
-    expect(classes).toContain("lg:max-w_panel.side");
-    expect(classes).toContain("lg:max-h_[none]");
-    expect(classes).toContain("bx-sh_[none]");
-  });
-
-  it("widens to the full panel token at desktop", () => {
-    render(<SidePanelColumn data-testid="panel" />);
-
-    const panel = screen.getByTestId("panel");
-    const classes = classTokens(panel);
-
-    expect(classes).toContain("desktop:w_panel.side");
-  });
-
-  it("puts the border on the axis facing the document: top below lg, left at/above lg", () => {
-    render(<SidePanelColumn data-testid="panel" />);
-
-    const panel = screen.getByTestId("panel");
-    const classes = classTokens(panel);
-
-    expect(classes).toContain("bd-t_[1px_solid_#BCBAB8]");
-    expect(classes).toContain("lg:bd-t_[none]");
-    expect(classes).toContain("bd-l_[none]");
-    expect(classes).toContain("lg:bd-l_[1px_solid_#BCBAB8]");
-  });
-
-  it("always carries flexShrink, regardless of breakpoint", () => {
-    render(<SidePanelColumn data-testid="panel" />);
-
-    const panel = screen.getByTestId("panel");
-    const classes = classTokens(panel);
-
     expect(classes).toContain("flex-sh_0");
   });
 
+  it("declares no responsive tier at all", () => {
+    render(<SidePanelColumn data-testid="panel" />);
+    const prefixed = classesOf(screen.getByTestId("panel")).filter((c) =>
+      /^(sm|md|lg|xl|2xl|desktop):/.test(c),
+    );
+
+    // Named in the failure so a reintroduced tier says which one it was.
+    expect(prefixed).toEqual([]);
+  });
+
+  it("keeps the border on the edge facing the document", () => {
+    render(<SidePanelColumn data-testid="panel" />);
+    const classes = classesOf(screen.getByTestId("panel"));
+
+    expect(classes.some((c) => c.startsWith("bd-l_"))).toBe(true);
+    expect(classes.some((c) => c.startsWith("bd-t_"))).toBe(false);
+  });
+
   it("forwards className and rest props onto the single styled node", () => {
-    render(<SidePanelColumn data-testid="panel" className="extra" />);
+    render(
+      <SidePanelColumn
+        className="consumer-class"
+        data-testid="panel"
+        aria-label="Panel"
+      />,
+    );
+    const el = screen.getByTestId("panel");
 
-    const panel = screen.getByTestId("panel");
-    const classes = classTokens(panel);
-
-    expect(classes).toContain("extra");
-    // Same node carries both the recipe classes and the forwarded testid -
-    // there is no wrapper (unlike ReadingColumn's full/split variants).
-    expect(classes).toContain("lg:max-w_panel.side");
+    // One node, not a wrapper pair: this primitive has no gutter, so the
+    // consumer's testid and the styling land on the same element.
+    expect(classesOf(el)).toContain("consumer-class");
+    expect(el.getAttribute("aria-label")).toBe("Panel");
+    expect(classesOf(el)).toContain("w_panel.side");
   });
 });

@@ -1,4 +1,3 @@
-import { css } from "@/styled/css";
 import { styled } from "@/styled/jsx";
 
 // Stitches `$s` (space) is 8px -> Panda spacing "2"; radii `$s` (8px) ->
@@ -13,23 +12,16 @@ export const Wrapper = styled("div", {
     gap: "2",
 
     position: "relative",
-  },
-});
 
-// Ellipsis for the file NAME only. This used to be a `"& p"` descendant
-// selector on `Wrapper`, which reached every `<p>` inside it - including
-// `<ErrorText>`, since both `Text` (`components/text/index.ts`) and
-// `ErrorText` are `styled("p")`. That silently truncated the error message
-// too and killed `ErrorText`'s own `whiteSpace: "pre-line"` (see
-// `ErrorText.ts`). Scoped to a class applied directly to the `<Text>`
-// instance in `file-check/index.tsx` (its only consumer) instead, so the
-// 150px cap - the width of the Card below it - only ever affects the name.
-export const fileNameEllipsis = css({
-  maxWidth: "[150px]",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-  width: "full",
+    // Settings to enable ellipsis on file name
+    maxWidth: "[150px]",
+    "& p": {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      width: "full",
+    },
+  },
 });
 
 // `$sizes$xs` (4px) is used here for BOTH `borderWidth` and the shadow

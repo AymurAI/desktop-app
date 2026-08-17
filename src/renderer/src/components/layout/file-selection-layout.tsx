@@ -11,11 +11,12 @@ const viewport = css({
   pt: { base: "6", xl: "16" },
 });
 
-// Reading-column rule A (tasks/responsive/plan.md) - `sizes.content.max`,
-// 1824px - rather than the crystallized 1015px Figma once specced at 1440px.
+// Scoped version (tasks/responsive-fixes/plan-version-acotada.md): back to the
+// 1015px cap. Only onboarding, preview and voice-to-text/onboarding consume
+// this layout, and the Figma Responsive page covers none of them.
 const content = css({
   width: "full",
-  maxWidth: "content.max",
+  maxWidth: "[1015px]",
   mx: "auto",
 });
 
