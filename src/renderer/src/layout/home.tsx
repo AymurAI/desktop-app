@@ -8,7 +8,7 @@ const background = css({
   height: "screen",
   width: "screen",
 
-  p: { base: "4", md: "8" },
+  p: "8",
 });
 
 const inner = css({

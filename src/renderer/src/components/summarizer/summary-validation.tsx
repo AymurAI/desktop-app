@@ -144,20 +144,7 @@ export default function SummaryValidation() {
     <>
       <Header feature={FeatureFlowEnum.Summarizer} currentStep={3} />
       <Grid
-        // No Figma coverage for this screen (RSP-09, [extrapolado]) - a
-        // proposal pending design review. Below `lg` (1024) there is no
-        // design either, so the two panes stack instead of squeezing to
-        // ~380px each; `lg` keeps the pre-existing 50/50 split as the
-        // fallback for the undesigned 1024-1439 band. `desktop` (>=1440)
-        // repeats the same 50/50 ratio explicitly - there's no distinct
-        // design for it either, both panes just grow fluidly together -
-        // kept as its own tier for consistency with the validate-dataset
-        // pattern (T11) rather than relying on `lg`'s value cascading up.
-        columns={{ base: 1, lg: 2, desktop: 2 }}
-        gridTemplateRows={{
-          base: "[repeat(2, minmax(0, 1fr))]",
-          lg: "[minmax(0, 1fr)]",
-        }}
+        columns={2}
         gap="0"
         flex="1"
         minHeight="0"

@@ -36,8 +36,7 @@ import { useTranslation } from "react-i18next";
 const previewFrame = css({
   alignSelf: "stretch",
   width: "full",
-  // Responsive height, following file-preview/index.tsx:41-42 (RSP-10).
-  height: "[clamp(200px, 30dvh, 357px)]",
+  height: "[200px]",
   borderLeft: "primary",
   borderRight: "primary",
   bg: "white",
@@ -51,11 +50,6 @@ const previewContent = css({
   boxSizing: "border-box",
 });
 
-// `fontWeight: 300` has no match in this preset (only 400/600 are baked
-// into the textStyle recipes); 18px/30px (166.7%) has no matching textStyle
-// either (closest is `paragraph.md` at 18px/150%=27px); `#9F99A5` has no
-// standalone colour token (it only appears inside the `borders.secondary`
-// composite). All three stay raw escapes (RSP-12a).
 const previewText = css({
   m: "[0]",
   fontWeight: "[300]",

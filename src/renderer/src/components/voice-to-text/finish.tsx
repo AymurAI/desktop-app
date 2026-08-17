@@ -92,21 +92,8 @@ export default function VoiceFinish() {
 
           {transcription ? (
             <Card>
-              {/*
-                No Figma coverage below 1440 - EXTRAPOLATED, pending design
-                review (tasks/responsive/plan.md RSP-10). Stacks to a single
-                column below `lg`; `gridTemplateColumns`/rows have no token
-                category in this preset (raw CssProperties, confirmed against
-                styled/types/style-props.d.ts), so strictTokens does not
-                require the [bracket] escape here - see
-                validate-dataset/index.tsx:74-81 (RSP-08) for the recorded
-                finding.
-              */}
               <Grid
-                gridTemplateColumns={{
-                  base: "minmax(0,1fr)",
-                  lg: "1fr auto 1fr",
-                }}
+                gridTemplateColumns="1fr auto 1fr"
                 columnGap="12"
                 rowGap="6"
               >
@@ -155,14 +142,10 @@ export default function VoiceFinish() {
                   </div>
                 </Stack>
 
-                {/* #BCBAB8 has no colors.border.* token (only composite
-                    borders.* at 1px, see FileCheck.styles.ts) - one of ~20
-                    sites, flagged for design as a missing token (RSP-12a). */}
                 <Divider
                   orientation="vertical"
                   color="[#BCBAB8]"
                   alignSelf="stretch"
-                  hideBelow="lg"
                 />
 
                 <Stack gap="6">

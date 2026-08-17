@@ -104,38 +104,3 @@ describe("DocumentSearchPanel", () => {
     expect(scrollSpy).toHaveBeenCalledWith({ block: "center" });
   });
 });
-
-describe("DocumentSearchPanel reading column (RSP-09)", () => {
-  it("renders the paragraphs through ReadingColumn variant=doc, with no gutter padding on the cap node", () => {
-    render(<DocumentSearchPanel paragraphs={paragraphs} />);
-
-    const column = screen.getByTestId("summary-search-reading-column");
-    const classes = column.className.split(/\s+/);
-
-    // rule C: percentage of the pane, capped by the content.doc token. This
-    // node still has ReadingColumn's own outer gutter node as its parent
-    // (T17/RSP-07b: every variant renders the same two-node shape) - it just
-    // carries no gutter padding of its own, since rule C is a percentage of
-    // the pane with no gutter.
-    expect(classes).toContain("w_[min(88%,_token(sizes.content.doc))]");
-    expect(classes).toContain("mx_auto");
-    expect(classes).not.toContain("px_4");
-    expect(classes).not.toContain("max-w_content.max");
-  });
-
-  it("moves the horizontal gutter off the scroll container onto ReadingColumn", () => {
-    render(<DocumentSearchPanel paragraphs={paragraphs} />);
-
-    const column = screen.getByTestId("summary-search-reading-column");
-    // ReadingColumn always renders its own outer gutter node (T17/RSP-07b
-    // fix) regardless of variant, so the real scroll container is one level
-    // further up.
-    const scrollContainer = column.parentElement?.parentElement as HTMLElement;
-    const scrollClasses = scrollContainer.className.split(/\s+/);
-
-    expect(scrollClasses).not.toContain("px_8");
-    // The scroll container itself is unchanged otherwise.
-    expect(scrollClasses).toContain("ov-y_auto");
-    expect(scrollClasses).toContain("pb_8");
-  });
-});

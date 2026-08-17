@@ -21,15 +21,7 @@ export default function ChooseHost({ onRemoteClick }: ChooseHostProps) {
   const { t } = useTranslation();
 
   return (
-    // maxWidth 400px, the base/xl logo widths (100px/180px) and the base gap
-    // (1rem) are arbitrary RSP-11 sizing choices with no matching preset
-    // token; kept as raw escapes (RSP-12a).
-    <Stack
-      align="center"
-      gap={{ base: "[1rem]", xl: "12" }}
-      width="full"
-      maxWidth="[400px]"
-    >
+    <Stack align="center" gap={{ base: "[1rem]", xl: "12" }} width="[400px]">
       <styled.img
         src={`${import.meta.env.BASE_URL}brand/aymurai-vert-darkpurple.svg`}
         alt="Logotipo AymurAI"

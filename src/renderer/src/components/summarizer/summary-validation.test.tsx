@@ -122,21 +122,6 @@ describe("SummaryValidation", () => {
     );
   });
 
-  it("uses a responsive grid that stacks below `lg` instead of a bare 2-column split (RSP-09)", () => {
-    const { container } = render(<SummaryValidation />);
-
-    const grid = container.querySelector(
-      '[aria-label="validation.originalDocumentLabel"]',
-    )?.parentElement as HTMLElement;
-    const classes = grid.className.split(/\s+/);
-
-    expect(classes).toContain("grid-tc_repeat(1,_minmax(0,_1fr))");
-    expect(classes).toContain("lg:grid-tc_repeat(2,_minmax(0,_1fr))");
-    expect(classes).toContain("desktop:grid-tc_repeat(2,_minmax(0,_1fr))");
-    expect(classes).toContain("grid-tr_[repeat(2,_minmax(0,_1fr))]");
-    expect(classes).toContain("lg:grid-tr_[minmax(0,_1fr)]");
-  });
-
   it("dedupes a save already in flight instead of firing a second network write", async () => {
     let resolveSave!: () => void;
     mockSave.mockImplementationOnce(

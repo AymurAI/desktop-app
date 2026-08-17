@@ -18,7 +18,7 @@ const BackButton = ({ onClick }: { onClick: () => void }) => (
   <button
     className={css({
       cursor: "pointer",
-      position: { base: "static", md: "absolute" },
+      position: "absolute",
       top: "8",
       left: "8",
     })}
@@ -82,9 +82,7 @@ export default function ConnectToHost({ onBackClick }: ConnectToHostProps) {
     <>
       <BackButton onClick={onBackClick} />
       <form onSubmit={tryConnection}>
-        {/* maxWidth 400px matches choose-host.tsx's arbitrary RSP-11 cap; no
-            matching preset token, kept as a raw escape (RSP-12a). */}
-        <Stack justify="center" gap="3" width="full" maxWidth="[400px]">
+        <Stack justify="center" gap="3" width="[400px]">
           <h2 className={css({ textStyle: "subtitle.sm.strong" })}>
             {t("home.host.connectServerExplanation")}
           </h2>
