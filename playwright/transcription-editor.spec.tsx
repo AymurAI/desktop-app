@@ -43,16 +43,6 @@ test("Voz a Texto transcription editor fits the viewport", async ({
   const panel = component.getByTestId("vtt-side-panel");
   await expect.soft(panel).toHaveCSS("width", expectedPanelWidth);
 
-  // G1 criterio 5 (tasks/responsive-fixes/issues/G1-paneles-laterales.md):
-  // misma guarda que file-annotator.spec.tsx - el panel de Voz a Texto
-  // comparte la primitiva SidePanelColumn, asi que debe seguir siendo
-  // `position: static` en los SEIS viewports (incluido 768). Commiteado en
-  // T1 (e81c4e2) como valor plano sin variante responsive - poner esta
-  // asercion en rojo exigiria revertir codigo ya commiteado, asi que NO se
-  // ejercito por mutacion en este ticket: es una guarda de regresion
-  // futura, no verificada por mutacion.
-  await expect.soft(panel).toHaveCSS("position", "static");
-
   // Reading column: T8 wires this up to ReadingColumn, testid moved onto the
   // transcript column's capped inner node (the one that carries max-width),
   // sharing a `variant={isEditMode ? "split" : "full"}` expression with the

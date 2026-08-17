@@ -85,12 +85,7 @@ export function ValidateDataset() {
           desktop: "[minmax(0, 1fr) token(sizes.panel.form)]",
         }}
         gridTemplateRows={{
-          // G1 criterio 3: el documento se lleva la mayor parte del alto de
-          // la fila apilada de abajo de `lg` (768) - el 50/50 anterior
-          // dejaba visible menos de una linea y media del formulario y
-          // cortaba el documento a ~13 lineas. El formulario conserva su
-          // propio scroll (`overflowY: auto`, mas abajo en este archivo).
-          base: "[minmax(0, 62%) minmax(0, 1fr)]",
+          base: "[repeat(2, minmax(0, 1fr))]",
           lg: "[minmax(0, 1fr)]",
         }}
       >

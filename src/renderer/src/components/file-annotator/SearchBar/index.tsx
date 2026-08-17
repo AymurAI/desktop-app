@@ -148,11 +148,7 @@ export const SearchBar = ({
   };
 
   return (
-    <div
-      ref={toolbarRef}
-      className={toolbarContainer}
-      data-testid="anon-toolbar"
-    >
+    <div ref={toolbarRef} className={toolbarContainer}>
       <Toolbar
         context="anonimizador"
         searchValue={search}

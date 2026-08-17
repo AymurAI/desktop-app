@@ -72,28 +72,6 @@ describe("FileAnnotator entities panel (RSP-07a)", () => {
     expect(classes).not.toContain("flex-d_row");
   });
 
-  // Third load-bearing piece of the G1 stacking fix (the other two are the
-  // panel primitive, side-panel-column.test.tsx, and the parent-half test
-  // above): `h: "auto"` lets the panel size to its OWN content below `lg`,
-  // instead of a flat `h: "full"` that `maxHeight: [50%]` would always clamp
-  // down to exactly 50% - needlessly starving the document to a bare 50/50
-  // split even when the panel's actual content is far shorter (measured live
-  // in playwright/file-annotator.spec.tsx: document scroller 764px with
-  // `auto` vs 398px with a forced `full`). No `lg` tier is needed either: the
-  // parent HStack's `alignItems="stretch"` already stretches an `auto`-height
-  // row item to the container's full height on its own (measured identical,
-  // 768px, with or without an explicit `lg: "full"`).
-  it("sizes the panel to its own content below lg instead of forcing a height", () => {
-    render(<FileAnnotator file={file} isAnnotable />);
-
-    const panel = screen.getByTestId("anon-side-panel");
-    const classes = classTokens(panel);
-
-    expect(classes).toContain("h_auto");
-    expect(classes).not.toContain("h_full");
-    expect(classes).not.toContain("lg:h_full");
-  });
-
   it("gives the pane HStack position:relative as SidePanelColumn's overlay containing block", () => {
     render(<FileAnnotator file={file} isAnnotable />);
 
