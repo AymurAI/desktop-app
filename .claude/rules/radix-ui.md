@@ -6,34 +6,30 @@ Visuals are layered on top with Panda CSS recipes.
 
 ## Where primitives live
 
-Most Radix-backed primitives this app uses — Dialog, Popover, Select, Switch,
-Tooltip — are **not** wrapped locally. They come straight from `@aymurai/ui`
-(`export * from "./components/dialog"` etc. in its `dist/index.d.ts`), which
-wraps the matching `@radix-ui/react-*` package itself (verified in its bundle:
-`@radix-ui/react-dialog`, `-popover`, `-select`, `-switch`, `-tooltip`).
-Feature code imports these directly from `@aymurai/ui` — see
-`how-it-works-modal.tsx` (Dialog) and `transcription-editor/turn-side-panel.tsx`
-(Popover) for the existing pattern. Do **not** add a local `ui/` wrapper for a
-primitive `@aymurai/ui` already exports — that duplicates what the library
-provides and is exactly the divergence this rule exists to avoid.
+All wrapped primitives are exported from `src/renderer/src/components/ui/`:
 
-`src/renderer/src/components/ui/` holds only primitives `@aymurai/ui` does
-**not** provide:
+- `ui/dialog.tsx` — wraps `@radix-ui/react-dialog`
+- `ui/popover.tsx` — wraps `@radix-ui/react-popover`
+- `ui/select.tsx` — wraps `@radix-ui/react-select`
+- `ui/switch.tsx` — wraps `@radix-ui/react-switch`
+- `ui/tooltip.tsx` — wraps `@radix-ui/react-tooltip`
+- Plus visual primitives without a Radix dependency: `button`, `card`, `input`,
+  `back-button`, `callout`, `suggestion`, `toast`.
 
-- `ui/scroll-area.tsx` — wraps `@radix-ui/react-scroll-area`
-- `ui/back-button.tsx` — visual only, no Radix dependency
-
-If a future primitive isn't covered by either `@aymurai/ui` or `ui/`, add it to
-`ui/` first (see "Adding a new primitive wrapper" below) — but check
-`@aymurai/ui`'s exports before doing so.
+Feature code imports from `@/components/ui/*`, **never** directly from
+`@radix-ui/react-*`. If a primitive isn't wrapped yet, add it to `ui/` first.
 
 ## Composition pattern (shadcn-style)
 
-Each primitive exports the parts the consumer needs. For a primitive
-`@aymurai/ui` already provides (e.g. Dialog):
+Each primitive exports the parts the consumer needs:
 
 ```tsx
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@aymurai/ui";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 <Dialog open={open} onOpenChange={setOpen}>
   <DialogContent>
@@ -42,9 +38,6 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@aymurai/ui";
   </DialogContent>
 </Dialog>
 ```
-
-For a primitive wrapped locally in `ui/` (e.g. ScrollArea), the same shape
-applies but the import comes from `@/components/ui/<name>` instead.
 
 - Open/close state lives in the consumer (`open` + `onOpenChange`).
 - Content goes inside the matching `*Content`.
@@ -70,9 +63,6 @@ applies but the import comes from `@/components/ui/<name>` instead.
 
 ## Adding a new primitive wrapper
 
-0. Check `@aymurai/ui`'s exports first (`export * from` lines in its
-   `dist/index.d.ts`). If it already provides the primitive, import it from
-   `@aymurai/ui` directly — don't wrap it again in `ui/`.
 1. Install the radix package as a devDep (e.g. `pnpm add -D @radix-ui/react-X`).
 2. Create `src/renderer/src/components/ui/<name>.tsx` and re-export the parts
    the codebase will use, wrapped in a Panda recipe.
@@ -82,9 +72,7 @@ applies but the import comes from `@/components/ui/<name>` instead.
 
 ## Don'ts
 
-- Don't import `@radix-ui/*` directly from feature code — use `@aymurai/ui`
-  if it already wraps that primitive, or `@/components/ui/*` if we wrap it
-  locally.
+- Don't import `@radix-ui/*` directly from feature code.
 - Don't reimplement focus management, escape handling, or click-outside logic.
 - Don't add `autoFocus` to dialog inputs.
 - Don't keep state inside `ui/` primitives that should be in the consumer
