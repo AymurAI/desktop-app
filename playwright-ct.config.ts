@@ -20,10 +20,6 @@ const VIEWPORTS: Record<string, { width: number; height: number }> = {
 
 export default defineConfig({
   testDir: "./playwright",
-  // E2E specs in this directory use the real dev server and router. CT aliases
-  // @tanstack/react-router to a stub, so running them here would not cover the
-  // navigation path they are meant to verify.
-  testIgnore: "**/no-console-errors.spec.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   reporter: "list",

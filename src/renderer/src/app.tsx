@@ -18,17 +18,12 @@ const history =
   import.meta.env.VITE_APP_MODE === "electron"
     ? createMemoryHistory({ initialEntries: ["/"] })
     : undefined;
-
-export const routerOptions = {
+const router = createRouter({
   routeTree,
   history,
   context: { ...TanStackQueryProviderContext },
-  // Keep TanStack's default View Transition off: router-core@1.171.14
-  // discards the ViewTransition returned by document.startViewTransition(),
-  // leaving Chromium's real `AbortError: Transition was skipped` `.ready`
-  // rejection unhandled. Re-enable only after upstream catches it.
-};
-const router = createRouter(routerOptions);
+  defaultViewTransition: true,
+});
 
 declare module "@tanstack/react-router" {
   interface Register {
