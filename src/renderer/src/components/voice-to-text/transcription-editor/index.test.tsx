@@ -152,3 +152,31 @@ describe("TranscriptionEditor search toolbar", () => {
     scrollSpy.mockRestore();
   });
 });
+
+// Adversary: the G1 stacking fix has two halves that only work together.
+// SidePanelColumn is now `position: static`, full width and `maxWidth: none`
+// below `lg`; the row that holds it has to become a `column` there, or that
+// full-width, `flexShrink: 0` panel stays a sibling in a ROW and claims the
+// whole width, pushing the transcript out of an `overflow: hidden` box - worse
+// than the overlay G1 replaced. side-panel-column.test.tsx pins the panel half
+// exhaustively; this pins the parent half, which no vitest test covered.
+describe("TranscriptionEditor side-panel stacking (G1)", () => {
+  it("stacks the side panel below the transcript under lg and restores the row at lg", () => {
+    render(
+      <TranscriptionEditor
+        transcription={transcription}
+        isEditMode
+        onEditModeChange={vi.fn()}
+      />,
+    );
+
+    const panel = screen.getByTestId("vtt-side-panel");
+    const row = panel.parentElement as HTMLElement;
+    const classes = row.className.split(/\s+/);
+
+    expect(classes).toContain("flex-d_column");
+    expect(classes).toContain("lg:flex-d_row");
+    // A flat `row` would silently undo the stacking at every width.
+    expect(classes).not.toContain("flex-d_row");
+  });
+});

@@ -71,7 +71,11 @@ const transcriptColumn = css({
 const content = css({
   flex: "[1]",
   display: "flex",
-  flexDir: "row",
+  // G1: below `lg` there's no room for a side-by-side panel, so the turn
+  // side panel stacks below the transcript instead of overlaying it
+  // (SidePanelColumn is `position: static` unconditionally now) - the
+  // layout has to actually reserve a row for it.
+  flexDir: { base: "column", lg: "row" },
   overflow: "hidden",
   position: "relative",
 });

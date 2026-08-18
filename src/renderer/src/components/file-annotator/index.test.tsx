@@ -37,17 +37,61 @@ describe("FileAnnotator entities panel (RSP-07a)", () => {
 
     // SidePanelColumn's own recipe classes (side-panel-column.test.tsx
     // asserts these exhaustively) - their presence here is what proves the
-    // wrapper div was actually swapped for the primitive. Scoped version: a
-    // flat `panel.side` with no responsive tier, which is all the Figma
-    // frames describe.
-    expect(classes).toContain("w_panel.side");
+    // wrapper div was actually swapped for the primitive. G1: `maxWidth`/
+    // `borderLeft` only engage at `lg` and up now (below `lg` the panel is a
+    // stacked row, not a docked column - see side-panel-column.tsx).
+    expect(classes).toContain("lg:max-w_panel.side");
     expect(classes).toContain("flex-sh_0");
-    expect(classes).toContain("bd-l_[1px_solid_#BCBAB8]");
+    expect(classes).toContain("lg:bd-l_[1px_solid_#BCBAB8]");
+    expect(classes).toContain("lg:w_panel.sideCompact");
+    expect(classes).toContain("desktop:w_panel.side");
 
     // The old self-imposed width is gone from the tree entirely.
     const html = panel.outerHTML;
     expect(html).not.toContain("clamp(260px");
     expect(html).not.toContain("45vw");
+  });
+
+  // Adversary: the G1 stacking fix has two halves that only work together.
+  // SidePanelColumn is `position: static`, full width and `maxWidth: none`
+  // below `lg`; the pane that holds it has to become a `column` there, or that
+  // full-width, `flexShrink: 0` panel stays a sibling in a ROW and claims the
+  // whole width, pushing the document out of an `overflow: hidden` box - worse
+  // than the overlay G1 replaced. side-panel-column.test.tsx pins the panel
+  // half exhaustively; this pins the parent half, which no vitest test covered.
+  it("stacks the panel below the document under lg and restores the row at lg", () => {
+    render(<FileAnnotator file={file} isAnnotable />);
+
+    const pane = screen.getByTestId("anon-side-panel")
+      .parentElement as HTMLElement;
+    const classes = classTokens(pane);
+
+    expect(classes).toContain("flex-d_column");
+    expect(classes).toContain("lg:flex-d_row");
+    // A flat `row` would silently undo the stacking at every width.
+    expect(classes).not.toContain("flex-d_row");
+  });
+
+  // Third load-bearing piece of the G1 stacking fix (the other two are the
+  // panel primitive, side-panel-column.test.tsx, and the parent-half test
+  // above): `h: "auto"` lets the panel size to its OWN content below `lg`,
+  // instead of a flat `h: "full"` that `maxHeight: [50%]` would always clamp
+  // down to exactly 50% - needlessly starving the document to a bare 50/50
+  // split even when the panel's actual content is far shorter (measured live
+  // in playwright/file-annotator.spec.tsx: document scroller 764px with
+  // `auto` vs 398px with a forced `full`). No `lg` tier is needed either: the
+  // parent HStack's `alignItems="stretch"` already stretches an `auto`-height
+  // row item to the container's full height on its own (measured identical,
+  // 768px, with or without an explicit `lg: "full"`).
+  it("sizes the panel to its own content below lg instead of forcing a height", () => {
+    render(<FileAnnotator file={file} isAnnotable />);
+
+    const panel = screen.getByTestId("anon-side-panel");
+    const classes = classTokens(panel);
+
+    expect(classes).toContain("h_auto");
+    expect(classes).not.toContain("h_full");
+    expect(classes).not.toContain("lg:h_full");
   });
 
   it("gives the pane HStack position:relative as SidePanelColumn's overlay containing block", () => {
@@ -190,6 +234,8 @@ describe("FileAnnotator panel toggle (adversary: RSP-07b variant remount)", () =
 
     fireEvent.click(
       screen.getByRole("button", {
+        // SearchBar stays at its pre-G3 state in this branch (the toolbar
+        // work is not a 768 fix), so the button still carries the literal.
         name: "Gestor de etiquetas",
       }),
     );

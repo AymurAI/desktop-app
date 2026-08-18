@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import FeaturesMenu from "../features-menu";
 import HowItWorksModal from "../how-it-works-modal";
 import HeaderLogoLink from "./header-logo-link";
+import { stepperHideClass } from "./stepper-visibility";
 
 type DocumentStep = 1 | 2 | 3 | 4;
 
@@ -50,8 +51,11 @@ export default function Header({ title, feature, currentStep }: HeaderProps) {
   };
 
   if (currentStep) {
+    // No `feature` means no title next to the logo, so nothing for the stepper
+    // to collide with — leave the class off rather than guessing a threshold.
     return (
       <AppHeader
+        className={feature ? stepperHideClass(feature) : undefined}
         featureName={featureTitle}
         helpLabel={helpLabel}
         appsLabel={t("header.appsAria")}

@@ -203,14 +203,10 @@ function playerSplitInset(): Record<
       ? `[max(token(spacing.${gutterToken}), calc((100% - token(sizes.${panelToken}) - token(sizes.${PLAYER_SPLIT_CAP})) / 2))]`
       : `[max(token(spacing.${gutterToken}), calc((100% - token(sizes.${PLAYER_SPLIT_CAP})) / 2))]`;
 
-  // Scoped version: SidePanelColumn is a flat `panel.side` (479px) at every
-  // width — the Figma frames specify no other panel width — so every tier
-  // subtracts the same amount and the `lg` tier that existed only to mirror
-  // `panel.sideCompact` is gone.
   return {
-    base: term(READING_GUTTER.base, "panel.side"),
-    md: term(READING_GUTTER.md, "panel.side"),
-    lg: term(READING_GUTTER.md, "panel.side"),
+    base: term(READING_GUTTER.base),
+    md: term(READING_GUTTER.md),
+    lg: term(READING_GUTTER.md, "panel.sideCompact"),
     desktop: term(READING_GUTTER.desktop, "panel.side"),
   };
 }

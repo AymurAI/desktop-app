@@ -7,13 +7,12 @@ import react from "@vitejs/plugin-react";
  * (tasks/responsive/plan.md). jsdom (Vitest) performs no layout, so numeric
  * CSS assertions and horizontal-overflow checks need a real browser engine.
  *
- * Scoped version (tasks/responsive-fixes/plan-version-acotada.md): the three
- * widths the Figma Responsive page actually draws. The full branch also ran
- * 768/1024/1366, but no frame describes them — asserting there would be
- * asserting an invention, and a green check on an invented contract is worse
- * than no check at all.
+ * Viewports match the plan's six target widths.
  */
 const VIEWPORTS: Record<string, { width: number; height: number }> = {
+  "768x1024": { width: 768, height: 1024 },
+  "1024x768": { width: 1024, height: 768 },
+  "1366x768": { width: 1366, height: 768 },
   "1440x900": { width: 1440, height: 900 },
   "1920x1080": { width: 1920, height: 1080 },
   "2560x1440": { width: 2560, height: 1440 },
@@ -21,6 +20,10 @@ const VIEWPORTS: Record<string, { width: number; height: number }> = {
 
 export default defineConfig({
   testDir: "./playwright",
+  // E2E specs in this directory use the real dev server and router. CT aliases
+  // @tanstack/react-router to a stub, so running them here would not cover the
+  // navigation path they are meant to verify.
+  testIgnore: "**/no-console-errors.spec.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   reporter: "list",

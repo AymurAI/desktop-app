@@ -36,7 +36,21 @@ import { generateSplits } from "./generateSplits";
 
 const labelManagerWrapper = css({
   display: "flex",
-  h: "full",
+  // G1: below `lg` the panel is a stacked row, not a column-filling sibling.
+  // `h: "auto"` sizes it to its OWN content (LabelManager measures ~146px),
+  // clamped by SidePanelColumn's own `maxHeight: [50%]` if that content ever
+  // grows past half the stacked column - it does NOT collapse the document
+  // to zero either way, `maxHeight` prevents that regardless of this `h`.
+  // What `h: "auto"` actually buys: a flat `h: "full"` here would force the
+  // panel's flex-basis to 100% of the column, which the `maxHeight` cap then
+  // clamps down to exactly 50% - ALWAYS, even when the content is far
+  // shorter - needlessly starving the document down to a bare 50/50 split
+  // (measured: document scroller 764px with `auto` vs 398px with a forced
+  // `full`, panel content is only ~146px either way). No `lg` override is
+  // needed: at/above `lg` the parent HStack's `alignItems="stretch"` already
+  // stretches an `auto`-height row item to the container's full cross-size
+  // on its own (measured identical either way: 768px in both cases).
+  h: "auto",
   minH: "0",
   flexShrink: "0",
   "&[hidden]": {
@@ -254,6 +268,11 @@ export default function FileAnnotator({
       gap="0"
       alignItems="stretch"
       overflow="hidden"
+      // G1: below `lg` there's no room for a side-by-side panel, so the
+      // entities panel stacks below the document instead of overlaying it
+      // (SidePanelColumn is `position: static` unconditionally now) - the
+      // layout has to actually reserve a row for it.
+      flexDirection={{ base: "column", lg: "row" }}
     >
       <div className={S.container}>
         <SearchBar

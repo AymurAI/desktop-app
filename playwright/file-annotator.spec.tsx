@@ -55,6 +55,38 @@ test("Anonimizador entities panel fits the viewport", async ({
     width < 1024 ? expectedPanelWidth : width < 1440 ? "359px" : "478px";
   await expect.soft(panelRoot).toHaveCSS("width", expectedRootWidth);
 
+  // G1 criterio 5 (tasks/responsive-fixes/issues/G1-paneles-laterales.md):
+  // el panel debe seguir siendo `position: static` en los SEIS viewports,
+  // incluido 768 - donde T1 lo convirtio de overlay absoluto a fila
+  // apilada. Esta guarda detecta que alguien reintroduzca el overlay.
+  // `side-panel-column.tsx` ya emite `position: "static"` como valor plano
+  // (sin variante responsive) desde T1, commiteado en e81c4e2 - poner esta
+  // asercion en rojo exigiria revertir codigo ya commiteado, asi que NO se
+  // ejercito por mutacion en este ticket: es una guarda de regresion
+  // futura. La contraparte unitaria (clase `pos_static` sin prefijo de
+  // breakpoint) vive en side-panel-column.test.tsx.
+  await expect.soft(panel).toHaveCSS("position", "static");
+
+  // G1 criterio 5, segunda parte: con el panel abierto a 1920, el toolbar
+  // del SearchBar debe seguir encogiendose con el pane (viewport - panel),
+  // no quedar fijo al ancho total del viewport. `container` (el padre
+  // inmediato) es `flex: 1` dentro del `HStack`, y `anon-toolbar`
+  // (SearchBar/index.tsx) es `width: full` dentro de ese `container`, asi
+  // que mide el ancho del pane exactamente: 1920 - 479 = 1441px. Medido con
+  // tolerancia +/-2px por bordes/redondeos, siguiendo el resto del archivo.
+  if (width === 1920) {
+    const toolbar = component.getByTestId("anon-toolbar");
+    await expect(toolbar).toHaveCount(1);
+    const toolbarBox = await toolbar.boundingBox();
+    expect.soft(toolbarBox).not.toBeNull();
+    if (toolbarBox) {
+      const expectedToolbarWidth = width - 479;
+      expect
+        .soft(Math.abs(toolbarBox.width - expectedToolbarWidth))
+        .toBeLessThanOrEqual(2);
+    }
+  }
+
   // Document reading column (RSP-07b). `FileAnnotatorFixture` mounts with
   // `isAnnotable`, so `labelManagerOpen` starts true and this pane gets
   // `ReadingColumn variant="doc"` (family D, rule C: 88% of the PANE - the
@@ -116,5 +148,58 @@ test("Anonimizador entities panel fits the viewport", async ({
     expect
       .soft(Math.abs(fullBox.width - expectedFullWidth))
       .toBeLessThanOrEqual(10);
+  }
+});
+
+/**
+ * G1: `labelManagerWrapper`'s `h: "auto"` below `lg` (file-annotator/
+ * index.tsx) is the third load-bearing piece of the G1 stacking fix, and it
+ * used to be guarded by neither gate - determined empirically here (with a
+ * temporary `h: "full"` mutation, since reverted) rather than assumed:
+ *
+ *  - At 768 (base, stacked column), `h: "auto"` measured PANEL_HEIGHT=146px
+ *    (LabelManager's own content) and the document scroller (`S.file`)
+ *    measured 764px. Mutating to a flat `h: "full"` (no responsive tiers)
+ *    measured PANEL_HEIGHT=512px (the `maxHeight: [50%]` cap engaging on a
+ *    100%-tall flex basis) and the scroller DROPPED to 398px - the document
+ *    does not collapse to zero, but it does lose ~366px it didn't need to,
+ *    because a short LabelManager body gets stretched to claim its full
+ *    clamped 50% share instead of shrinking to its own content.
+ *  - At 1024 (`lg`, row), `h: "auto"` alone (no `lg: "full"` override)
+ *    measured the identical PANEL_HEIGHT=768px as the current `lg: "full"`
+ *    tier - the parent HStack's `alignItems="stretch"` already stretches an
+ *    `auto`-height row item to the container's full cross-size on its own,
+ *    so no override is needed there at all.
+ *
+ * This asserts the base-tier behaviour directly: the panel must stay
+ * content-sized (nowhere near its own 50% cap) so the document keeps the
+ * bulk of the stacked row's height, matching G1 criterion 3's intent.
+ */
+test("G1: below `lg` the panel sizes to its own content instead of forcing its full 50% cap", async ({
+  mount,
+}, testInfo) => {
+  const width = Number(testInfo.project.name.split("x")[0]);
+  if (width >= 1024) return;
+
+  const component = await mount(<FileAnnotatorFixture />);
+  const panel = component.getByTestId("anon-side-panel");
+  const doc = component.getByTestId("anon-reading-column");
+  // `S.file`, the document's real scroll viewport, is two levels above the
+  // testid'd node - ReadingColumn (T17/RSP-07b) always renders its own outer
+  // gutter node, same convention as validate-dataset.spec.tsx.
+  const scroller = doc.locator("xpath=../..");
+
+  const panelBox = await panel.boundingBox();
+  const scrollerBox = await scroller.boundingBox();
+  expect.soft(panelBox).not.toBeNull();
+  expect.soft(scrollerBox).not.toBeNull();
+  if (panelBox && scrollerBox) {
+    // Content-sized (~146px measured) stays far under half the mounted
+    // height - a forced 50% share would be ~half the viewport (e.g. ~512px
+    // at 768x1024). 300px is comfortably between the two.
+    expect.soft(panelBox.height).toBeLessThan(300);
+    // The document correspondingly keeps the bulk of the row, not a bare
+    // 50% floor (~398px measured under the forced-height mutation).
+    expect.soft(scrollerBox.height).toBeGreaterThan(500);
   }
 });
