@@ -122,11 +122,22 @@ export default defineConfig({
   // Global styles (migrated from Stitches globalStyles.ts)
   globalCss,
 
-  // Other configuration
-  strictTokens: true,
-
+  // Theme extensions
   theme: {
     extend: {
+      semanticTokens: {
+        colors: {
+          bg: {
+            // Dark surface for the Voz a Texto editor's floating selection
+            // toolbar. Not in the preset because it's the only dark-surface
+            // element in the app.
+            "overlay-dark": { value: "#26244A" },
+          },
+          text: {
+            "on-overlay-dark": { value: "#FFFFFF" },
+          },
+        },
+      },
       // Extra breakpoint between the preset's `xl` (1280px) and `2xl`
       // (1536px), for the responsive-layout plan (tasks/responsive/plan.md).
       breakpoints: {
@@ -148,4 +159,7 @@ export default defineConfig({
       },
     },
   },
+
+  // Other configuration
+  strictTokens: true,
 });

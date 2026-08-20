@@ -90,7 +90,11 @@ const Paragraph = memo(
     // HStack), which the browser would otherwise reparent out of a <p>,
     // corrupting the layout (and triggering a React DOM-nesting error).
     return (
-      <div id={paragraph.id} className={S.paragraph}>
+      <div
+        id={paragraph.id}
+        data-paragraph-id={paragraph.id}
+        className={S.paragraph}
+      >
         {splits.map((s) => {
           const content = children.slice(s.start, s.end);
           const key = `${s.type}-${s.start}-${s.end}`;

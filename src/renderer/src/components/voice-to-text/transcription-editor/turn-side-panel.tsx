@@ -5,6 +5,7 @@ import SidePanelColumn from "@/components/layout/side-panel-column";
 import { formatTime } from "@/components/voice-to-text/format-time";
 import { showToast } from "@/features/showToast";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
+import { nextPersonaLabel } from "@/reducers/transcription";
 import {
   addPersonaSpeaker,
   addSpeaker,
@@ -18,13 +19,18 @@ import {
 } from "@/reducers/transcription/actions";
 import { SUGGESTED_SPEAKERS } from "@/services/aymurai/fixtures/suggestedSpeakers";
 import { css, cx } from "@/styled/css";
-import type { Speaker, Transcription, Turn } from "@/types/transcription";
+import { stack } from "@/styled/patterns";
+import type {
+  Speaker,
+  SuggestedSpeaker,
+  Transcription,
+  Turn,
+} from "@/types/transcription";
 import {
   Button,
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogTitle,
   SidePanel,
   TooltipProvider,
@@ -203,25 +209,37 @@ const emptyPanel = css({
   p: "6",
 });
 
-// Lightweight text-link Cancel, matching the "Ya existe" Figma reference
-// (bordered buttons for the real actions, plain text for Cancelar) instead of
-// a third equally-weighted bordered button crowding the footer.
-const cancelLink = css({
-  color: "text.lighter",
-  textStyle: "label.md.default",
-  textDecoration: "underline",
-  cursor: "pointer",
-  bg: "transparent",
-  border: "[none]",
-  p: "[0]",
-  mr: "auto",
-  "&:hover": { color: "brand.primary" },
+// Confirmation treatment from Figma node 40002384:38487 — the same one
+// @aymurai/ui's internal ConfirmDialog uses for the name-conflict prompt.
+// Replicated instead of imported because that component isn't public and
+// hardcodes the "Combinar"/"Cancelar" labels.
+const confirmCard = css({ ...stack.raw({ gap: "4" }), maxW: "[389px]" });
+const confirmTextBlock = css({ ...stack.raw({ gap: "1" }) });
+const confirmTitle = css({
+  margin: "0",
+  textStyle: "subtitle.md.strong",
+  color: "text.default",
+});
+const confirmDescription = css({
+  margin: "0",
+  textStyle: "subtitle.sm.default",
+  color: "text.default",
+});
+const confirmButtons = css({
+  display: "flex",
+  alignItems: "center",
+  gap: "3", // 12px
 });
 
 export interface TurnSidePanelProps {
   transcription: Transcription;
   activeTurnId: string | null;
 }
+
+type PendingSelection =
+  | { kind: "existing"; speakerId: string }
+  | { kind: "role"; role: SuggestedSpeaker }
+  | { kind: "new" };
 
 /**
  * Edit-mode side panel. Thin adapter that wires the transcription reducer to
@@ -250,7 +268,7 @@ export default function TurnSidePanel({
   // the handlers that use it, so every render calls the same hooks in the
   // same order regardless of whether activeTurn/currentSpeaker are set.
   const [scopeChoice, setScopeChoice] = useState<{
-    personIndex: number;
+    pending: PendingSelection;
     targetLabel: string;
   } | null>(null);
 
@@ -267,46 +285,53 @@ export default function TurnSidePanel({
     );
   }
 
-  // People pills = existing speakers first, then still-unused suggested roles.
+  // Pills = only the detected speakers. Roles no longer go here: they live
+  // in the "Nuevo" dropdown.
+  const people = speakers.map((s) => ({
+    id: s.id,
+    initials: s.initials,
+    name: s.label,
+    color: s.color,
+    renamable: true,
+  }));
+  const selectedIndex = speakers.findIndex((s) => s.id === currentSpeaker.id);
+
+  // Roles not yet used, for the dropdown.
   const usedLabels = new Set(speakers.map((s) => s.label.toLowerCase()));
   const availableSuggested = SUGGESTED_SPEAKERS.filter(
     (sg) => !usedLabels.has(sg.label.toLowerCase()),
   );
-  const people = [
-    ...speakers.map((s) => ({
-      kind: "existing" as const,
-      id: s.id,
-      initials: s.initials,
-      name: s.label,
-      color: s.color,
-      renamable: true,
-    })),
-    ...availableSuggested.map((sg) => ({
-      kind: "suggested" as const,
-      id: sg.id,
-      sg,
-      initials: sg.initials,
-      name: sg.label,
-      color: sg.color,
-      renamable: false,
-    })),
-  ];
-  const selectedIndex = people.findIndex(
-    (p) => p.kind === "existing" && p.id === currentSpeaker.id,
-  );
+  const newPersonOptions = availableSuggested.map((sg) => ({
+    id: sg.id,
+    initials: sg.initials,
+    name: sg.label,
+    color: sg.color,
+  }));
 
-  const applySelection = (i: number) => {
-    const p = people[i];
-    if (!p) return;
-    if (p.kind === "existing") {
-      dispatch(reassignTurnSpeaker(transcription.id, activeTurn.id, p.id));
+  // "new" is dispatched via ADD_PERSONA_SPEAKER, not built here: that action
+  // derives label/initials/color from the reducer's OWN speakers array at
+  // apply time (reducers/transcription/index.ts, G7 F4), which is what makes
+  // N "+ Nuevo" dispatches in the same React batch each see the previous
+  // one's result instead of all N reading this render's identical `speakers`
+  // closure and colliding on the same label/color.
+  const applySelection = (pending: PendingSelection) => {
+    if (pending.kind === "existing") {
+      dispatch(
+        reassignTurnSpeaker(transcription.id, activeTurn.id, pending.speakerId),
+      );
+      return;
+    }
+    if (pending.kind === "new") {
+      const id = crypto.randomUUID();
+      dispatch(addPersonaSpeaker(transcription.id, id));
+      dispatch(reassignTurnSpeaker(transcription.id, activeTurn.id, id));
       return;
     }
     const newSpeaker: Speaker = {
       id: crypto.randomUUID(),
-      label: p.sg.label,
-      initials: p.sg.initials,
-      color: p.sg.color,
+      label: pending.role.label,
+      initials: pending.role.initials,
+      color: pending.role.color,
     };
     dispatch(addSpeaker(transcription.id, newSpeaker));
     dispatch(
@@ -314,32 +339,63 @@ export default function TurnSidePanel({
     );
   };
 
-  const handleSelectPerson = (i: number) => {
-    const p = people[i];
-    if (!p || !currentSpeaker) return;
+  const currentSpeakerTurnCount = turns.filter(
+    (t) => t.speakerId === currentSpeaker.id,
+  ).length;
 
-    const targetLabel = p.kind === "existing" ? p.name : p.sg.label;
-    const isDifferentIdentity =
-      p.kind === "suggested" || p.id !== currentSpeaker.id;
-    const currentSpeakerTurnCount = turns.filter(
-      (t) => t.speakerId === currentSpeaker.id,
-    ).length;
+  /**
+   * Confirmation toast (Figma node 40002383:73634). Called inside the same
+   * handler that dispatches, so `currentSpeaker.label` still reads this
+   * render's value: after the dispatch the component re-renders and the
+   * message would say "from Fiscal to Fiscal".
+   */
+  const notifyApplied = (targetLabel: string, count: number) => {
+    showToast(
+      t("sidePanel.changeApplied", {
+        from: currentSpeaker.label,
+        to: targetLabel,
+        count,
+      }),
+      "success",
+    );
+  };
 
-    if (isDifferentIdentity && currentSpeakerTurnCount > 1) {
-      setScopeChoice({ personIndex: i, targetLabel });
+  /** Decides between applying directly or asking for scope. Shared by both paths. */
+  const requestSelection = (pending: PendingSelection, targetLabel: string) => {
+    if (currentSpeakerTurnCount > 1) {
+      setScopeChoice({ pending, targetLabel });
       return;
     }
-    applySelection(i);
+    applySelection(pending);
+    notifyApplied(targetLabel, 1);
+  };
+
+  /** Click en una pill de la grilla (un orador existente). */
+  const handleSelectPerson = (index: number) => {
+    const speaker = speakers[index];
+    if (!speaker || speaker.id === currentSpeaker.id) return;
+    requestSelection(
+      { kind: "existing", speakerId: speaker.id },
+      speaker.label,
+    );
+  };
+
+  /** Click en un rol del desplegable de "Nuevo". */
+  const handleSelectNewPersonOption = (index: number) => {
+    const role = availableSuggested[index];
+    if (!role) return;
+    requestSelection({ kind: "role", role }, role.label);
   };
 
   const handleApplyToThisTurnOnly = () => {
     if (!scopeChoice) return;
-    applySelection(scopeChoice.personIndex);
+    applySelection(scopeChoice.pending);
+    notifyApplied(scopeChoice.targetLabel, 1);
     setScopeChoice(null);
   };
 
   const handleApplyToAllTurns = () => {
-    if (!scopeChoice || !currentSpeaker) return;
+    if (!scopeChoice) return;
     dispatch(
       renameSpeakerGlobal(
         transcription.id,
@@ -347,6 +403,7 @@ export default function TurnSidePanel({
         scopeChoice.targetLabel,
       ),
     );
+    notifyApplied(scopeChoice.targetLabel, currentSpeakerTurnCount);
     setScopeChoice(null);
   };
 
@@ -367,9 +424,7 @@ export default function TurnSidePanel({
   // criterion covers it - G7's F4 is specifically about "+ Nuevo" - so it's
   // left as-is; see the comment there.
   const handleNewPerson = () => {
-    const id = crypto.randomUUID();
-    dispatch(addPersonaSpeaker(transcription.id, id));
-    dispatch(reassignTurnSpeaker(transcription.id, activeTurn.id, id));
+    requestSelection({ kind: "new" }, nextPersonaLabel(speakers));
   };
 
   const { minMs, maxMs } = getTimestampBounds(
@@ -406,16 +461,16 @@ export default function TurnSidePanel({
     : undefined;
 
   const handleRenamePerson = (personIndex: number, name: string) => {
-    const person = people[personIndex];
-    if (person?.kind !== "existing") return;
-    dispatch(renameSpeakerGlobal(transcription.id, person.id, name));
+    const speaker = speakers[personIndex];
+    if (!speaker) return;
+    dispatch(renameSpeakerGlobal(transcription.id, speaker.id, name));
   };
 
   const handleMergePeople = (sourceIndex: number, targetIndex: number) => {
-    const source = people[sourceIndex];
-    const target = people[targetIndex];
-    if (source?.kind !== "existing" || target?.kind !== "existing") return;
-    dispatch(renameSpeakerGlobal(transcription.id, source.id, target.name));
+    const source = speakers[sourceIndex];
+    const target = speakers[targetIndex];
+    if (!source || !target) return;
+    dispatch(renameSpeakerGlobal(transcription.id, source.id, target.label));
   };
 
   const handleAddBelow = () => {
@@ -455,15 +510,11 @@ export default function TurnSidePanel({
             time: formatTime(activeTurn.startMs),
             color: currentSpeaker.color,
           }}
-          people={people.map((p) => ({
-            id: p.id,
-            initials: p.initials,
-            name: p.name,
-            color: p.color,
-            renamable: p.renamable,
-          }))}
+          people={people}
           selectedIndex={selectedIndex >= 0 ? selectedIndex : undefined}
           onSelectPerson={handleSelectPerson}
+          newPersonOptions={newPersonOptions}
+          onSelectNewPersonOption={handleSelectNewPersonOption}
           onNewPerson={handleNewPerson}
           onRenamePerson={handleRenamePerson}
           onMergePeople={handleMergePeople}
@@ -488,30 +539,33 @@ export default function TurnSidePanel({
           if (!open) setScopeChoice(null);
         }}
       >
-        <DialogContent size="sm">
-          <DialogTitle>{t("sidePanel.scopeDialog.title")}</DialogTitle>
-          <DialogDescription>
-            {t("sidePanel.scopeDialog.description", {
-              current: currentSpeaker?.label,
-            })}
-          </DialogDescription>
-          <DialogFooter>
-            <button
-              type="button"
-              className={cancelLink}
-              onClick={() => setScopeChoice(null)}
-            >
-              {t("sidePanel.scopeDialog.cancel")}
-            </button>
-            <Button variant="secondary" onClick={handleApplyToThisTurnOnly}>
-              {t("sidePanel.scopeDialog.thisTurnOnly")}
-            </Button>
-            <Button onClick={handleApplyToAllTurns}>
+        <DialogContent className={confirmCard}>
+          <div className={confirmTextBlock}>
+            <DialogTitle asChild>
+              <p className={confirmTitle}>{t("sidePanel.scopeDialog.title")}</p>
+            </DialogTitle>
+            <DialogDescription asChild>
+              <p className={confirmDescription}>
+                {t("sidePanel.scopeDialog.description", {
+                  current: currentSpeaker.label,
+                })}
+              </p>
+            </DialogDescription>
+          </div>
+          <div className={confirmButtons}>
+            <Button variant="primary" size="sm" onClick={handleApplyToAllTurns}>
               {t("sidePanel.scopeDialog.allTurns", {
-                current: currentSpeaker?.label,
+                current: currentSpeaker.label,
               })}
             </Button>
-          </DialogFooter>
+            <Button
+              variant="tertiary"
+              size="sm"
+              onClick={handleApplyToThisTurnOnly}
+            >
+              {t("sidePanel.scopeDialog.thisTurnOnly")}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </SidePanelColumn>

@@ -1,3 +1,5 @@
+import { CanceledError } from "axios";
+
 import api from "@/services/api";
 
 export interface SummarizationRequest {
@@ -72,49 +74,60 @@ export async function summarizeStream(
     );
   }
 
-  const response = await fetch(`${baseURL}/llm/summarize/stream`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "text/event-stream",
-    },
-    body: JSON.stringify({ text } satisfies SummarizationRequest),
-    signal,
-  });
-
-  if (!response.ok || !response.body) {
-    throw new FatalStreamError(
-      `Summarization stream failed: ${response.status} ${response.statusText}`,
-    );
-  }
-
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  const tokens: string[] = [];
   let finalResponse: SummarizationResponse | null = null;
 
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
+  try {
+    const response = await fetch(`${baseURL}/llm/summarize/stream`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "text/event-stream",
+      },
+      body: JSON.stringify({ text } satisfies SummarizationRequest),
+      signal,
+    });
 
-    buffer += decoder.decode(value, { stream: true });
-    const parsed = parseSseMessages(buffer);
-    buffer = parsed.remainder;
+    if (!response.ok || !response.body) {
+      throw new FatalStreamError(
+        `Summarization stream failed: ${response.status} ${response.statusText}`,
+      );
+    }
 
-    for (const event of parsed.events) {
-      if (event.type === "token") {
-        tokens.push(event.text);
-        onPartialText?.(tokens.join(""));
-      } else if (event.type === "summary") {
-        finalResponse = {
-          summary: event.summary,
-          model: event.model ?? "",
-          chunks_used: event.chunks_used ?? 0,
-          steps: event.steps ?? [],
-        };
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    const tokens: string[] = [];
+
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const parsed = parseSseMessages(buffer);
+      buffer = parsed.remainder;
+
+      for (const event of parsed.events) {
+        if (event.type === "token") {
+          tokens.push(event.text);
+          onPartialText?.(tokens.join(""));
+        } else if (event.type === "summary") {
+          finalResponse = {
+            summary: event.summary,
+            model: event.model ?? "",
+            chunks_used: event.chunks_used ?? 0,
+            steps: event.steps ?? [],
+          };
+        }
       }
     }
+  } catch (err) {
+    // A FatalStreamError originates from us (a non-2xx response) — surface
+    // its message verbatim, even if aborting also threw a side-effect error.
+    if (err instanceof FatalStreamError) throw err;
+    if (signal?.aborted || (err as { name?: string })?.name === "AbortError") {
+      throw new CanceledError();
+    }
+    throw err;
   }
 
   if (!finalResponse) {

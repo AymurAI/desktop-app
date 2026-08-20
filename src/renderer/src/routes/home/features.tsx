@@ -87,6 +87,7 @@ function RouteComponent() {
     "dataset",
     "anonymizer",
     "voice-to-text",
+    "summarizer",
   ]);
 
   return (
@@ -124,8 +125,8 @@ function RouteComponent() {
                 <FeatureCardLink
                   to="/app/$feature"
                   params={{ feature: FeatureFlowEnum.Summarizer }}
-                  title={t("home.features.summaryTitle")}
-                  subtitle={t("home.features.summarySubtitle")}
+                  title={t("summarizer:title")}
+                  subtitle={t("summarizer:subtitle")}
                   icon={FEATURE_ICON.SUMMARIZER}
                 />
               </Grid>

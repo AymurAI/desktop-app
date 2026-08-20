@@ -14,15 +14,8 @@ const common = {
   home: {
     features: {
       greeting: "¡Hola! Selecciona la herramienta a utilizar",
-      summaryTitle: "Resumen de Documento",
-      summarySubtitle:
-        "Genera síntesis claras de resoluciones judiciales extensas",
     },
     host: {
-      howToConnect: "¿Cómo deseas conectarte a Aymurai?",
-      optionLocal: "Local",
-      optionServer: "Servidor",
-      optionOr: "o",
       connectServerExplanation:
         "Ingresa la dirección del servidor al que deseas conectarte",
       connectServerLabel: "Dirección del servidor",
@@ -44,8 +37,8 @@ const common = {
   },
   filePreview: {
     loadError: "No se pudo cargar el archivo",
-    meta_one: "{{count}} párrafo · {{size}}",
-    meta_other: "{{count}} párrafos · {{size}}",
+    meta_one: "{{count}} página · {{size}}",
+    meta_other: "{{count}} páginas · {{size}}",
     removeAria: "Eliminar {{name}}",
   },
   fileCheck: {

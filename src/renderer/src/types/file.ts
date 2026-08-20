@@ -25,6 +25,10 @@ export type DocFile = {
    */
   paragraphs?: Paragraph[];
   /**
+   * Page count reported by the `/misc/document-extract` endpoint
+   */
+  pageCount?: number | null;
+  /**
    * Used on the 'preview' page to detect which files have to be processed
    */
   selected: boolean;

@@ -1,5 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { parseSseMessages } from "./summarization";
+import { CanceledError } from "axios";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import api from "@/services/api";
+import { parseSseMessages, summarizeStream } from "./summarization";
 
 describe("parseSseMessages", () => {
   it("parses a single complete SSE frame", () => {
@@ -36,5 +39,37 @@ describe("parseSseMessages", () => {
 
   it("returns an empty remainder and no events for an empty buffer", () => {
     expect(parseSseMessages("")).toEqual({ events: [], remainder: "" });
+  });
+});
+
+describe("summarizeStream", () => {
+  const originalFetch = global.fetch;
+
+  beforeEach(() => {
+    api.defaults.baseURL = "http://llm.test";
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it("converts an aborted request into a CanceledError, matching transcribeStream", async () => {
+    global.fetch = vi
+      .fn()
+      .mockRejectedValue(
+        new DOMException("The operation was aborted.", "AbortError"),
+      );
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(
+      summarizeStream("texto", { signal: controller.signal }),
+    ).rejects.toBeInstanceOf(CanceledError);
+  });
+
+  it("does not mask a non-abort fetch failure as CanceledError", async () => {
+    global.fetch = vi.fn().mockRejectedValue(new TypeError("Network error"));
+
+    await expect(summarizeStream("texto", {})).rejects.toThrow("Network error");
   });
 });
