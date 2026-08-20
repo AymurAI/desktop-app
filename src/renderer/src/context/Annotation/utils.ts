@@ -87,8 +87,8 @@ export function getSelectionAnnotationRange(selection: Selection): {
   const endElement = closestOffsetElement(range.endContainer);
   if (!startElement || !endElement) return null;
 
-  const startParagraph = startElement.closest<HTMLParagraphElement>("p[id]");
-  const endParagraph = endElement.closest<HTMLParagraphElement>("p[id]");
+  const startParagraph = startElement.closest<HTMLElement>("div[id]");
+  const endParagraph = endElement.closest<HTMLElement>("div[id]");
   if (!startParagraph || !endParagraph || startParagraph.id !== endParagraph.id)
     return null;
 
