@@ -87,9 +87,17 @@ export function getSelectionAnnotationRange(selection: Selection): {
   const endElement = closestOffsetElement(range.endContainer);
   if (!startElement || !endElement) return null;
 
-  const startParagraph = startElement.closest<HTMLElement>("div[id]");
-  const endParagraph = endElement.closest<HTMLElement>("div[id]");
-  if (!startParagraph || !endParagraph || startParagraph.id !== endParagraph.id)
+  const startParagraph = startElement.closest<HTMLDivElement>(
+    "div[data-paragraph-id]",
+  );
+  const endParagraph = endElement.closest<HTMLDivElement>(
+    "div[data-paragraph-id]",
+  );
+  if (
+    !startParagraph ||
+    !endParagraph ||
+    startParagraph.dataset.paragraphId !== endParagraph.dataset.paragraphId
+  )
     return null;
 
   const startBase = Number(startElement.dataset.start ?? 0);
@@ -108,7 +116,7 @@ export function getSelectionAnnotationRange(selection: Selection): {
   if (startOffset === null || endOffset === null) return null;
 
   return {
-    paragraphId: startParagraph.id,
+    paragraphId: startParagraph.dataset.paragraphId as string,
     start: startBase + startOffset,
     end: endBase + endOffset,
     text,
