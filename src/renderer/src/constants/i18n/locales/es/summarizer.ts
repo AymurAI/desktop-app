@@ -52,7 +52,7 @@ const summarizer = {
     // G8 F3: title/subtitle must reflect the aggregated status
     // (summarizer/summary-process.tsx), not just "processing" forever.
     finishedTitle: "AymurAI finalizó el resumen del archivo.",
-    finishedSubtitle: "Podés continuar con la validación del resumen.",
+    finishedSubtitle: "Puedes continuar con la validación del resumen.",
     errorTitle: "Ocurrió un problema al resumir el archivo.",
     errorSubtitle: "El resumen no pudo completarse correctamente.",
     stoppedTitle: "Detuviste el resumen del archivo.",
@@ -62,7 +62,7 @@ const summarizer = {
     completedAria: "Resumen completado",
     callout:
       "Resumiendo texto. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
-    error: "Error de carga de archivo. Volvelo a intentar",
+    error: "Error de carga de archivo. Vuelve a intentarlo",
     stopped: "El resumen del archivo fue detenido manualmente.",
     continue: "Continuar",
     stop: "Detener",
@@ -72,7 +72,7 @@ const summarizer = {
     finish: "Finalizar",
     saving: "Guardando...",
     saveFailed:
-      "No se pudo guardar la validación. Podés continuar, pero los cambios podrían no quedar persistidos.",
+      "No se pudo guardar la validación. Puedes continuar, pero los cambios podrían no quedar persistidos.",
     missingSummary: "No se encontró ningún resumen generado.",
     originalDocumentLabel: "Documento original",
     summaryLabel: "Resumen editable",
@@ -91,7 +91,7 @@ const summarizer = {
     back: "Volver",
     export: "Exportar",
     exportError:
-      "No se pudo exportar el resumen. Volvé a intentarlo en unos instantes.",
+      "No se pudo exportar el resumen. Vuelve a intentarlo en unos instantes.",
   },
 };
 
