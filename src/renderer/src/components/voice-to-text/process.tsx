@@ -181,14 +181,13 @@ export default function VoiceProcess() {
                * G8 F3: title/subtitle must reflect the actual status, not
                * announce "AymurAI está transcribiendo" forever regardless of
                * outcome (the defect the report caught via the Callout below,
-               * which shares this same three-way split).
+               * which shares this same four-way split).
                *
-               * "stopped" folds into the same non-success branch as "error" -
-               * matching routes/app.$feature/process.tsx (G8 F3): an aborted
-               * run must never show the success copy, and this title doesn't
-               * need to distinguish "the model failed" from "you cancelled
-               * it" - both mean "this run did not finish", which is what
-               * `process.errorTitle`/`errorSubtitle` say. No copy of its own.
+               * "stopped" gets its own copy (`process.stoppedTitle`/
+               * `stoppedSubtitle`) distinct from "error": both are non-
+               * success outcomes, but only "stopped" was a deliberate user
+               * action (see `useTranscribe`'s `abort`), so it reads as "you
+               * cancelled it" rather than "the model failed".
                *
                * "idle" (the instant before `useTranscribe`'s effect fires its
                * mutation - see that hook) is deliberately left in the same
@@ -203,16 +202,20 @@ export default function VoiceProcess() {
                 <styled.h2 textStyle="subtitle.md.default">
                   {isCompleted
                     ? t("process.finishedTitle")
-                    : isError || isStopped
-                      ? t("process.errorTitle")
-                      : t("process.processingTitle")}
+                    : isStopped
+                      ? t("process.stoppedTitle")
+                      : isError
+                        ? t("process.errorTitle")
+                        : t("process.processingTitle")}
                 </styled.h2>
                 <styled.p textStyle="subtitle.sm.default" color="text.lighter">
                   {isCompleted
                     ? t("process.finishedSubtitle")
-                    : isError || isStopped
-                      ? t("process.errorSubtitle")
-                      : t("process.processingSubtitle")}
+                    : isStopped
+                      ? t("process.stoppedSubtitle")
+                      : isError
+                        ? t("process.errorSubtitle")
+                        : t("process.processingSubtitle")}
                 </styled.p>
               </Stack>
 

@@ -94,15 +94,15 @@ function DocumentProcess() {
 
   const combinedStatuses = files.map((f) => getCombinedStatus(f.data.name));
   const isProcessing = combinedStatuses.some((s) => s === "processing");
-  // "stopped" (the user aborted this file) is folded into the same
-  // non-success branch as "error": an aborted file must never show the
-  // success banner, and this Callout doesn't need to distinguish "the model
-  // failed" from "you cancelled it" - both mean "this run did not finish
-  // successfully", which is what `process.errorText` says in both locales.
-  const hasError = combinedStatuses.some(
-    (s) => s === "error" || s === "stopped",
-  );
-  const isDone = files.length > 0 && !isProcessing && !hasError;
+  const hasError = combinedStatuses.some((s) => s === "error");
+  // "stopped" (the user aborted this file) is a distinct non-success outcome
+  // from "error": both must keep the success banner from showing, but
+  // "stopped" gets its own copy (`process.stoppedTitle`/`stoppedText`) since
+  // it was a deliberate user action, not a failure. When a run mixes both
+  // outcomes across files, the error copy takes priority as the more
+  // actionable one.
+  const hasStopped = combinedStatuses.some((s) => s === "stopped");
+  const isDone = files.length > 0 && !isProcessing && !hasError && !hasStopped;
 
   useEffect(() => {
     // Fires once processing genuinely stops, success OR error - previously
@@ -161,14 +161,18 @@ function DocumentProcess() {
                     ? t("process.finishedTitle")
                     : hasError
                       ? t("process.errorTitle")
-                      : t("process.processingTitle")}
+                      : hasStopped
+                        ? t("process.stoppedTitle")
+                        : t("process.processingTitle")}
                 </styled.h2>
                 <styled.p textStyle="subtitle.sm.default" color="text.lighter">
                   {isDone
                     ? t("process.finishedSubtitle")
                     : hasError
                       ? t("process.errorSubtitle")
-                      : t("process.processingSubtitle")}
+                      : hasStopped
+                        ? t("process.stoppedSubtitle")
+                        : t("process.processingSubtitle")}
                 </styled.p>
               </Stack>
               {isDone && !isDismissed && (
@@ -182,6 +186,14 @@ function DocumentProcess() {
               {hasError && !isDismissed && (
                 <Callout
                   message={t("process.errorText")}
+                  variant="error"
+                  noBorder
+                  onDismiss={() => setIsDismissed(true)}
+                />
+              )}
+              {!hasError && hasStopped && !isDismissed && (
+                <Callout
+                  message={t("process.stoppedText")}
                   variant="error"
                   noBorder
                   onDismiss={() => setIsDismissed(true)}

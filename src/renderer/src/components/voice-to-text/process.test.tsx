@@ -144,18 +144,17 @@ describe("VoiceProcess", () => {
     expect(screen.getByText("process.errorSubtitle")).toBeInTheDocument();
   });
 
-  // "stopped" folds into the same non-success branch as "error" - matching
-  // routes/app.$feature/process.tsx's G8 F3 decision (documented in
-  // process.tsx) - so a cancelled run shows the same errorTitle/Subtitle,
-  // not its own copy.
-  it("shows the error title/subtitle (not a separate copy) when the status is stopped", () => {
+  // "stopped" gets its own copy, distinct from "error": both are non-success
+  // outcomes, but only "stopped" was a deliberate user action.
+  it("shows the stopped title/subtitle (not the error copy) when the status is stopped", () => {
     mockTranscribeState.status = "stopped";
     mockTranscribeState.partialText = "";
 
     render(<VoiceProcess />);
 
-    expect(screen.getByText("process.errorTitle")).toBeInTheDocument();
-    expect(screen.getByText("process.errorSubtitle")).toBeInTheDocument();
+    expect(screen.getByText("process.stoppedTitle")).toBeInTheDocument();
+    expect(screen.getByText("process.stoppedSubtitle")).toBeInTheDocument();
+    expect(screen.queryByText("process.errorTitle")).not.toBeInTheDocument();
     expect(screen.queryByText("process.finishedTitle")).not.toBeInTheDocument();
   });
 

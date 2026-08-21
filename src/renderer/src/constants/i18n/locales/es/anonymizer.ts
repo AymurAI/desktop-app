@@ -68,6 +68,9 @@ const anonymizer = {
     errorTitle: "Ocurrió un problema al procesar el archivo.",
     errorSubtitle: "El archivo no pudo procesarse correctamente.",
     errorText: "El procesamiento del archivo no se completó correctamente.",
+    stoppedTitle: "Detuviste el procesamiento del archivo.",
+    stoppedSubtitle: "Podés reanudarlo cuando quieras.",
+    stoppedText: "El procesamiento del archivo fue detenido manualmente.",
     continue: "Continuar",
   },
   validation: {

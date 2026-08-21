@@ -55,6 +55,8 @@ const summarizer = {
     finishedSubtitle: "Podés continuar con la validación del resumen.",
     errorTitle: "Ocurrió un problema al resumir el archivo.",
     errorSubtitle: "El resumen no pudo completarse correctamente.",
+    stoppedTitle: "Detuviste el resumen del archivo.",
+    stoppedSubtitle: "Podés reanudarlo cuando quieras.",
     waitingForWords: "Esperando las primeras palabras…",
     previewAriaLabel: "Vista previa del resumen",
     completedAria: "Resumen completado",
