@@ -72,7 +72,7 @@ const voiceToText = {
     sectionTitle: "1. Selección de archivo",
     selectedCount_one: "{{count}} archivo seleccionado",
     selectedCount_other: "{{count}} archivos seleccionados",
-    continue: "Siguiente",
+    continue: "Continuar",
     removeAria: "Eliminar {{name}}",
     playAria: "Reproducir 10 segundos de {{name}}",
     pauseAria: "Pausar {{name}}",
@@ -95,7 +95,7 @@ const voiceToText = {
     callout:
       "Transcribiendo audio. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
     back: "Volver",
-    next: "Siguiente",
+    continue: "Continuar",
   },
   validation: {
     back: "Volver",

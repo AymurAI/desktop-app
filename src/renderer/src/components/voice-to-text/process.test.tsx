@@ -101,7 +101,9 @@ describe("VoiceProcess", () => {
 
     render(<VoiceProcess />);
 
-    expect(screen.getByRole("button", { name: "process.next" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "process.continue" }),
+    ).toBeDisabled();
   });
 
   // G8 F3: the core regression guard. Fails today (before this ticket) via

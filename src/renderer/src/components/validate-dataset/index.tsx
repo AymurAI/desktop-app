@@ -6,9 +6,11 @@ import { SectionTitle } from "@/layout/section-title";
 import { validate } from "@/reducers/file/actions";
 import { css } from "@/styled/css";
 import { Grid, HStack, Stack } from "@/styled/jsx";
+import { featureNamespace } from "@/types/features";
 import { isFileValidated, isValidationCompleted } from "@/utils/file";
 import { Button } from "@aymurai/ui";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import FileAnnotator from "../file-annotator";
 import FileStepper from "../file-stepper";
 import FormGroup from "./form-group";
@@ -17,6 +19,7 @@ import { moveNext, movePrevious } from "./utils";
 export function ValidateDataset() {
   // HOOKS
   const { feature } = useParams({ from: "/app/$feature/validation" });
+  const { t } = useTranslation(featureNamespace[feature]);
   const files = useFiles();
   const [checked, setChecked] = useState(false);
   const [selected, setSelected] = useState(0);
@@ -148,7 +151,7 @@ export function ValidateDataset() {
 
           {canContinue ? (
             <Button size="md" onClick={handleContinue}>
-              Continuar
+              {t("validation.continue")}
             </Button>
           ) : (
             <Button
