@@ -44,8 +44,8 @@ function AppLayoutRoute() {
   const isSummarizer = feature === FeatureFlowEnum.Summarizer;
   const inner = (
     <Stack
-      width="screen"
-      height="screen"
+      width="full"
+      height="[100dvh]"
       minHeight="0"
       gap="0"
       overflow="hidden"

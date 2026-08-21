@@ -10,6 +10,8 @@ import {
 
 import { SearchBar } from "./SearchBar";
 
+import ReadingColumn from "@/components/layout/reading-column";
+import SidePanelColumn from "@/components/layout/side-panel-column";
 import AnnotationProvider, { useAnnotation } from "@/context/Annotation";
 import { useExcludedTagsConfig } from "@/store/useLocal";
 import { css } from "@/styled/css";
@@ -34,7 +36,21 @@ import { generateSplits } from "./generateSplits";
 
 const labelManagerWrapper = css({
   display: "flex",
-  h: "full",
+  // G1: below `lg` the panel is a stacked row, not a column-filling sibling.
+  // `h: "auto"` sizes it to its OWN content (LabelManager measures ~146px),
+  // clamped by SidePanelColumn's own `maxHeight: [50%]` if that content ever
+  // grows past half the stacked column - it does NOT collapse the document
+  // to zero either way, `maxHeight` prevents that regardless of this `h`.
+  // What `h: "auto"` actually buys: a flat `h: "full"` here would force the
+  // panel's flex-basis to 100% of the column, which the `maxHeight` cap then
+  // clamps down to exactly 50% - ALWAYS, even when the content is far
+  // shorter - needlessly starving the document down to a bare 50/50 split
+  // (measured: document scroller 764px with `auto` vs 398px with a forced
+  // `full`, panel content is only ~146px either way). No `lg` override is
+  // needed: at/above `lg` the parent HStack's `alignItems="stretch"` already
+  // stretches an `auto`-height row item to the container's full cross-size
+  // on its own (measured identical either way: 768px in both cases).
+  h: "auto",
   minH: "0",
   flexShrink: "0",
   "&[hidden]": {
@@ -113,8 +129,19 @@ const Paragraph = memo(
 interface Props {
   file: DocFile;
   isAnnotable?: boolean;
+  // Opt-in only: forces ReadingColumn's rule-C ("doc") variant regardless of
+  // panel state, for hosts that put a fixed-width column (e.g. a form)
+  // beside the document - Set de Datos (RSP-08). Defaults to false so every
+  // existing caller keeps today's behavior (doc when the panel is open,
+  // full otherwise) - see file-annotator/index.test.tsx's
+  // "variant=full (rule A) when the panel starts closed".
+  narrowDocument?: boolean;
 }
-export default function FileAnnotator({ file, isAnnotable = false }: Props) {
+export default function FileAnnotator({
+  file,
+  isAnnotable = false,
+  narrowDocument = false,
+}: Props) {
   const [search, setSearch] = useState("");
   const [activeSearchIndex, setActiveSearchIndex] = useState<number | null>(
     null,
@@ -237,6 +264,7 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
 
   return (
     <HStack
+      position="relative"
       w="full"
       h="full"
       minW="0"
@@ -244,6 +272,11 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
       gap="0"
       alignItems="stretch"
       overflow="hidden"
+      // G1: below `lg` there's no room for a side-by-side panel, so the
+      // entities panel stacks below the document instead of overlaying it
+      // (SidePanelColumn is `position: static` unconditionally now) - the
+      // layout has to actually reserve a row for it.
+      flexDirection={{ base: "column", lg: "row" }}
     >
       <div className={S.container}>
         <SearchBar
@@ -260,28 +293,37 @@ export default function FileAnnotator({ file, isAnnotable = false }: Props) {
           onFocusDocument={focusDocument}
         />
         <div ref={fileRef} tabIndex={-1} className={S.file}>
-          <AnnotationProvider
-            file={file}
-            isAnnotable={isAnnotable}
-            label={label}
+          <ReadingColumn
+            variant={narrowDocument || labelManagerOpen ? "doc" : "full"}
+            data-testid="anon-reading-column"
           >
-            {paragraphs.map((p) => (
-              <Paragraph
-                key={p.id}
-                paragraph={p}
-                predictions={predictionsMap.get(p.id) ?? []}
-                searchMatches={searchMatchesMap.get(p.id) ?? []}
-                activeSearchMatchId={activeSearchMatchId}
-              >
-                {p.value}
-              </Paragraph>
-            ))}
-          </AnnotationProvider>
+            <AnnotationProvider
+              file={file}
+              isAnnotable={isAnnotable}
+              label={label}
+            >
+              {paragraphs.map((p) => (
+                <Paragraph
+                  key={p.id}
+                  paragraph={p}
+                  predictions={predictionsMap.get(p.id) ?? []}
+                  searchMatches={searchMatchesMap.get(p.id) ?? []}
+                  activeSearchMatchId={activeSearchMatchId}
+                >
+                  {p.value}
+                </Paragraph>
+              ))}
+            </AnnotationProvider>
+          </ReadingColumn>
         </div>
       </div>
-      <div hidden={!labelManagerOpen} className={labelManagerWrapper}>
+      <SidePanelColumn
+        hidden={!labelManagerOpen}
+        className={labelManagerWrapper}
+        data-testid="anon-side-panel"
+      >
         <LabelManager onClose={toggleManagerLabel} />
-      </div>
+      </SidePanelColumn>
     </HStack>
   );
 }

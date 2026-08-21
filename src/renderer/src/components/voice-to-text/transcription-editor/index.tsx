@@ -9,6 +9,10 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 
+import ReadingColumn, {
+  readingInsetChildOverride,
+  readingInsetToolbarOverride,
+} from "@/components/layout/reading-column";
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
 import { renameTranscription } from "@/reducers/transcription/actions";
 import { css, cx } from "@/styled/css";
@@ -49,19 +53,31 @@ const switchLabel = css({
 const body = css({
   flex: "[1]",
   overflowY: "auto",
-  p: "12",
+  py: "12",
+  bg: "bg.secondary",
+  position: "relative",
+});
+
+// The flex/gap that used to live on `body` itself (removed above) rides
+// through here as ReadingColumn's forwarded `className`, onto its capped
+// inner node - otherwise nesting the turn list under ReadingColumn leaves
+// `body` with a single child and every turn loses its 24px gap.
+const transcriptColumn = css({
   display: "flex",
   flexDir: "column",
   gap: "6",
-  bg: "bg.secondary",
-  position: "relative",
 });
 
 const content = css({
   flex: "[1]",
   display: "flex",
-  flexDir: "row",
+  // G1: below `lg` there's no room for a side-by-side panel, so the turn
+  // side panel stacks below the transcript instead of overlaying it
+  // (SidePanelColumn is `position: static` unconditionally now) - the
+  // layout has to actually reserve a row for it.
+  flexDir: { base: "column", lg: "row" },
   overflow: "hidden",
+  position: "relative",
 });
 
 // Groups the title/banner and the scrollable transcript into a single
@@ -84,12 +100,19 @@ const titleRow = css({
 
 const titleSection = css({
   bg: "bg.secondary",
-  px: "12",
   pt: "6",
   flexShrink: "0",
 });
 
 const titleInput = css({
+  // G4 issue 12: no `width` at all left this at the UA's intrinsic input
+  // width (~32px via the default `size` attribute) instead of the row's
+  // full column width. `titleRow` already fills the reading column and this
+  // input is its only child in the editing branch, so `width: full` is
+  // enough - `minWidth: 0` lets it actually shrink below that intrinsic
+  // width in a flex row instead of forcing an overflow.
+  width: "full",
+  minWidth: "0",
   fontSize: "[32px]",
   lineHeight: "[38px]",
   fontWeight: "[600]",
@@ -347,13 +370,52 @@ export default function TranscriptionEditor({
   }, [isEditMode]);
 
   const switchId = "transcription-edit-mode";
+  // Title/banner and turn list sit on opposite sides of `body`'s scroll
+  // boundary (see index.tsx's `body`/`titleSection` split above), so they
+  // can't share one ReadingColumn instance - both use this same variant
+  // expression so they still line up to the same cap and gutters.
+  const readingVariant = isEditMode ? "split" : "full";
 
   return (
     <div className={wrap}>
       <div className={content}>
         <div className={bodyColumn}>
+          {/*
+            G5 (tasks/responsive-fixes/issues/G5-alineacion-cromo.md), issue
+            08: the transcript below (via ReadingColumn) has always been
+            where Figma's A-vtt-sin-panel-2560.png/B-vtt-con-panel-2560.png
+            put it (1824 centered off, 1672-in-pane on) - the Toolbar's own
+            hardcoded `px: "12"` (@aymurai/ui's dist/index.js) is what's
+            wrong. `readingInsetToolbarOverride` reuses ReadingColumn's SAME
+            gutter/cap tokens via `readingInset` (not a copy -
+            CONVENTIONS.md; see that file for why the actual css() call has
+            to live there, not here) so the toolbar always lines up with the
+            transcript, whichever cap it uses.
+
+            The "&&" inside that override is deliberate and necessary: the
+            Toolbar lands our className on the SAME root that carries its
+            own `px: "12"` class (`D(k({...px:"12"...}), h)`), so a flat
+            paddingInline override would be (0,1,0) against the library's
+            own (0,1,0) - and since main.tsx imports ./index.css before
+            @aymurai/ui/styles.css (same @layer order in both), the
+            library's later-imported rule would win the tie. "&&" (Panda
+            emits .class.class, specificity (0,2,0)) wins regardless of
+            import order - same mechanism as how-it-works.tsx's
+            tutorialGridOverride. AudioPlayer's fix (G5 T2, below) also
+            needs raised specificity after a bare child selector ("& > *")
+            measured as a cascade tie that lost to the library import order;
+            there the raised selector is combined with a child combinator
+            because the padding has to land on the wrapper's child rather
+            than the wrapper itself.
+
+            NOT applied to file-annotator/SearchBar/index.tsx's Toolbar
+            instance (context "anonimizador") - that is G3's territory and
+            a different screen; touching it here would be both scope creep
+            and a merge conflict.
+          */}
           <Toolbar
             context="search-switch"
+            className={readingInsetToolbarOverride[readingVariant]}
             searchValue={searchQuery}
             onSearchChange={(value) => {
               setSearchQuery(value);
@@ -392,77 +454,85 @@ export default function TranscriptionEditor({
           />
 
           <div className={titleSection}>
-            <EditableTitle
-              title={transcription.title}
-              onRename={(value) =>
-                dispatch(renameTranscription(transcription.id, value))
-              }
-            />
+            <ReadingColumn variant={readingVariant}>
+              <EditableTitle
+                title={transcription.title}
+                onRename={(value) =>
+                  dispatch(renameTranscription(transcription.id, value))
+                }
+              />
 
-            {isEditMode && (
-              <div className={editBanner}>
-                <Info size={20} color="#3F479D" />
-                <span>{t("editor.editModeBanner")}</span>
-              </div>
-            )}
+              {isEditMode && (
+                <div className={editBanner}>
+                  <Info size={20} color="#3F479D" />
+                  <span>{t("editor.editModeBanner")}</span>
+                </div>
+              )}
+            </ReadingColumn>
           </div>
 
           <div ref={scrollRef} className={body}>
-            {transcription.turns.map((turn) => {
-              const speaker = speakerMap[turn.speakerId];
-              if (!speaker) return null;
+            <ReadingColumn
+              variant={readingVariant}
+              className={transcriptColumn}
+              data-testid="vtt-reading-column"
+            >
+              {transcription.turns.map((turn) => {
+                const speaker = speakerMap[turn.speakerId];
+                if (!speaker) return null;
 
-              // Read mode → @aymurai/ui TranscriptBlock (Figma display component).
-              // Wrapped in a ref'd div so search scroll-to-match and the
-              // playback follow-along both work. Clicking a block seeks the
-              // player to that turn; the active turn is highlighted.
-              if (!isEditMode) {
-                const isActive = turn.id === activeTurnId;
+                // Read mode → @aymurai/ui TranscriptBlock (Figma display component).
+                // Wrapped in a ref'd div so search scroll-to-match and the
+                // playback follow-along both work. Clicking a block seeks the
+                // player to that turn; the active turn is highlighted.
+                if (!isEditMode) {
+                  const isActive = turn.id === activeTurnId;
+                  return (
+                    <div key={turn.id} ref={setTurnRef(turn.id)}>
+                      <TranscriptBlock
+                        initials={speaker.initials}
+                        name={speaker.label}
+                        time={formatTime(turn.startMs)}
+                        text={turn.text}
+                        highlight={searchQuery}
+                        color={speaker.color}
+                        className={cx(readBlock, isActive && readBlockActive)}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={t("editor.seekToTurn", {
+                          time: formatTime(turn.startMs),
+                        })}
+                        onClick={() => handleSeekTo(turn.startMs)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleSeekTo(turn.startMs);
+                          }
+                        }}
+                      />
+                    </div>
+                  );
+                }
+
                 return (
-                  <div key={turn.id} ref={setTurnRef(turn.id)}>
-                    <TranscriptBlock
-                      initials={speaker.initials}
-                      name={speaker.label}
-                      time={formatTime(turn.startMs)}
-                      text={turn.text}
-                      highlight={searchQuery}
-                      color={speaker.color}
-                      className={cx(readBlock, isActive && readBlockActive)}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={t("editor.seekToTurn", {
-                        time: formatTime(turn.startMs),
-                      })}
-                      onClick={() => handleSeekTo(turn.startMs)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          handleSeekTo(turn.startMs);
-                        }
-                      }}
-                    />
-                  </div>
+                  <TurnBlock
+                    key={turn.id}
+                    turn={turn}
+                    speaker={speaker}
+                    transcription={transcription}
+                    isActive={turn.id === activeTurnId}
+                    isSelected={turn.id === selectedTurnId}
+                    isEditing={turn.id === editingTurnId}
+                    highlight={searchQuery}
+                    onSeekTo={handleSeekTo}
+                    onSelect={handleTurnSelect}
+                    onTextSelect={sa.onSelect}
+                    onEditingFocusChange={handleEditingFocusChange}
+                    turnRef={setTurnRef(turn.id)}
+                  />
                 );
-              }
-
-              return (
-                <TurnBlock
-                  key={turn.id}
-                  turn={turn}
-                  speaker={speaker}
-                  transcription={transcription}
-                  isActive={turn.id === activeTurnId}
-                  isSelected={turn.id === selectedTurnId}
-                  isEditing={turn.id === editingTurnId}
-                  highlight={searchQuery}
-                  onSeekTo={handleSeekTo}
-                  onSelect={handleTurnSelect}
-                  onTextSelect={sa.onSelect}
-                  onEditingFocusChange={handleEditingFocusChange}
-                  turnRef={setTurnRef(turn.id)}
-                />
-              );
-            })}
+              })}
+            </ReadingColumn>
 
             {isEditMode && (
               <SelectionToolbar
@@ -485,13 +555,31 @@ export default function TranscriptionEditor({
         )}
       </div>
 
-      <AudioPlayer
-        ref={playerRef}
-        src={transcription.audioObjectUrl}
-        durationMs={transcription.audioDurationMs}
-        onTimeUpdate={(ms) => setCurrentMs(ms)}
-        rightSlot={footerActions}
-      />
+      {/*
+        G5 (tasks/responsive-fixes/issues/G5-alineacion-cromo.md), issue 08,
+        second half: `Player` doesn't accept a `className` at all (verified
+        in @aymurai/ui's Player.d.ts), so its content is aligned to the
+        reading column via a wrapper `<div>` around it instead - the wrapper
+        carries no padding/background/border of its own, only the inset
+        class indexed by `readingVariant` (`&& > *`, see
+        readingInsetChildOverride's docblock for why the child selector also
+        has to raise specificity against the library's root utility class).
+        The player's own root stays
+        full-bleed (viewport-wide background + border-top matching Figma's
+        A/B frames) - only its CONTENT is inset, which is exactly what
+        wrapping the CONTENT rather than the player itself achieves; a
+        `ReadingColumn` around `AudioPlayer` would instead clip the
+        full-bleed chrome.
+      */}
+      <div className={readingInsetChildOverride[readingVariant]}>
+        <AudioPlayer
+          ref={playerRef}
+          src={transcription.audioObjectUrl}
+          durationMs={transcription.audioDurationMs}
+          onTimeUpdate={(ms) => setCurrentMs(ms)}
+          rightSlot={footerActions}
+        />
+      </div>
     </div>
   );
 }

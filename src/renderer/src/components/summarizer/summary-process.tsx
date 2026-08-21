@@ -127,25 +127,49 @@ export default function SummaryProcess() {
           <Card>
             <Stack gap="6">
               <HStack justifyContent="space-between" alignItems="center">
+                {/*
+                 * G8 F3: title/subtitle must reflect the actual status - this
+                 * screen already conditions the stop button/spinner/check
+                 * below on isCompleted/isError/isStopped, which is exactly
+                 * what made the previous unconditional copy so visibly wrong
+                 * (a green check next to "AymurAI está resumiendo…").
+                 *
+                 * "stopped" folds into the same non-success branch as "error"
+                 * - matching routes/app.$feature/process.tsx (G8 F3) and
+                 * voice-to-text/process.tsx: no copy of its own.
+                 *
+                 * "idle" (the instant before `useSummarize`'s effect fires
+                 * its mutation) stays in the same bucket as "processing",
+                 * same rationale as voice-to-text/process.tsx: `RequireFile`
+                 * only mounts this screen once a file exists, so the
+                 * mutation is always about to fire with no user action
+                 * needed. Same treatment applies to the Callout below.
+                 */}
                 <Stack gap="1">
                   <styled.h2 textStyle="subtitle.md.default">
-                    {t("process.processingTitle")}
+                    {isCompleted
+                      ? t("process.finishedTitle")
+                      : isError || isStopped
+                        ? t("process.errorTitle")
+                        : t("process.processingTitle")}
                   </styled.h2>
                   <styled.p
                     textStyle="subtitle.sm.default"
                     color="text.lighter"
                   >
-                    {t("process.processingSubtitle")}
+                    {isCompleted
+                      ? t("process.finishedSubtitle")
+                      : isError || isStopped
+                        ? t("process.errorSubtitle")
+                        : t("process.processingSubtitle")}
                   </styled.p>
                 </Stack>
                 <HStack gap="4" alignItems="center">
-                  <Button
-                    variant="secondary"
-                    onClick={handleStop}
-                    disabled={isCompleted || isError || isStopped}
-                  >
-                    {t("process.stop")}
-                  </Button>
+                  {!isCompleted && !isError && !isStopped && (
+                    <Button variant="secondary" onClick={handleStop}>
+                      {t("process.stop")}
+                    </Button>
+                  )}
                   <div className={spinnerSlot}>
                     {!isCompleted && !isError && !isStopped && <Spinner />}
                     {isCompleted && (
@@ -187,7 +211,13 @@ export default function SummaryProcess() {
                   </ScrollArea>
                 )}
 
-                {!isError && !isStopped && (
+                {/* G8 F3: this banner literally says "Resumiendo
+                 * texto…Aparecerá aquí cuando esté listo" - it must not
+                 * coexist with the finished summary it's promising, so the
+                 * guard now also excludes `isCompleted` (previously only
+                 * excluded error/stopped). "idle" intentionally stays
+                 * included here, same rationale as the title/subtitle above. */}
+                {!isCompleted && !isError && !isStopped && (
                   <Callout
                     message={t("process.callout")}
                     variant="info"

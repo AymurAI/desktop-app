@@ -1,17 +1,21 @@
-import { keyframes, styled } from "@/styles";
+import { css } from "@/styled/css";
 
-const spin = keyframes({
-  "0%": { transform: "rotate(0deg)" },
-  "100%": { transform: "rotate(360deg)" },
-});
-
-const SVG = styled("svg", {
-  animation: `${spin} 1s linear infinite`,
+// @pandacss/preset-panda (already in `presets` at panda.config.ts) ships
+// both a `spin` keyframe (`to: { transform: "rotate(360deg)" } }`) and an
+// `animations.spin` token whose value is `"spin 1s linear infinite"` -
+// byte-identical in effect to the Stitches keyframes/animation pair this
+// replaces. The only difference is that Stitches named the `0%` state
+// explicitly where the token relies on the implicit from-state, which is
+// equivalent here since this SVG has no base transform. No panda.config.ts
+// edit was needed or made.
+const spin = css({
+  animation: "spin",
 });
 
 export default function Spinner() {
   return (
-    <SVG
+    <svg
+      className={spin}
       width={48}
       height={48}
       viewBox="0 0 48 48"
@@ -45,6 +49,6 @@ export default function Spinner() {
           <stop offset={1} stopColor="#3F479D" stopOpacity={0} />
         </linearGradient>
       </defs>
-    </SVG>
+    </svg>
   );
 }

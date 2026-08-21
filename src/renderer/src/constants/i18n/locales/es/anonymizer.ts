@@ -41,11 +41,34 @@ const anonymizer = {
         "Proceso terminado. El documento está listo para ser exportado.",
     },
   },
+  labelManager: {
+    closeAria: "Cerrar gestor de etiquetas",
+  },
+  searchBar: {
+    searchAriaLabel: "Buscar en el documento",
+    applyLabels: "Aplicar etiquetas",
+    labelPlaceholder: "Etiqueta",
+    manageLabels: "Gestor de etiquetas",
+    searchPlaceholder: "Buscar",
+    clearSearch: "Limpiar búsqueda",
+    previousMatch: "Coincidencia anterior",
+    nextMatch: "Coincidencia siguiente",
+    noMatches: "0 ocurrencias",
+    matchCount: "{{current}} de {{total}}",
+  },
   process: {
     sectionTitle: "2. Procesamiento del archivo",
     processingTitle: "AymurAI está extrayendo los datos del archivo.",
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
     finishText: "Se finalizó el análisis del documento.",
+    // G8 F3: title/subtitle/Callout must reflect the aggregated status
+    // (routes/app.$feature/process.tsx), not just "processing" forever.
+    finishedTitle: "AymurAI finalizó la extracción de datos del archivo.",
+    finishedSubtitle: "Podés continuar con la validación de los datos.",
+    errorTitle: "Ocurrió un problema al procesar el archivo.",
+    errorSubtitle: "El archivo no pudo procesarse correctamente.",
+    errorText: "El procesamiento del archivo no se completó correctamente.",
+    next: "Siguiente",
   },
   validation: {
     toastSingleSuccess:
@@ -64,6 +87,22 @@ const anonymizer = {
     viewResultPDF: "Descargar PDF",
     downloadError:
       "Ocurrió un error al generar el archivo. Por favor, intente nuevamente.",
+  },
+  // G8 F1: one key per fatal-issue family (utils/anonymizer/export-validation.ts),
+  // so the export-blocked message names the family that actually blocked the
+  // export instead of a single hardcoded "offsets" message for all nine codes.
+  export: {
+    invalidOffsets:
+      "No se puede exportar: hay entidades con offsets inválidos o fuera del texto original.",
+    duplicateRanges:
+      "No se puede exportar: hay más de una entidad activa sobre el mismo tramo de texto.",
+    overlappingRanges:
+      "No se puede exportar: hay entidades con tramos de texto solapados.",
+    textMismatch:
+      "No se puede exportar: el texto de una entidad no coincide con el documento original.",
+    mixedGroupLabels:
+      "No se puede exportar: un grupo de entidades combina etiquetas incompatibles.",
+    generic: "No se puede exportar: hay entidades con datos inválidos.",
   },
 };
 

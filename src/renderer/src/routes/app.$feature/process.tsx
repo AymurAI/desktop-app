@@ -74,14 +74,43 @@ function DocumentProcess() {
     });
   };
 
-  const isProcessing = files.some(
-    (f) =>
-      parseStatuses[f.data.name]?.status === "processing" ||
-      fileStatuses[f.data.name]?.status === "processing" ||
-      disambiguateStatuses[f.data.name]?.status === "processing",
+  // Status accounts for all three stages so "completed" only shows at 100%.
+  // This is the ONLY source of per-file status: `isProcessing`/`hasError`/
+  // `isDone` below all derive from it. Looking at a single stage's table (or
+  // recomputing an equivalent by hand) reintroduces G8 F3 by another door -
+  // e.g. `usePredict` reports "completed" once a file has 0 paragraphs
+  // (`total === 0`, meaning parse hasn't produced any yet), so a naive
+  // `fileStatuses[...]?.status === "error"` check would miss parse errors.
+  const getCombinedStatus = (fileName: string): PredictStatus => {
+    const parseStatus = parseStatuses[fileName]?.status ?? "processing";
+    if (parseStatus !== "completed") return parseStatus;
+
+    const predictStatus = fileStatuses[fileName]?.status ?? "processing";
+    if (workflow !== "anonymizer" || predictStatus !== "completed")
+      return predictStatus;
+
+    return disambiguateStatuses[fileName]?.status ?? "processing";
+  };
+
+  const combinedStatuses = files.map((f) => getCombinedStatus(f.data.name));
+  const isProcessing = combinedStatuses.some((s) => s === "processing");
+  // "stopped" (the user aborted this file) is folded into the same
+  // non-success branch as "error": an aborted file must never show the
+  // success banner, and this Callout doesn't need to distinguish "the model
+  // failed" from "you cancelled it" - both mean "this run did not finish
+  // successfully", which is what `process.errorText` says in both locales.
+  const hasError = combinedStatuses.some(
+    (s) => s === "error" || s === "stopped",
   );
+  const isDone = files.length > 0 && !isProcessing && !hasError;
 
   useEffect(() => {
+    // Fires once processing genuinely stops, success OR error - previously
+    // this read a hand-rolled `isProcessing` that, for the Anonimizador,
+    // stayed `true` forever once predict errored (see G8 F3), so a failed
+    // run never notified. Deriving from `getCombinedStatus` fixes that as a
+    // side effect: a run that ends entirely in error now DOES notify, same
+    // as a successful one - the user still needs to know the run is over.
     if (files.length > 0 && !isProcessing && !hasNotified.current) {
       hasNotified.current = true;
       taskbar.notify();
@@ -100,18 +129,6 @@ function DocumentProcess() {
     const disambiguateDone =
       disambiguateStatuses[fileName]?.status === "completed" ? 1 : 0;
     return parseDone * 0.1 + predictProgress * 0.7 + disambiguateDone * 0.2;
-  };
-
-  // Status accounts for all three stages so "completed" only shows at 100%.
-  const getCombinedStatus = (fileName: string): PredictStatus => {
-    const parseStatus = parseStatuses[fileName]?.status ?? "processing";
-    if (parseStatus !== "completed") return parseStatus;
-
-    const predictStatus = fileStatuses[fileName]?.status ?? "processing";
-    if (workflow !== "anonymizer" || predictStatus !== "completed")
-      return predictStatus;
-
-    return disambiguateStatuses[fileName]?.status ?? "processing";
   };
 
   const handleAbort = (file: DocFile) => () => {
@@ -140,16 +157,32 @@ function DocumentProcess() {
             <Stack gap="6" direction="column">
               <Stack direction="column" gap="1">
                 <styled.h2 textStyle="subtitle.md.default">
-                  {t("process.processingTitle")}
+                  {isDone
+                    ? t("process.finishedTitle")
+                    : hasError
+                      ? t("process.errorTitle")
+                      : t("process.processingTitle")}
                 </styled.h2>
                 <styled.p textStyle="subtitle.sm.default" color="text.lighter">
-                  {t("process.processingSubtitle")}
+                  {isDone
+                    ? t("process.finishedSubtitle")
+                    : hasError
+                      ? t("process.errorSubtitle")
+                      : t("process.processingSubtitle")}
                 </styled.p>
               </Stack>
-              {!isProcessing && !isDismissed && (
+              {isDone && !isDismissed && (
                 <Callout
                   message={t("process.finishText")}
                   variant="info"
+                  noBorder
+                  onDismiss={() => setIsDismissed(true)}
+                />
+              )}
+              {hasError && !isDismissed && (
+                <Callout
+                  message={t("process.errorText")}
+                  variant="error"
                   noBorder
                   onDismiss={() => setIsDismissed(true)}
                 />
@@ -169,7 +202,7 @@ function DocumentProcess() {
       </MainContent>
       <Footer withBuiltBy>
         <Button onClick={handleNext} disabled={isProcessing}>
-          Siguiente
+          {t("process.next")}
         </Button>
       </Footer>
     </RequireFile>

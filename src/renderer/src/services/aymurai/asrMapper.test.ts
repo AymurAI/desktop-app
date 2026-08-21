@@ -58,6 +58,38 @@ describe("mapASRDocumentToTranscription", () => {
     ]);
   });
 
+  it("maps double-digit backend speakers to distinct initials", () => {
+    const speakerTurns = [1, 10, 11].map((speakerNo) => ({
+      speaker: `Speaker ${speakerNo}`,
+      speaker_no: speakerNo,
+      start: `00:00:${String(speakerNo).padStart(2, "0")}.000`,
+      end: `00:00:${String(speakerNo + 1).padStart(2, "0")}.000`,
+      text: `Turno ${speakerNo}`,
+      segments: [],
+    }));
+
+    const transcription = mapASRDocumentToTranscription(
+      {
+        document_id: "double-digit-speakers",
+        document: [],
+        speaker_turns: speakerTurns,
+      },
+      audioFile,
+      "blob:audio",
+    );
+
+    expect(transcription.speakers.map((speaker) => speaker.label)).toEqual([
+      "Persona 1",
+      "Persona 10",
+      "Persona 11",
+    ]);
+    expect(transcription.speakers.map((speaker) => speaker.initials)).toEqual([
+      "P1",
+      "P10",
+      "P11",
+    ]);
+  });
+
   it("uses speaker_turns as the editable turn source instead of raw document chunks", () => {
     const doc: ASRDocument = {
       document_id: "doc-1",

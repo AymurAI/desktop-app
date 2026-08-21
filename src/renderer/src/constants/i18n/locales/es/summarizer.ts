@@ -49,6 +49,12 @@ const summarizer = {
     sectionTitle: "2. Resumiendo documento",
     processingTitle: "AymurAI está resumiendo el archivo.",
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
+    // G8 F3: title/subtitle must reflect the aggregated status
+    // (summarizer/summary-process.tsx), not just "processing" forever.
+    finishedTitle: "AymurAI finalizó el resumen del archivo.",
+    finishedSubtitle: "Podés continuar con la validación del resumen.",
+    errorTitle: "Ocurrió un problema al resumir el archivo.",
+    errorSubtitle: "El resumen no pudo completarse correctamente.",
     waitingForWords: "Esperando las primeras palabras…",
     previewAriaLabel: "Vista previa del resumen",
     completedAria: "Resumen completado",

@@ -50,7 +50,7 @@ import {
   Warning,
   XCircle,
 } from "phosphor-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import type { EntityGroup } from "@/hooks/useEntityGroups";
 import {
@@ -71,6 +71,27 @@ function normalizeText(t: string) {
 
 const GROUP_PREFIX = "group:";
 const TEXT_PREFIX = "text:";
+
+/**
+ * The text-entity context menu opens at the click's raw viewport
+ * coordinates (`position: fixed`), so near the right/bottom edge it can
+ * render off-screen - especially at 768, where the entities panel overlays
+ * most of the width. Clamp the desired position so the menu's own box
+ * (measured after mount) always stays within the viewport, minus `margin`.
+ */
+export function clampMenuPosition(
+  desired: { x: number; y: number },
+  menuSize: { width: number; height: number },
+  viewport: { width: number; height: number },
+  margin = 8,
+): { x: number; y: number } {
+  const maxX = Math.max(margin, viewport.width - menuSize.width - margin);
+  const maxY = Math.max(margin, viewport.height - menuSize.height - margin);
+  return {
+    x: Math.min(desired.x, maxX),
+    y: Math.min(desired.y, maxY),
+  };
+}
 
 function groupDndId(id: string) {
   return `${GROUP_PREFIX}${id}`;
@@ -437,6 +458,32 @@ export default function LabelEntityTab({
     normalizedText: string;
   } | null>(null);
   const [textMenuActionHovered, setTextMenuActionHovered] = useState(false);
+  const textMenuRef = useRef<HTMLDivElement>(null);
+  const [textMenuPosition, setTextMenuPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  useLayoutEffect(() => {
+    if (!textMenu) {
+      setTextMenuPosition(null);
+      return;
+    }
+    setTextMenuPosition({ x: textMenu.x, y: textMenu.y });
+  }, [textMenu]);
+
+  useLayoutEffect(() => {
+    if (!textMenu || !textMenuRef.current) return;
+    const rect = textMenuRef.current.getBoundingClientRect();
+    const clamped = clampMenuPosition(
+      { x: textMenu.x, y: textMenu.y },
+      { width: rect.width, height: rect.height },
+      { width: window.innerWidth, height: window.innerHeight },
+    );
+    if (clamped.x !== textMenu.x || clamped.y !== textMenu.y) {
+      setTextMenuPosition(clamped);
+    }
+  }, [textMenu]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -693,8 +740,12 @@ export default function LabelEntityTab({
       >
         {textMenu && (
           <div
+            ref={textMenuRef}
             className={textContextMenu}
-            style={{ left: textMenu.x, top: textMenu.y }}
+            style={{
+              left: textMenuPosition?.x ?? textMenu.x,
+              top: textMenuPosition?.y ?? textMenu.y,
+            }}
             onClick={(event) => event.stopPropagation()}
             onContextMenu={(event) => {
               event.preventDefault();

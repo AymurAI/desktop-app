@@ -1,4 +1,5 @@
 import { MEDIA_EXTENSIONS } from "@/constants/config";
+import { computeInitials } from "@/reducers/transcription";
 import type { ASRDocument, ASRParagraph, ASRSpeakerTurn } from "@/schema/asr";
 import type {
   Speaker,
@@ -60,7 +61,7 @@ function buildSpeakersFromLabels(
   return [...speakerLabelsByNo.entries()].map(([no, label], idx) => ({
     id: `s${no}`,
     label,
-    initials: `P${no}`.slice(0, 2),
+    initials: computeInitials(label),
     color: SPEAKER_PALETTE[idx % SPEAKER_PALETTE.length],
   }));
 }

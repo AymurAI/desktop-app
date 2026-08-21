@@ -41,6 +41,9 @@ const common = {
     meta_other: "{{count}} páginas · {{size}}",
     removeAria: "Eliminar {{name}}",
   },
+  fileCheck: {
+    defaultError: "Error de guardado\nVolvé a cargar el archivo",
+  },
 };
 
 export default common;

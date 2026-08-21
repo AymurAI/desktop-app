@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { useFileDispatch } from "@/hooks";
 import {
@@ -16,6 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@aymurai/ui";
+import { X } from "phosphor-react";
 import LabelConfigTab from "./config-tab";
 import LabelEntityTab from "./entity-tab";
 import LabelManagerTab from "./tab";
@@ -27,8 +29,10 @@ const styles = sva({
   base: {
     container: {
       ...stack.raw({ gap: "0" }),
-      width: "[clamp(260px,32vw,400px)]",
-      maxWidth: "[45vw]",
+      // Width comes from the SidePanelColumn wrapper (T9,
+      // file-annotator/index.tsx) - this fills whatever box that provides
+      // rather than imposing its own competing width.
+      width: "full",
       h: "full",
       minH: "0",
       flexShrink: "0",
@@ -56,6 +60,16 @@ const styles = sva({
       overflowX: "hidden",
     },
     close: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      w: "6",
+      h: "6",
+      flexShrink: "0",
+      // The button inherits UA chrome (border/background) now that it no
+      // longer renders a plain text glyph - reset both explicitly.
+      border: "none",
+      bg: "transparent",
       cursor: "pointer",
     },
   },
@@ -75,6 +89,7 @@ interface LabelManagerProps {
   onClose: () => void;
 }
 export default function LabelManager({ onClose }: LabelManagerProps) {
+  const { t } = useTranslation("anonymizer");
   const [selectedTab, setSelectedTab] = useState<"entity" | "config">("entity");
   const [expandedEntitySections, setExpandedEntitySections] =
     useState<ExpandedState>({});
@@ -124,7 +139,7 @@ export default function LabelManager({ onClose }: LabelManagerProps) {
       <TooltipProvider>
         <HStack
           justify="space-between"
-          alignItems="flex-start"
+          alignItems="center"
           className={classes.header}
         >
           <HStack alignItems="center">
@@ -157,12 +172,17 @@ export default function LabelManager({ onClose }: LabelManagerProps) {
           </HStack>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button onClick={onClose} type="button" className={classes.close}>
-                X
+              <button
+                onClick={onClose}
+                type="button"
+                className={classes.close}
+                aria-label={t("labelManager.closeAria")}
+              >
+                <X size={20} />
               </button>
             </TooltipTrigger>
             <TooltipContent showArrow={false} className={tooltipContent}>
-              Cerrar gestor de etiquetas
+              {t("labelManager.closeAria")}
             </TooltipContent>
           </Tooltip>
         </HStack>

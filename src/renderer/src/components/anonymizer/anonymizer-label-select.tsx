@@ -28,7 +28,7 @@ interface LabelSection {
   labels: SelectOption[];
 }
 
-const select = sva({
+export const select = sva({
   slots: [
     "container",
     "trigger",
@@ -122,7 +122,7 @@ const select = sva({
       },
     },
     viewport: {
-      maxHeight: "[360px]",
+      maxHeight: "[min(360px, 60dvh)]",
       overflowY: "auto",
       py: "1",
     },
@@ -283,7 +283,21 @@ export default function AnonymizerLabelSelect({
   return (
     <div className={classes.container}>
       <RadixSelect.Root
-        value={value}
+        // G10 (adversary/critic): keep Radix CONTROLLED for the component's
+        // whole lifetime. Every consumer feeds this a value that goes
+        // undefined whenever no label is selected (the toolbar's
+        // `label ?? undefined`, same shape in tagger.tsx/entity-tab.tsx) -
+        // passing that straight through makes Radix uncontrolled while
+        // `value` is undefined and controlled once it's set, and Radix keeps
+        // a separate uncontrolled value it falls back to the moment the prop
+        // goes undefined again. Re-selecting the SAME label after it was
+        // cleared then no-ops: Radix's uncontrolled value already equals it,
+        // so `onValueChange` never fires and the app's `label` state is
+        // stuck at null for that option, forever, while every other label
+        // still works. `""` reads as "no value" to Radix (it renders the
+        // placeholder), so this keeps the prop always-defined without
+        // changing what the trigger displays.
+        value={value ?? ""}
         onValueChange={handleChange}
         onOpenChange={handleOpenChange}
         disabled={disabled}

@@ -1,8 +1,14 @@
-import type { Speaker, Transcription } from "@/types/transcription";
+import { PERSONA_LABEL_TEMPLATE } from "@/constants/i18n/locales/es/voice-to-text";
+import {
+  SPEAKER_PALETTE,
+  type Speaker,
+  type Transcription,
+} from "@/types/transcription";
 import { apportionTimeRange } from "@/utils/apportion-time-range";
 
 import {
   ActionTypes,
+  type AddPersonaSpeakerAction,
   type AddSpeakerAction,
   type AddTranscriptionAction,
   type ClearTranscriptionsAction,
@@ -32,6 +38,7 @@ export type TranscriptionAction =
   | InsertTurnAction
   | RemoveTurnAction
   | AddSpeakerAction
+  | AddPersonaSpeakerAction
   | SplitTurnAction
   | MergeTurnWithPreviousAction
   | MergeTurnWithNextAction
@@ -39,8 +46,14 @@ export type TranscriptionAction =
 
 /**
  * Computes speaker initials from a label.
- * Takes the first character of each word, max 2 characters, uppercased.
- * E.g. "Dra. Silva" → "DS", "Locutor 1" → "L1", "Jueza" → "JU"
+ * Single word: first two characters, uppercased. E.g. "Jueza" → "JU".
+ * Multiple words, last one numeric: first character of the first word plus
+ * the FULL number (3 characters max), so "Persona 10" → "P10" instead of
+ * colliding with "Persona 1" on "P1" — G7 criterion 4
+ * (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md). E.g. "Persona
+ * 9" → "P9", "Persona 10" → "P10", "Locutor 11" → "L11".
+ * Multiple words, none numeric: first character of the first two words,
+ * max 2 characters, uppercased. E.g. "Dra. Silva" → "DS".
  */
 export function computeInitials(label: string): string {
   const words = label.trim().split(/\s+/);
@@ -50,7 +63,18 @@ export function computeInitials(label: string): string {
     return words[0].slice(0, 2).toUpperCase();
   }
 
-  // Multi-word: take first char of each word, max 2
+  const lastWord = words[words.length - 1];
+  if (/^\d+$/.test(lastWord)) {
+    // Last word is a number: first letter of the first word + the number,
+    // capped at 3 characters total (a 4th would overflow the avatar's 24px
+    // circle). That cap is what bounds uniqueness to "Persona 1".."Persona
+    // 99": "Persona 100" → "P10", colliding with "Persona 10" — beyond 99,
+    // color and the full label (still shown alongside the badge) are the
+    // desambiguators, not the initials.
+    return `${words[0].charAt(0)}${lastWord}`.slice(0, 3).toUpperCase();
+  }
+
+  // Multi-word, non-numeric: take first char of each word, max 2
   return words
     .slice(0, 2)
     .map((w) => w.charAt(0))
@@ -58,14 +82,74 @@ export function computeInitials(label: string): string {
     .toUpperCase();
 }
 
-const PERSONA_LABEL_RE = /^Persona (\d+)$/;
+/**
+ * G7 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md), i18n
+ * restriction: derives the recognizer regex from `PERSONA_LABEL_TEMPLATE`
+ * (constants/i18n/locales/es/voice-to-text.ts) instead of writing a second,
+ * hand-maintained regex - if the template and the regex ever drifted apart,
+ * `nextPersonaLabel` below would stop recognizing existing "Persona N"
+ * speakers and reset the counter to 1, a new F4 (duplicate persona labels)
+ * by another route, right after fixing the original one. Splits the
+ * template on its `{{n}}` placeholder and escapes each literal half
+ * separately before rebuilding the regex - concatenating the escaped
+ * template naively (or not escaping at all) would let a template containing
+ * `.`, `(`, or any other regex metacharacter silently produce a wrong or
+ * unanchored pattern.
+ *
+ * Import-mechanism choice (three were measured, none is mandatory - see the
+ * ticket): (A) importing `@/constants/i18n` (the bootstrap) runs
+ * `i18n.use(initReactI18next).init(...)` at import time, and several test
+ * files (e.g. turn-side-panel.test.tsx) import this reducer while mocking
+ * `react-i18next` with a factory that doesn't export `initReactI18next` -
+ * `i18next.use(undefined)` throws at import time and takes down the whole
+ * test file, not just an assertion. (B) `import i18n from "i18next"` (the
+ * bare package, un-configured) avoids that crash, but `test/setup.ts` never
+ * initializes it and `constants/i18n` has exactly one import site in the
+ * whole app (main.tsx) - so under vitest `t()` would return the raw key
+ * instead of "Persona N". (C), used here: import the plain string constant
+ * straight from its locale module. `voice-to-text.ts` has no i18next/
+ * react-i18next import of its own, so this carries no init dependency and
+ * no risk of an incomplete `react-i18next` mock breaking an unrelated test
+ * file. The trade-off: the label can't change with a runtime language
+ * switch - acceptable today, since `constants/i18n/index.ts` registers only
+ * one locale (`resources: { es }`, `fallbackLng: "es"`) and a persona's
+ * label is data persisted on the speaker, not re-derived on each render, so
+ * a future language switch wouldn't retroactively relabel it either way.
+ */
+function derivePersonaLabelRegex(template: string): RegExp {
+  const placeholder = "{{n}}";
+  const placeholderIndex = template.indexOf(placeholder);
+  if (placeholderIndex === -1) {
+    throw new Error(
+      `PERSONA_LABEL_TEMPLATE ("${template}") is missing the "${placeholder}" placeholder`,
+    );
+  }
+  const escapeRegExp = (segment: string) =>
+    segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const before = escapeRegExp(template.slice(0, placeholderIndex));
+  const after = escapeRegExp(
+    template.slice(placeholderIndex + placeholder.length),
+  );
+  return new RegExp(`^${before}(\\d+)${after}$`, "i");
+}
+
+const PERSONA_LABEL_RE = derivePersonaLabelRegex(PERSONA_LABEL_TEMPLATE);
 
 /**
  * Label for the next auto-generated speaker: one past the highest existing
  * "Persona N" label, or "Persona 1" if there are none — regardless of how
  * many other (custom-named) speakers exist. Used by "Nuevo" in the side
- * panel; matches the numbering `renumberPersonaSpeakers` below keeps
- * contiguous after a rename.
+ * panel. Because nothing renumbers existing "Persona N" speakers after a
+ * rename or delete (see `RENAME_SPEAKER_GLOBAL` below), this can leave gaps
+ * (1, 2, 4 → next is "Persona 5", not "Persona 3") — deliberate: it never
+ * collides with an existing label, which is what matters, and "one past the
+ * max" is stable regardless of how many speakers came and went.
+ *
+ * Builds the label from the SAME `PERSONA_LABEL_TEMPLATE` the regex above
+ * derives from (see its docblock) - the format itself is unchanged from
+ * before this ticket ("Persona <number>", nothing else), so `computeInitials`
+ * (above), which caps to 3 characters only when the label's last word is a
+ * bare number, keeps working unmodified.
  */
 export function nextPersonaLabel(speakers: Speaker[]): string {
   const numbers = speakers
@@ -73,33 +157,7 @@ export function nextPersonaLabel(speakers: Speaker[]): string {
     .filter((n): n is string => n !== undefined)
     .map(Number);
   const next = numbers.length > 0 ? Math.max(...numbers) + 1 : 1;
-  return `Persona ${next}`;
-}
-
-/**
- * Renumbers auto-generated "Persona N" labels so they stay contiguous
- * (1, 2, 3, ...) after a rename/merge relabels or drops one of them.
- * Speakers with a custom label (anything not matching "Persona N") are
- * left untouched.
- */
-function renumberPersonaSpeakers(speakers: Speaker[]): Speaker[] {
-  const personaSpeakers = speakers
-    .filter((s) => PERSONA_LABEL_RE.test(s.label))
-    .sort((a, b) => {
-      const aNum = Number(a.label.match(PERSONA_LABEL_RE)?.[1]);
-      const bNum = Number(b.label.match(PERSONA_LABEL_RE)?.[1]);
-      return aNum - bNum;
-    });
-
-  const nextLabelById = new Map(
-    personaSpeakers.map((s, i) => [s.id, `Persona ${i + 1}`]),
-  );
-
-  return speakers.map((s) => {
-    const nextLabel = nextLabelById.get(s.id);
-    if (!nextLabel || nextLabel === s.label) return s;
-    return { ...s, label: nextLabel, initials: computeInitials(nextLabel) };
-  });
+  return PERSONA_LABEL_TEMPLATE.replace("{{n}}", String(next));
 }
 
 /**
@@ -171,7 +229,27 @@ export default function reducer(
             s.label.toLowerCase() === trimmed.toLowerCase(),
         );
 
-        const renamed = existing
+        // G7 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md),
+        // criterion 2: this used to end with
+        // `speakers: renumberPersonaSpeakers(renamed.speakers)`, which
+        // renumbered every remaining "Persona N" speaker to stay contiguous
+        // (1, 2, 3, ...) after this rename/merge relabeled or dropped one.
+        // That's a DELIBERATE REVERSION of intentional behavior, not an
+        // accident fix: the function's own docstring declared its purpose.
+        // Removed because it means a speaker's displayed label is NOT
+        // stable across an unrelated rename — with four speakers, renaming
+        // s2 to "Testigo" used to leave s3 (previously "Persona 2") holding
+        // the label "Persona 2" that a moment ago identified s2, and s4
+        // ("Persona 3") sliding to "Persona 2" as well one down the chain -
+        // measured, not a corner case. Contiguous numbering is cosmetic;
+        // the label a user reads staying attached to the same `id` is
+        // correctness (CONVENTIONS.md: "Join on ids, never on display
+        // strings"). The visible cost: after a delete, numbering can leave
+        // gaps (1, 2, 4, 5) instead of collapsing back to 1, 2, 3, 4 -
+        // `nextPersonaLabel` already tolerates this (it computes "one past
+        // the max", never "count + 1"), so gaps don't cause a collision,
+        // they're just gaps.
+        return existing
           ? {
               ...t,
               speakers: t.speakers.filter((s) => s.id !== speakerId),
@@ -189,11 +267,6 @@ export default function reducer(
                   : s,
               ),
             };
-
-        return {
-          ...renamed,
-          speakers: renumberPersonaSpeakers(renamed.speakers),
-        };
       });
     }
 
@@ -299,6 +372,30 @@ export default function reducer(
         ...t,
         speakers: [...t.speakers, speaker],
       }));
+    }
+
+    // ----------------
+    // ADD PERSONA SPEAKER
+    // ----------------
+    // G7 F4: label/initials/color are derived HERE, from the transcription's
+    // own speakers array at apply time - not by the caller from a `speakers`
+    // prop that every handler in a React batch reads identically. That's
+    // what makes N of these dispatched back-to-back (e.g. N rapid "+ Nuevo"
+    // clicks in the same batch) each see the PREVIOUS dispatch's result and
+    // produce N distinct labels and N distinct colors, instead of all N
+    // colliding on the same "Persona K" / same palette color.
+    case ActionTypes.ADD_PERSONA_SPEAKER: {
+      const { transcriptionId, id } = payload;
+      return updateTranscription(state, transcriptionId, (t) => {
+        const label = nextPersonaLabel(t.speakers);
+        const speaker: Speaker = {
+          id,
+          label,
+          initials: computeInitials(label),
+          color: SPEAKER_PALETTE[t.speakers.length % SPEAKER_PALETTE.length],
+        };
+        return { ...t, speakers: [...t.speakers, speaker] };
+      });
     }
 
     // ----------------

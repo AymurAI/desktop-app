@@ -71,6 +71,7 @@ export default function SpeakerPicker({
   const [newName, setNewName] = useState("");
   const popoverRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const pendingSpeakerIdsByLabel = useRef(new Map<string, string>());
 
   // Close on outside pointerdown
   useEffect(() => {
@@ -95,6 +96,17 @@ export default function SpeakerPicker({
 
   const { speakers } = transcription;
 
+  useEffect(() => {
+    const committedLabels = new Set(
+      speakers.map((speaker) => speaker.label.trim().toLowerCase()),
+    );
+    for (const label of pendingSpeakerIdsByLabel.current.keys()) {
+      if (committedLabels.has(label)) {
+        pendingSpeakerIdsByLabel.current.delete(label);
+      }
+    }
+  }, [speakers]);
+
   // Filter suggested speakers whose label isn't already in use
   const usedLabels = new Set(speakers.map((s) => s.label.toLowerCase()));
   const availableSuggested = SUGGESTED_SPEAKERS.filter(
@@ -107,10 +119,14 @@ export default function SpeakerPicker({
     fallbackInitials?: string,
   ): string {
     const trimmed = label.trim();
+    const normalizedLabel = trimmed.toLowerCase();
     const existing = speakers.find(
-      (s) => s.label.toLowerCase() === trimmed.toLowerCase(),
+      (s) => s.label.toLowerCase() === normalizedLabel,
     );
     if (existing) return existing.id;
+
+    const pendingId = pendingSpeakerIdsByLabel.current.get(normalizedLabel);
+    if (pendingId) return pendingId;
 
     const color: SpeakerColor =
       fallbackColor ??
@@ -122,6 +138,7 @@ export default function SpeakerPicker({
       initials,
       color,
     };
+    pendingSpeakerIdsByLabel.current.set(normalizedLabel, newSpeaker.id);
     dispatch(addSpeaker(transcription.id, newSpeaker));
     return newSpeaker.id;
   }

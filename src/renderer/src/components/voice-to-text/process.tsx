@@ -177,12 +177,42 @@ export default function VoiceProcess() {
           </HStack>
           <Card>
             <Stack gap="6">
+              {/*
+               * G8 F3: title/subtitle must reflect the actual status, not
+               * announce "AymurAI está transcribiendo" forever regardless of
+               * outcome (the defect the report caught via the Callout below,
+               * which shares this same three-way split).
+               *
+               * "stopped" folds into the same non-success branch as "error" -
+               * matching routes/app.$feature/process.tsx (G8 F3): an aborted
+               * run must never show the success copy, and this title doesn't
+               * need to distinguish "the model failed" from "you cancelled
+               * it" - both mean "this run did not finish", which is what
+               * `process.errorTitle`/`errorSubtitle` say. No copy of its own.
+               *
+               * "idle" (the instant before `useTranscribe`'s effect fires its
+               * mutation - see that hook) is deliberately left in the same
+               * bucket as "processing", not given its own copy: `RequireFile`
+               * only mounts this screen once files exist, so the mutation is
+               * always about to fire with no user action needed, and this
+               * render is not something a user can meaningfully dwell on or
+               * act on before it flips to "processing". Same treatment
+               * applies to the Callout below.
+               */}
               <Stack gap="1">
                 <styled.h2 textStyle="subtitle.md.default">
-                  {t("process.processingTitle")}
+                  {isCompleted
+                    ? t("process.finishedTitle")
+                    : isError || isStopped
+                      ? t("process.errorTitle")
+                      : t("process.processingTitle")}
                 </styled.h2>
                 <styled.p textStyle="subtitle.sm.default" color="text.lighter">
-                  {t("process.processingSubtitle")}
+                  {isCompleted
+                    ? t("process.finishedSubtitle")
+                    : isError || isStopped
+                      ? t("process.errorSubtitle")
+                      : t("process.processingSubtitle")}
                 </styled.p>
               </Stack>
 
@@ -223,7 +253,13 @@ export default function VoiceProcess() {
                   </ScrollArea>
                 )}
 
-                {!isError && !isStopped && (
+                {/* G8 F3: this banner literally says "Transcribiendo
+                 * audio…Aparecerá aquí cuando esté listo" - it must not
+                 * coexist with the finished transcription it's promising, so
+                 * the guard now also excludes `isCompleted` (previously only
+                 * excluded error/stopped). "idle" intentionally stays
+                 * included here, same rationale as the title/subtitle above. */}
+                {!isCompleted && !isError && !isStopped && (
                   <Callout
                     message={t("process.callout")}
                     variant="info"

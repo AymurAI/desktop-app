@@ -4,7 +4,7 @@ import { z } from "zod";
 export const SpeakerSchema = z.object({
   id: z.string(),
   label: z.string(),
-  initials: z.string().max(2),
+  initials: z.string().max(3),
   color: z.enum(SPEAKER_COLORS),
 });
 

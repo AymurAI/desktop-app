@@ -15,7 +15,17 @@
       "out",
       "routeTree.gen.ts",
       "src/renderer/src/styled/**",
-      ".worktrees"
+      "playwright/.cache/**",
+      "playwright-report",
+      "test-results",
+      ".worktrees",
+      ".claude/settings.local.json",
+      ".orquestalite",
+      "tasks",
+      "team.json",
+      "flows.json",
+      "prompts",
+      "schemas"
     ]
   },
   "formatter": {
@@ -47,6 +57,16 @@
         "useSelfClosingElements": {
           "fix": "safe",
           "level": "error"
+        }
+      },
+      "nursery": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "@stitches/react": "Stitches has been fully migrated to Panda CSS (RSP-12b). Import from `@/styled/css` or `@/styled/jsx` instead."
+            }
+          }
         }
       },
       "suspicious": {

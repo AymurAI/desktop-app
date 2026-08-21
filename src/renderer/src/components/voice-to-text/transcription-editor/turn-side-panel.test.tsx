@@ -1,6 +1,9 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { useReducer } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import reducer, { computeInitials } from "@/reducers/transcription";
+import sampleTranscript from "@/services/aymurai/fixtures/sampleDeepgramTranscription.json";
 import type { Transcription } from "@/types/transcription";
 import TurnSidePanel, { getTimestampBounds } from "./turn-side-panel";
 
@@ -29,6 +32,45 @@ const showToast = vi.fn();
 vi.mock("@/features/showToast", () => ({
   showToast: (...args: unknown[]) => showToast(...args),
 }));
+
+/**
+ * G7 F4 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md): the
+ * module-level `dispatch` mock above is a bare `vi.fn()` - state never
+ * advances, so a "+ Nuevo" race test written against it is vacuous FOR A
+ * DIFFERENT REASON than the bug: every dispatched action sees the SAME
+ * initial `speakers` regardless of whether the derivation lives in the
+ * component or the reducer, so N clicks would produce N identical labels
+ * with or without the fix. Routes the shared `dispatch` mock to the REAL
+ * production reducer instead, via `useReducer`, so state genuinely
+ * accumulates across dispatches - this is what makes the race test below
+ * capable of failing.
+ *
+ * A hidden JSON dump of the current speakers is the simplest way for a test
+ * to read back derived fields (label/initials/color) that `ADD_PERSONA_
+ * SPEAKER`'s payload no longer carries (it only carries `id` - the whole
+ * point of the fix is that those fields are computed BY the reducer).
+ */
+function RealReducerHarness({
+  initial,
+  activeTurnId,
+}: {
+  initial: Transcription;
+  activeTurnId: string | null;
+}) {
+  const [state, dispatchReal] = useReducer(reducer, [initial]);
+  dispatch.mockImplementation(dispatchReal);
+  return (
+    <>
+      <div data-testid="debug-speakers" style={{ display: "none" }}>
+        {JSON.stringify(state[0].speakers)}
+      </div>
+      <div data-testid="debug-turns" style={{ display: "none" }}>
+        {JSON.stringify(state[0].turns)}
+      </div>
+      <TurnSidePanel transcription={state[0]} activeTurnId={activeTurnId} />
+    </>
+  );
+}
 
 const transcription: Transcription = {
   id: "doc-1",
@@ -360,7 +402,14 @@ describe("TurnSidePanel bulk-apply scope prompt", () => {
 });
 
 describe("TurnSidePanel new-person numbering", () => {
+  // G7 F4: `handleNewPerson` no longer computes the label itself - it
+  // dispatches `ADD_PERSONA_SPEAKER` with only `{transcriptionId, id}`, and
+  // the reducer derives the label. So verifying "which label did it pick"
+  // now requires the REAL reducer behind dispatch (RealReducerHarness),
+  // not an assertion on the dispatched action's payload (which no longer
+  // carries a label at all).
   beforeEach(() => dispatch.mockClear());
+  afterEach(() => dispatch.mockReset());
 
   it("starts a fresh Persona count at 1 when the only speaker was renamed away from Persona N", () => {
     // Regression: renaming the sole "Persona 1" to a custom name (e.g. "JFK")
@@ -370,7 +419,7 @@ describe("TurnSidePanel new-person numbering", () => {
       ...transcription,
       speakers: [{ id: "s1", label: "JFK", initials: "JF", color: "violet" }],
     };
-    render(<TurnSidePanel transcription={renamedOnly} activeTurnId="a" />);
+    render(<RealReducerHarness initial={renamedOnly} activeTurnId="a" />);
     fireEvent.click(screen.getByText("Nuevo"));
     fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
     // "a" is one of this fixture's 3 turns for "s1" (unlike `withCustomAndPersona`
@@ -381,14 +430,11 @@ describe("TurnSidePanel new-person numbering", () => {
     // regression test cares about.
     fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
 
-    expect(dispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: "ADD_SPEAKER",
-        payload: expect.objectContaining({
-          speaker: expect.objectContaining({ label: "Persona 1" }),
-        }),
-      }),
+    const speakers = JSON.parse(
+      screen.getByTestId("debug-speakers").textContent ?? "[]",
     );
+    expect(speakers).toHaveLength(2);
+    expect(speakers[1].label).toBe("Persona 1");
   });
 
   it("continues from the highest existing Persona N, not from the total speaker count", () => {
@@ -403,19 +449,243 @@ describe("TurnSidePanel new-person numbering", () => {
       ],
     };
     render(
-      <TurnSidePanel transcription={withCustomAndPersona} activeTurnId="a" />,
+      <RealReducerHarness initial={withCustomAndPersona} activeTurnId="a" />,
     );
     fireEvent.click(screen.getByText("Nuevo"));
     fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
 
-    expect(dispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: "ADD_SPEAKER",
-        payload: expect.objectContaining({
-          speaker: expect.objectContaining({ label: "Persona 2" }),
-        }),
-      }),
+    const speakers = JSON.parse(
+      screen.getByTestId("debug-speakers").textContent ?? "[]",
     );
+    expect(speakers).toHaveLength(3);
+    expect(speakers[2].label).toBe("Persona 2");
+  });
+});
+
+// G7 F4, criterion 1 (with the CORRECTED test shape the ticket calls for):
+// N clicks on "+ Nuevo" within the same React batch must produce N speakers
+// with N distinct labels AND N distinct colors.
+//
+// NOT `fireEvent.click`: Testing Library wraps EACH `fireEvent` call in its
+// own `act()`, which flushes React's pending state before the next call -
+// so four un-awaited `fireEvent.click()` calls each run against the
+// PREVIOUSLY COMMITTED state and produce four distinct labels even WITH the
+// bug present (i.e. even with the old component-side derivation from a
+// stale `speakers` prop). That is exactly the false-negative this test
+// exists to avoid, one level up from the bug itself. Four raw DOM
+// `.click()` calls inside a SINGLE `act()` do not get an intermediate
+// flush - all four invoke the SAME pre-click render's `handleNewPerson`
+// closure before React commits, which is the actual race a user causes by
+// clicking "+ Nuevo" rapidly.
+describe("TurnSidePanel new-person race (F4)", () => {
+  afterEach(() => dispatch.mockReset());
+
+  it("N rapid clicks in the same batch produce N speakers with distinct labels and colors", () => {
+    // Needs one PRE-EXISTING speaker matching the active turn: with zero
+    // speakers, `currentSpeaker` resolves to null and the whole panel
+    // (including "+ Nuevo") renders the empty-panel placeholder instead -
+    // that state is only reachable/testable at the reducer level (see
+    // reducers/transcription/index.test.ts's own empty-speakers case).
+    const initial: Transcription = {
+      ...transcription,
+      speakers: [
+        { id: "seed", label: "Persona 1", initials: "P1", color: "violet" },
+      ],
+      turns: [
+        {
+          id: "a",
+          speakerId: "seed",
+          text: "uno",
+          startMs: 0,
+          endMs: 1000,
+        },
+      ],
+    };
+
+    render(<RealReducerHarness initial={initial} activeTurnId="a" />);
+    fireEvent.click(screen.getByText("Nuevo"));
+    const button = screen.getByRole("button", { name: "Nueva persona" });
+
+    act(() => {
+      button.click();
+      button.click();
+      button.click();
+      button.click();
+    });
+
+    const speakers = JSON.parse(
+      screen.getByTestId("debug-speakers").textContent ?? "[]",
+    );
+    // The 1 seed speaker plus 4 newly-created ones.
+    expect(speakers).toHaveLength(5);
+    const created = speakers.slice(1);
+    expect(created.map((s: { label: string }) => s.label)).toEqual([
+      "Persona 2",
+      "Persona 3",
+      "Persona 4",
+      "Persona 5",
+    ]);
+    expect(new Set(created.map((s: { label: string }) => s.label)).size).toBe(
+      4,
+    );
+    expect(new Set(created.map((s: { color: string }) => s.color)).size).toBe(
+      4,
+    );
+  });
+});
+
+// Sad paths (G7 F4).
+describe("TurnSidePanel new-person sad paths", () => {
+  beforeEach(() => dispatch.mockClear());
+  afterEach(() => dispatch.mockReset());
+
+  it('"+ Nuevo" is not reachable when there is no active turn (renders the empty panel instead)', () => {
+    render(
+      <TurnSidePanel
+        transcription={transcription}
+        activeTurnId="does-not-exist"
+      />,
+    );
+    expect(screen.getByTestId("vtt-side-panel")).toBeInTheDocument();
+    expect(screen.queryByText("Nuevo")).toBeNull();
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  // There is no explicit "remove speaker" action in this reducer today, so
+  // "the last person was deleted" reduces to an empty `speakers` array for
+  // `ADD_PERSONA_SPEAKER`'s purposes. That case can't be driven through
+  // THIS component, though: with zero speakers, `currentSpeaker` resolves
+  // to null and the panel never renders its body (or "+ Nuevo") at all -
+  // see the "no active turn" case just above, which hits the same early
+  // return for a different reason. Covered directly at the reducer level
+  // instead: reducers/transcription/index.test.ts's "sad path: creating a
+  // persona when speakers is empty still works".
+  it("documents why the empty-speakers sad path is a reducer-level test, not a component one", () => {
+    const noSpeakers: Transcription = {
+      ...transcription,
+      speakers: [],
+    };
+    render(<TurnSidePanel transcription={noSpeakers} activeTurnId="a" />);
+    expect(screen.getByTestId("vtt-side-panel")).toBeInTheDocument();
+    expect(screen.getByText("sidePanel.empty")).toBeInTheDocument();
+    expect(screen.queryByText("Nuevo")).toBeNull();
+  });
+});
+
+// Criterion 5 (this component's half of it — the reducer-level half is
+// already covered by "addPersonaSpeaker — turn assignment stays stable by
+// id" in reducers/transcription/index.test.ts, T1): a turn already assigned
+// to a speaker must keep pointing to that same `speakerId`, with that same
+// speaker's label unchanged, after OTHER personas are created and renamed
+// through this component's own UI. "Nuevo" reassigns the CURRENTLY ACTIVE
+// turn to the persona it creates (see `handleNewPerson`), so the turn this
+// test watches is deliberately a different, non-active one — otherwise
+// "create others" would trivially reassign the very turn under test.
+describe("TurnSidePanel — a bystander speaker survives creates and renames (criterion 5)", () => {
+  it("a turn keeps its speakerId and label after other personas are created and renamed", () => {
+    const initial: Transcription = {
+      ...transcription,
+      speakers: [
+        { id: "s-active", label: "Persona 1", initials: "P1", color: "violet" },
+        {
+          id: "s-bystander",
+          label: "Persona 2",
+          initials: "P2",
+          color: "green",
+        },
+      ],
+      turns: [
+        {
+          id: "active-turn",
+          speakerId: "s-active",
+          text: "uno",
+          startMs: 0,
+          endMs: 1000,
+        },
+        {
+          id: "watched-turn",
+          speakerId: "s-bystander",
+          text: "dos",
+          startMs: 1000,
+          endMs: 2000,
+        },
+      ],
+    };
+
+    render(<RealReducerHarness initial={initial} activeTurnId="active-turn" />);
+
+    // Create two more personas (assigned to the active turn, not the
+    // watched one) and rename one of THEM — never the bystander.
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+    fireEvent.click(screen.getByText("Nuevo"));
+    fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
+
+    fireEvent.click(screen.getAllByLabelText("Renombrar")[2]);
+    const input = screen.getByLabelText("Editar nombre de Persona 3");
+    fireEvent.change(input, { target: { value: "Testigo" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    const speakers = JSON.parse(
+      screen.getByTestId("debug-speakers").textContent ?? "[]",
+    );
+    const turns = JSON.parse(
+      screen.getByTestId("debug-turns").textContent ?? "[]",
+    );
+
+    expect(
+      speakers.find((s: { id: string }) => s.id === "s-bystander"),
+    ).toMatchObject({
+      id: "s-bystander",
+      label: "Persona 2",
+    });
+    expect(
+      turns.find((t: { id: string }) => t.id === "watched-turn")?.speakerId,
+    ).toBe("s-bystander");
+  });
+});
+
+// G7 criterion 4 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md):
+// with 12 speakers, each must get a distinct badge - before the fix,
+// "Locutor 1", "Locutor 10" and "Locutor 11" all rendered "L1". The fixture
+// already models this exact three-way collision (`Locutor 1`/`10`/`11`), so
+// it's used as the vehicle (labels/ids/colors) instead of synthesizing 12
+// personas - but `initials` is recomputed here via the real
+// `computeInitials`, not read back from the fixture's own stored field, so
+// this test actually exercises the production function instead of just
+// re-displaying whatever the JSON happens to say.
+describe("TurnSidePanel — 12 distinct persona badges (criterion 4)", () => {
+  it("renders 12 distinct initials, with no collision between Locutor 1/10/11", () => {
+    const fixtureSpeakers =
+      sampleTranscript.speakers as Transcription["speakers"];
+    const twelveSpeakers = fixtureSpeakers.map((s) => ({
+      ...s,
+      initials: computeInitials(s.label),
+    }));
+    const withTwelve: Transcription = {
+      ...transcription,
+      speakers: twelveSpeakers,
+      turns: [
+        {
+          id: "a",
+          speakerId: twelveSpeakers[0].id,
+          text: "uno",
+          startMs: 0,
+          endMs: 1000,
+        },
+      ],
+    };
+
+    render(<TurnSidePanel transcription={withTwelve} activeTurnId="a" />);
+
+    expect(new Set(twelveSpeakers.map((s) => s.initials)).size).toBe(12);
+    for (const s of twelveSpeakers) {
+      expect(screen.getAllByText(s.initials).length).toBeGreaterThan(0);
+    }
+    expect(screen.getByText("L10")).toBeInTheDocument();
+    expect(screen.getByText("L11")).toBeInTheDocument();
+    // Exactly one badge reads "L1" - Locutor 1's own, not shared with 10/11.
+    expect(screen.getAllByText("L1")).toHaveLength(1);
   });
 });
 
@@ -520,13 +790,12 @@ describe("TurnSidePanel 'Nueva persona' from the Nuevo menu", () => {
     fireEvent.click(screen.getByRole("button", { name: "Nueva persona" }));
 
     expect(screen.queryByText("sidePanel.scopeDialog.title")).toBeNull();
+    // Label/initials/color aren't in this dispatch's payload at all: G7 F4
+    // moved that derivation into the ADD_PERSONA_SPEAKER reducer case, so it
+    // sees the transcription's own speakers at apply time instead of every
+    // "+ Nuevo" handler in a batch reading the same stale `speakers` prop.
     expect(dispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: "ADD_SPEAKER",
-        payload: expect.objectContaining({
-          speaker: expect.objectContaining({ label: "Persona 3" }),
-        }),
-      }),
+      expect.objectContaining({ type: "ADD_PERSONA_SPEAKER" }),
     );
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -562,12 +831,7 @@ describe("TurnSidePanel 'Nueva persona' from the Nuevo menu", () => {
     fireEvent.click(screen.getByText("sidePanel.scopeDialog.thisTurnOnly"));
 
     expect(dispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: "ADD_SPEAKER",
-        payload: expect.objectContaining({
-          speaker: expect.objectContaining({ label: "Persona 3" }),
-        }),
-      }),
+      expect.objectContaining({ type: "ADD_PERSONA_SPEAKER" }),
     );
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({

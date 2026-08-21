@@ -4,17 +4,34 @@ import pandaPreset from "@pandacss/preset-panda";
 
 const globalCss = defineGlobalStyles({
   "*": {
-    fontFamily:
-      '"Archivo", -apple-system, Helvetica Neue, Helvetica, Roboto, sans-serif', // TODO: Replace token here (was $primary)
+    // was $primary; preset's fonts.primary QUOTES "Helvetica Neue"
+    // ('"Archivo", -apple-system, "Helvetica Neue", Helvetica, Roboto,
+    // sans-serif', preset.js:37) while this literal leaves it bare, so it is
+    // NOT a byte-identical substitution - tokenizing is a deliberate
+    // CSS-validity correction (an unquoted multi-word family name is not
+    // strictly valid CSS even though browsers tolerate it) (RSP-12e).
+    fontFamily: "primary",
   },
 
   html: {
-    color: "#110041",
+    // was a raw #110041 literal with no verdict comment - unlike every
+    // sibling site here, it never carried a `// TODO: Replace token here`
+    // marker, so both RSP-12a's and RSP-12e's audits (scoped by that marker
+    // list) missed it. Exact match for the preset's `text.default`
+    // (`token("colors.text.default")` === "#110041", asserted in
+    // global-styles-tokens.test.ts); tokenizing is byte-identical, confirmed
+    // via a `panda cssgen` before/after diff (RSP-12b).
+    color: "text.default",
   },
 
   "mark.predicted-word": {
-    backgroundColor: "#E6E8FF", // TODO: Replace token here (was $primaryAlt)
-    fontFamily: '"Times New Roman", Times, serif', // TODO: Replace token here (was $file)
+    // was $primaryAlt; NEAR-MISS (c), same shape as `tabs/index.ts`'s pinned
+    // default-tab background - the preset's `bg.primary-alternative` is
+    // #E5E8FF, one hex digit off this legacy value. Kept as a raw escape so
+    // this migration introduces zero rendered colour change; see the
+    // decision at components/tabs/index.ts:17-21 (RSP-12e).
+    backgroundColor: "#E6E8FF",
+    fontFamily: "file", // was $file, exact match (RSP-12e)
     padding: "0px 0px 0px 2px",
     borderRadius: "8px",
 
@@ -27,13 +44,15 @@ const globalCss = defineGlobalStyles({
     "& button.remove-tag": {
       visibility: "hidden",
       position: "relative",
-      backgroundColor: "#DC582E", // TODO: Replace token here (was $errorPrimary)
-      color: "#FFFFFF", // TODO: Replace token here (was $white)
+      backgroundColor: "system.error", // was $errorPrimary #DC582E, exact match (RSP-12a)
+      color: "text.onbutton-alternative", // was $white #FFFFFF, exact match (RSP-12a)
       padding: "3px 5px",
       borderRadius: "8px",
       cursor: "pointer",
       fontSize: "10px",
-      fontWeight: 800, // TODO: Replace token here (was $heavy)
+      // was $heavy 800; no fontWeights token category in this preset (only
+      // 400/600 baked into the textStyle recipes), so it stays literal (RSP-12a)
+      fontWeight: 800,
       textAlign: "center",
       top: "-10px",
       right: "-5px",
@@ -49,8 +68,13 @@ const globalCss = defineGlobalStyles({
   },
 
   "mark.searched-word": {
-    backgroundColor: "#E0DDE2", // TODO: Replace token here (was $bgSecondaryAlt)
-    fontFamily: '"Times New Roman", Times, serif', // TODO: Replace token here (was $file)
+    // was $bgSecondaryAlt; TWO exact preset matches for #E0DDE2 -
+    // `action.disabled` and `bg.secondary-highlight`. `bg.secondary-highlight`
+    // is the better fit here on both family (`bg.*`) and intent (a
+    // highlighted background, not a disabled-state one) grounds; the
+    // rejected candidate is `action.disabled` (RSP-12e).
+    backgroundColor: "bg.secondary-highlight",
+    fontFamily: "file", // was $file, exact match (RSP-12e)
     padding: "0px 2px",
     borderRadius: "8px",
 
@@ -60,13 +84,15 @@ const globalCss = defineGlobalStyles({
 
     "& button.add-tag": {
       position: "relative",
-      backgroundColor: "#1B834E", // TODO: Replace token here (was $successPrimary)
-      color: "#FFFFFF", // TODO: Replace token here (was $white)
+      backgroundColor: "system.success", // was $successPrimary #1B834E, exact match (RSP-12e)
+      color: "text.onbutton-alternative", // was $white #FFFFFF, exact match - same substitution as `button.remove-tag` above (RSP-12e)
       padding: "2px 5px",
       borderRadius: "8px",
       cursor: "pointer",
       fontSize: "12px",
-      fontWeight: 800, // TODO: Replace token here (was $heavy)
+      // was $heavy 800; no fontWeights token category in this preset (only
+      // 400/600 baked into the textStyle recipes), so it stays literal (RSP-12e)
+      fontWeight: 800,
       textAlign: "center",
       top: "-10px",
       right: "-5px",
@@ -109,6 +135,25 @@ export default defineConfig({
           },
           text: {
             "on-overlay-dark": { value: "#FFFFFF" },
+          },
+        },
+      },
+      // Extra breakpoint between the preset's `xl` (1280px) and `2xl`
+      // (1536px), for the responsive-layout plan (tasks/responsive/plan.md).
+      breakpoints: {
+        desktop: "1440px",
+      },
+      tokens: {
+        sizes: {
+          content: {
+            max: { value: "1824px" },
+            split: { value: "1672px" },
+            doc: { value: "1520px" },
+          },
+          panel: {
+            side: { value: "479px" },
+            form: { value: "594px" },
+            sideCompact: { value: "360px" },
           },
         },
       },

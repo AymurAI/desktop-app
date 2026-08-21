@@ -82,7 +82,9 @@ datasheet files
 - `typecheck:web`: runs type checking on the _React_ application
 - `validate`: runs linting and type checking on both React and renderer
 - `prepare`: runs `panda codegen` and installs lefthook git hooks (auto-runs after `pnpm install`)
-- `knip`: detects unused exports and dependencies (also gated on `pre-push`)
+- `knip`: reports unused exports and dependencies (informational only — every
+  rule in `knip.json` is severity `warn`, so it never fails and is not gated
+  anywhere)
 - `pre-commit`: runs _LintStaged_
 
 ### Deployment

@@ -26,13 +26,17 @@
     "forge.config.js",
     "panda.config.ts",
     "postcss.config.cjs",
-    "vite.config.ts"
+    "vite.config.ts",
+    "playwright-ct.config.ts",
+    "playwright/index.tsx",
+    "playwright/**/*.spec.tsx"
   ],
-  "project": ["src/**/*.{ts,tsx}"],
+  "project": ["src/**/*.{ts,tsx}", "playwright/**/*.{ts,tsx}"],
   "ignore": [
     "src/renderer/src/styled/**",
     "src/renderer/src/routeTree.gen.ts",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "playwright/mocks/**"
   ],
   "ignoreDependencies": [
     "@electron-toolkit/preload",

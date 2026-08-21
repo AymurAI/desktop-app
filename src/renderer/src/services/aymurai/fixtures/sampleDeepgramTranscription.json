@@ -65,13 +65,13 @@
     {
       "id": "s10",
       "label": "Locutor 10",
-      "initials": "L1",
+      "initials": "L10",
       "color": "warning"
     },
     {
       "id": "s11",
       "label": "Locutor 11",
-      "initials": "L1",
+      "initials": "L11",
       "color": "success"
     }
   ],

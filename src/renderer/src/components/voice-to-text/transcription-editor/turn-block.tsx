@@ -1,4 +1,4 @@
-import type { MouseEvent } from "react";
+import { type MouseEvent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useTranscriptionDispatch } from "@/hooks/useTranscriptions";
@@ -131,6 +131,13 @@ export default function TurnBlock({
   const { t } = useTranslation("voice-to-text");
   const dispatch = useTranscriptionDispatch();
 
+  const handleTextCommit = useCallback(
+    (id: string, value: string) => {
+      dispatch(updateTurnText(transcription.id, id, value));
+    },
+    [dispatch, transcription.id],
+  );
+
   const handleHeaderClick = (e: MouseEvent) => {
     // Stop propagation so this doesn't also trigger handleWrapClick below —
     // both are bound because the header sits inside the click-to-seek wrap.
@@ -185,9 +192,7 @@ export default function TurnBlock({
               speaker: speaker.label,
               time: formatTime(turn.startMs),
             })}
-            onCommit={(id, value) =>
-              dispatch(updateTurnText(transcription.id, id, value))
-            }
+            onCommit={handleTextCommit}
             onSelect={onTextSelect}
             onFocusChange={onEditingFocusChange}
           />

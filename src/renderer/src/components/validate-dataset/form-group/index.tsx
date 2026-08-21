@@ -5,7 +5,7 @@ import { appendValidation } from "@/reducers/file/actions";
 import type { DocFile } from "@/types/file";
 import { Suggester, countDecisiones } from "@/utils/predictions";
 import DecisionTabs from "../../decision-tabs";
-import Container from "./FormGroup.styles";
+import containerStyles from "./FormGroup.styles";
 import {
   DatosAcusado,
   DatosDenunciante,
@@ -37,7 +37,6 @@ export default function FormGroup({ file, onCheck }: Props) {
   const selectDecision = (n: number) => setDecision(n);
 
   const handleSubmit = submit((data) => {
-    console.log({ data });
     dispatch(appendValidation(file.data.name, data));
   });
 
@@ -69,7 +68,7 @@ export default function FormGroup({ file, onCheck }: Props) {
   ]);
 
   return (
-    <Container>
+    <div className={containerStyles}>
       <InfoGral {...props} onCheck={setCheckedInfoGral} />
 
       <DecisionTabs
@@ -77,7 +76,7 @@ export default function FormGroup({ file, onCheck }: Props) {
         addDecision={createDecision}
         {...{ decisionAmount, selectDecision }}
       />
-      <Container key={decision}>
+      <div key={decision} className={containerStyles}>
         <InfoHecho
           {...decisionProps}
           decision={decision}
@@ -88,10 +87,10 @@ export default function FormGroup({ file, onCheck }: Props) {
           decision={decision}
           onCheck={setCheckedDecision}
         />
-      </Container>
+      </div>
 
       <DatosDenunciante {...props} onCheck={setCheckedDatosDenunciante} />
       <DatosAcusado {...props} onCheck={setCheckedDatosAcusado} />
-    </Container>
+    </div>
   );
 }

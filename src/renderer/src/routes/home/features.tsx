@@ -92,7 +92,7 @@ function RouteComponent() {
 
   return (
     <APIProtected>
-      <Stack width="screen" height="screen" gap="0">
+      <Stack width="full" height="[100dvh]" gap="0">
         <Header />
         <MainContent full>
           <div className={homeViewport}>

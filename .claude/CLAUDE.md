@@ -3,7 +3,10 @@
 This repo's renderer (`src/renderer/`) uses:
 
 - **Panda CSS** for styling. See `.claude/rules/panda-css.md`.
-- **Radix UI** primitives wrapped under `src/renderer/src/components/ui/`.
+- **Radix UI** primitives, mostly consumed straight from `@aymurai/ui` (Dialog,
+  Popover, Select, Switch, Tooltip — the library wraps `@radix-ui/react-*`
+  itself). `src/renderer/src/components/ui/` holds only what the library does
+  not provide (`scroll-area`, `back-button`).
   See `.claude/rules/radix-ui.md`.
 - **TanStack Router** for file-based routing in `src/renderer/src/routes/`.
 - **TanStack React Query** for backend data; query/mutation factories live in
@@ -24,15 +27,25 @@ from training data.
 - Pre-commit gate (lefthook): biome (autoformat + lint), panda codegen,
   forbidden-pattern grep (`console.log`, `debugger`, leftover merge markers,
   `.only(`, `@stitches/react`).
-- Pre-push gate: `pnpm typecheck` and `pnpm knip`.
+- Pre-push gate: `pnpm typecheck`. (`pnpm knip` is informational only — every
+  rule in `knip.json` is severity `warn`, so it can never fail; it is not part
+  of any gate.)
 
-## Migration in progress
+## Migration complete
 
-Stitches CSS-in-JS is being replaced by Panda CSS. Files under `components/ui/`,
-`components/voice-to-text/`, `components/finish/`, `components/anonymizer/`,
-`components/home/`, and `components/layout/` are already on Panda. Older
-components (under `components/{checkbox,radio,file-*,validation-form,...}` and
-`components/{label,title,text,subtitle,spinner,uncontrolled-input}`) still
-import from `@/styles/stitches.config`. Migrate any of these you touch; the
-biome rule banning `@stitches/react` is **not yet enabled** because of this
-backlog.
+Stitches CSS-in-JS has been fully replaced by Panda CSS (RSP-08 through
+RSP-12e). `src/renderer/src/styles/` (the legacy `stitches.config.ts`,
+`tokens.ts`, `globalStyles.ts`, `index.ts`) no longer exists, and
+`@stitches/react` is no longer a dependency. See `.claude/rules/panda-css.md`
+for the measured Stitches → Panda mapping, kept as the historical record.
+
+Two mechanisms block a `@stitches/react` import, with different coverage:
+
+- `lefthook.yml`'s pre-commit forbidden-pattern grep has **always** blocked
+  `from "@stitches/react"`, but only over staged files.
+- `biome.json`'s `linter.rules.nursery.noRestrictedImports` rule was added once
+  the migration finished, and checks the whole tree on every `pnpm validate`
+  — proven to fire against a scratch import.
+
+Both are live; the ban was never actually unenforced, only the whole-tree
+(biome) half of it was missing until the migration closed.

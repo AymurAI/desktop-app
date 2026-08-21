@@ -1,5 +1,21 @@
 import { MEDIA_EXTENSIONS } from "@/constants/config";
 
+/**
+ * G7 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md): exported
+ * as a plain constant, not just used inline in `sidePanel.personaLabel`
+ * below, so `reducers/transcription/index.ts` can import THIS single
+ * definition and derive both the label it generates (`nextPersonaLabel`)
+ * and the regex it uses to recognize existing ones (`PERSONA_LABEL_RE`) from
+ * it - if those two ever drifted apart, `nextPersonaLabel` would stop seeing
+ * existing "Persona N" speakers and reset the counter to 1, a new F4 by
+ * another route. This module is plain TS with no `react-i18next`/`i18next`
+ * import (see `formatExtensionList` above, which already computes strings at
+ * load time), so importing it from the reducer carries no i18next
+ * runtime/init dependency - see the reducer's docblock for the two
+ * alternatives this sidesteps and their trade-offs.
+ */
+export const PERSONA_LABEL_TEMPLATE = "Persona {{n}}";
+
 function formatExtensionList(extensions: string[]) {
   const formatted = extensions.map((extension) => `.${extension}`);
   if (formatted.length <= 1) return formatted.join("");
@@ -66,6 +82,12 @@ const voiceToText = {
     sectionTitle: "2. Transcripción de voz a texto",
     processingTitle: "AymurAI está transcribiendo el archivo.",
     processingSubtitle: "Este proceso puede tardar algunos minutos.",
+    // G8 F3: title/subtitle must reflect the aggregated status
+    // (voice-to-text/process.tsx), not just "processing" forever.
+    finishedTitle: "AymurAI finalizó la transcripción del archivo.",
+    finishedSubtitle: "Podés continuar con la validación de la transcripción.",
+    errorTitle: "Ocurrió un problema al transcribir el archivo.",
+    errorSubtitle: "La transcripción no pudo completarse correctamente.",
     // Progress label / status / stop / replace copy is rendered by the
     // @aymurai/ui ArchiveProgress component (v0.3.0), not here.
     waitingForWords: "Esperando las primeras palabras…",
@@ -149,6 +171,7 @@ const voiceToText = {
     renameAria: "Renombrar locutor en todos los turnos",
     renamePlaceholder: "Nombre del locutor",
     personSection: "Locutor",
+    personaLabel: PERSONA_LABEL_TEMPLATE,
     newPerson: "Nuevo",
     newPersonPlaceholder: "Nombre de la persona",
     create: "Crear",

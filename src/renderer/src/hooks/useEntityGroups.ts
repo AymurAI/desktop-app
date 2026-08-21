@@ -51,8 +51,11 @@ export function stripSuffix(label: string): string {
  * across the provided files.
  *
  * Groups are identified by `canonical_entity_id`. Mentions without a
- * canonical id are silently skipped (they are raw predict results that haven't
- * been through the disambiguate step yet).
+ * canonical id are silently skipped. A missing id does NOT mean "not yet
+ * disambiguated" — the backend only assigns `canonical_entity_id` when it can
+ * group a mention with others; most disambiguated mentions in a given
+ * document (e.g. `PER`, `DIRECCION`) never get one and are anonymized as
+ * ungrouped singletons. That's the normal case, not a pending state.
  *
  * Suffix indices are assigned by first-appearance order per `renderBase`.
  * Duplicate detection compares `(renderBase, uniqueTexts)`.
