@@ -13,7 +13,7 @@ export default function FileCheck({
   fileName,
   hasError = false,
   isLoading = false,
-  errorMessage = "Error de guardado\nVolvé a cargar el archivo",
+  errorMessage = "Error de guardado\nVuelve a cargar el archivo",
 }: Props) {
   return (
     <Wrapper>

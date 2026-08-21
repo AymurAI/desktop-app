@@ -40,8 +40,8 @@ const voiceToText = {
     helpAria: "Cómo funciona la transcripción de voz a texto",
     step1: {
       alt: "Interfaz de carga de un archivo de audio o video",
-      title: "Subí el archivo de audio o video",
-      subtitle: `Cargá un archivo en formato ${formatExtensionList(MEDIA_EXTENSIONS)}.`,
+      title: "Sube el archivo de audio o video",
+      subtitle: `Carga un archivo en formato ${formatExtensionList(MEDIA_EXTENSIONS)}.`,
     },
     step2: {
       alt: "Procesamiento automático de un archivo multimedia",
@@ -53,11 +53,11 @@ const voiceToText = {
       alt: "Revisión y edición de una transcripción",
       title: "Revisión y validación humana",
       subtitle:
-        "Revisá la transcripción, editá el texto y renombrá a las personas antes de exportar el archivo.",
+        "Revisa la transcripción, edita el texto y renombra a las personas antes de exportar el archivo.",
     },
     step4: {
       alt: "Descarga de una transcripción terminada",
-      title: "Descargá la transcripción",
+      title: "Descarga la transcripción",
       subtitle: "El archivo queda listo para exportar en formato de texto.",
     },
   },
@@ -85,7 +85,7 @@ const voiceToText = {
     // G8 F3: title/subtitle must reflect the aggregated status
     // (voice-to-text/process.tsx), not just "processing" forever.
     finishedTitle: "AymurAI finalizó la transcripción del archivo.",
-    finishedSubtitle: "Podés continuar con la validación de la transcripción.",
+    finishedSubtitle: "Puedes continuar con la validación de la transcripción.",
     errorTitle: "Ocurrió un problema al transcribir el archivo.",
     errorSubtitle: "La transcripción no pudo completarse correctamente.",
     errorText: "La transcripción del archivo no se completó correctamente.",
@@ -106,7 +106,7 @@ const voiceToText = {
     finish: "Finalizar",
     saving: "Guardando...",
     saveFailed:
-      "No se pudo guardar la validación. Podés continuar, pero los cambios podrían no quedar persistidos.",
+      "No se pudo guardar la validación. Puedes continuar, pero los cambios podrían no quedar persistidos.",
     missingTranscription: "No se encontró ninguna transcripción.",
   },
   finish: {
@@ -129,7 +129,7 @@ const voiceToText = {
     includeSpeakers: "Incluir oradores",
     includeTimestamps: "Incluir marcas de tiempo",
     export: "Exportar",
-    exportFailed: "No se pudo generar el archivo. Intentá de nuevo.",
+    exportFailed: "No se pudo generar el archivo. Inténtalo de nuevo.",
     back: "Volver",
     missing: "No se encontró ninguna transcripción.",
   },
@@ -139,7 +139,7 @@ const voiceToText = {
     clearSearch: "Limpiar búsqueda",
     editMode: "Modo Edición",
     editModeBanner:
-      "Modo edición activo. Seleccioná el texto para modificarlo.",
+      "Modo edición activo. Selecciona el texto para modificarlo.",
     editTitleAria: "Editar título de la transcripción",
     titleInputAria: "Título de la transcripción",
     prevResult: "Resultado anterior",
@@ -165,7 +165,7 @@ const voiceToText = {
     assignTo: "Asignar a…",
   },
   sidePanel: {
-    empty: "Seleccioná un turno para editar sus propiedades.",
+    empty: "Selecciona un turno para editar sus propiedades.",
     selectedTurn: "Turno seleccionado",
     changeApplied_one:
       "Se aplicó con éxito el cambio de {{from}} a {{to}} · 1 turno actualizado",
@@ -180,7 +180,7 @@ const voiceToText = {
     newPersonPlaceholder: "Nombre de la persona",
     create: "Crear",
     timeSection: "Marca de tiempo",
-    timeInvalid: "Formato inválido. Usá mm:ss o hh:mm:ss.",
+    timeInvalid: "Formato inválido. Usa mm:ss o hh:mm:ss.",
     timestampOutOfRange:
       "La marca de tiempo debe estar entre {{min}} y {{max}} para mantener el orden de los turnos.",
     actionsSection: "Acciones",
@@ -191,7 +191,7 @@ const voiceToText = {
     scopeDialog: {
       title: "Aplicar cambio",
       description:
-        '"{{current}}" tiene más de una intervención en esta transcripción. ¿Aplicás el cambio sólo a este turno o a todas las intervenciones de "{{current}}"?',
+        '"{{current}}" tiene más de una intervención en esta transcripción. ¿Aplicas el cambio solo a este turno o a todas las intervenciones de "{{current}}"?',
       thisTurnOnly: "Sólo este turno",
       allTurns: "Todas las de {{current}}",
     },

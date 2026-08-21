@@ -122,7 +122,7 @@ export default function SummaryValidation() {
   // an unmounting component and the saveFailed Callout would never get a
   // chance to show. If the save fails, we stay on this screen so the user
   // sees why; a second click (with saveFailed already true) lets them
-  // continue anyway, matching the "podés continuar, pero los cambios podrían
+  // continue anyway, matching the "puedes continuar, pero los cambios podrían
   // no quedar persistidos" copy.
   const handleContinue = async () => {
     const to = "/app/$feature/finish" as const;

@@ -42,7 +42,7 @@ const common = {
     removeAria: "Eliminar {{name}}",
   },
   fileCheck: {
-    defaultError: "Error de guardado\nVolvé a cargar el archivo",
+    defaultError: "Error de guardado\nVuelve a cargar el archivo",
   },
 };
 

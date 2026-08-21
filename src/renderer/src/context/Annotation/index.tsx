@@ -355,7 +355,7 @@ export default function AnnotationProvider({
       );
       if (overlappingPrediction) {
         showToast(
-          "La selección se solapa con una entidad activa. Eliminá o editá la entidad existente antes de crear otra.",
+          "La selección se solapa con una entidad activa. Elimina o edita la entidad existente antes de crear otra.",
           "error",
           WarningCircle,
         );

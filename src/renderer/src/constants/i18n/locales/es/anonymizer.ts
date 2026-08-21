@@ -64,7 +64,7 @@ const anonymizer = {
     // G8 F3: title/subtitle/Callout must reflect the aggregated status
     // (routes/app.$feature/process.tsx), not just "processing" forever.
     finishedTitle: "AymurAI finalizó la extracción de datos del archivo.",
-    finishedSubtitle: "Podés continuar con la validación de los datos.",
+    finishedSubtitle: "Puedes continuar con la validación de los datos.",
     errorTitle: "Ocurrió un problema al procesar el archivo.",
     errorSubtitle: "El archivo no pudo procesarse correctamente.",
     errorText: "El procesamiento del archivo no se completó correctamente.",
