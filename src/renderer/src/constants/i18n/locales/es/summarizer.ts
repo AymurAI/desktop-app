@@ -61,7 +61,7 @@ const summarizer = {
     callout:
       "Resumiendo texto. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
     error: "Error de carga de archivo. Volvelo a intentar",
-    next: "Continuar",
+    continue: "Continuar",
     stop: "Detener",
   },
   validation: {

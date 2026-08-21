@@ -233,7 +233,7 @@ export default function SummaryProcess() {
       </MainContent>
       <Footer withBuiltBy>
         <Button onClick={handleNext} disabled={!isCompleted}>
-          {t("process.next")}
+          {t("process.continue")}
         </Button>
       </Footer>
     </RequireFile>

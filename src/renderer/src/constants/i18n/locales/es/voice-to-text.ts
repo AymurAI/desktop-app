@@ -95,7 +95,7 @@ const voiceToText = {
     callout:
       "Transcribiendo audio. Puede demorar unos minutos. Aparecerá aquí cuando esté listo.",
     back: "Volver",
-    next: "Continuar",
+    continue: "Continuar",
   },
   validation: {
     back: "Volver",

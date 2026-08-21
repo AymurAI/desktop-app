@@ -205,7 +205,7 @@ describe("DocumentProcess (Anonimizador): the disambiguate-stuck-in-processing b
     renderProcess();
 
     expect(
-      screen.getByRole("button", { name: "process.next" }),
+      screen.getByRole("button", { name: "process.continue" }),
     ).not.toBeDisabled();
     expect(screen.getByText("process.errorText")).toBeInTheDocument();
   });

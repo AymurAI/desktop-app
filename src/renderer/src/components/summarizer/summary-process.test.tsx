@@ -68,7 +68,9 @@ describe("SummaryProcess", () => {
 
   it("disables the next button until the summary is completed", () => {
     render(<SummaryProcess />);
-    expect(screen.getByRole("button", { name: "process.next" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "process.continue" }),
+    ).toBeDisabled();
   });
 
   it("shows a real error message instead of the waiting placeholder when the status is error", () => {
