@@ -139,11 +139,15 @@ const PERSONA_LABEL_RE = derivePersonaLabelRegex(PERSONA_LABEL_TEMPLATE);
  * Label for the next auto-generated speaker: one past the highest existing
  * "Persona N" label, or "Persona 1" if there are none — regardless of how
  * many other (custom-named) speakers exist. Used by "Nuevo" in the side
- * panel. Because nothing renumbers existing "Persona N" speakers after a
- * rename or delete (see `RENAME_SPEAKER_GLOBAL` below), this can leave gaps
- * (1, 2, 4 → next is "Persona 5", not "Persona 3") — deliberate: it never
- * collides with an existing label, which is what matters, and "one past the
- * max" is stable regardless of how many speakers came and went.
+ * panel. `RENAME_SPEAKER_GLOBAL` keeps "Persona N" speakers renumbered
+ * contiguously after a rename or merge-collision drop (see
+ * `renumberPersonaSpeakers` below), so in practice the highest existing
+ * number and the count of "Persona N" speakers are the same value by the
+ * time this runs — computing from the max (rather than "count + 1") is kept
+ * anyway as the more robust invariant: it can never collide with an
+ * existing label even if that contiguity assumption is ever broken by a
+ * future code path that adds/removes "Persona N" speakers without going
+ * through the renumbering step.
  *
  * Builds the label from the SAME `PERSONA_LABEL_TEMPLATE` the regex above
  * derives from (see its docblock) - the format itself is unchanged from
@@ -158,6 +162,47 @@ export function nextPersonaLabel(speakers: Speaker[]): string {
     .map(Number);
   const next = numbers.length > 0 ? Math.max(...numbers) + 1 : 1;
   return PERSONA_LABEL_TEMPLATE.replace("{{n}}", String(next));
+}
+
+/**
+ * Renumbers auto-generated "Persona N" labels so they stay contiguous
+ * (1, 2, 3, ...) after a rename/merge relabels or drops one of them.
+ * Speakers with a custom label (anything not matching "Persona N",
+ * including "Persona no identificada") are left untouched, and no
+ * speaker's position in the array changes - only `label`/`initials` are
+ * ever reassigned, keyed by `id`.
+ *
+ * Restored 2026-08-21 (see `RENAME_SPEAKER_GLOBAL` below for the product
+ * decision behind reintroducing this): contiguous numbering was previously
+ * removed over a concern that it lets a "Persona N" label point at a
+ * different underlying speaker than a moment before. That concern is about
+ * label stability for a human reading it OUTSIDE the app (e.g. a written
+ * note taken mid-review) - it was never about `id`-based joins inside the
+ * app, which stay completely unaffected by this function: every consumer
+ * (turn reassignment, side panel selection, ASR export) resolves speakers
+ * by `id`, never by `label`.
+ */
+function renumberPersonaSpeakers(speakers: Speaker[]): Speaker[] {
+  const personaSpeakers = speakers
+    .filter((s) => PERSONA_LABEL_RE.test(s.label))
+    .sort((a, b) => {
+      const aNum = Number(a.label.match(PERSONA_LABEL_RE)?.[1]);
+      const bNum = Number(b.label.match(PERSONA_LABEL_RE)?.[1]);
+      return aNum - bNum;
+    });
+
+  const nextLabelById = new Map(
+    personaSpeakers.map((s, i) => [
+      s.id,
+      PERSONA_LABEL_TEMPLATE.replace("{{n}}", String(i + 1)),
+    ]),
+  );
+
+  return speakers.map((s) => {
+    const nextLabel = nextLabelById.get(s.id);
+    if (!nextLabel || nextLabel === s.label) return s;
+    return { ...s, label: nextLabel, initials: computeInitials(nextLabel) };
+  });
 }
 
 /**
@@ -230,26 +275,22 @@ export default function reducer(
         );
 
         // G7 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md),
-        // criterion 2: this used to end with
-        // `speakers: renumberPersonaSpeakers(renamed.speakers)`, which
-        // renumbered every remaining "Persona N" speaker to stay contiguous
-        // (1, 2, 3, ...) after this rename/merge relabeled or dropped one.
-        // That's a DELIBERATE REVERSION of intentional behavior, not an
-        // accident fix: the function's own docstring declared its purpose.
-        // Removed because it means a speaker's displayed label is NOT
-        // stable across an unrelated rename — with four speakers, renaming
-        // s2 to "Testigo" used to leave s3 (previously "Persona 2") holding
-        // the label "Persona 2" that a moment ago identified s2, and s4
-        // ("Persona 3") sliding to "Persona 2" as well one down the chain -
-        // measured, not a corner case. Contiguous numbering is cosmetic;
-        // the label a user reads staying attached to the same `id` is
-        // correctness (CONVENTIONS.md: "Join on ids, never on display
-        // strings"). The visible cost: after a delete, numbering can leave
-        // gaps (1, 2, 4, 5) instead of collapsing back to 1, 2, 3, 4 -
-        // `nextPersonaLabel` already tolerates this (it computes "one past
-        // the max", never "count + 1"), so gaps don't cause a collision,
-        // they're just gaps.
-        return existing
+        // criterion 2, then reverted, then restored again (2026-08-21):
+        // this end with `renumberPersonaSpeakers` was removed over a
+        // concern that a "Persona N" label could point at a different
+        // underlying speaker than a moment before (e.g. renaming s2 to
+        // "Testigo" would leave s3 - previously "Persona 2" - holding that
+        // label instead, one down the chain). That concern is real but
+        // narrow: it's about label stability for a human reading it
+        // OUTSIDE the app (e.g. a note taken mid-review before every
+        // speaker is identified), not about `id`-based joins inside the
+        // app - every consumer here (turn reassignment below, side panel
+        // selection, ASR export) resolves speakers by `id`, never by
+        // `label`, so that stays completely unaffected either way. Product
+        // decided the UX cost of leaving numbering gaps (1, 2, 4, 5) after
+        // a rename/merge outweighs that narrow risk - see
+        // `renumberPersonaSpeakers`'s docblock above.
+        const renamed = existing
           ? {
               ...t,
               speakers: t.speakers.filter((s) => s.id !== speakerId),
@@ -267,6 +308,11 @@ export default function reducer(
                   : s,
               ),
             };
+
+        return {
+          ...renamed,
+          speakers: renumberPersonaSpeakers(renamed.speakers),
+        };
       });
     }
 

@@ -414,17 +414,14 @@ describe("renameSpeakerGlobal", () => {
 
 // G7 (tasks/responsive-fixes/issues/G7-modo-edicion-personas.md), criterion
 // 2: renaming one speaker must never change another speaker's label. This
-// block used to be "renameSpeakerGlobal renumbering" and its first two
-// cases asserted the OPPOSITE of what's tested now — that a rename/merge
-// renumbered every remaining "Persona N" speaker to stay contiguous. That
-// was `renumberPersonaSpeakers` (removed from `RENAME_SPEAKER_GLOBAL`): a
-// deliberate reversion of intentional behavior, not an accident fix — see
-// the comment at its old call site in index.ts. The contract forbids
-// deleting or skipping tests, so those two assertions are INVERTED here
-// rather than removed; the third case ("leaves numbering untouched...")
-// needed no change and is now the general rule instead of the exception
-// that survives only when no gap is created.
-describe("renameSpeakerGlobal leaves other speakers' labels untouched", () => {
+// block was inverted by d8aedd2 (removing renumberPersonaSpeakers) and is
+// restored here (2026-08-21, see the comment at the RENAME_SPEAKER_GLOBAL
+// call site in index.ts for the product decision): contiguous numbering
+// after a rename/merge is a UX win, and the only cost - a "Persona N"
+// label pointing at a different underlying speaker than a moment before -
+// is about labels read OUTSIDE the app, not about id-based joins inside
+// it, which stay unaffected either way.
+describe("renameSpeakerGlobal renumbering", () => {
   const baseSpeakers = () => [
     { id: "s1", label: "Persona 1", initials: "P1", color: "violet" as const },
     { id: "s2", label: "Persona 2", initials: "P2", color: "green" as const },
@@ -435,20 +432,20 @@ describe("renameSpeakerGlobal leaves other speakers' labels untouched", () => {
     { id: "turn2", speakerId: "s2", text: "b", startMs: 100, endMs: 200 },
   ];
 
-  it("does not renumber other Persona speakers after a plain rename", () => {
+  it("renumbers remaining Persona speakers after a plain rename", () => {
     const state = [
       makeTranscription({ speakers: baseSpeakers(), turns: baseTurns() }),
     ];
     const next = reducer(state, renameSpeakerGlobal("t1", "s1", "Fiscal"));
     const speakers = next[0].speakers;
     expect(speakers.find((s) => s.id === "s2")).toMatchObject({
-      label: "Persona 2",
-      initials: "P2",
+      label: "Persona 1",
+      initials: "P1",
     });
     expect(speakers.find((s) => s.id === "s3")?.label).toBe("Jueza");
   });
 
-  it("does not renumber other Persona speakers after a merge-collision rename", () => {
+  it("renumbers remaining Persona speakers after a merge-collision rename", () => {
     const state = [
       makeTranscription({
         speakers: [
@@ -470,12 +467,11 @@ describe("renameSpeakerGlobal leaves other speakers' labels untouched", () => {
       }),
     ];
     // "Persona 1" collides with the existing "Fiscal" speaker -> merges s1
-    // into s3 and drops s1. s2 keeps its own label — no renumbering fills
-    // the gap s1 leaves behind.
+    // into s3 and drops s1, leaving a gap that s2 must fill.
     const next = reducer(state, renameSpeakerGlobal("t1", "s1", "Fiscal"));
     const speakers = next[0].speakers;
     expect(speakers.find((s) => s.id === "s1")).toBeUndefined();
-    expect(speakers.find((s) => s.id === "s2")?.label).toBe("Persona 2");
+    expect(speakers.find((s) => s.id === "s2")?.label).toBe("Persona 1");
   });
 
   it("leaves numbering untouched when no gap is created", () => {
@@ -488,14 +484,13 @@ describe("renameSpeakerGlobal leaves other speakers' labels untouched", () => {
     expect(speakers.find((s) => s.id === "s2")?.label).toBe("Persona 2");
   });
 
-  // Criterion 2, the exact scenario measured against the real defect: with
-  // four "Persona N" speakers, renaming the SECOND one used to shift every
-  // speaker after it down by one (s3 "Persona 3" -> "Persona 2", s4
-  // "Persona 4" -> "Persona 3") - worse than the report described (it said
-  // an upward shift; measured behavior was downward), and a genuine
-  // correctness bug: whoever wrote down "Persona 3" a moment ago is now
-  // looking at a different person.
-  it("renaming the second of four Persona speakers leaves the other three's id and label untouched", () => {
+  // The exact scenario the previous ("identity independent of position")
+  // revert measured against: with four "Persona N" speakers, renaming the
+  // SECOND one shifts every Persona speaker after it down by one number.
+  // That's the intended, accepted cost of contiguous renumbering, not a
+  // bug - the label moving to a different `id` never affects any id-based
+  // join in the app (turn reassignment, side panel selection, ASR export).
+  it("renaming the second of four Persona speakers shifts the remaining ones down by one", () => {
     const state = [
       makeTranscription({
         speakers: [
@@ -535,20 +530,18 @@ describe("renameSpeakerGlobal leaves other speakers' labels untouched", () => {
     expect(speakers.find((s) => s.id === "s2")?.label).toBe("Testigo");
     expect(speakers.find((s) => s.id === "s3")).toMatchObject({
       id: "s3",
-      label: "Persona 3",
+      label: "Persona 2",
     });
     expect(speakers.find((s) => s.id === "s4")).toMatchObject({
       id: "s4",
-      label: "Persona 4",
+      label: "Persona 3",
     });
   });
 
-  // Visible production change (documented, not incidental): without
-  // renumbering, a gap left by a merge-collision drop is never backfilled.
-  // `nextPersonaLabel` already computes "one past the highest existing
-  // number" (never "count + 1"), so the gap can never cause a label
-  // collision - it's just a gap (1, 2, 4, 5 after "Persona 3" is dropped).
-  it("does not fill the gap a merge-collision rename leaves behind", () => {
+  // A gap left by a merge-collision drop gets backfilled by
+  // `renumberPersonaSpeakers`, so the next auto-created persona lands one
+  // past the new (closed-up) max rather than the pre-merge max.
+  it("fills the gap a merge-collision rename leaves behind", () => {
     const state = [
       makeTranscription({
         speakers: [
@@ -580,7 +573,8 @@ describe("renameSpeakerGlobal leaves other speakers' labels untouched", () => {
       }),
     ];
     // Renaming s3 to "Persona 2" collides with s2 -> merges s3 into s2 and
-    // drops s3, leaving a gap at 3.
+    // drops s3, leaving a gap at 3 that renumbering closes: s4 ("Persona
+    // 4") shifts down to "Persona 3".
     const afterMerge = reducer(
       state,
       renameSpeakerGlobal("t1", "s3", "Persona 2"),
@@ -589,14 +583,14 @@ describe("renameSpeakerGlobal leaves other speakers' labels untouched", () => {
     expect(afterMerge[0].speakers.map((s) => s.label)).toEqual([
       "Persona 1",
       "Persona 2",
-      "Persona 4",
+      "Persona 3",
     ]);
 
-    // The next auto-created persona is "Persona 5" (one past the max, 4) -
-    // NOT "Persona 3" (filling the gap) and NOT "Persona 4" (speaker count).
+    // The next auto-created persona is "Persona 4" (one past the new max,
+    // 3) now that the gap has been closed.
     const next = reducer(afterMerge, addPersonaSpeaker("t1", "new-id"));
     expect(next[0].speakers.find((s) => s.id === "new-id")?.label).toBe(
-      "Persona 5",
+      "Persona 4",
     );
   });
 });
@@ -873,15 +867,15 @@ describe("addPersonaSpeaker — turn assignment stays stable by id", () => {
     state = reducer(state, renameSpeakerGlobal("t1", "id-1", "Jueza"));
 
     // The identity assertion this test is actually about: the turn still
-    // points to "id-2" by ID, regardless of what happened to "id-1"'s label.
+    // points to "id-2" by ID, regardless of what happened to "id-1"'s label
+    // or number. `renumberPersonaSpeakers` DOES shift "id-2"'s displayed
+    // label here (from "Persona 2" down to "Persona 1", filling the gap
+    // "id-1" left) - that's the accepted, documented cost of contiguous
+    // renumbering (see RENAME_SPEAKER_GLOBAL's comment in index.ts), and it
+    // never touches `id`/`speakerId`, which is what this test guards.
     expect(state[0].turns[0].speakerId).toBe("id-2");
-    // "Persona 2" (not "Persona 1"): `RENAME_SPEAKER_GLOBAL` no longer
-    // renumbers remaining "Persona N" labels to stay contiguous after a
-    // rename (G7 criterion 2 - see the removed `renumberPersonaSpeakers`
-    // and its old call site's comment in index.ts). "id-2"'s own label is
-    // therefore stable too, not just its id.
     expect(state[0].speakers.find((s) => s.id === "id-2")?.label).toBe(
-      "Persona 2",
+      "Persona 1",
     );
   });
 });
@@ -951,10 +945,15 @@ describe("addPersonaSpeaker — a bystander survives a merge-collision delete (c
     const speakers = next[0].speakers;
     const turns = next[0].turns;
 
-    // The bystander: s3 and turn3 are untouched by a merge between s1 and s2.
+    // The bystander: s3's `id` and turn3's `speakerId` are untouched by a
+    // merge between s1 and s2. Its displayed label DOES shift, from
+    // "Persona 3" to "Persona 2" - renumbering closes the gap s1 leaves
+    // behind, same as any other rename/merge (see RENAME_SPEAKER_GLOBAL's
+    // comment in index.ts) - `id`-stability is what this test guards, not
+    // label stability.
     expect(speakers.find((s) => s.id === "s3")).toMatchObject({
       id: "s3",
-      label: "Persona 3",
+      label: "Persona 2",
     });
     expect(turns.find((t) => t.id === "turn3")?.speakerId).toBe("s3");
   });
