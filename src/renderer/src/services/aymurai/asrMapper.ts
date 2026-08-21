@@ -40,19 +40,23 @@ function parseDurationToMs(value: string | number): number {
   return 0;
 }
 
+// speaker_no < 0 marks a segment the diarization model couldn't confidently
+// attribute to any speaker - a single catch-all bucket, not a real speaker
+// identity, so (unlike "Persona N") it never gets a number of its own.
+const UNIDENTIFIED_SPEAKER_LABEL = "Persona no identificada";
+
 function speakerLabelForSegment(segment: ASRParagraph): string {
   return (
     segment.speaker_name?.trim() ||
     (segment.speaker_no < 0
-      ? `Speaker ${segment.speaker_no}`
+      ? UNIDENTIFIED_SPEAKER_LABEL
       : `Persona ${segment.speaker_no}`)
   );
 }
 
 function normalizeSpeakerLabel(label: string, speakerNo: number): string {
-  return speakerNo >= 0 && label.trim() === `Speaker ${speakerNo}`
-    ? `Persona ${speakerNo}`
-    : label;
+  if (label.trim() !== `Speaker ${speakerNo}`) return label;
+  return speakerNo < 0 ? UNIDENTIFIED_SPEAKER_LABEL : `Persona ${speakerNo}`;
 }
 
 function buildSpeakersFromLabels(

@@ -311,7 +311,7 @@ describe("mapASRDocumentToTranscription", () => {
     expect(transcription.rawSpeakerTurns).toEqual([]);
   });
 
-  it("preserves and renders speaker -1 turns from speaker_turns", () => {
+  it("maps speaker -1 turns from speaker_turns to the unidentified-speaker label", () => {
     const doc: ASRDocument = {
       document_id: "doc-negative-speaker",
       document: [
@@ -352,7 +352,7 @@ describe("mapASRDocumentToTranscription", () => {
     );
 
     expect(transcription.speakers).toContainEqual(
-      expect.objectContaining({ id: "s-1", label: "Speaker -1" }),
+      expect.objectContaining({ id: "s-1", label: "Persona no identificada" }),
     );
     expect(transcription.turns).toHaveLength(1);
     expect(transcription.turns[0]).toMatchObject({
@@ -363,7 +363,7 @@ describe("mapASRDocumentToTranscription", () => {
     });
   });
 
-  it("preserves speaker -1 document segments for legacy responses", () => {
+  it("maps speaker -1 document segments to the unidentified-speaker label for legacy responses", () => {
     const doc: ASRDocument = {
       document_id: "doc-legacy-negative-speaker",
       document: [
@@ -386,7 +386,7 @@ describe("mapASRDocumentToTranscription", () => {
     );
 
     expect(transcription.speakers).toContainEqual(
-      expect.objectContaining({ id: "s-1", label: "Speaker -1" }),
+      expect.objectContaining({ id: "s-1", label: "Persona no identificada" }),
     );
     expect(transcription.turns).toHaveLength(1);
     expect(transcription.turns[0]).toMatchObject({
