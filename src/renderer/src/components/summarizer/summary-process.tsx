@@ -15,7 +15,7 @@ import { FeatureFlowEnum } from "@/types/features";
 import { Button, Callout, Card, CheckCircle, Spinner } from "@aymurai/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { Info } from "phosphor-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const previewFrame = css({
@@ -73,6 +73,7 @@ export default function SummaryProcess() {
   const isCompleted = status === "completed";
   const isError = status === "error";
   const isStopped = status === "stopped";
+  const [isDismissed, setIsDismissed] = useState(false);
 
   // Play the completion sound + taskbar bounce once when the summary
   // finishes, matching the Dataset/Anonimizador/Voz a texto pipelines.
@@ -134,9 +135,10 @@ export default function SummaryProcess() {
                  * what made the previous unconditional copy so visibly wrong
                  * (a green check next to "AymurAI está resumiendo…").
                  *
-                 * "stopped" folds into the same non-success branch as "error"
-                 * - matching routes/app.$feature/process.tsx (G8 F3) and
-                 * voice-to-text/process.tsx: no copy of its own.
+                 * "stopped" gets its own copy (`process.stoppedTitle`/
+                 * `stoppedSubtitle`), distinct from "error" - matching
+                 * voice-to-text/process.tsx: it was a deliberate user action
+                 * (see `useSummarize`'s `abort`), not a failure.
                  *
                  * "idle" (the instant before `useSummarize`'s effect fires
                  * its mutation) stays in the same bucket as "processing",
@@ -149,9 +151,11 @@ export default function SummaryProcess() {
                   <styled.h2 textStyle="subtitle.md.default">
                     {isCompleted
                       ? t("process.finishedTitle")
-                      : isError || isStopped
-                        ? t("process.errorTitle")
-                        : t("process.processingTitle")}
+                      : isStopped
+                        ? t("process.stoppedTitle")
+                        : isError
+                          ? t("process.errorTitle")
+                          : t("process.processingTitle")}
                   </styled.h2>
                   <styled.p
                     textStyle="subtitle.sm.default"
@@ -159,9 +163,11 @@ export default function SummaryProcess() {
                   >
                     {isCompleted
                       ? t("process.finishedSubtitle")
-                      : isError || isStopped
-                        ? t("process.errorSubtitle")
-                        : t("process.processingSubtitle")}
+                      : isStopped
+                        ? t("process.stoppedSubtitle")
+                        : isError
+                          ? t("process.errorSubtitle")
+                          : t("process.processingSubtitle")}
                   </styled.p>
                 </Stack>
                 <HStack gap="4" alignItems="center">
@@ -180,7 +186,7 @@ export default function SummaryProcess() {
               </HStack>
 
               <Stack gap="3">
-                {!isError ? (
+                {!isError && !isStopped ? (
                   <ScrollArea
                     className={previewFrame}
                     viewportRef={previewRef}
@@ -198,18 +204,21 @@ export default function SummaryProcess() {
                       )}
                     </div>
                   </ScrollArea>
-                ) : (
+                ) : !isDismissed ? (
                   <ScrollArea className={previewFrame}>
                     <div className={previewContent}>
                       <Callout
-                        message={t("process.error")}
+                        message={
+                          isStopped ? t("process.stopped") : t("process.error")
+                        }
                         variant="error"
                         size="compact"
                         noBorder
+                        onDismiss={() => setIsDismissed(true)}
                       />
                     </div>
                   </ScrollArea>
-                )}
+                ) : null}
 
                 {/* G8 F3: this banner literally says "Resumiendo
                  * texto…Aparecerá aquí cuando esté listo" - it must not

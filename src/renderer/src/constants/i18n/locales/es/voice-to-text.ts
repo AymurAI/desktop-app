@@ -88,6 +88,10 @@ const voiceToText = {
     finishedSubtitle: "Podés continuar con la validación de la transcripción.",
     errorTitle: "Ocurrió un problema al transcribir el archivo.",
     errorSubtitle: "La transcripción no pudo completarse correctamente.",
+    errorText: "La transcripción del archivo no se completó correctamente.",
+    stoppedTitle: "Detuviste la transcripción del archivo.",
+    stoppedSubtitle: "Vuelve atrás para reiniciar la transcripción.",
+    stoppedText: "La transcripción del archivo fue detenida manualmente.",
     // Progress label / status / stop / replace copy is rendered by the
     // @aymurai/ui ArchiveProgress component (v0.3.0), not here.
     waitingForWords: "Esperando las primeras palabras…",

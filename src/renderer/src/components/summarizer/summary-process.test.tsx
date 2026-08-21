@@ -110,18 +110,21 @@ describe("SummaryProcess", () => {
     ).toBeInTheDocument();
   });
 
-  // "stopped" folds into the same non-success branch as "error" - matching
-  // routes/app.$feature/process.tsx's G8 F3 decision (documented in
-  // summary-process.tsx) - so a cancelled run shows the same errorTitle/
-  // Subtitle, not its own copy.
-  it("shows the error title/subtitle (not a separate copy) when the status is stopped", () => {
+  // "stopped" gets its own copy, distinct from "error": both are non-success
+  // outcomes, but only "stopped" was a deliberate user action. It also gets
+  // its own Callout in place of the preview area, matching the dataset/
+  // anonymizer aggregated screen's treatment of a stopped run.
+  it("shows the stopped title/subtitle/callout (not the error copy) when the status is stopped", () => {
     mockSummarizeState.status = "stopped";
     mockSummaryState.partialText = "";
 
     render(<SummaryProcess />);
 
-    expect(screen.getByText("process.errorTitle")).toBeInTheDocument();
-    expect(screen.getByText("process.errorSubtitle")).toBeInTheDocument();
+    expect(screen.getByText("process.stoppedTitle")).toBeInTheDocument();
+    expect(screen.getByText("process.stoppedSubtitle")).toBeInTheDocument();
+    expect(screen.getByText("process.stopped")).toBeInTheDocument();
+    expect(screen.queryByText("process.errorTitle")).not.toBeInTheDocument();
+    expect(screen.queryByText("process.error")).not.toBeInTheDocument();
     expect(screen.queryByText("process.finishedTitle")).not.toBeInTheDocument();
     expect(
       screen.queryByText("process.processingTitle"),

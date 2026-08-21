@@ -165,10 +165,10 @@ describe("DocumentProcess (Set de Datos): aggregated status, not per-table", () 
   });
 
   it("with an aborted (stopped) file and nothing else processing, does not show the finished Callout", () => {
-    // Decision (documented in process.tsx): "stopped" is folded into the
-    // same non-success branch as "error" - an aborted file must never show
-    // the success banner, and this Callout doesn't need distinct copy for
-    // "you cancelled it" vs "it errored".
+    // Decision (documented in process.tsx): "stopped" is a distinct
+    // non-success outcome from "error" - an aborted file must never show
+    // the success banner, but gets its own "stoppedText" copy since it was
+    // a deliberate user action, not a failure.
     mockFiles = [file("a.docx")];
     setAllCompleted("a.docx");
     mockPredictStatuses["a.docx"] = { status: "stopped", progress: 0.2 };
@@ -176,7 +176,8 @@ describe("DocumentProcess (Set de Datos): aggregated status, not per-table", () 
     renderProcess();
 
     expect(screen.queryByText("process.finishText")).not.toBeInTheDocument();
-    expect(screen.getByText("process.errorText")).toBeInTheDocument();
+    expect(screen.queryByText("process.errorText")).not.toBeInTheDocument();
+    expect(screen.getByText("process.stoppedText")).toBeInTheDocument();
   });
 
   it("sad path: with no files, renders no success banner", () => {
