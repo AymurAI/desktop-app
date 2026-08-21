@@ -68,7 +68,7 @@ const anonymizer = {
     errorTitle: "Ocurrió un problema al procesar el archivo.",
     errorSubtitle: "El archivo no pudo procesarse correctamente.",
     errorText: "El procesamiento del archivo no se completó correctamente.",
-    next: "Siguiente",
+    next: "Continuar",
   },
   validation: {
     toastSingleSuccess:

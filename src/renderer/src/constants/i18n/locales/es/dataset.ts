@@ -55,7 +55,10 @@ const dataset = {
     errorTitle: "Ocurrió un problema al procesar los archivos.",
     errorSubtitle: "Alguno de los archivos no pudo procesarse correctamente.",
     errorText: "El procesamiento de los archivos no se completó correctamente.",
-    next: "Siguiente",
+    next: "Continuar",
+  },
+  validation: {
+    continue: "Continuar",
   },
   result: { sectionTitle: "" },
   finish: {
