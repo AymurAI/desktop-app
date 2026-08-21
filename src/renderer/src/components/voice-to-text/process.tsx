@@ -76,6 +76,7 @@ export default function VoiceProcess() {
 
   const replaceInputRef = useRef<HTMLInputElement>(null);
   const hasNotified = useRef(false);
+  const [isDismissed, setIsDismissed] = useState(false);
 
   const audioFiles = useMemo(
     () =>
@@ -222,13 +223,13 @@ export default function VoiceProcess() {
               <Stack gap="3">
                 <ArchiveProgress
                   fileName={files[0]?.data.name}
-                  progress={isCompleted ? 100 : progressPercent}
+                  progress={isCompleted ? 100 : isStopped ? 0 : progressPercent}
                   status={archiveStatus}
                   onStop={handleStop}
                   onReplace={handleReplaceClick}
                 />
 
-                {!isError ? (
+                {!isError && !isStopped ? (
                   <ScrollArea
                     className={previewFrame}
                     viewportRef={previewRef}
@@ -246,15 +247,23 @@ export default function VoiceProcess() {
                       )}
                     </div>
                   </ScrollArea>
-                ) : (
+                ) : !isDismissed ? (
                   <ScrollArea className={previewFrame}>
                     <div className={previewContent}>
-                      <span className={previewPlaceholder}>
-                        {t("process.waitingForWords")}
-                      </span>
+                      <Callout
+                        message={
+                          isStopped
+                            ? t("process.stoppedText")
+                            : t("process.errorText")
+                        }
+                        variant="error"
+                        size="compact"
+                        noBorder
+                        onDismiss={() => setIsDismissed(true)}
+                      />
                     </div>
                   </ScrollArea>
-                )}
+                ) : null}
 
                 {/* G8 F3: this banner literally says "Transcribiendo
                  * audio…Aparecerá aquí cuando esté listo" - it must not

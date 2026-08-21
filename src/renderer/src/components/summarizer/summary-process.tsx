@@ -15,7 +15,7 @@ import { FeatureFlowEnum } from "@/types/features";
 import { Button, Callout, Card, CheckCircle, Spinner } from "@aymurai/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { Info } from "phosphor-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const previewFrame = css({
@@ -73,6 +73,7 @@ export default function SummaryProcess() {
   const isCompleted = status === "completed";
   const isError = status === "error";
   const isStopped = status === "stopped";
+  const [isDismissed, setIsDismissed] = useState(false);
 
   // Play the completion sound + taskbar bounce once when the summary
   // finishes, matching the Dataset/Anonimizador/Voz a texto pipelines.
@@ -185,7 +186,7 @@ export default function SummaryProcess() {
               </HStack>
 
               <Stack gap="3">
-                {!isError ? (
+                {!isError && !isStopped ? (
                   <ScrollArea
                     className={previewFrame}
                     viewportRef={previewRef}
@@ -203,18 +204,21 @@ export default function SummaryProcess() {
                       )}
                     </div>
                   </ScrollArea>
-                ) : (
+                ) : !isDismissed ? (
                   <ScrollArea className={previewFrame}>
                     <div className={previewContent}>
                       <Callout
-                        message={t("process.error")}
+                        message={
+                          isStopped ? t("process.stopped") : t("process.error")
+                        }
                         variant="error"
                         size="compact"
                         noBorder
+                        onDismiss={() => setIsDismissed(true)}
                       />
                     </div>
                   </ScrollArea>
-                )}
+                ) : null}
 
                 {/* G8 F3: this banner literally says "Resumiendo
                  * texto…Aparecerá aquí cuando esté listo" - it must not

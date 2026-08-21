@@ -142,11 +142,14 @@ describe("VoiceProcess", () => {
     expect(screen.queryByText("process.callout")).not.toBeInTheDocument();
     expect(screen.getByText("process.errorTitle")).toBeInTheDocument();
     expect(screen.getByText("process.errorSubtitle")).toBeInTheDocument();
+    expect(screen.getByText("process.errorText")).toBeInTheDocument();
   });
 
   // "stopped" gets its own copy, distinct from "error": both are non-success
-  // outcomes, but only "stopped" was a deliberate user action.
-  it("shows the stopped title/subtitle (not the error copy) when the status is stopped", () => {
+  // outcomes, but only "stopped" was a deliberate user action. It also gets
+  // its own Callout in place of the preview area, matching the dataset/
+  // anonymizer aggregated screen's treatment of a stopped run.
+  it("shows the stopped title/subtitle/callout (not the error copy) when the status is stopped", () => {
     mockTranscribeState.status = "stopped";
     mockTranscribeState.partialText = "";
 
@@ -154,7 +157,9 @@ describe("VoiceProcess", () => {
 
     expect(screen.getByText("process.stoppedTitle")).toBeInTheDocument();
     expect(screen.getByText("process.stoppedSubtitle")).toBeInTheDocument();
+    expect(screen.getByText("process.stoppedText")).toBeInTheDocument();
     expect(screen.queryByText("process.errorTitle")).not.toBeInTheDocument();
+    expect(screen.queryByText("process.errorText")).not.toBeInTheDocument();
     expect(screen.queryByText("process.finishedTitle")).not.toBeInTheDocument();
   });
 

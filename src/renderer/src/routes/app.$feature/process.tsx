@@ -120,6 +120,13 @@ function DocumentProcess() {
   // Weighted progress: 10% parse / 70% predict / 20% disambiguate (anonymizer)
   // or 10% parse / 90% predict (datapublic).
   const getProgress = (fileName: string): number => {
+    // A stopped file keeps resolving in-flight paragraph queries in the
+    // background even after abort (usePredict only stops NEW queries from
+    // starting), so successCount/total keeps climbing behind the "stopped"
+    // status. Force the bar back to empty once stopped instead of racing
+    // that background completion.
+    if (getCombinedStatus(fileName) === "stopped") return 0;
+
     const parseDone = parseStatuses[fileName]?.status === "completed" ? 1 : 0;
     const predictProgress = fileStatuses[fileName]?.progress ?? 0;
 

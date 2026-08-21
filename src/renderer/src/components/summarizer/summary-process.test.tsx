@@ -111,8 +111,10 @@ describe("SummaryProcess", () => {
   });
 
   // "stopped" gets its own copy, distinct from "error": both are non-success
-  // outcomes, but only "stopped" was a deliberate user action.
-  it("shows the stopped title/subtitle (not the error copy) when the status is stopped", () => {
+  // outcomes, but only "stopped" was a deliberate user action. It also gets
+  // its own Callout in place of the preview area, matching the dataset/
+  // anonymizer aggregated screen's treatment of a stopped run.
+  it("shows the stopped title/subtitle/callout (not the error copy) when the status is stopped", () => {
     mockSummarizeState.status = "stopped";
     mockSummaryState.partialText = "";
 
@@ -120,7 +122,9 @@ describe("SummaryProcess", () => {
 
     expect(screen.getByText("process.stoppedTitle")).toBeInTheDocument();
     expect(screen.getByText("process.stoppedSubtitle")).toBeInTheDocument();
+    expect(screen.getByText("process.stopped")).toBeInTheDocument();
     expect(screen.queryByText("process.errorTitle")).not.toBeInTheDocument();
+    expect(screen.queryByText("process.error")).not.toBeInTheDocument();
     expect(screen.queryByText("process.finishedTitle")).not.toBeInTheDocument();
     expect(
       screen.queryByText("process.processingTitle"),
