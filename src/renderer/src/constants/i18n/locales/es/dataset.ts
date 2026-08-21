@@ -56,7 +56,7 @@ const dataset = {
     errorSubtitle: "Alguno de los archivos no pudo procesarse correctamente.",
     errorText: "El procesamiento de los archivos no se completó correctamente.",
     stoppedTitle: "Detuviste el procesamiento de los archivos.",
-    stoppedSubtitle: "Podés reanudarlo cuando quieras.",
+    stoppedSubtitle: "Vuelve atrás para reiniciar el procesamiento.",
     stoppedText: "El procesamiento de los archivos fue detenido manualmente.",
     continue: "Continuar",
   },

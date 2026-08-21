@@ -69,7 +69,7 @@ const anonymizer = {
     errorSubtitle: "El archivo no pudo procesarse correctamente.",
     errorText: "El procesamiento del archivo no se completó correctamente.",
     stoppedTitle: "Detuviste el procesamiento del archivo.",
-    stoppedSubtitle: "Podés reanudarlo cuando quieras.",
+    stoppedSubtitle: "Vuelve atrás para reiniciar el procesamiento.",
     stoppedText: "El procesamiento del archivo fue detenido manualmente.",
     continue: "Continuar",
   },
