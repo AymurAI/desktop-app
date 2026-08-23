@@ -85,9 +85,16 @@ const anonymizer = {
     description:
       "Los datos encontrados por AymurAI y posteriormente validados ya han sido anonimizados correctamente.",
     subtitle: "Archivo procesado",
-    restart: "Cargar un nuevo documento",
-    viewResult: "Descargar ODT",
-    viewResultPDF: "Descargar PDF",
+    exportOptionsLabel: "Opciones de exportación",
+    formatLabel: "Formato de archivo",
+    formatDescriptions: {
+      odt: ".odt: documento editable.",
+      pdf: ".pdf: sólo lectura, ideal para archivar o compartir.",
+    },
+    back: "Volver",
+    export: "Exportar",
+    exportError:
+      "No se pudo exportar el documento. Vuelve a intentarlo en unos instantes.",
     downloadError:
       "Ocurrió un error al generar el archivo. Por favor, intente nuevamente.",
   },
