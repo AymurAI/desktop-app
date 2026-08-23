@@ -135,7 +135,7 @@ export default function FinishAnonymizer() {
               columnGap="12"
               rowGap="6"
             >
-              <Stack gap="4">
+              <Stack gap="4" alignItems="center">
                 <styled.h2 textStyle="subtitle.md.strong">
                   {t("finish.subtitle")}
                 </styled.h2>

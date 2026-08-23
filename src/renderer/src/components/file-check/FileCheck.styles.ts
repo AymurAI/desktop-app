@@ -20,6 +20,7 @@ export const Wrapper = styled("div", {
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
       width: "full",
+      textAlign: "center",
     },
   },
 });
