@@ -54,7 +54,7 @@ function DocumentFinish() {
       {feature === FeatureFlowEnum.Dataset ? (
         <FinishDataset onRestart={handleRestart} />
       ) : (
-        <FinishAnonymizer onRestart={handleRestart} />
+        <FinishAnonymizer />
       )}
     </RequireFile>
   );
