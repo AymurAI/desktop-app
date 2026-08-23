@@ -192,7 +192,7 @@ export default function FinishAnonymizer() {
           </Button>
           <Button
             onClick={handleExport}
-            disabled={isError || isLoading}
+            disabled={isError || isLoading || isExporting}
             isLoading={isLoading || isExporting}
           >
             {t("finish.export")}

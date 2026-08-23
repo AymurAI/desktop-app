@@ -192,6 +192,29 @@ describe("FinishAnonymizer", () => {
     expect(odtToPdfMutationFn).not.toHaveBeenCalled();
   });
 
+  it("disables Exportar while a cross-format export is in flight, preventing duplicate requests", async () => {
+    let resolveConversion: (blob: Blob) => void = () => {};
+    odtToPdfMutationFn.mockReturnValue(
+      new Promise<Blob>((resolve) => {
+        resolveConversion = resolve;
+      }),
+    );
+
+    render(withQueryClient(<FinishAnonymizer />));
+    await waitFor(() => expect(screen.getByText(".odt")).toBeInTheDocument());
+    fireEvent.click(screen.getByText(".odt"));
+    fireEvent.click(await screen.findByText(".pdf"));
+
+    const exportButton = screen.getByRole("button", { name: "finish.export" });
+    fireEvent.click(exportButton);
+    await waitFor(() => expect(exportButton).toBeDisabled());
+    fireEvent.click(exportButton);
+
+    resolveConversion(pdfBlob);
+    await waitFor(() => expect(downloadBlob).toHaveBeenCalledTimes(1));
+    expect(odtToPdfMutationFn).toHaveBeenCalledTimes(1);
+  });
+
   it("shows the export-error callout and leaves the screen interactive when a conversion rejects", async () => {
     odtToPdfMutationFn.mockRejectedValue(new Error("conversion failed"));
     render(withQueryClient(<FinishAnonymizer />));
